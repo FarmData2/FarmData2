@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo "Running FarmData2 pre-commit checks..."
+
+# Prevent commits to the production branch
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$BRANCH" = "production" ]; then
+  echo
+  echo "You cannot commit directly to the production branch."
+  echo "The production branch should only be updated by merging development into it."
+  echo "This operation should only be performed by maintainers."
+  echo
+  exit 255
+fi
+
+if [ "$BRANCH" = "development" ]; then
+  echo
+  echo "You cannot commit directly to the development branch."
+  echo "Instead create a feature branch and commit your changes to it."
+  echo "Then push your feature branch to GitHub and create a pull request."
+  echo
+  exit 255
+fi
+
+# For all other branches, run the pre-commit checks using lint-staged.
+if npm run check:staged; then
+  echo "Done."
+  echo "Making the commit."
+  echo
+  exit 0
+else
+  echo
+  echo "FarmData2 pre-commit checks failed."
+  echo "The commit will not be made."
+  echo "Review the output above for details."
+  echo "Fix the issues and try your commit again."
+  echo
+  exit 255
+fi

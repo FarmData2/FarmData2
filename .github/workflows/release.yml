@@ -1,0 +1,53 @@
+name: FD2Release
+
+on:
+  push:
+    branches: [production, development]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  FD2Release:
+    name: Build FarmData2 Drupal Module for Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+
+      - name: Get Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+
+      - name: Install CI Dependencies
+        run: npm ci
+
+      - name: Build the farmdata2 Drupal Module
+        run: npm run build:fd2
+
+      - name: Create zip and tar.gz of farmdata2 Drupal Module
+        run: |
+          npm run zip:fd2
+          npm run tgz:fd2
+
+      - name: Create Semantic Versioned Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # When push is to production a new release was created
+      # so delete all but the most recent pre-release
+      # on development branch.
+      - name: Delete Pre-releases
+        if: github.ref == 'refs/heads/production'
+        uses: jay2610/delete-older-releases@1.4.0
+        with:
+          keep_latest: 1
+          delete_tags: 'true'
+          delete_type: 'prerelease'
+          target_branch: 'development'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

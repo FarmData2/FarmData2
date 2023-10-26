@@ -1,0 +1,44 @@
+#!/bin/bash
+
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT_DIR/bin/lib.bash"
+
+echo "Running FarmData2 pre-push hook..."
+
+read -r line
+LOCAL_BRANCH=$(echo "$line" | cut -f3 -d'/' | cut -f1 -d' ')
+REMOTE_BRANCH=$(echo "$line" | cut -f3 -d' ' | cut -f3 -d'/')
+
+if [ "$REMOTE_BRANCH" = "development" ]; then
+  echo
+  echo "Do not push to the development branch."
+  echo "Instead create a feature branch and commit your changes to it."
+  echo "Then push your feature branch to GitHub and create a pull request."
+  echo
+  exit 255
+fi
+
+# Only run this hook when pushing to the production branch.
+if [ "$REMOTE_BRANCH" = "production" ]; then
+
+  echo "  Pushing to the production branch."
+  echo "  A release will be prepared on git.drupalcode.org."
+
+  if [ "$LOCAL_BRANCH" = "production" ]; then
+    echo "  Starting drupal-release script (will run in 10 seconds)"
+    (
+      sleep 10
+      "$REPO_ROOT_DIR/.githooks/drupal-release"
+    ) &
+    exit 0
+  else
+    echo
+    echo "Only the local production branch may be pushed to the remote production branch."
+    echo
+    exit 255
+  fi
+else
+  # Not pushing to the production branch
+  echo "Done."
+  exit 0
+fi

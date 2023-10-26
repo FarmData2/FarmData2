@@ -1,0 +1,107 @@
+#!/bin/bash
+
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT_DIR/bin/lib.bash"
+
+echo
+echo "Starting the drupal-release script..."
+
+# Assumes that the most recent run on production is the one we want.
+# Note: the release action cancels in-progress-runs so should be okay.
+RUN_ID=$(gh run list --repo farmdata2/temp-spike --workflow FD2Release --branch production --event push --limit 1 | tail -1 | cut -d$'\t' -f7)
+
+echo "  Watching the FarmData2 FD2Release action on farmdata2/temp-spike..."
+gh run watch --repo farmdata2/temp-spike "$RUN_ID" --exit-status -i 2
+error_check "FarmData2 FD2Release action has failed."
+
+echo "  Updating FarmData2 repo branches..."
+safe_cd "$REPO_ROOT_DIR"
+
+echo "    Updating production branch..."
+git switch --quiet production
+error_check "Failed to switch to production branch."
+git pull --ff-only --quiet origin production
+error_check "Failed to update the production branch."
+echo "    Done."
+
+echo "    Updating development branch..."
+git switch --quiet development
+error_check "Failed to switch to development branch."
+git pull --ff-only --quiet origin development
+error_check "Failed to update the development branch."
+echo "    Done."
+echo "  Done."
+
+echo "  Building the Drupal release..."
+
+echo "    Building the farm_fd2 module locally..."
+git switch --quiet production
+error_check "Failed to switch to production branch."
+npm run build:fd2 > /dev/null
+error_check "Failed to build farm_fd2 module."
+echo "    Done."
+
+if [ -d /var/tmp/farmdata2 ]; then
+  echo "    Removing existing farmdata2 clone..."
+  rm -rf /var/tmp/farmdata2
+  echo "    Done."
+fi
+
+echo "    Creating clone of farmdata2 from git.drupalcode.org..."
+git clone --quiet https://git.drupalcode.org/project/farmdata2.git /var/tmp/farmdata2
+error_check "Failed to clone farmdata2 from git.drupalcode.org."
+echo "    Done."
+
+echo "    Copying files from farm_fd2/dist/farmdata to clone..."
+git switch --quiet production
+error_check "Failed to switch to production branch."
+cp -Ru modules/farm_fd2/dist/farmdata2/* /var/tmp/farmdata2/
+error_check "Failed to copy files from farm_fd2/dist/farmdata2."
+echo "    Done."
+
+safe_cd /var/tmp/farmdata2
+
+echo "    Checking status of farmdata2 clone..."
+STATUS=$(git status | grep "nothing to commit, working tree clean")
+if [ "$STATUS" = "" ]; then
+  echo "      Staging and committing to release branch in farmdata2 clone..."
+  git switch --quiet release
+  error_check "Failed to switch to release branch."
+  git stage .
+  error_check "Failed to stage files."
+  git commit --no-verify --quiet -m "updated to release "
+  error_check "Failed to commit files."
+  echo "      Done."
+
+  echo "      Pushing farmdata2 clone to git.drupalcode.org..."
+  git push --quiet --no-verify origin release
+  error_check "Failed to push farmdata2 clone to git.drupalcode.org."
+  echo "      Done."
+
+  echo "      Creating tag $RELEASE on git.drupalcode.org..."
+  safe_cd /var/tmp/farmdata2
+  RELEASE=$(gh release list --repo farmdata2/temp-spike | grep Latest | cut -f1)
+  RELEASE="${RELEASE:1}"
+  git tag -a "$RELEASE" -m "Release $RELEASE"
+  error_check "Failed to create tag $RELEASE."
+  git push --no-verify --quiet origin "$RELEASE"
+  error_check "Failed to push tag $RELEASE to git.drupalcode.org."
+  echo "      Done."
+  echo "    Done."
+  echo "  Done."
+  echo "Done."
+  echo
+  echo "farmdata2 on git.drupalcode.org is ready for release $RELEASE."
+  echo "Visit https://www.drupal.org/node/add/project-release/3396323"
+  echo "and create a release for the tag $RELEASE."
+  echo
+
+else
+  echo "      No changes to farmdata2 module to be committed."
+  echo "      No tag was created for farmdata2 on git.drupalcode.org."
+  echo "    Done."
+  echo "  Done."
+  echo "Done."
+fi
+
+exit 0
