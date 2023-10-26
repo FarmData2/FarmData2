@@ -1,0 +1,68 @@
+version: '3'
+services:
+  db:
+    image: farmdata2/postgres:fd2.1
+    container_name: fd2_postgres
+    volumes:
+      # Use docker volume for performance.
+      # Bump version here and in volumes if new image requires new db.
+      - farmos2_db_fd2.1:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: farm
+      POSTGRES_PASSWORD: farm
+      POSTGRES_DB: farm
+
+  farmos:
+    depends_on:
+      - db
+    image: farmdata2/farmos2:fd2.1
+    container_name: fd2_farmos
+    volumes:
+      # Mount a volume to hold the config information for farmos between runs.
+      - farmos2_config_fd2.1:/opt/drupal/web/sites
+      # Mount a volume to hold the farmos api keys
+      - farmos2_keys_fd2.1:/opt/drupal/keys
+      # Mount the dist directories containing the fd2 modules into the farmOS container.
+      - ../modules/farm_fd2/dist/farmdata2:/opt/drupal/web/sites/all/modules/farmdata2
+      - ../modules/farm_fd2_examples/dist/fd2_examples:/opt/drupal/web/sites/all/modules/fd2_examples
+      - ../modules/farm_fd2_school/dist/fd2_school:/opt/drupal/web/sites/all/modules/fd2_school
+    ports:
+      - '80:80'
+    environment:
+      XDEBUG_MODE: debug
+      XDEBUG_CONFIG: discover_client_host=yes
+
+  fd2dev:
+    depends_on:
+      - db
+      - farmos
+    image: farmdata2/fd2dev:fd2.6
+    container_name: fd2_dev
+    init: true
+    volumes:
+      # Mount the FarmData2 repo into the fd2dev user's home directory.
+      - ..:/home/fd2dev/FarmData2
+      # Mount the docker.sock so we can run docker commands in the container.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Preserve the fd2dev user's home directory on a docker volume.
+      # Bump the version here and in volumes below
+      # if image rebuild requires new home.
+      - fd2dev_home_fd2.3:/home/fd2dev
+      # Mount a docker volume into which the farmOS database will be built.
+      # This allows switching the database from within the dev container.
+      # This has significantly better performance than mounting a host directory.
+      # Bump the version here if a new db volume is required.
+      - farmos2_db_fd2.1:/home/fd2dev/FarmData2/docker/db
+      # Mount the fd2 development environment configuration information.
+      - ~/.fd2:/home/fd2dev/.fd2
+    ports:
+      - 5901:5901
+      - 6901:6901
+
+volumes:
+  farmos2_db_fd2.1:
+  farmos2_config_fd2.1:
+  farmos2_keys_fd2.1:
+  fd2dev_home_fd2.3:
