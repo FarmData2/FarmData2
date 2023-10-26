@@ -1,0 +1,7 @@
+dist
+package-lock.json
+node_modules
+docker/db
+bin/templates/entrypoints/*.yml
+licenses
+CHANGELOG.md

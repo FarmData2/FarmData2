@@ -1,0 +1,4 @@
+# Allow source commands in scripts.
+external-sources=true
+
+disable=SC1091

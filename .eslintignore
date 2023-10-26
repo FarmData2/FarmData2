@@ -1,0 +1,14 @@
+docker/db/
+docker/docker-compose.yml
+
+bin/templates/entrypoints/*.yml
+**/*.info.yml
+**/*.libraries.yml
+**/*.links.menu.yml
+**/*.routing.yml
+
+**/dist
+modules/farm_fd2/src/public
+
+licenses
+CHANGELOG.md
