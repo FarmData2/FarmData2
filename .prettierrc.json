@@ -1,7 +1,9 @@
-dist
-package-lock.json
-node_modules
-docker/db
-bin/templates/entrypoints/*.yml
-licenses
-CHANGELOG.md
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "semi": true,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "printWidth": 80,
+  "trailingComma": "es5",
+  "singleAttributePerLine": true
+}
