@@ -8,10 +8,10 @@ echo "Starting the drupal-release script..."
 
 # Assumes that the most recent run on production is the one we want.
 # Note: the release action cancels in-progress-runs so should be okay.
-RUN_ID=$(gh run list --repo farmdata2/temp-spike --workflow FD2Release --branch production --event push --limit 1 | tail -1 | cut -d$'\t' -f7)
+RUN_ID=$(gh run list --repo FarmData2/FarmData2 --workflow FD2Release --branch production --event push --limit 1 | tail -1 | cut -d$'\t' -f7)
 
-echo "  Watching the FarmData2 FD2Release action on farmdata2/temp-spike..."
-gh run watch --repo farmdata2/temp-spike "$RUN_ID" --exit-status -i 2
+echo "  Watching the FarmData2 FD2Release action on FarmData2/FarmData2..."
+gh run watch --repo FarmData2/FarmData2 "$RUN_ID" --exit-status -i 2
 error_check "FarmData2 FD2Release action has failed."
 
 echo "  Updating FarmData2 repo branches..."
@@ -80,7 +80,7 @@ if [ "$STATUS" = "" ]; then
 
   echo "      Creating tag $RELEASE on git.drupalcode.org..."
   safe_cd /var/tmp/farmdata2
-  RELEASE=$(gh release list --repo farmdata2/temp-spike | grep Latest | cut -f1)
+  RELEASE=$(gh release list --repo FarmData2/FarmData2 | grep Latest | cut -f1)
   RELEASE="${RELEASE:1}"
   git tag -a "$RELEASE" -m "Release $RELEASE"
   error_check "Failed to create tag $RELEASE."
