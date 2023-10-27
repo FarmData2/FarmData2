@@ -5,6 +5,8 @@ import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import vue from '@vitejs/plugin-vue';
 import { exec } from 'child_process';
+import Components from 'unplugin-vue-components/vite';
+import { BootstrapVueNextResolver } from 'unplugin-vue-components/resolvers';
 
 let viteConfig = {
   root: 'modules/farm_fd2/src/entrypoints',
@@ -12,6 +14,9 @@ let viteConfig = {
   base: '/fd2/',
   plugins: [
     vue(),
+    Components({
+      resolvers: [BootstrapVueNextResolver()],
+    }),
     viteStaticCopy({
       // Copy the Drupal module stuff...
       targets: [
@@ -67,7 +72,7 @@ let viteConfig = {
         assetFileNames: (assetInfo) => {
           let ext = assetInfo.name.split('.').at(1);
           if (ext === 'css') {
-            return '[name]/[name].css';
+            return 'shared/[name].css';
           } else {
             return 'shared/[name].[ext]';
           }
