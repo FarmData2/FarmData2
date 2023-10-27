@@ -10,11 +10,11 @@ SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
-# Check that the main branch is checked out
+# Check that the development branch is checked out
 CUR_GIT_BRANCH=$(git branch)
-if [[ ! "$CUR_GIT_BRANCH" == *"* main"* ]]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} You must have the main branch checked out to add an entry point."
-  echo "Switch to the main branch."
+if [[ ! "$CUR_GIT_BRANCH" == *"* development"* ]]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} You must have the development branch checked out to add an entry point."
+  echo "Switch to the development branch."
   echo "Then run this script again."
   exit 255
 fi
@@ -269,7 +269,7 @@ if [ ! "$TESTS_PASSED" == "0" ]; then
   echo "  Correct any errors and rerun tests using test.bash."
   echo "  Or try again by:"
   echo "    Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the main branch"
+  echo "    Switch to the development branch"
   echo "    Delete the $FEATURE_BRANCH_NAME branch."
   echo "    Run this script again."
 else
