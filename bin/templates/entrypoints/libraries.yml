@@ -1,0 +1,10 @@
+
+%ENTRY_POINT%:
+  js:
+    %ENTRY_POINT%/%ENTRY_POINT%.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      %ENTRY_POINT%/%ENTRY_POINT%.css: {}

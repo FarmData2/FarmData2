@@ -1,0 +1,9 @@
+main:
+  js:
+    main/main.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      main/main.css: {}
