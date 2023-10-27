@@ -1,0 +1,6 @@
+farm.fd2_main:
+  title: 'FarmData2'
+  description: 'FarmData2 supports operations and reporting for diversified vegetable farms.'
+  parent: farm.base
+  route_name: farm.fd2_main.content
+  weight: 100

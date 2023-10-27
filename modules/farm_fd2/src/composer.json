@@ -1,0 +1,28 @@
+{
+  "name": "drupal/farmdata2",
+  "description": "FarmData2 module for farmOS",
+  "keywords": [],
+  "type": "drupal-module",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Grant Braught",
+      "email": "braughtg@gmail.com",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Joe Smith"
+    }
+  ],
+  "homepage": "https://github.com/DickinsonCollege/FarmData2",
+  "support": {
+    "docs": "https://github.com/DickinsonCollege/FarmData2",
+    "issues": "https://github.com/DickinsonCollege/FarmData2",
+    "source": "https://github.com/DickinsonCollege/FarmData2",
+    "forum": "https://farmdata2.zulipchat.com/",
+    "chat": "https://farmdata2.zulipchat.com/"
+  },
+  "require": {
+    "drupal/core": "^9"
+  }
+}
