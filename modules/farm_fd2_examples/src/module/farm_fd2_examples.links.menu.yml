@@ -1,0 +1,6 @@
+farm.fd2_examples_main:
+  title: 'FD2 Examples'
+  description: 'Canonical examples of FarmData2 entry points, components and tests.'
+  parent: farm.base
+  route_name: farm.fd2_examples.content
+  weight: 110

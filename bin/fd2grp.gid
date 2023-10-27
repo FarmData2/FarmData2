@@ -1,0 +1,6 @@
+# This is the GID at which the up script will begin
+# looking for available group ID's for the fd2grp
+# and the fd2docker group. The number must be the
+# last line in this file.
+
+3000

@@ -1,0 +1,6 @@
+farm.%DRUPAL_ROUTE_NAME%:
+  title: '%ENTRY_POINT_TITLE%'
+  description: '%ENTRY_POINT_DESCRIPTION%'
+  parent: %ENTRY_POINT_PARENT%
+  route_name: farm.%DRUPAL_ROUTE_NAME%.content
+  weight: 100
