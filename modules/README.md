@@ -36,9 +36,18 @@ Inside each of the above module directories there are the following directories 
   - stores - used by Vue pinia store
   - composer.json - Drupal configuration information (only for farm_fd2)
 
-## Adding Entry Points
+## Adding an new Entry Point
 
-- use bin/addEntrypoint.bash
+- ensure you have no uncommitted changes
+- switch to `development` branch
+- run `addEntrypoint.bash`
+  - Will create a new feature branch
+  - Switch to that branch
+  - Add boilerplate and starter code to it
+  - Run some basic tests against the added code
+    - Note: running test script also builds the module containing the new entry point.
+- Edit `App.vue` to implement the entry point.
+- Add `\*.cy.js` files to test the new entry point.
 
 ## Testing
 
