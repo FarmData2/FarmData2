@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       date: dayjs(),
+      createdCount: 0,
     };
   },
   computed: {
