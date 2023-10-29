@@ -8,3 +8,6 @@
   css:
     theme:
       %ENTRY_POINT%/%ENTRY_POINT%.css: {}
+    component:
+      shared/index.css: {}
+    
