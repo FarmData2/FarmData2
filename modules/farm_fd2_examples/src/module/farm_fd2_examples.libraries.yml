@@ -7,3 +7,5 @@ main:
   css:
     theme:
       main/main.css: {}
+    component:
+      shared/index.css: {}
