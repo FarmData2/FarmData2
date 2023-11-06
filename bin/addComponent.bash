@@ -91,7 +91,7 @@ git switch --quiet "$FEATURE_BRANCH_NAME"
 echo "  Switched."
 
 # Copy templates over to component directory
-COMPONENT_TEMPLATE_DIR="$SCRIPT_DIR/templates/components"
+COMPONENT_TEMPLATE_DIR="$SCRIPT_DIR/templates/component"
 
 echo "  Creating component's files from templates..."
 echo "    Creating $COMPONENT_NAME.vue from templates..."
