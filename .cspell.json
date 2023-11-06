@@ -28,7 +28,8 @@
     "CHANGELOG.md",
     "docs/components",
     "docs/library",
-    "docs/FarmData2.md"
+    "docs/FarmData2.md",
+    "modules/**/components.d.ts"
   ],
   "enableFiletypes": [
     "dockercompose",
