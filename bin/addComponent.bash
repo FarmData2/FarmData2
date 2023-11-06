@@ -93,12 +93,24 @@ echo "  Switched."
 # Copy templates over to component directory
 COMPONENT_TEMPLATE_DIR="$SCRIPT_DIR/templates/components"
 
-echo "  Copying components .vue template..."
+echo "  Creating component's files from templates..."
+echo "    Creating $COMPONENT_NAME.vue from templates..."
 cp "$COMPONENT_TEMPLATE_DIR/NewComponent.vue" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
-echo "  Added $COMPONENT_SRC_DIR/$COMPONENT_NAME.vue from templates."
-echo "  Copied."
-
+echo "    Creating."
+echo "    Creating $COMPONENT_NAME.content.comp.cy.js from templates..."
+cp "$COMPONENT_TEMPLATE_DIR/NewComponent.content.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
+echo "    Created."
+echo "    Creating $COMPONENT_NAME.events.comp.cy.js from templates..."
+cp "$COMPONENT_TEMPLATE_DIR/NewComponent.events.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.events.comp.cy.js"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.events.comp.cy.js"
+echo "    Created."
+echo "    Creating $COMPONENT_NAME.behavior.comp.cy.js from templates..."
+cp "$COMPONENT_TEMPLATE_DIR/NewComponent.behavior.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.behavior.comp.cy.js"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.behavior.comp.cy.js"
+echo "    Created."
+echo "  Created."
 
 echo "Created."
 

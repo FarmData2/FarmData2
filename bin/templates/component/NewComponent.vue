@@ -1,6 +1,9 @@
 <template>
-  <BFormGroup>
-    <p>Component content goes here.</p>
+  <BFormGroup
+    id="new-comp-group"
+    data-cy="new-comp-group"
+  >
+    <p data-cy="placeholder">Component content goes here.</p>
   </BFormGroup>
 </template>
 
