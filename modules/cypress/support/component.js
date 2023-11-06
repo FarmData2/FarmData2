@@ -26,3 +26,7 @@ Cypress.Commands.add('mount', mount);
 
 // Example use:
 // cy.mount(MyComponent)
+
+// Import the bootstrap Vue CSS files
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';

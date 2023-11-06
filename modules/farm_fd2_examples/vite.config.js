@@ -60,6 +60,9 @@ let viteConfig = {
       input: Object.fromEntries(
         glob
           .sync('modules/farm_fd2_examples/src/entrypoints/*')
+          .filter((dir) => {
+            return !dir.endsWith('components.d.ts');
+          })
           .map((dir) => [path.basename(dir), dir + '/index.html'])
       ),
       output: {
@@ -68,7 +71,7 @@ let viteConfig = {
         assetFileNames: (assetInfo) => {
           let ext = assetInfo.name.split('.').at(1);
           if (ext === 'css') {
-            return 'shared/[name].css';
+            return 'shared/index.css';
           } else {
             return 'shared/[name].[ext]';
           }
@@ -81,7 +84,7 @@ let viteConfig = {
     alias: {
       '@': fileURLToPath(new URL('./src/', import.meta.url)),
       '@comps': fileURLToPath(new URL('../../components/', import.meta.url)),
-      '@libs': fileURLToPath(new URL('../../libraries/', import.meta.url)),
+      '@libs': fileURLToPath(new URL('../../library/', import.meta.url)),
     },
   },
 };
