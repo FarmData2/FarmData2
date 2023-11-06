@@ -43,10 +43,10 @@ fi
 COMPONENT_DIR="$COMPONENTS_DIR/$COMPONENT_NAME"
 if [ -d "$COMPONENT_DIR" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the component $COMPONENT_NAME already exists"
-  echo "in the directory $$COMPONENT_DIR."
+  echo "in the directory $COMPONENT_DIR."
   echo "Pick a different name for your Component."
   echo "OR:"
-  echo "  Remove the sCOMPONENT_DIR directory"
+  echo "  Remove the $COMPONENT_DIR directory"
   echo "Then run this script again."
   exit 255
 fi
