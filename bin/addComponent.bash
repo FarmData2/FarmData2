@@ -40,13 +40,13 @@ if [[ ! "$FEATURE_BRANCH_EXISTS" == "" ]]; then
 fi
 
 # Check if the directory for the component exits...
-COMPONENT_DIR="$COMPONENTS_DIR/$COMPONENT_NAME"
-if [ -d "$COMPONENT_DIR" ]; then
+COMPONENT_SRC_DIR="$COMPONENTS_DIR/$COMPONENT_NAME"
+if [ -d "$COMPONENT_SRC_DIR" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the component $COMPONENT_NAME already exists"
-  echo "in the directory $COMPONENT_DIR."
+  echo "in the directory $COMPONENTS_DIR."
   echo "Pick a different name for your Component."
   echo "OR:"
-  echo "  Remove the $COMPONENT_DIR directory"
+  echo "  Remove the $COMPONENT_SRC_DIR directory"
   echo "Then run this script again."
   exit 255
 fi
@@ -54,7 +54,7 @@ fi
 echo "About to add a component as follows:"
 echo "        Component name: $COMPONENT_NAME"
 echo "  Components directory: $COMPONENTS_DIR"
-echo "   Component directory: $COMPONENT_DIR"
+echo "   Component directory: $COMPONENT_SRC_DIR"
 echo "        Feature branch: $FEATURE_BRANCH_NAME"
 echo ""
 
@@ -90,8 +90,14 @@ echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
 git switch --quiet "$FEATURE_BRANCH_NAME"
 echo "  Switched."
 
+# Copy templates over to component directory
+COMPONENT_TEMPLATE_DIR="$SCRIPT_DIR/templates/components"
 
-
+echo "  Copying components .vue template..."
+cp "$COMPONENT_TEMPLATE_DIR/NewComponent.vue" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
+echo "  Added $COMPONENT_SRC_DIR/$COMPONENT_NAME.vue from templates."
+echo "  Copied."
 
 
 echo "Created."
