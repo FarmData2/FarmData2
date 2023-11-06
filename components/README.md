@@ -6,6 +6,12 @@ Custom FarmData2 Vue Components.
   - `.vue` file for the component
   - `.comp.cy.js` files for the component tests
 
+## Creating a new Component
+
+- use `addComponent.bash`
+
+  - describe its use...
+
 ## Component Structure
 
 ### Template
@@ -23,6 +29,8 @@ Custom FarmData2 Vue Components.
 - All testable elements in the component must have a `data-cy` attribute.
 
 ### Script
+
+- imports appear after `<script>` and before the component comment.
 
 - elements of the script should be in the order:
 
