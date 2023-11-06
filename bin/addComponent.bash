@@ -112,7 +112,47 @@ sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAM
 echo "    Created."
 echo "  Created."
 
+# Run the included component tests to be sure everything is working...
+echo "  Running component tests on $COMPONENT_NAME..."
+COMP_TEST_OUT=$(test.bash --comp --glob="components/**/$COMPONENT_NAME/*.comp.cy.js")
+COMP_EXIT_CODE=$?
+if [ ! "$COMP_EXIT_CODE" == "0" ]; then
+  echo "    Errors occurred when running the component tests. Output will be shown below"
+else
+  echo "    Success."
+fi
+
+echo "  Tests complete."
 echo "Created."
+
+if [ ! "$COMP_EXIT_CODE" == "0" ]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Failed component tests."
+  echo ""
+  echo -e "$COMP_TEST_OUT"
+  echo ""
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Check output of failed tests above."
+  echo "  Correct any errors and rerun tests using test.bash."
+  echo "  Or try again by:"
+  echo "    Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "    Switch to the development branch"
+  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    Run this script again."
+else
+  # Print a message...
+  echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
+
+  # Commit the changes to the feature branch and print some info...
+  echo "Use git status to review the changes."
+  echo "Commit them to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
+  echo "Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing." 
+  echo "Add additional *.comp.cy.js files as necessary to fully test the the component."
+  echo "When ready, push your feature branch to your origin and create a pull request."
+  echo ""
+fi
+
+exit "$TESTS_PASSED"
+
 
 
 
