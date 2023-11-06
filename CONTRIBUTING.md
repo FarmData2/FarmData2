@@ -106,3 +106,16 @@ When changes warranting a new release have been added to the `development` branc
    - The local production and development branches will be updated.
 4. Manually create the drupal release by visiting: <https://www.drupal.org/node/add/project-release/3396323> and selecting the "Release branch or tag" for the new release.
    - See <https://www.drupal.org/docs/develop/git/git-for-drupal-project-maintainers/creating-a-project-release> for detailed instructions about creating the release.
+
+## Development Utilities
+
+### Getting Log / Asset Type Details
+
+Need to figure out how to use the `library/farmosUtil/printFarmOSLogs.js` script.
+
+## Terminology
+
+- Entry Points
+- Components
+- Libraries
+- etc...
