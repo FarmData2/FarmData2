@@ -27,7 +27,7 @@
 export default {
   name: '%COMPONENT_NAME%',
   components: {},
-  emits: [],
+  emits: ['ready'],
   props: {},
   data() {
     return {};
