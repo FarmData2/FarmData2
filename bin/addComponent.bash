@@ -79,15 +79,15 @@ echo "  Created."
 
 # Create a new feature branch for the component from the development branch
 echo "  Updating development branch..."
-git switch development
-git pull origin development > /dev/null
+git switch --quiet development
+git pull --quiet origin development
 error_check "Failed to update development branch."
 echo "  Updated."
 echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
-git branch "$FEATURE_BRANCH_NAME"
+git branch --quiet "$FEATURE_BRANCH_NAME"
 echo "  Created."
 echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
-git switch "$FEATURE_BRANCH_NAME"
+git switch --quiet "$FEATURE_BRANCH_NAME"
 echo "  Switched."
 
 
