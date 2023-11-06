@@ -8,7 +8,7 @@ Custom FarmData2 Vue Components.
 
 ## Creating a new Component
 
-- use `addComonent.bash`
+- use `addComponent.bash`
 
   - describe its use...
 
@@ -29,6 +29,8 @@ Custom FarmData2 Vue Components.
 - All testable elements in the component must have a `data-cy` attribute.
 
 ### Script
+
+- imports appear after `<script>` and before the component comment.
 
 - elements of the script should be in the order:
 
