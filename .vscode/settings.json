@@ -4,5 +4,8 @@
   "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.quickSuggestionsDelay": 3000,
-  "eslint.validate": ["markdown", "md"]
+  "eslint.validate": [
+    "markdown",
+    "md"
+  ],
 }
