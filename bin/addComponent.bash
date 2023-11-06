@@ -13,7 +13,7 @@ REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 # Check that working tree is clean
 GIT_STATUS=$(git status | tail -1)
 if [[ ! "$GIT_STATUS" =~ ^"nothing to commit, working tree clean"$ ]]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} The working tree must be clean to add an entry point."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} The working tree must be clean to add a component."
   echo "Commit changes to a feature branch or use git stash."
   echo "Then run this script again."
   exit 255
