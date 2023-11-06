@@ -5,3 +5,10 @@ farm.fd2_main.content:
     _title: 'FarmData2'
   requirements:
     _permission: 'access content'
+farm.fd2_tray_seeding.content:
+  path: '/fd2/tray_seeding'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
+    _title: 'Tray Seeding'
+  requirements:
+    _permission: 'access content'

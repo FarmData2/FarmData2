@@ -4,3 +4,9 @@ farm.fd2_main:
   parent: farm.base
   route_name: farm.fd2_main.content
   weight: 100
+farm.fd2_tray_seeding:
+  title: 'Tray Seeding'
+  description: 'Data entry form for recording a tray seeding.'
+  parent: farm.fd2_main
+  route_name: farm.fd2_tray_seeding.content
+  weight: 100

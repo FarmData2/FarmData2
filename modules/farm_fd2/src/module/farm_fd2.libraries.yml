@@ -9,3 +9,15 @@ main:
       main/main.css: {}
     component:
       shared/index.css: {}
+tray_seeding:
+  js:
+    tray_seeding/tray_seeding.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      tray_seeding/tray_seeding.css: {}
+    component:
+      shared/index.css: {}
+    
