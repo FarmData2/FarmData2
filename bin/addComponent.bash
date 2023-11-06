@@ -39,10 +39,23 @@ if [[ ! "$FEATURE_BRANCH_EXISTS" == "" ]]; then
   exit 255
 fi
 
+# Check if the directory for the component exits...
+COMPONENT_DIR="$COMPONENTS_DIR/$COMPONENT_NAME"
+if [ -d "$COMPONENT_DIR" ]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the component $COMPONENT_NAME already exists"
+  echo "in the directory $$COMPONENT_DIR."
+  echo "Pick a different name for your Component."
+  echo "OR:"
+  echo "  Remove the sCOMPONENT_DIR directory"
+  echo "Then run this script again."
+  exit 255
+fi
+
 echo "About to add a component as follows:"
-echo "       component directory: $COMPONENTS_DIR"
-echo "               component name: $COMPONENT_NAME"
-echo "   feature branch: $FEATURE_BRANCH_NAME"
+echo "        Component name: $COMPONENT_NAME"
+echo "  Components directory: $COMPONENTS_DIR"
+echo "   Component directory: $COMPONENT_DIR"
+echo "        Feature branch: $FEATURE_BRANCH_NAME"
 echo ""
 
 # Confirm that the component should be created.
@@ -57,10 +70,12 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
-
 echo "Creating new component $COMPONENT_NAME"
 
-exit -1
+# Create a new directory for the component.
+echo "  Creating directory $COMPONENT_DIR for component..."
+mkdir "$COMPONENT_DIR"
+echo "  Created."
 
 # Create a new feature branch for the component from the development branch
 echo "  Updating development branch..."
@@ -72,18 +87,13 @@ git branch "$FEATURE_BRANCH_NAME"
 echo "  Created."
 echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
 git switch "$FEATURE_BRANCH_NAME"
-echo "  Switched.
+echo "  Switched."
 
-echo "Crated."
 
-# Check that the development branch is checked out
-# CUR_GIT_BRANCH=$(git branch)
-# if [[ ! "$CUR_GIT_BRANCH" == *"* development"* ]]; then
-#   echo -e "${ON_RED}ERROR:${NO_COLOR} You must have the development branch checked out to add an entry point."
-#   echo "Switch to the development branch."
-#   echo "Then run this script again."
-#   exit 255
-# fi
+
+
+
+echo "Created."
 
 
 
