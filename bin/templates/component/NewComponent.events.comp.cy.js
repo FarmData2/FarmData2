@@ -1,8 +1,7 @@
 import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
 
-describe('Test the  %COMPONENT_NAME% component events', () => {
+describe('Test the  DateSelect component events', () => {
   it('Emits "ready" when component has been created', () => {
-    
     /*
      * See `components/README.md` for information about component testing.
      * See other components in the `components/` directory for examples.
@@ -18,6 +17,9 @@ describe('Test the  %COMPONENT_NAME% component events', () => {
 
     cy.get('@readySpy').should('have.been.calledOnce');
     cy.get('[data-cy="new-comp-group"]').should('exist');
-    cy.get('[data-cy="new-crop-placeholder"]').should('have.text', 'Component content goes here.');
+    cy.get('[data-cy="placeholder"]').should(
+      'have.text',
+      'Component content goes here.'
+    );
   });
 });
