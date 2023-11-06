@@ -8,3 +8,4 @@ CHANGELOG.md
 docs/library
 docs/components
 docs/FarmData2.md
+modules/**/components.d.ts

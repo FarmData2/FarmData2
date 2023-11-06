@@ -9,6 +9,7 @@ bin/templates/entrypoints/*.yml
 
 **/dist
 modules/farm_fd2/src/public
+modules/**/components.d.ts
 
 docs/library
 docs/components

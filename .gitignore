@@ -34,3 +34,4 @@ docker/db.*.tar.bz2
 docs/components
 docs/library
 docs/FarmData2.md
+modules/**/components.d.ts
