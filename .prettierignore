@@ -5,3 +5,6 @@ docker/db
 bin/templates/entrypoints/*.yml
 licenses
 CHANGELOG.md
+docs/library
+docs/components
+docs/FarmData2.md

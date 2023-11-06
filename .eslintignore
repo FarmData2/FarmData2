@@ -10,5 +10,9 @@ bin/templates/entrypoints/*.yml
 **/dist
 modules/farm_fd2/src/public
 
+docs/library
+docs/components
+docs/FarmData2.md
+
 licenses
 CHANGELOG.md

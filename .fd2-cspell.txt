@@ -3,8 +3,10 @@ backmerged
 bashlint
 Braught
 chgrp
+CHUAU
 contconf
 conventionalcommits
+datacy
 dockercompose
 dockerlint
 drupalcode
@@ -15,6 +17,7 @@ farmos
 getopt
 gids
 isready
+jsdocrc
 linkcheck
 lintstagedrc
 mfinelli
@@ -30,5 +33,7 @@ shellcheck
 shfmt
 toplevel
 vite
+vuejs
+vuese
 XDEBUG
 Zulip

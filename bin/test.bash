@@ -156,12 +156,14 @@ if [ -n "$E2E_TESTS" ]; then
     URL_PREFIX="fd2_school"
   fi
 else
-  CYPRESS_TEST_TYPE="component"
-  CYPRESS_PROJECT="modules/farm_fd2"
   if [ -n "$COMPONENT_TESTS" ]; then
     echo "Component testing requested."
+    CYPRESS_PROJECT="modules/farm_fd2"
+    CYPRESS_TEST_TYPE="component"
   else
     echo "Unit testing requested."
+    CYPRESS_PROJECT="library"
+    CYPRESS_TEST_TYPE="e2e"
   fi
 fi
 
