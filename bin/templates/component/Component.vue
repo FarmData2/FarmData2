@@ -1,14 +1,14 @@
 <template>
   <BFormGroup
-    id="crop-group"
-    data-cy="crop-group"
-    label-for="crop-select"
+    id="new-comp-group"
+    data-cy="new-comp-group"
+    label-for="new-comp-select"
     label-cols="auto"
     label-align="end"
     content-cols="auto"
   >
     <template v-slot:label>
-      <span data-cy="crop-label">Crop:</span>
+      <span data-cy="new-comp-label">Pick one:</span>
       <sup
         data-cy="required-star"
         v-if="required"
@@ -17,96 +17,53 @@
       >
     </template>
 
-    <BInputGroup>
-      <BFormSelect
-        id="crop-select"
-        data-cy="crop-select"
-        v-model="crop"
-        aria-describedby="crop-help"
-        v-bind:required="required"
-      >
-        <template v-slot:first>
-          <BFormSelectOption
-            v-bind:value="null"
-            data-cy="option-0"
-            disabled
-            >Choose crop...</BFormSelectOption
-          >
-        </template>
-        <BFormSelectOption
-          v-for="(crop, i) in cropList"
-          v-bind:key="crop"
-          v-bind:value="crop"
-          v-bind:data-cy="'option-' + (i + 1)"
-        >
-          {{ crop }}
-        </BFormSelectOption>
-      </BFormSelect>
-      <BInputGroupAppend>
-        <BButton
-          data-cy="add-crop-button"
-          variant="info"
-          href="http://farmos/admin/structure/taxonomy/manage/plant_type/add"
-          >+</BButton
-        >
-      </BInputGroupAppend>
-    </BInputGroup>
+    <BFormSelect
+      id="new-comp-select"
+      data-cy="new-comp-select"
+      v-model="itemPicked"
+      aria-describedby="new-comp-help"
+      v-bind:required="required"
+    />
+
     <BFormText
-      id="crop-help"
-      data-cy="crop-help"
+      id="new-comp-help"
+      data-cy="new-comp-help"
       >{{ helpText }}</BFormText
     >
   </BFormGroup>
 </template>
 
 <script>
-import { BButton } from 'bootstrap-vue-next';
+import { BFormSelect } from 'bootstrap-vue-next';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
- * A component that allows the user to select a crop.
+ * A new component.
  *
  * ## Usage Example
  *
  * ```html
- * <CropSelector
- *   required
- *   helpText="Select seeded crop."
- *   v-model:selected="form.crop"
- *   v-on:ready="createdCount++"
- *   v-on:error="
- *     (msg) =>
- *        uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
- *   "
- * />
-
+ * Add example of how to add this component to a template.
+ * See the other components in the `components` directory for examples.
  * ```
- * - Notes:
- *   - The entrypoint using this component as shown above would need to:
- *      - import `uiUtil`.
- *      - define `form.crop` and `createdCount` in its `data` property.
- *   - See the `modules/README.md` for more information about using components.
  *
  * ## `data-cy` Attributes
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `crop-group`          | The `BFormGroup` component containing this component.
- * `crop-label`          | The `span` component containing the "Crop" label.
+ * `new-comp-group`      | The `BFormGroup` component containing this component.
+ * `new-comp-label`      | The `span` component containing the "Crop" label.
  * `required-star`       | The `*` that appears in the label if the input is required.
- * `crop-select`         | The `BFormSelect` component used to select a crop.
- * `option-0`            | The disabled "Choose crop..." option in the `BFormSelect` component.
- * `option-n`            | The nth option in the `BFormSelect` component [1...n].
- * `add-crop-button`     | The `BButton` component that redirects to the page for adding a new crop.
- * `crop-help`           | The `BFormText` component that displays the help text below the `BFormSelect` component.
+ * `new-comp-button'     | The `BButton` component included in the sample template.
+ * `new-comp-help`       | The `BFormText` component that displays the help text below the `BButton` component.
  */
 export default {
-  name: 'CropSelector',
-  components: { BButton },
-  emits: ['ready', 'error', 'update:selected'],
+  name: 'NewComponent',
+  components: { BFormSelect },
+  emits: [],
   props: {
     /**
-     * Whether a crop selection is required or not.
+     * Whether values are required or not.
      */
     required: {
       type: Boolean,
@@ -117,10 +74,10 @@ export default {
      */
     helpText: {
       type: String,
-      default: 'Select crop.',
+      default: 'Select item.',
     },
     /**
-     * The name of the selected crop.
+     * The name of the selected item.
      * This prop is watched by the component.
      */
     selected: {
@@ -130,8 +87,8 @@ export default {
   },
   data() {
     return {
-      cropList: [],
-      crop: this.selected,
+      itemList: ['Apple', 'Banana', 'Orange'],
+      itemPicked: this.selected,
     };
   },
   computed: {},
@@ -139,43 +96,20 @@ export default {
   watch: {
     crop() {
       /**
-       * The selected crop has changed.
-       * @property {string} crop the name of the newly selected crop.
+       * The selected item has changed.
+       * @property {string} itemPicked the name of the newly selected item.
        */
-      this.$emit('update:selected', this.crop);
+      this.$emit('update:selected', this.itemPicked);
     },
     selected() {
-      this.crop = this.selected;
+      this.itemPicked = this.selected;
     },
   },
   created() {
-    farmosUtil
-      .getFarmOSInstance()
-      .then((farm) => {
-        farmosUtil
-          .getCropNameToTermMap(farm)
-          .then((cropMap) => {
-            this.cropList = Array.from(cropMap.keys());
-            /**
-             * The select has been populated with the list of crops.
-             */
-            this.$emit('ready');
-          })
-          .catch((error) => {
-            console.error('CropSelector: Error fetching crops.');
-            console.error(error);
-            /**
-             * An error occurred when communicating with the farmOS server.
-             * @property {string} msg an error message.
-             */
-            this.$emit('error', 'Unable to fetch crops.');
-          });
-      })
-      .catch((error) => {
-        console.error('CropSelector: Error connecting to farm.');
-        console.error(error);
-        this.$emit('error', 'Unable to connect to farm.');
-      });
+    /**
+     * This component is ready for use.
+     */
+    this.$emit('ready');
   },
 };
 </script>
