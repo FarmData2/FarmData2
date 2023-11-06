@@ -73,8 +73,8 @@ done
 echo "Creating new component $COMPONENT_NAME"
 
 # Create a new directory for the component.
-echo "  Creating directory $COMPONENT_DIR for component..."
-mkdir "$COMPONENT_DIR"
+echo "  Creating directory $COMPONENT_SRC_DIR for component..."
+mkdir "$COMPONENT_SRC_DIR"
 echo "  Created."
 
 # Create a new feature branch for the component from the development branch
