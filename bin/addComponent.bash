@@ -116,7 +116,7 @@ echo "  Created."
 echo "  Running component tests on $COMPONENT_NAME..."
 COMP_TEST_OUT=$(test.bash --comp --glob="components/**/$COMPONENT_NAME/*.comp.cy.js")
 COMP_TEST_EXIT_CODE=$?
-if [ ! "$COMP_EXIT_CODE" == "0" ]; then
+if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo "    Errors occurred when running the component tests. Output will be shown below"
 else
   echo "    Success."
