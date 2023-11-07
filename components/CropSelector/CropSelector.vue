@@ -22,7 +22,7 @@
         id="crop-select"
         data-cy="crop-select"
         v-model="crop"
-        v-bind:state="validStyling"
+        v-bind:state="useValidityStyling"
         v-bind:required="required"
       >
         <template v-slot:first>
@@ -78,9 +78,11 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ```html
  * <CropSelector
  *   required
- *   helpText="Select seeded crop."
+ *   validText="Select seeded crop."
+ *   invalidText="Seeded crop is required."
  *   v-model:selected="form.crop"
- *   v-model:show-validity="validity.show"
+ *   v-bind:showValidity="form.validity.show" 
+ *   v-on:valid="(valid) => form.validity.crop = valid"
  *   v-on:ready="createdCount++"
  *   v-on:error="
  *     (msg) =>
@@ -168,7 +170,7 @@ export default {
         return true;
       }
     },
-    validStyling() {
+    useValidityStyling() {
       // Indicates if the component UI validity should be shown.
       // 'null' if the entrypoint says not to showValidity
       // `true` if the entrypoint says to showValidity and this component is valid.
