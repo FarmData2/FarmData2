@@ -67,7 +67,6 @@
 </template>
 
 <script>
-//import { BButton } from 'bootstrap-vue-next';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -113,7 +112,6 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  */
 export default {
   name: 'CropSelector',
-  //components: { BButton },
   emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
@@ -200,7 +198,7 @@ export default {
     isValid() {
       /**
        * The validity of the component has changed.
-       * @property {boolean} valid whether the component is valid or not.
+       * @property {boolean} valid whether the component's value is valid or not.
        */
       this.$emit('valid', this.isValid);
     },
