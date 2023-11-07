@@ -48,17 +48,17 @@ Custom FarmData2 Vue Components.
   - Indicates that inputs are required field if present.
   - required fields are indicated by a red asterisk
 
-- All components must have a `help-text` prop to indicate ARIA text below the field.
+- All components must have a `validText` and `invalidText` props to indicate ARIA text below the field when teh value in the component is valid or invalid.
 
-- All components must have a `show-validity` prop that indicates if the validity should be shown.
+- All components must have a `showValidity` prop that indicates if the validity of components should be shown using the bootstrap styling.
 
-  - The component computes validity on all blur events as described below but only shows it when `show-validity` is set to true.
+  - The component computes validity as described below but only shows it when `show-validity` is set to true.
   - This prop is watched and is set to true by the entry point when "Submit" is clicked.
 
 - Components manage props, state and events to allow page to change state via the prop.
 
-  - The component provides a prop for every value that is collected by the component
-  - The component watches the props and the state variables that are v-modeled to input elements
+  - The component provides a `prop` for every value that is collected by the component
+  - The component watches the `props` and the state variables that are `v-modeled` to input elements
   - When a value that a component collects changes, the component emits an `updated:prop_name` event with a payload giving the new value of the prop.
   - The entry point should `v-model` the prop to an element in `data.form`
 
@@ -69,22 +69,23 @@ Custom FarmData2 Vue Components.
 
 - All components must emit a `valid` event any time their validity changes.
 
-  - This event will have a boolean payload indicating if the component's value is valid or not.
+  - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - Entry points will use this value to enable/disable submission.
-  - see `isValid()` computed property below.
-    - The component `watch`es the computed property for changes and emit this event.
+  - The component `watch`es the `isValid` computed property for changes and emits this event.
 
 - If an error occurs, the component must emit an `error` event with a `String` message as the payload.
 
   - The entrypoint will handle the error.
 
 - Components will have a `isValid()` computed property
+
   - true if the component's value is valid
   - false if the component's value is invalid
-  - bound to `state` of input element and form group
-  - inverse is bound to `aria-invalid`
-  - inverse is bound to `v-if` on `help-text` (hide it if invalid)
+  - is bound to `state` on `<BFormValidFeedback>` and `<BFormInvalidFeedback>`
   - watched and a `valid` event is emitted when validity changes.
+
+- Components will have a `useValidityStyling()` computed property
+  - uses `isValid` and `showValidity` to determine if the component should show its validity styling.
 
 ## Component Testing
 

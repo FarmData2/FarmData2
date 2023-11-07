@@ -22,19 +22,25 @@
       data-cy="date-input"
       type="date"
       v-model="chosenDate"
-      aria-describedby="date-help"
+      v-bind:state="useValidityStyling"
       v-bind:required="required"
     />
-    <BFormText
-      id="date-help"
-      data-cy="date-help"
-      >{{ helpText }}</BFormText
+    <BFormValidFeedback
+      id="date-valid-text"
+      data-cy="date-valid-text"
+      v-bind:state="isValid"
+      >{{ validText }}</BFormValidFeedback
+    >
+    <BFormInvalidFeedback
+      id="date-invalid-text"
+      data-cy="date-invalid-text"
+      v-bind:state="isValid"
+      >{{ invalidText }}</BFormInvalidFeedback
     >
   </BFormGroup>
 </template>
 
 <script>
-import { BFormInput } from 'bootstrap-vue-next';
 import dayjs from 'dayjs';
 
 /**
@@ -55,12 +61,12 @@ import dayjs from 'dayjs';
  * `date-label`          | The `span` component containing the "Date:" label.
  * `required-star`       | The `*` that appears in the label if the input is required.
  * `date-input`          | The `BFormInput` component used to select a date.
- * `date-help`           | The `BFormText` component that displays the help text below the date input.
+ * `date-valid-text`     | The `BFormValidFeedback` component that displays help when the date is valid.
+ * `date-invalid-text`   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
  */
 export default {
   name: 'DateSelector',
-  components: { BFormInput },
-  emits: ['ready', 'update:date'],
+  emits: ['ready', 'update:date', 'valid'],
   props: {
     /**
      * Whether a crop selection is required or not.
@@ -70,11 +76,26 @@ export default {
       default: false,
     },
     /**
-     * Help text that appears below the select element.
+     * Text that appears below the date input when the date is valid.
      */
-    helpText: {
+    validText: {
       type: String,
       default: 'Select date.',
+    },
+    /**
+     * Text that appears below the date input when the date is invalid.
+     */
+    invalidText: {
+      type: String,
+      default: 'Date selection is required.',
+    },
+    /**
+     * Whether to show the validity styling of the component elements.
+     * This prop is watched by the component.
+     */
+    showValidity: {
+      type: Boolean,
+      default: false,
     },
     /**
      * The selected date. This prop is watched by the component.
@@ -87,9 +108,30 @@ export default {
   data() {
     return {
       chosenDate: this.date,
+      validate: this.showValidity,
     };
   },
-  computed: {},
+  computed: {
+    isValid() {
+      // Indicates if the current value of the component is valid.
+      if (this.required) {
+        return this.chosenDate != null && this.chosenDate.length === 10;
+      } else {
+        return true;
+      }
+    },
+    useValidityStyling() {
+      // Indicates if the component UI validity should be shown.
+      // 'null' if the entrypoint says not to showValidity
+      // `true` if the entrypoint says to showValidity and this component is valid.
+      // `false` otherwise.
+      if (!this.validate) {
+        return null;
+      } else {
+        return this.isValid;
+      }
+    },
+  },
   methods: {},
   watch: {
     chosenDate() {
@@ -101,6 +143,16 @@ export default {
     },
     date() {
       this.chosenDate = this.date;
+    },
+    showValidity() {
+      this.validate = this.showValidity;
+    },
+    isValid() {
+      /**
+       * The validity of the component has changed.
+       * @property {boolean} valid whether the component's value is valid or not.
+       */
+      this.$emit('valid', this.isValid);
     },
   },
   created() {

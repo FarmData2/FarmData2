@@ -1,6 +1,16 @@
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 
 describe('Test the CropSelector events', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
   it('Emits "ready" when crops are fetched', () => {
     const readySpy = cy.spy().as('readySpy');
 
@@ -10,11 +20,13 @@ describe('Test the CropSelector events', () => {
       },
     });
 
-    cy.get('@readySpy').should('have.been.calledOnce');
-
-    cy.get('[data-cy="crop-select"] option').should('have.length', 112);
-    cy.get('[data-cy="option-1"]').should('have.text', 'ARUGULA');
-    cy.get('[data-cy="option-111"]').should('have.text', 'ZUCCHINI');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="crop-select"] option').should('have.length', 112);
+        cy.get('[data-cy="option-1"]').should('have.text', 'ARUGULA');
+        cy.get('[data-cy="option-111"]').should('have.text', 'ZUCCHINI');
+      });
   });
 
   it('Verify that `selected` prop is watched', () => {
@@ -47,15 +59,92 @@ describe('Test the CropSelector events', () => {
         onReady: readySpy,
         'onUpdate:selected': updateSpy,
       },
-    }).then(() => {
-      cy.get('[data-cy="crop-select"]').select('ARUGULA');
-      cy.get('@updateSpy').should('have.been.calledOnce');
-      cy.get('@updateSpy').should('have.been.calledWith', 'ARUGULA');
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="crop-select"]').select('ARUGULA');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', 'ARUGULA');
+      });
+  });
+
+  it('Emits "valid" when a valid crop is selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="crop-select"]').select('ARUGULA');
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('Only emits "valid" when validity changes', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="crop-select"]').select('ARUGULA');
+        cy.get('[data-cy="crop-select"]').select('BROCCOLI');
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('Watches showValidity prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="crop-select"]').should(
+            'not.have.class',
+            'is-valid'
+          );
+          cy.get('[data-cy="crop-select"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidity: true });
+
+          cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
+        });
     });
   });
 
   it('Emits "error" when unable to connect to farm', () => {
     const errorSpy = cy.spy().as('errorSpy');
+
+    cy.clearLocalStorage();
 
     cy.intercept('POST', '**/oauth/token', {
       forceNetworkError: true,
@@ -65,13 +154,13 @@ describe('Test the CropSelector events', () => {
       props: {
         onError: errorSpy,
       },
-    }).then(() => {
-      cy.get('@errorSpy').should('have.been.calledOnce');
-      cy.get('@errorSpy').should(
-        'have.been.calledWith',
-        'Unable to connect to farm.'
-      );
     });
+
+    cy.get('@errorSpy').should('have.been.calledOnce');
+    cy.get('@errorSpy').should(
+      'have.been.calledWith',
+      'Unable to connect to farm.'
+    );
   });
 
   it('Emits "error" when unable to fetch crops', () => {
@@ -85,12 +174,12 @@ describe('Test the CropSelector events', () => {
       props: {
         onError: errorSpy,
       },
-    }).then(() => {
-      cy.get('@errorSpy').should('have.been.calledOnce');
-      cy.get('@errorSpy').should(
-        'have.been.calledWith',
-        'Unable to fetch crops.'
-      );
     });
+
+    cy.get('@errorSpy').should('have.been.calledOnce');
+    cy.get('@errorSpy').should(
+      'have.been.calledWith',
+      'Unable to fetch crops.'
+    );
   });
 });

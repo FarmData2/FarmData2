@@ -1,6 +1,16 @@
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 
 describe('Test the CropSelector behaviors', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
   it('Clicking add crop button goes to add crop form', () => {
     const readySpy = cy.spy().as('readySpy');
 
@@ -19,8 +29,8 @@ describe('Test the CropSelector behaviors', () => {
         .then(() => {
           cy.get('[data-cy="add-crop-button"]').should('exist');
           cy.get('[data-cy="add-crop-button"]').click();
-          cy.wait('@urlIntercept').then((response) => {
-            console.log(response);
+          cy.wait('@urlIntercept').then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
           });
         });
     });

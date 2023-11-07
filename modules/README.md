@@ -204,8 +204,11 @@ v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger')"
 Every entry point has a data element with at least a `form`, a `validity` and a `createdCount` element:
 
 - form contains values for each form element and are v-modeled to props.
-- validity contains the validity of each form element and are v-modeled to the `valid` props.
+- `validity` contains the validity of each form element and are set by `valid` event handlers.
   - all should be `null` to start.
+  - used to determine if the form can be submitted.
+  - also contains a `show` attribute bound to the `show-validity` prop
+    - set to true to have component styled to show validity.
 - createdCount is used to track when the entry point is ready to be used in tests.
 
 ```JavaScript
