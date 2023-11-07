@@ -1,6 +1,8 @@
 <script setup>
 import dayjs from 'dayjs';
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
+import DateSelector from '@comps/DateSelector/DateSelector.vue';
+
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 </script>
 
@@ -14,29 +16,14 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <h2 class="text-center">Tray Seeding</h2>
     </template>
 
-    <BForm
-      @submit="submit"
-      @reset="reset"
-    >
+    <BForm>
       <!-- Seeding Date -->
-      <BFormGroup
-        id="ts-date-group"
-        label-for="ts-date"
-        label-cols="auto"
-        label-align="end"
-        content-cols="auto"
-      >
-        <template v-slot:label>Date:<sup class="text-danger">*</sup> </template>
-        <BFormInput
-          id="ts-date"
-          data-cy="ts-date"
-          type="date"
-          v-model="form.seedingDate"
-          aria-describedby="date-help"
-          required
-        />
-        <BFormText id="date-help">Date seeding occurred.</BFormText>
-      </BFormGroup>
+      <DateSelector
+        required
+        helpText="Date seeding occurred."
+        v-model:date="form.seedingDate"
+        v-on:ready="createdCount++"
+      />
 
       <!-- Crop Selection -->
       <CropSelector
@@ -57,16 +44,15 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <BRow>
         <BCol cols="8">
           <BButton
-            type="Create"
-            class="form-control"
+            v-on:click="submit()"
+            type="submit"
             variant="primary"
             >Submit</BButton
           >
         </BCol>
         <BCol cols="4">
           <BButton
-            type="Reset"
-            class="form-control"
+            v-on:click="reset()"
             variant="danger"
             >Reset</BButton
           >
@@ -99,13 +85,13 @@ export default {
       console.log(this.form);
     },
     reset() {
-      this.seedingDate = dayjs().format('YYYY-MM-DD');
+      this.form.seedingDate = dayjs().format('YYYY-MM-DD');
       this.form.crop = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 2;
+      return this.createdCount == 3;
     },
   },
   created() {

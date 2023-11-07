@@ -58,7 +58,7 @@ Inside each of the above module directories there are the following directories 
 
 ## Entry point structure
 
-- Main container is a Bootstrap-Vue-Next [_BCard_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/b-card)
+- Main container is a Bootstrap-Vue-Next [_BCard_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/card)
 
 - BOIL THIS DOWN TO A MINIMAL EXAMPLE...
 
@@ -193,22 +193,7 @@ v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger')"
 
 - Values for placement and variant should be documented by pointing to the Bootstrap-Vue-Next documentation
 
-- Every entry point will have the `showToast` function (should be added to template)
-
-```JavaScript
-showToast(title, message, placement, variant, duration) {
-  useToast().show(message, {
-    variant: variant,
-    pos: placement,
-    title: title,
-    value: duration * 1000,
-    interval: duration * 50,
-    progressProps: {
-      variant: 'secondary',
-    },
-  });
-},
-```
+- Every entry point will import the `showToast` function from the `uiUtil` module
 
 - All components are contained in a Bootstrap-Vue-Next [_Form_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form) element.
 
@@ -216,7 +201,12 @@ showToast(title, message, placement, variant, duration) {
 
 - Every entry point contains some essential code that facilitates testing.
 
-Every entry point has a data element with at least a `form` and a `createdCount` element:
+Every entry point has a data element with at least a `form`, a `validity` and a `createdCount` element:
+
+- form contains values for each form element and are v-modeled to props.
+- validity contains the validity of each form element and are v-modeled to the `valid` props.
+  - all should be `null` to start.
+- createdCount is used to track when the entry point is ready to be used in tests.
 
 ```JavaScript
 data() {
@@ -224,10 +214,15 @@ data() {
     form: {
       ...,
     },
+    validity: {
+      ...
+    }
     createdCount: 0,
   };
 },
 ```
+
+The form will have an `isValid()` computed property that uses the `validity` values to set the `show-validity` prop of all of the components and to enable/disable the submit button.
 
 Every API call made in created must increment `createdCount` when finished.
 
@@ -243,7 +238,7 @@ Every FarmData2 component emits a `ready` event when it is ready to be used in t
 
 - Every component used must have a `v-on` handler for this event.
   - This handler increments the `createdCount`.
-- Props that the entry point uses to affect the comonent state should be `v-model`ed to the data in `data.form`
+- Props that the entry point uses to affect the component state should be `v-model`ed to the data in `data.form`
 
 ```JavaScript
 <CropSelector

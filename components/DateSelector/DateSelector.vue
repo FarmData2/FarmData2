@@ -60,7 +60,7 @@ import dayjs from 'dayjs';
 export default {
   name: 'DateSelector',
   components: { BFormInput },
-  emits: ['ready'],
+  emits: ['ready', 'update:date'],
   props: {
     /**
      * Whether a crop selection is required or not.

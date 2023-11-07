@@ -47,7 +47,13 @@ Custom FarmData2 Vue Components.
 
   - Indicates that inputs are required field if present.
   - required fields are indicated by a red asterisk
-    - use `v-show` so that spacing is the same whether it is there or not.
+
+- All components must have a `help-text` prop to indicate ARIA text below the field.
+
+- All components must have a `show-validity` prop that indicates if the validity should be shown.
+
+  - The component computes validity on all blur events as described below but only shows it when `show-validity` is set to true.
+  - This prop is watched and is set to true by the entry point when "Submit" is clicked.
 
 - Components manage props, state and events to allow page to change state via the prop.
 
@@ -57,13 +63,28 @@ Custom FarmData2 Vue Components.
   - The entry point should `v-model` the prop to an element in `data.form`
 
 - All events emitted must be kabob-case.
-- All components must emit `ready` event when they are ready to be used in tests.
+- All components must emit a `ready` event when they are ready to be used in tests.
 
   - e.g. any API calls that were made in `created` have completed.
+
+- All components must emit a `valid` event any time their validity changes.
+
+  - This event will have a boolean payload indicating if the component's value is valid or not.
+  - Entry points will use this value to enable/disable submission.
+  - see `isValid()` computed property below.
+    - The component `watch`es the computed property for changes and emit this event.
 
 - If an error occurs, the component must emit an `error` event with a `String` message as the payload.
 
   - The entrypoint will handle the error.
+
+- Components will have a `isValid()` computed property
+  - true if the component's value is valid
+  - false if the component's value is invalid
+  - bound to `state` of input element and form group
+  - inverse is bound to `aria-invalid`
+  - inverse is bound to `v-if` on `help-text` (hide it if invalid)
+  - watched and a `valid` event is emitted when validity changes.
 
 ## Component Testing
 
