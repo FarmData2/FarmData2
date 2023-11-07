@@ -19,8 +19,8 @@ describe('Test the CropSelector behaviors', () => {
         .then(() => {
           cy.get('[data-cy="add-crop-button"]').should('exist');
           cy.get('[data-cy="add-crop-button"]').click();
-          cy.wait('@urlIntercept').then((response) => {
-            console.log(response);
+          cy.wait('@urlIntercept').then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
           });
         });
     });
