@@ -1,6 +1,16 @@
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 
 describe('Test the CropSelector behaviors', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
   it('Clicking add crop button goes to add crop form', () => {
     const readySpy = cy.spy().as('readySpy');
 

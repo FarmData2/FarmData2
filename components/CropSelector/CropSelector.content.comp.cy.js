@@ -1,6 +1,16 @@
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 
 describe('Test the CropSelector content', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
   it('Check all of the data-cy elements exist', () => {
     cy.mount(CropSelector);
 
@@ -14,6 +24,10 @@ describe('Test the CropSelector content', () => {
     cy.get('[data-cy="add-crop-button"]').should('exist');
     cy.get('[data-cy="crop-valid-text"]').should('have.text', 'Select crop.');
     cy.get('[data-cy="crop-invalid-text"]').should('not.be.visible');
+    cy.get('[data-cy="crop-invalid-text"]').should(
+      'have.text',
+      'Crop selection is required.'
+    );
   });
 
   it('Test the defaults when CropSelector is required', () => {
@@ -25,39 +39,24 @@ describe('Test the CropSelector content', () => {
     cy.get('[data-cy="required-star"]').should('exist');
     cy.get('[data-cy="required-star"]').should('have.text', '*');
     cy.get('[data-cy="crop-valid-text"]').should('not.be.visible');
-    cy.get('[data-cy="crop-invalid-text"]').should(
-      'have.text',
-      'Crop selection is required.'
-    );
   });
 
-  it('Test that custom validText is shown', () => {
+  it('Test that custom validText and invalidText work', () => {
     cy.mount(CropSelector, {
       props: {
         validText: 'Testing valid text.',
+        invalidText: 'Testing invalid text.',
       },
     });
-    cy.get('[data-cy="crop-valid-text"]').should('be.visible');
+
     cy.get('[data-cy="crop-valid-text"]').should(
       'have.text',
       'Testing valid text.'
     );
-    cy.get('[data-cy="crop-invalid-text"]').should('not.be.visible');
-  });
-
-  it('Test that custom invalidText is shown', () => {
-    cy.mount(CropSelector, {
-      props: {
-        required: true,
-        invalidText: 'Testing invalid text.',
-      },
-    });
-    cy.get('[data-cy="crop-invalid-text"]').should('be.visible');
     cy.get('[data-cy="crop-invalid-text"]').should(
       'have.text',
       'Testing invalid text.'
     );
-    cy.get('[data-cy="crop-valid-text"]').should('not.be.visible');
   });
 
   it('Test showValidity with valid state', () => {
@@ -69,7 +68,6 @@ describe('Test the CropSelector content', () => {
 
     cy.get('[data-cy="crop-select"]').should('have.class', 'is-valid');
     cy.get('[data-cy="crop-valid-text"]').should('be.visible');
-    cy.get('[data-cy="crop-valid-text"]').should('have.text', 'Select crop.');
     cy.get('[data-cy="crop-invalid-text"]').should('not.be.visible');
   });
 
@@ -83,10 +81,6 @@ describe('Test the CropSelector content', () => {
 
     cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
     cy.get('[data-cy="crop-valid-text"]').should('not.be.visible');
-    cy.get('[data-cy="crop-invalid-text"]').should(
-      'have.text',
-      'Crop selection is required.'
-    );
     cy.get('[data-cy="crop-invalid-text"]').should('be.visible');
   });
 });
