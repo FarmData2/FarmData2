@@ -48,9 +48,62 @@ describe('Test the CropSelector events', () => {
         'onUpdate:selected': updateSpy,
       },
     }).then(() => {
-      cy.get('[data-cy="crop-select"]').select('ARUGULA');
-      cy.get('@updateSpy').should('have.been.calledOnce');
-      cy.get('@updateSpy').should('have.been.calledWith', 'ARUGULA');
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="crop-select"]').select('ARUGULA');
+          cy.get('@updateSpy').should('have.been.calledOnce');
+          cy.get('@updateSpy').should('have.been.calledWith', 'ARUGULA');
+        });
+    });
+  });
+
+  it('Emits "valid" when a valid crop is selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="crop-select"]').select('ARUGULA');
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        });
+    });
+  });
+
+  it('Watches showValidity prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="crop-select"]').should(
+            'not.have.class',
+            'is-valid'
+          );
+          cy.get('[data-cy="crop-select"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidity: true });
+
+          cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
+        });
     });
   });
 

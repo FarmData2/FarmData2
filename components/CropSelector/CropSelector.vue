@@ -22,7 +22,7 @@
         id="crop-select"
         data-cy="crop-select"
         v-model="crop"
-        aria-describedby="crop-help"
+        v-bind:state="validStyling"
         v-bind:required="required"
       >
         <template v-slot:first>
@@ -50,17 +50,24 @@
           >+</BButton
         >
       </BInputGroupAppend>
+      <BFormValidFeedback
+        id="crop-valid-text"
+        data-cy="crop-valid-text"
+        v-bind:state="isValid"
+        >{{ validText }}</BFormValidFeedback
+      >
+      <BFormInvalidFeedback
+        id="crop-invalid-text"
+        data-cy="crop-invalid-text"
+        v-bind:state="isValid"
+        >{{ invalidText }}
+      </BFormInvalidFeedback>
     </BInputGroup>
-    <BFormText
-      id="crop-help"
-      data-cy="crop-help"
-      >{{ helpText }}</BFormText
-    >
   </BFormGroup>
 </template>
 
 <script>
-import { BButton } from 'bootstrap-vue-next';
+//import { BButton } from 'bootstrap-vue-next';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -73,6 +80,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *   required
  *   helpText="Select seeded crop."
  *   v-model:selected="form.crop"
+ *   v-model:show-validity="validity.show"
  *   v-on:ready="createdCount++"
  *   v-on:error="
  *     (msg) =>
@@ -98,12 +106,13 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * `option-0`            | The disabled "Choose crop..." option in the `BFormSelect` component.
  * `option-n`            | The nth option in the `BFormSelect` component [1...n].
  * `add-crop-button`     | The `BButton` component that redirects to the page for adding a new crop.
- * `crop-help`           | The `BFormText` component that displays the help text below the `BFormSelect` component.
+ * `crop-valid-text`     | The `BFormValidFeedback` component that displays help when input is valid.
+ * `crop-invalid-text`   | The `BFormInvalidFeedback` component that displays help when input is invalid.
  */
 export default {
   name: 'CropSelector',
-  components: { BButton },
-  emits: ['ready', 'error', 'update:selected'],
+  //components: { BButton },
+  emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
      * Whether a crop selection is required or not.
@@ -113,11 +122,26 @@ export default {
       default: false,
     },
     /**
-     * Help text that appears below the select element.
+     * Text that appears below the select element when value is valid.
      */
-    helpText: {
+    validText: {
       type: String,
       default: 'Select crop.',
+    },
+    /**
+     * Text that appears below the select element when value is invalid.
+     */
+    invalidText: {
+      type: String,
+      default: 'Crop selection is required.',
+    },
+    /**
+     * Whether to show the validity styling of the component elements.
+     * This prop is watched by the component.
+     */
+    showValidity: {
+      type: Boolean,
+      default: false,
     },
     /**
      * The name of the selected crop.
@@ -132,9 +156,30 @@ export default {
     return {
       cropList: [],
       crop: this.selected,
+      validate: this.showValidity,
     };
   },
-  computed: {},
+  computed: {
+    isValid() {
+      // Indicates if the current value of the component is valid.
+      if (this.required) {
+        return this.crop != null;
+      } else {
+        return true;
+      }
+    },
+    validStyling() {
+      // Indicates if the component UI validity should be shown.
+      // 'null' if the entrypoint says not to showValidity
+      // `true` if the entrypoint says to showValidity and this component is valid.
+      // `false` otherwise.
+      if (!this.validate) {
+        return null;
+      } else {
+        return this.isValid;
+      }
+    },
+  },
   methods: {},
   watch: {
     crop() {
@@ -146,6 +191,16 @@ export default {
     },
     selected() {
       this.crop = this.selected;
+    },
+    showValidity() {
+      this.validate = this.showValidity;
+    },
+    isValid() {
+      /**
+       * The validity of the component has changed.
+       * @property {boolean} valid whether the component is valid or not.
+       */
+      this.$emit('valid', this.isValid);
     },
   },
   created() {
