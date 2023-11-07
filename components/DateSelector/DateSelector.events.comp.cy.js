@@ -1,6 +1,16 @@
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
 
 describe('Test the  DateSelector component events', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
   it('Emits "ready" when component has been created', () => {
     const readySpy = cy.spy().as('readySpy');
 
@@ -10,8 +20,11 @@ describe('Test the  DateSelector component events', () => {
       },
     });
 
-    cy.get('@readySpy').should('have.been.calledOnce');
-    cy.get('[data-cy="date-group"]').should('exist');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-group"]').should('exist');
+      });
   });
 
   it('Verify that `date` prop is watched', () => {
@@ -43,14 +56,102 @@ describe('Test the  DateSelector component events', () => {
         onReady: readySpy,
         'onUpdate:date': updateSpy,
       },
-    }).then(() => {
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').type('1999-01-02');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', '1999-01-02');
+      });
+  });
+
+  it('Watches showValidity prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          cy.get('[data-cy="date-input"]').type('1999-01-02');
-          cy.get('@updateSpy').should('have.been.calledOnce');
-          cy.get('@updateSpy').should('have.been.calledWith', '1999-01-02');
+          cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+          cy.get('[data-cy="date-input"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidity: true });
+
+          cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
         });
     });
+  });
+
+  it('Emits "valid" when validity of date becomes false', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').clear();
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('Emits "valid" when validity of date becomes true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+        date: '',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').type('1999-01-02');
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('Only emits "valid" when validity of date changes', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').type('1999-01-02');
+        cy.get('@validSpy').should('not.have.been.called');
+      });
   });
 });
