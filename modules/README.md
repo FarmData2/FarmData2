@@ -52,3 +52,242 @@ Inside each of the above module directories there are the following directories 
 ## Testing
 
 - use bin/test.bash
+
+- use watch:fd2 by default and just run in live farmOS.
+  - point to another document that discusses the use of the dev and preview servers.
+
+## Entry point structure
+
+- Main container is a Bootstrap-Vue-Next [_BCard_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/card)
+
+- BOIL THIS DOWN TO A MINIMAL EXAMPLE...
+
+```JavaScript
+<script setup>
+import dayjs from 'dayjs';
+import CropSelector from '@comps/CropSelector/CropSelector.vue';
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+</script>
+
+<template>
+  <BToaster />
+  <BCard
+    bg-variant="light"
+    header-tag="header"
+  >
+    <template #header>
+      <h2 class="text-center">Tray Seeding</h2>
+    </template>
+
+    <BForm
+      @submit="submit"
+      @reset="reset"
+    >
+      <!-- Seeding Date -->
+      <BFormGroup
+        id="ts-date-group"
+        label-for="ts-date"
+        label-cols="auto"
+        label-align="end"
+        content-cols="auto"
+      >
+        <template v-slot:label>Date:<sup class="text-danger">*</sup> </template>
+        <BFormInput
+          id="ts-date"
+          data-cy="ts-date"
+          type="date"
+          v-model="form.seedingDate"
+          aria-describedby="date-help"
+          required
+        />
+        <BFormText id="date-help">Date seeding occurred.</BFormText>
+      </BFormGroup>
+
+      <!-- Crop Selection -->
+      <CropSelector
+        required
+        helpText="Select seeded crop."
+        v-model:selected="form.crop"
+        v-on:ready="createdCount++"
+        v-on:error="
+          (msg) =>
+            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+        "
+      />
+
+      <!-- Submit and Reset Buttons -->
+
+      <!-- TODO: MAKE SO CAN'T SUBMIT AGAIN UNTIL A CHANGE HAS BEEN MADE -->
+      <!-- POSSIBLY JUST CLEAR THE LOCATION OR THE CROP? -->
+      <BRow>
+        <BCol cols="8">
+          <BButton
+            type="Create"
+            class="form-control"
+            variant="primary"
+            >Submit</BButton
+          >
+        </BCol>
+        <BCol cols="4">
+          <BButton
+            type="Reset"
+            class="form-control"
+            variant="danger"
+            >Reset</BButton
+          >
+        </BCol>
+      </BRow>
+    </BForm>
+  </BCard>
+
+  <div
+    data-cy="page-loaded"
+    v-show="false"
+  >
+    {{ pageDoneLoading }}
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      form: {
+        seedingDate: dayjs().format('YYYY-MM-DD'),
+        crop: null,
+      },
+      createdCount: 0,
+    };
+  },
+  methods: {
+    submit() {
+      console.log(this.form);
+    },
+    reset() {
+      this.seedingDate = dayjs().format('YYYY-MM-DD');
+      this.form.crop = null;
+    },
+  },
+  computed: {
+    pageDoneLoading() {
+      return this.createdCount == 2;
+    },
+  },
+  created() {
+    this.createdCount++;
+  },
+};
+</script>
+```
+
+Every entry point has a `<BToaster />` element as its first element.
+
+- The `BToaster` allows alert/info/success/error messages to be displayed.
+
+  - Every FarmData2 component emits an `error` event with a message when an error occurs.
+  - The entrypoint then must have an `on-error` handler that displays the Toast.
+
+```JavaScript
+v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger')"
+```
+
+- Values for placement and variant should be documented by pointing to the Bootstrap-Vue-Next documentation
+
+- Every entry point will import the `showToast` function from the `uiUtil` module
+
+- All components are contained in a Bootstrap-Vue-Next [_Form_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form) element.
+
+  - Ideally all components will be FarmData2 components that wrap the Bootstrap-Vue-Next components to simplify their use in FD2.
+
+- Every entry point contains some essential code that facilitates testing.
+
+Every entry point has a data element with at least a `form`, a `validity` and a `createdCount` element:
+
+- form contains values for each form element and are v-modeled to props.
+- `validity` contains the validity of each form element and are set by `valid` event handlers.
+  - all should be `null` to start.
+  - used to determine if the form can be submitted.
+  - also contains a `show` attribute bound to the `show-validity` prop
+    - set to true to have component styled to show validity.
+- createdCount is used to track when the entry point is ready to be used in tests.
+
+```JavaScript
+data() {
+  return {
+    form: {
+      ...,
+    },
+    validity: {
+      ...
+    }
+    createdCount: 0,
+  };
+},
+```
+
+The form will have an `isValid()` computed property that uses the `validity` values to set the `show-validity` prop of all of the components and to enable/disable the submit button.
+
+Every API call made in created must increment `createdCount` when finished.
+
+```JavaScript
+created() {
+
+  // once promise from API call resolves...
+  this.createdCount++;
+},
+```
+
+Every FarmData2 component emits a `ready` event when it is ready to be used in tests.
+
+- Every component used must have a `v-on` handler for this event.
+  - This handler increments the `createdCount`.
+- Props that the entry point uses to affect the component state should be `v-model`ed to the data in `data.form`
+
+```JavaScript
+<CropSelector
+  required
+  helpText="Select seeded crop."
+  v-model:selected="form.crop"
+  v-on:ready="createdCount++"
+  v-on:error="
+    (msg) =>
+      uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+  "
+/>
+```
+
+Every entry point has a computed property that indicates when all API calls and components are ready.
+
+```JavaScript
+pageDoneLoading() {
+  return this.createdCount == 2;
+},
+```
+
+Every entry point template ends with the following `<div>` that uses the `pageDoneLoading()` property to indicate that the page is ready for testing.
+
+```JavaScript
+  <div
+    data-cy="page-loaded"
+    v-show="false"
+  >
+    { pageDoneLoading }}
+  </div>
+```
+
+Cypress tests use `cy.waitForPage()` to wait for the entry point to fully load before running tests.
+
+```JavaScript
+describe('Sample test.', () => {
+  it('Sample test.', () => {
+    // Login if running in live farmOS.
+    cy.login('admin', 'admin');
+    // Go to the desired entry point.
+    cy.visit('fd2/tray_seeding/');
+    // Wait for everything to be ready before testing.
+    cy.waitForPage();
+
+    // Entry point is now fully loaded...
+  });
+});
+```

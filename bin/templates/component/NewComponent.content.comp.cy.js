@@ -1,6 +1,16 @@
 import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
 
 describe('Test the default DateSelect content', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+  
   it('Check all of the data-cy elements', () => {
     /*
      * See `components/README.md` for information about component testing.
