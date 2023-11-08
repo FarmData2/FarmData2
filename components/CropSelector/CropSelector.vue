@@ -5,7 +5,8 @@
     label-for="crop-select"
     label-cols="auto"
     label-align="end"
-    content-cols="auto"
+    content-cols="9"
+    content-cols-sm="auto"
   >
     <template v-slot:label>
       <span data-cy="crop-label">Crop:</span>
@@ -30,8 +31,7 @@
             v-bind:value="null"
             data-cy="option-0"
             disabled
-            >Choose crop...</BFormSelectOption
-          >
+          />
         </template>
         <BFormSelectOption
           v-for="(crop, i) in cropList"
@@ -50,19 +50,19 @@
           >+</BButton
         >
       </BInputGroupAppend>
-      <BFormValidFeedback
-        id="crop-valid-text"
-        data-cy="crop-valid-text"
-        v-bind:state="isValid"
-        >{{ validText }}</BFormValidFeedback
-      >
-      <BFormInvalidFeedback
-        id="crop-invalid-text"
-        data-cy="crop-invalid-text"
-        v-bind:state="isValid"
-        >{{ invalidText }}
-      </BFormInvalidFeedback>
     </BInputGroup>
+    <BFormValidFeedback
+      id="crop-valid-text"
+      data-cy="crop-valid-text"
+      v-bind:state="isValid"
+      >{{ validText }}</BFormValidFeedback
+    >
+    <BFormInvalidFeedback
+      id="crop-invalid-text"
+      data-cy="crop-invalid-text"
+      v-bind:state="isValid"
+      >{{ invalidText }}
+    </BFormInvalidFeedback>
   </BFormGroup>
 </template>
 
