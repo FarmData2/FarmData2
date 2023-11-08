@@ -292,6 +292,17 @@ describe('Sample test.', () => {
 });
 ```
 
+- Include the following CSS in an entrypoint to hide the farmOS page header and a few other elements that appear at different screen sizes.
+
+```CSS
+<style>
+header.region.region-sticky,
+div.sticky-shadow {
+  display: none;
+}
+</style>
+```
+
 ## Technical Build Details
 
 - both an entry_point.html and an index.html

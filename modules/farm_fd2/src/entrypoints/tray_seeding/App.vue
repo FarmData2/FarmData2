@@ -101,7 +101,8 @@ export default {
 </script>
 
 <style>
-header.region.region-sticky {
+header.region.region-sticky,
+div.sticky-shadow {
   display: none;
 }
 </style>
