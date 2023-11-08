@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from 'node:url';
-import path from 'node:path';
 import glob from 'glob';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -59,20 +58,23 @@ let viteConfig = {
     exclude: ['**/*.cy.js', '**/*.cy.comp.js', '**/*.cy.unit.js'],
     rollupOptions: {
       input: Object.fromEntries(
-        glob
-          .sync('modules/farm_fd2/src/entrypoints/*')
-          .filter((dir) => {
-            return !dir.endsWith('components.d.ts');
-          })
-          .map((dir) => [path.basename(dir), dir + '/index.html'])
+        glob.sync('modules/farm_fd2/src/entrypoints/*/*.html').map((dir) => {
+          let key = dir.split('/').at(-2) + '/' + dir.split('/').at(-1);
+          return [key, dir];
+        })
       ),
       output: {
         // Ensures that the entry point and css names are not hashed.
         entryFileNames: '[name]/[name].js',
         assetFileNames: (assetInfo) => {
+          let name = assetInfo.name.split('/').at(0);
           let ext = assetInfo.name.split('.').at(1);
           if (ext === 'css') {
-            return 'shared/index.css';
+            if (name.startsWith('_plugin-vue_')) {
+              return 'shared/index.css';
+            } else {
+              return '[name]/[name].css';
+            }
           } else {
             return 'shared/[name].[ext]';
           }

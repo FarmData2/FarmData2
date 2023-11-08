@@ -291,3 +291,10 @@ describe('Sample test.', () => {
   });
 });
 ```
+
+## Technical Build Details
+
+- both an entry_point.html and an index.html
+  - identical.
+  - entry_point.html allows vite to put css for SPC in its on dir.
+  - index.html allows us to access page using the same url on the dev/prev server as in farmOS.

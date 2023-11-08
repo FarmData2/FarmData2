@@ -99,3 +99,9 @@ export default {
   },
 };
 </script>
+
+<style>
+header.region.region-sticky {
+  display: none;
+}
+</style>
