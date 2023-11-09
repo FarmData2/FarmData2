@@ -89,6 +89,7 @@ let viteConfig = {
       '@': fileURLToPath(new URL('./src/', import.meta.url)),
       '@comps': fileURLToPath(new URL('../../components/', import.meta.url)),
       '@libs': fileURLToPath(new URL('../../library/', import.meta.url)),
+      '@css': fileURLToPath(new URL('../css/', import.meta.url)),
     },
   },
 };

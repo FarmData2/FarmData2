@@ -292,14 +292,11 @@ describe('Sample test.', () => {
 });
 ```
 
-- Include the following CSS in an entrypoint to hide the farmOS page header and a few other elements that appear at different screen sizes.
+- Include the following CSS in an entrypoint to optimize the entry point for mobile. This hides and reduces the space required for some of the farmOS UI elements. It reduces margins and borders to increase screen real estate.
 
 ```CSS
 <style>
-header.region.region-sticky,
-div.sticky-shadow {
-  display: none;
-}
+@import url('@css/fd2-mobile.css');
 </style>
 ```
 
