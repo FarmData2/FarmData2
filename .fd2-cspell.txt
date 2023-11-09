@@ -7,6 +7,7 @@ CHUAU
 contconf
 conventionalcommits
 datacy
+docgen
 dockercompose
 dockerlint
 drupalcode
