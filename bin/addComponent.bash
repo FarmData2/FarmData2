@@ -75,6 +75,7 @@ echo "Creating new component $COMPONENT_NAME"
 # Create a new directory for the component.
 echo "  Creating directory $COMPONENT_SRC_DIR for component..."
 mkdir "$COMPONENT_SRC_DIR"
+error_check "Failed to create directory $COMPONENT_SRC_DIR."
 echo "  Created."
 
 # Create a new feature branch for the component from the development branch
@@ -85,9 +86,11 @@ error_check "Failed to update development branch."
 echo "  Updated."
 echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
 git branch --quiet "$FEATURE_BRANCH_NAME"
+error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
 echo "  Created."
 echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
 git switch --quiet "$FEATURE_BRANCH_NAME"
+error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
 echo "  Switched."
 
 # Copy templates over to component directory
@@ -146,14 +149,10 @@ else
   echo "  * Use git status to review the changes."
   echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
   echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing." 
+  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
   echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
   echo "  * When ready, push your feature branch to your origin and create a pull request."
   echo ""
 fi
 
 exit "$COMP_TEST_EXIT_CODE"
-
-
-
-

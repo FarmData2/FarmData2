@@ -164,6 +164,7 @@ echo ""
 
 # Make the directory for the entrypoint and populate it with the template files.
 mkdir "$ENTRY_POINT_SRC_DIR"
+error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
 echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
