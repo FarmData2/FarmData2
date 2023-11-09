@@ -1,6 +1,6 @@
 import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
 
-describe('Test the default DateSelect content', () => {
+describe('Test the default %COMPONENT_NAME% content', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
