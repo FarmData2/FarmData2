@@ -39,10 +39,10 @@
  *
  * ```html
  * <SubmitResetButtons
+ *   v-model:enableSubmit="enableSubmit"
+ *   v-model:enableReset="enableReset"
  *   v-on:submit="submit()"
  *   v-on:reset="reset()"
- *   v-model:submitEnabled="submitEnabled"
- *   v-model:resetEnabled="resetEnabled"
  * />
  * ```
  *
@@ -56,7 +56,7 @@
  */
 export default {
   name: 'SubmitResetButtons',
-  emits: ['submit', 'reset'],
+  emits: ['submit', 'ready', 'reset'],
   props: {
     /**
      * Indicates if the submit button should be enabled.
