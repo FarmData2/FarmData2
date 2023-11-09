@@ -1,6 +1,6 @@
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
-describe('Test the default DateSelect content', () => {
+describe('Test the default SubmitResetButtons content', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -12,17 +12,42 @@ describe('Test the default DateSelect content', () => {
   });
 
   it('Check all of the data-cy elements', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
     cy.mount(SubmitResetButtons);
 
-    cy.get('[data-cy="new-comp-group"]').should('exist');
-    cy.get('[data-cy="placeholder"]').should(
-      'have.text',
-      'Component content goes here.'
-    );
+    cy.get('[data-cy="submit-reset"]').should('exist');
+    cy.get('[data-cy="submit-button"]')
+      .should('exist')
+      .should('be.disabled')
+      .should('have.text', 'Submit');
+    cy.get('[data-cy="reset-button"]')
+      .should('exist')
+      .should('be.disabled')
+      .should('have.text', 'Reset');
+  });
+
+  it('Check enabled prop on submit button', () => {
+    cy.mount(SubmitResetButtons, {
+      props: {
+        enableSubmit: true,
+      },
+    });
+
+    cy.get('[data-cy="submit-button"]')
+      .should('exist')
+      .should('not.be.disabled');
+    cy.get('[data-cy="reset-button"]').should('exist').should('be.disabled');
+  });
+
+  it('Check enabled prop on reset button', () => {
+    cy.mount(SubmitResetButtons, {
+      props: {
+        enableReset: true,
+      },
+    });
+
+    cy.get('[data-cy="submit-button"]').should('exist').should('be.disabled');
+    cy.get('[data-cy="reset-button"]')
+      .should('exist')
+      .should('not.be.disabled');
   });
 });

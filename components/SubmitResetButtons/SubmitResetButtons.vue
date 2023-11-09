@@ -1,15 +1,39 @@
 <template>
-  <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
+  <BRow
+    id="submit-reset"
+    data-cy="submit-reset"
   >
-    <p data-cy="placeholder">Component content goes here.</p>
-  </BFormGroup>
+    <BCol cols="auto">
+      <BButton
+        id="submit-button"
+        data-cy="submit-button"
+        variant="primary"
+        size="lg"
+        class="fd2-submit"
+        v-on:click="submit()"
+        v-bind:disabled="!submitEnabled"
+        >Submit</BButton
+      >
+    </BCol>
+    <BCol
+      cols="auto"
+      alignSelf="center"
+    >
+      <BButton
+        id="reset-button"
+        data-cy="reset-button"
+        variant="warning"
+        v-on:click="reset()"
+        v-bind:disabled="!resetEnabled"
+        >Reset</BButton
+      >
+    </BCol>
+  </BRow>
 </template>
 
 <script>
 /**
- * A new component.
+ * A component containing the Submit and Reset buttons used on forms.
  *
  * ## Usage Example
  *
@@ -22,79 +46,58 @@
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * `submit-reset``       | The `<row> element containing the submit and reset buttons.
+ * `submit`              | The submit button.
+ * `reset`               | The reset button.
  */
 export default {
   name: 'SubmitResetButtons',
-  emits: ['ready', 'valid'],
+  emits: ['submit', 'reset'],
   props: {
-    /**
-     * Whether a value for the input element is required or not.
+    /*
+     * Indicates if the submit button should be enabled.
+     * This prop is watched by the component.
      */
-    required: {
+    enableSubmit: {
       type: Boolean,
       default: false,
     },
-    /**
-     * Text that appears below the input element when value is valid.
-     */
-    validText: {
-      type: String,
-      default: 'Default valid message.',
-    },
-    /**
-     * Text that appears below the input element when value is invalid.
-     */
-    invalidText: {
-      type: String,
-      default: 'Default invalid message.',
-    },
-    /**
-     * Whether to show the validity styling of the input elements.
+    /*
+     * Indicates if the reset button should be enabled.
      * This prop is watched by the component.
      */
-    showValidity: {
+    enableReset: {
       type: Boolean,
       default: false,
     },
   },
   data() {
     return {
-      validate: this.showValidity,
+      submitEnabled: this.enableSubmit,
+      resetEnabled: this.enableReset,
     };
   },
-  computed: {
-    isValid() {
-      // Indicates if the current value of the component is valid.
-      if (this.required) {
-        return false; // TODO: Add validation here.
-      } else {
-        return true;
-      }
+  computed: {},
+  methods: {
+    submit() {
+      /**
+       * The submit button has been clicked.
+       */
+      this.$emit('submit', this.submitEnabled);
     },
-    useValidityStyling() {
-      // Indicates if the component UI validity should be shown.
-      // 'null' if the entrypoint says not to showValidity
-      // `true` if the entrypoint says to showValidity and component value is valid.
-      // `false` otherwise.
-      if (!this.validate) {
-        return null;
-      } else {
-        return this.isValid;
-      }
+    reset() {
+      /**
+       * The reset button has been clicked.
+       */
+      this.$emit('reset', this.resetEnabled);
     },
   },
-  methods: {},
   watch: {
-    showValidity() {
-      this.validate = this.showValidity;
+    enableSubmit() {
+      this.submitEnabled = this.enableSubmit;
     },
-    isValid() {
-      /**
-       * The validity of the component has changed.
-       * @property {boolean} valid whether the component's value is valid or not.
-       */
-      this.$emit('valid', this.isValid);
+    enableReset() {
+      this.resetEnabled = this.enableReset;
     },
   },
   created() {
@@ -105,3 +108,17 @@ export default {
   },
 };
 </script>
+
+<style>
+.fd2-submit {
+  width: 210px !important;
+  min-width: 210px;
+  max-width: 210px;
+}
+
+.fd2-reset {
+  width: 50px !important;
+  min-width: 50px;
+  max-width: 50px;
+}
+</style>
