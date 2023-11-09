@@ -1,6 +1,6 @@
 import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
 
-describe('Test the  DateSelect component events', () => {
+describe('Test the %COMPONENT_NAME% component events', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
