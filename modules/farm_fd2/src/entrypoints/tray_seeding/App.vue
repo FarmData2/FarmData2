@@ -38,22 +38,23 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       />
 
       <!-- Submit and Reset Buttons -->
-
-      <!-- TODO: MAKE SO CAN'T SUBMIT AGAIN UNTIL A CHANGE HAS BEEN MADE -->
-      <!-- POSSIBLY JUST CLEAR THE LOCATION OR THE CROP? -->
       <BRow>
-        <BCol cols="8">
+        <BCol cols="auto">
           <BButton
             v-on:click="submit()"
-            type="submit"
             variant="primary"
+            size="lg"
+            class="fd2-submit"
             >Submit</BButton
           >
         </BCol>
-        <BCol cols="4">
+        <BCol
+          cols="auto"
+          alignSelf="center"
+        >
           <BButton
             v-on:click="reset()"
-            variant="danger"
+            variant="warning"
             >Reset</BButton
           >
         </BCol>
@@ -101,8 +102,17 @@ export default {
 </script>
 
 <style>
-header.region.region-sticky,
-div.sticky-shadow {
-  display: none;
+@import url('@css/fd2-mobile.css');
+
+.fd2-submit {
+  width: 210px !important;
+  min-width: 210px;
+  max-width: 210px;
+}
+
+.fd2-reset {
+  width: 50px !important;
+  min-width: 50px;
+  max-width: 50px;
 }
 </style>
