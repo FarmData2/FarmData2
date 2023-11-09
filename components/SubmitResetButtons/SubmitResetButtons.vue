@@ -38,15 +38,19 @@
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <SubmitResetButtons
+ *   v-on:submit="submit()"
+ *   v-on:reset="reset()"
+ *   v-model:submitEnabled="submitEnabled"
+ *   v-model:resetEnabled="resetEnabled"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `submit-reset``       | The `<row> element containing the submit and reset buttons.
+ * `submit-reset`        | The `<row> element containing the submit and reset buttons.
  * `submit`              | The submit button.
  * `reset`               | The reset button.
  */
@@ -54,7 +58,7 @@ export default {
   name: 'SubmitResetButtons',
   emits: ['submit', 'reset'],
   props: {
-    /*
+    /**
      * Indicates if the submit button should be enabled.
      * This prop is watched by the component.
      */
@@ -62,7 +66,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    /*
+    /**
      * Indicates if the reset button should be enabled.
      * This prop is watched by the component.
      */
