@@ -12,21 +12,39 @@ Custom FarmData2 Vue Components.
 
   - describe its use...
 
+- modify `.vue` file as appropriate.
+- modify the `.comp.cy.js` file as appropriate.
+  - See component testing below...
+
 ## Component Structure
 
 ### Template
 
-- Each component will be one or more [_Form Group_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form-group) elements.
+- Many components will be one or more [_Form Group_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form-group) elements.
 
   - the label for a required input element is followed by `<sup v-if="required" class="text-danger">*</sup>`.
-  - `id` must be set for each input element.
-  - every input element must have a `data-cy` attribute.
-  - `aria-describedby` must be set for each input element.
-  - `BRow` and `BCol` can be used to create more complex layouts.
-  - `BFormSelect` elements should begin with `{ value: null, text: '' }`.
-    - to allow them to be blank when form is reset.
 
+- Each input element must have:
+
+  - `<BFormValidFeedback>`
+  - `<BFormInvalidFeedback>`
+  - `v-bound to a prop`
+
+- Elements must also have:
+- `id` must be set for each input element.
 - All testable elements in the component must have a `data-cy` attribute.
+  - e.g. every input element must have a `data-cy` attribute.
+- `BRow` and `BCol` can be used to create more complex layouts.
+- `BFormSelect` elements should begin with `{ value: null, text: '' }`.
+  - to allow them to be blank when form is reset.
+- attributes on element should appear in the order:
+  - id
+  - data-cy
+  - classes, properties
+  - v-if / v-show
+  - v-model
+  - v-bind
+  - v-on
 
 ### Script
 
