@@ -34,7 +34,7 @@ export function showToast(title, message, placement, variant, duration) {
 }
 
 /**
- * Indicates if a component's styling should reflect the value of isValid.
+ * Indicates when a component's styling should reflect the value of isValid.
  *
  * This function is called by the `showInvalidStyling` computed property
  * in a components to control the styling.  It is defined here to ensure
@@ -47,9 +47,9 @@ export function showToast(title, message, placement, variant, duration) {
  *
  * @param {boolean} isValid - the value of the `isValid` computed property in the component.
  * @param {boolean} showValidity - the value of the `showValidity`
- * @returns
+ * @returns {*} `true`, `false`, or `null`. `true` indicates that valid styling should be applied. `false` indicates that invalid styling should be applied. `null` indicates that no styling should be applied.
  */
-export function showInvalidStyling(isValid, showValidity) {
+export function validationStyling(isValid, showValidity) {
   /*
 
    *

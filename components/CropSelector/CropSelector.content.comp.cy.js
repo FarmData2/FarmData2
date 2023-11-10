@@ -47,7 +47,7 @@ describe('Test the CropSelector content', () => {
   it('Test showInvalid true when not required', () => {
     cy.mount(CropSelector, {
       props: {
-        showinvalid: true,
+        showinvalidStyling: true,
       },
     });
 
@@ -61,7 +61,7 @@ describe('Test the CropSelector content', () => {
     cy.mount(CropSelector, {
       props: {
         required: true,
-        showInvalid: true,
+        showInvalidStyling: true,
       },
     });
 

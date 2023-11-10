@@ -157,7 +157,7 @@ describe('Test the CropSelector events', () => {
             'is-invalid'
           );
 
-          wrapper.setProps({ showInvalid: true });
+          wrapper.setProps({ showInvalidStyling: true });
 
           cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
         });

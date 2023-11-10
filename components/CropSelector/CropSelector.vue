@@ -22,7 +22,7 @@
         id="crop-select"
         data-cy="crop-select"
         v-model="crop"
-        v-bind:state="showInvalidStyling"
+        v-bind:state="validationStyling"
         v-bind:required="required"
       >
         <template v-slot:first>
@@ -52,7 +52,7 @@
       <BFormInvalidFeedback
         id="crop-invalid-feedback"
         data-cy="crop-invalid-feedback"
-        v-bind:state="showInvalidStyling"
+        v-bind:state="validationStyling"
       >
         A crop selection is required.
       </BFormInvalidFeedback>
@@ -104,7 +104,7 @@ export default {
      * Whether validity styling should appear on input elements with invalid values.
      * This prop is watched by the component.
      */
-    showInvalid: {
+    showInvalidStyling: {
       type: Boolean,
       default: false,
     },
@@ -130,8 +130,8 @@ export default {
       return this.required && this.crop != null;
     },
     // Controls when the invalid styling (i.e. red X) should be displayed.
-    showInvalidStyling() {
-      return uiUtil.showInvalidStyling(this.isValid, this.showInvalid);
+    validationStyling() {
+      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
     },
   },
   methods: {},

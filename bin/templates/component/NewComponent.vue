@@ -26,6 +26,7 @@
  */
 export default {
   name: '%COMPONENT_NAME%',
+  components: {},
   emits: ['ready', 'valid'],
   props: {
     /**
@@ -36,70 +37,47 @@ export default {
       default: false,
     },
     /**
-     * Text that appears below the input element when value is valid.
-     */
-    validText: {
-      type: String,
-      default: 'Default valid message.',
-    },
-    /**
-     * Text that appears below the input element when value is invalid.
-     */
-    invalidText: {
-      type: String,
-      default: 'Default invalid message.',
-    },
-    /**
-     * Whether to show the validity styling of the input elements.
+     * Whether validity styling should appear on input elements with invalid values.
      * This prop is watched by the component.
      */
-    showValidity: {
+    showInvalidStyling: {
       type: Boolean,
       default: false,
     },
   },
   data() {
-    return {
-      validate: this.showValidity,
-    };
+    return {};
   },
   computed: {
     isValid() {
-      // Indicates if the current value of the component is valid.
-      if (this.required) {
-        return false;  // TODO: Add validation here.
-      } else {
-        return true;
-      }
+      /*
+       * Edit this computed property to indicate when the values are valid.
+       * This should account for the `required` prop but should be independent of the `showInvalid` prop.
+       */
+      return true;
     },
-    useValidityStyling() {
-      // Indicates if the component UI validity should be shown.
-      // 'null' if the entrypoint says not to showValidity
-      // `true` if the entrypoint says to showValidity and component value is valid.
-      // `false` otherwise.
-      if (!this.validate) {
-        return null;
-      } else {
-        return this.isValid;
-      }
+    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
+    validationStyling() {
+      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
     },
   },
   methods: {},
   watch: {
-    showValidity() {
-      this.validate = this.showValidity;
-    },
     isValid() {
       /**
-       * The validity of the component has changed.
-       * @property {boolean} valid whether the component's value is valid or not.
+       * The validity of the component has changed.  Also emitted when the component is created.
+       * @property {*} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
     },
   },
   created() {
+    
+    //Emit the initial valid state of the component's value.
+    this.$emit('valid', this.isValid);
+
     /**
-     * This component is ready for use.
+     * The component is ready for use.
      */
     this.$emit('ready');
   },
