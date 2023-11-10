@@ -32,3 +32,37 @@ export function showToast(title, message, placement, variant, duration) {
     },
   });
 }
+
+/**
+ * Indicates if a component's styling should reflect the value of isValid.
+ *
+ * This function is called by the `showInvalidStyling` computed property
+ * in a components to control the styling.  It is defined here to ensure
+ * that it is consistent across all components.
+ *
+ * If the conventions defined in `components/README.md` and `modules/README.md`
+ * are followed this function ensures that:
+ *   - the green check anytime the value is valid.
+ *   - the red X when submit is clicked and the value is invalid.
+ *
+ * @param {boolean} isValid - the value of the `isValid` computed property in the component.
+ * @param {boolean} showValidity - the value of the `showValidity`
+ * @returns
+ */
+export function showInvalidStyling(isValid, showValidity) {
+  /*
+
+   *
+   * This computed property should not be edited.
+   * Use the `isValid` computed property to indicate when the values are valid.
+   */
+  if (isValid) {
+    return true;
+  } else {
+    if (showValidity) {
+      return isValid;
+    } else {
+      return null;
+    }
+  }
+}
