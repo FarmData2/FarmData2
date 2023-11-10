@@ -218,6 +218,7 @@ data() {
       ...,
     },
     validity: {
+      show: false,
       ...
     }
     createdCount: 0,
@@ -240,7 +241,9 @@ created() {
 Every FarmData2 component emits a `ready` event when it is ready to be used in tests.
 
 - Every component used must have a `v-on` handler for this event.
+
   - This handler increments the `createdCount`.
+
 - Props that the entry point uses to affect the component state should be `v-model`ed to the data in `data.form`
 
 ```JavaScript

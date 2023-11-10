@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
+import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 </script>
@@ -20,16 +21,22 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <!-- Seeding Date -->
       <DateSelector
         required
-        helpText="Date seeding occurred."
+        validText="Date that the seeding occurred."
+        invalidText="A seeding date is required."
         v-model:date="form.seedingDate"
+        v-bind:showValidity="validity.show"
+        v-on:valid="validity.seedingDate = $event"
         v-on:ready="createdCount++"
       />
 
       <!-- Crop Selection -->
       <CropSelector
         required
-        helpText="Select seeded crop."
+        validText="The crop that was seeded."
+        invalidText="A seeded crop is required."
         v-model:selected="form.crop"
+        v-bind:showValidity="validity.show"
+        v-on:valid="validity.crop = $event"
         v-on:ready="createdCount++"
         v-on:error="
           (msg) =>
@@ -38,27 +45,13 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       />
 
       <!-- Submit and Reset Buttons -->
-      <BRow>
-        <BCol cols="auto">
-          <BButton
-            v-on:click="submit()"
-            variant="primary"
-            size="lg"
-            class="fd2-submit"
-            >Submit</BButton
-          >
-        </BCol>
-        <BCol
-          cols="auto"
-          alignSelf="center"
-        >
-          <BButton
-            v-on:click="reset()"
-            variant="warning"
-            >Reset</BButton
-          >
-        </BCol>
-      </BRow>
+      <SubmitResetButtons
+        v-model:enableSubmit="enableSubmit"
+        v-model:enableReset="enableReset"
+        v-on:ready="createdCount++"
+        v-on:submit="submit()"
+        v-on:reset="reset()"
+      />
     </BForm>
   </BCard>
 
@@ -78,21 +71,30 @@ export default {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         crop: null,
       },
+      validity: {
+        show: false,
+        seedingDate: false,
+        crop: false,
+      },
+      enableSubmit: true,
+      enableReset: true,
       createdCount: 0,
     };
   },
   methods: {
     submit() {
+      this.validity.show = true;
       console.log(this.form);
     },
     reset() {
+      this.validity.show = false;
       this.form.seedingDate = dayjs().format('YYYY-MM-DD');
       this.form.crop = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 3;
+      return this.createdCount == 4;
     },
   },
   created() {
@@ -103,16 +105,4 @@ export default {
 
 <style>
 @import url('@css/fd2-mobile.css');
-
-.fd2-submit {
-  width: 210px !important;
-  min-width: 210px;
-  max-width: 210px;
-}
-
-.fd2-reset {
-  width: 50px !important;
-  min-width: 50px;
-  max-width: 50px;
-}
 </style>
