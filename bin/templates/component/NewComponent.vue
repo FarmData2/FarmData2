@@ -38,7 +38,6 @@ export default {
     },
     /**
      * Whether validity styling should appear on input elements with invalid values.
-     * This prop is watched by the component.
      */
     showInvalidStyling: {
       type: Boolean,
