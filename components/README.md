@@ -140,31 +140,16 @@ Custom FarmData2 Vue Components.
 
       - i.e. check that changing each watched prop has the desired effect in the component.
 
-      ```JavaScript
-      it.only('Verify that `selected` prop is watched', () => {
-        const readySpy = cy.spy().as('readySpy');
-        const updateSpy = cy.spy().as('updateSpy');
-
-        cy.mount(CropSelector, {
-          props: {
-            onReady: readySpy,
-            'onUpdate:selected': updateSpy,
-            selected: null,
-          },
-        }).then(({ wrapper }) => {
-          cy.get('@readySpy').should('have.been.calledOnce').then(() => {
-            wrapper.setProps({ selected: 'ARUGULA' });
-            cy.get('@updateSpy').should('have.been.calledOnce');
-            cy.get('[data-cy="crop-select"]').should('have.value', 'ARUGULA');
-          });
-        });
-      });
-      ```
-
     - check that all other events are emitted properly
+
       - i.e. do something to cause the event and check that it is emitted properly and has the correct payload.
       - include all error events (including network errors) are emitted properly
         - i.e. Use `cy.intercept` to generate network errors on the appropriate route.
+
+    - Give or point to examples that illustrate structure for:
+
+      - waiting for `ready` before doing more.
+      - changing props.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 
