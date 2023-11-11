@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+
 /**
  * A new component.
  *
@@ -32,7 +34,7 @@ export default {
     /**
      * Whether a value for the input element is required or not.
      */
-     required: {
+    required: {
       type: Boolean,
       default: false,
     },
@@ -57,7 +59,7 @@ export default {
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
+      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
     },
   },
   methods: {},
@@ -71,7 +73,6 @@ export default {
     },
   },
   created() {
-    
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
 
