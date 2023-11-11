@@ -14,7 +14,11 @@ Custom FarmData2 Vue Components.
 
 - modify `.vue` file as appropriate.
 - modify the `.comp.cy.js` file as appropriate.
+
   - See component testing below...
+
+- Use other components as examples!!
+  - copy / paste and modify liberally.
 
 ## Component Structure
 
@@ -33,6 +37,8 @@ Custom FarmData2 Vue Components.
 - `id` must be set for each input element.
 - All testable elements in the component must have a `data-cy` attribute.
   - e.g. every input element must have a `data-cy` attribute.
+  - all `data-cy` in a component should be prefixed by the component name or abbreviation.
+    - E.g. `data-cy="crop-group` or `location-0`.
 - their `state` prop `v-bound` to the `invalidStyling` prop
 - `BRow` and `BCol` can be used to create more complex layouts.
 - `BFormSelect` elements should begin with `{ value: null, text: '' }`.
