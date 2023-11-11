@@ -24,7 +24,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         validText="Date that the seeding occurred."
         invalidText="A seeding date is required."
         v-model:date="form.seedingDate"
-        v-bind:showValidity="validity.show"
+        v-bind:showInvalidStyling="validity.show"
         v-on:valid="validity.seedingDate = $event"
         v-on:ready="createdCount++"
       />
@@ -35,7 +35,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         validText="The crop that was seeded."
         invalidText="A seeded crop is required."
         v-model:selected="form.crop"
-        v-bind:showValidity="validity.show"
+        v-bind:showInvalidStyling="validity.show"
         v-on:valid="validity.crop = $event"
         v-on:ready="createdCount++"
         v-on:error="
