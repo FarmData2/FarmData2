@@ -60,7 +60,7 @@ export default {
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
+      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
     },
   },
   methods: {},
