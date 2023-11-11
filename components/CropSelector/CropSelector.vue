@@ -58,18 +58,6 @@
         A crop selection is required.
       </BFormInvalidFeedback>
     </BInputGroup>
-    <BFormValidFeedback
-      id="crop-valid-text"
-      data-cy="crop-valid-text"
-      v-bind:state="isValid"
-      >{{ validText }}</BFormValidFeedback
-    >
-    <BFormInvalidFeedback
-      id="crop-invalid-text"
-      data-cy="crop-invalid-text"
-      v-bind:state="isValid"
-      >{{ invalidText }}
-    </BFormInvalidFeedback>
   </BFormGroup>
 </template>
 
