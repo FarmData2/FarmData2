@@ -97,7 +97,7 @@ echo "  Creating component's files from templates..."
 echo "    Creating $COMPONENT_NAME.vue from templates..."
 cp "$COMPONENT_TEMPLATE_DIR/NewComponent.vue" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
-echo "    Creating."
+echo "    Created."
 echo "    Creating $COMPONENT_NAME.content.comp.cy.js from templates..."
 cp "$COMPONENT_TEMPLATE_DIR/NewComponent.content.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
@@ -146,14 +146,10 @@ else
   echo "  * Use git status to review the changes."
   echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
   echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing." 
+  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
   echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
   echo "  * When ready, push your feature branch to your origin and create a pull request."
   echo ""
 fi
 
 exit "$COMP_TEST_EXIT_CODE"
-
-
-
-
