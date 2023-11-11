@@ -67,6 +67,8 @@ Custom FarmData2 Vue Components.
   - methods
   - created
 
+- list props in alphabetical order.
+
 - All components must have a `required` prop.
 
   - Indicates that inputs are required field if present.
