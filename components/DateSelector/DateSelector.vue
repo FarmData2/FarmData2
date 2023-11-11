@@ -22,26 +22,22 @@
       data-cy="date-input"
       type="date"
       v-model="chosenDate"
-      v-bind:state="useValidityStyling"
+      v-bind:state="validationStyling"
       v-bind:required="required"
     />
-    <BFormValidFeedback
-      id="date-valid-text"
-      data-cy="date-valid-text"
-      v-bind:state="isValid"
-      >{{ validText }}</BFormValidFeedback
-    >
     <BFormInvalidFeedback
-      id="date-invalid-text"
-      data-cy="date-invalid-text"
-      v-bind:state="isValid"
-      >{{ invalidText }}</BFormInvalidFeedback
+      id="date-invalid-feedback"
+      data-cy="date-invalid-feedback"
+      v-bind:state="validationStyling"
     >
+      A valid date is required.
+    </BFormInvalidFeedback>
   </BFormGroup>
 </template>
 
 <script>
 import dayjs from 'dayjs';
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
 /**
  * A component for selecting a date.
@@ -55,14 +51,13 @@ import dayjs from 'dayjs';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * `date-group`          | The `BFormGroup` component containing this component.
- * `date-label`          | The `span` component containing the "Date:" label.
- * `required-star`       | The `*` that appears in the label if the input is required.
- * `date-input`          | The `BFormInput` component used to select a date.
- * `date-valid-text`     | The `BFormValidFeedback` component that displays help when the date is valid.
- * `date-invalid-text`   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
+ * Attribute Name            | Description
+ * --------------------------| -----------
+ * `date-group`              | The `BFormGroup` component containing this component.
+ * `date-label`              | The `span` component containing the "Date:" label.
+ * `required-star`           | The `*` that appears in the label if the input is required.
+ * `date-input`              | The `BFormInput` component used to select a date.
+ * `date-invalid-feedback`   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
  */
 export default {
   name: 'DateSelector',
@@ -76,24 +71,10 @@ export default {
       default: false,
     },
     /**
-     * Text that appears below the date input when the date is valid.
-     */
-    validText: {
-      type: String,
-      default: 'Select date.',
-    },
-    /**
-     * Text that appears below the date input when the date is invalid.
-     */
-    invalidText: {
-      type: String,
-      default: 'Date selection is required.',
-    },
-    /**
-     * Whether to show the validity styling of the component elements.
+     * Whether validity styling should appear on input elements with invalid values.
      * This prop is watched by the component.
      */
-    showValidity: {
+    showInvalidStyling: {
       type: Boolean,
       default: false,
     },
@@ -108,7 +89,6 @@ export default {
   data() {
     return {
       chosenDate: this.date,
-      validate: this.showValidity,
     };
   },
   computed: {
@@ -120,16 +100,9 @@ export default {
         return true;
       }
     },
-    useValidityStyling() {
-      // Indicates if the component UI validity should be shown.
-      // 'null' if the entrypoint says not to showValidity
-      // `true` if the entrypoint says to showValidity and this component is valid.
-      // `false` otherwise.
-      if (!this.validate) {
-        return null;
-      } else {
-        return this.isValid;
-      }
+    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
+    validationStyling() {
+      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
     },
   },
   methods: {},
@@ -144,9 +117,6 @@ export default {
     date() {
       this.chosenDate = this.date;
     },
-    showValidity() {
-      this.validate = this.showValidity;
-    },
     isValid() {
       /**
        * The validity of the component has changed.
@@ -156,6 +126,9 @@ export default {
     },
   },
   created() {
+    // Emit the initial valid state of the component's value.
+    this.$emit('valid', this.isValid);
+
     /**
      * The component is ready for use.
      */

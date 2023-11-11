@@ -26,18 +26,18 @@ Custom FarmData2 Vue Components.
 
 - Each input element must have:
 
-  - `<BFormValidFeedback>`
   - `<BFormInvalidFeedback>`
-  - `v-bound to a prop`
+    - with its `state` prop `v-bound` to the `invalidStyling` prop
 
 - Elements must also have:
 - `id` must be set for each input element.
 - All testable elements in the component must have a `data-cy` attribute.
   - e.g. every input element must have a `data-cy` attribute.
+- their `state` prop `v-bound` to the `invalidStyling` prop
 - `BRow` and `BCol` can be used to create more complex layouts.
 - `BFormSelect` elements should begin with `{ value: null, text: '' }`.
   - to allow them to be blank when form is reset.
-- attributes on element should appear in the order:
+- attributes on component/element tags should appear in the order:
   - id
   - data-cy
   - classes, properties
@@ -53,7 +53,7 @@ Custom FarmData2 Vue Components.
 - elements of the script should be in the order:
 
   - name
-  - components
+  - components - may be empty as Bootstrap-Vue-Next components are automatically imported.
   - emits
   - props
   - data
@@ -66,30 +66,32 @@ Custom FarmData2 Vue Components.
   - Indicates that inputs are required field if present.
   - required fields are indicated by a red asterisk
 
-- All components must have a `validText` and `invalidText` props to indicate ARIA text below the field when teh value in the component is valid or invalid.
+- All components must have a `showInvalid` prop
 
-- All components must have a `showValidity` prop that indicates if the validity of components should be shown using the bootstrap styling.
+  - This prop is set by the entry point to indicates that bootstrap styling should be shown for invalid inputs.
+  - The component indicates the validity of inputs using its `isValid` computed property as described below.
+  - The validity styling is shown:
 
-  - The component computes validity as described below but only shows it when `show-validity` is set to true.
-  - This prop is watched and is set to true by the entry point when "Submit" is clicked.
+    - When `isValid` is true (regardless of the value of the `showInvalid` prop).
+    - When `isValid` is false and `showInvalid` is true.
+
+  - This prop should be is set by the entry point to
+    - `true` when "Submit" is clicked
+    - `false` when "Reset" is clicked
 
 - Components manage props, state and events to allow page to change state via the prop.
 
   - The component provides a `prop` for every value that is collected by the component
   - The component watches the `props` and the state variables that are `v-modeled` to input elements
-  - When a value that a component collects changes, the component emits an `updated:prop_name` event with a payload giving the new value of the prop.
-  - The entry point should `v-model` the prop to an element in `data.form`
+  - when a watched prop changes the component updates its state.
+  - When the state for a value that a component collects changes, the component emits an `updated:prop_name` event with a payload giving the new value of the prop.
+  - The entry point should `v-model` the prop to an element in its `data.form`
 
 - All events emitted must be kabob-case.
+
 - All components must emit a `ready` event when they are ready to be used in tests.
 
   - e.g. any API calls that were made in `created` have completed.
-
-- All components must emit a `valid` event any time their validity changes.
-
-  - This event will have a `boolean` payload indicating if the component's value is valid or not.
-  - Entry points will use this value to enable/disable submission.
-  - The component `watch`es the `isValid` computed property for changes and emits this event.
 
 - If an error occurs, the component must emit an `error` event with a `String` message as the payload.
 
@@ -102,8 +104,14 @@ Custom FarmData2 Vue Components.
   - is bound to `state` on `<BFormValidFeedback>` and `<BFormInvalidFeedback>`
   - watched and a `valid` event is emitted when validity changes.
 
-- Components will have a `useValidityStyling()` computed property
-  - uses `isValid` and `showValidity` to determine if the component should show its validity styling.
+- All components must emit a `valid` event any time their validity changes.
+
+  - This event will have a `boolean` payload indicating if the component's value is valid or not.
+  - The component `watch`es the `isValid` computed property for changes and emits this event.
+
+- Components have a `invalidStyling()` computed property
+  - uses `isValid` computed property and `showInvalid` prop to determine if the component should show its validity styling.
+  - provided by `uiUtil.invalidStyling` so that it is consistent across components.
 
 ## Component Testing
 
@@ -132,31 +140,16 @@ Custom FarmData2 Vue Components.
 
       - i.e. check that changing each watched prop has the desired effect in the component.
 
-      ```JavaScript
-      it.only('Verify that `selected` prop is watched', () => {
-        const readySpy = cy.spy().as('readySpy');
-        const updateSpy = cy.spy().as('updateSpy');
-
-        cy.mount(CropSelector, {
-          props: {
-            onReady: readySpy,
-            'onUpdate:selected': updateSpy,
-            selected: null,
-          },
-        }).then(({ wrapper }) => {
-          cy.get('@readySpy').should('have.been.calledOnce').then(() => {
-            wrapper.setProps({ selected: 'ARUGULA' });
-            cy.get('@updateSpy').should('have.been.calledOnce');
-            cy.get('[data-cy="crop-select"]').should('have.value', 'ARUGULA');
-          });
-        });
-      });
-      ```
-
     - check that all other events are emitted properly
+
       - i.e. do something to cause the event and check that it is emitted properly and has the correct payload.
       - include all error events (including network errors) are emitted properly
         - i.e. Use `cy.intercept` to generate network errors on the appropriate route.
+
+    - Give or point to examples that illustrate structure for:
+
+      - waiting for `ready` before doing more.
+      - changing props.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 
