@@ -45,8 +45,13 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <DateSelector
+ *   required
+ *   v-model:date="form.seedingDate"
+ *   v-bind:showInvalidStyling="validity.show"
+ *   v-on:valid="validity.seedingDate = $event"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
@@ -72,14 +77,14 @@ export default {
     },
     /**
      * Whether validity styling should appear on input elements with invalid values.
-     * This prop is watched by the component.
      */
     showInvalidStyling: {
       type: Boolean,
       default: false,
     },
     /**
-     * The selected date. This prop is watched by the component.
+     * The selected date.
+     * This prop is watched and changes are relayed to the component's internal state..
      */
     date: {
       type: String,

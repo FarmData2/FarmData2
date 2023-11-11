@@ -83,9 +83,17 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
  * ## Usage Example
  *
  * ```html
- * TODO: Update this example.
+ * CropSelector
+ *   required
+ *   v-model:selected="form.crop"
+ *   v-bind:showInvalidStyling="validity.show"
+ *   v-on:valid="validity.crop = $event"
+ *   v-on:ready="createdCount++"
+ *   v-on:error="
+ *     (msg) =>
+ *       uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+ *   "
  * />
-
  * ```
  *
  * ## `data-cy` Attributes
@@ -115,7 +123,6 @@ export default {
     },
     /**
      * Whether validity styling should appear on input elements with invalid values.
-     * This prop is watched by the component.
      */
     showInvalidStyling: {
       type: Boolean,
@@ -123,7 +130,7 @@ export default {
     },
     /**
      * The name of the selected crop.
-     * This prop is watched by the component.
+     * This prop is watched and changes are relayed to the component's internal state.
      */
     selected: {
       type: String,

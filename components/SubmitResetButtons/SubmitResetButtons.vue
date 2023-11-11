@@ -41,6 +41,7 @@
  * <SubmitResetButtons
  *   v-model:enableSubmit="enableSubmit"
  *   v-model:enableReset="enableReset"
+ *   v-on:ready="createdCount++"
  *   v-on:submit="submit()"
  *   v-on:reset="reset()"
  * />
