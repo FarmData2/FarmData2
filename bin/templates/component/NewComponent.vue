@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+
 /**
  * A new component.
  *
@@ -32,7 +34,7 @@ export default {
     /**
      * Whether a value for the input element is required or not.
      */
-     required: {
+    required: {
       type: Boolean,
       default: false,
     },
@@ -72,7 +74,6 @@ export default {
     },
   },
   created() {
-    
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
 
