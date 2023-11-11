@@ -1,6 +1,6 @@
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 
-describe('Test the SelectorBase component behavior', () => {
+describe('Test the SelectorBase behaviors', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -11,18 +11,31 @@ describe('Test the SelectorBase component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Add tests for behavior here', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
+  it('Clicking add button goes to the addUrl', () => {
+    const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(SelectorBase);
+    cy.intercept('GET', 'http://farmos', {
+      statusCode: 200,
+      body: 'Add Option Form',
+    }).as('urlIntercept');
 
-    cy.get('[data-cy="new-comp-group"]').should('exist');
-    cy.get('[data-cy="placeholder"]').should(
-      'have.text',
-      'Component content goes here.'
-    );
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+        addOptionUrl: 'http://farmos',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-add-button"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').click();
+        cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
+      });
   });
 });

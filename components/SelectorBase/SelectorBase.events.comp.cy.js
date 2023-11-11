@@ -11,28 +11,197 @@ describe('Test the SelectorBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when component has been created', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
+  it('Emits "ready" when dropdown is created', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(SelectorBase, {
       props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy').should('have.been.calledOnce');
+  });
+
+  it('Emits "valid" with true on creation', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        required: true,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'One',
+        onReady: readySpy,
+        onValid: validSpy,
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="new-comp-group"]').should('exist');
-        cy.get('[data-cy="placeholder"]').should(
-          'have.text',
-          'Component content goes here.'
-        );
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
+  });
+
+  it('Emits "valid" with false on creation', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        required: true,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: '',
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('Verify that `selected` prop is reactive', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          wrapper.setProps({ selected: 'Two' });
+          cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
+        });
+    });
+  });
+
+  it('Emits "update:selected" when selection is changed', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('Two');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', 'Two');
+      });
+  });
+
+  it('Emits "valid" when a valid option is selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledWith', false); // during creation.
+        cy.get('[data-cy="selector-input"]').select('Two');
+        cy.get('@validSpy').should('have.been.calledTwice'); // on creation and on selection.
+        cy.get('@validSpy').should('have.been.calledWith', true); // during selection.
+      });
+  });
+
+  it('Only emits "valid" when validity changes', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce'); // on creation.
+        cy.get('[data-cy="selector-input"]').select('Two');
+        cy.get('@validSpy').should('have.been.calledTwice'); // on selection.
+        cy.get('[data-cy="selector-input"]').select('Three');
+        cy.get('@validSpy').should('have.been.calledTwice'); // but not again - no change in validity.
+        cy.get('[data-cy="selector-input"]').select('Four');
+        cy.get('@validSpy').should('have.been.calledTwice');
+      });
+  });
+
+  it('showValidity prop is reactive', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        showValidStyling: false,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-input"]').should(
+            'not.have.class',
+            'is-valid'
+          );
+          cy.get('[data-cy="selector-input"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidityStyling: true });
+
+          cy.get('[data-cy="selector-input"]').should(
+            'have.class',
+            'is-invalid'
+          );
+        });
+    });
   });
 });

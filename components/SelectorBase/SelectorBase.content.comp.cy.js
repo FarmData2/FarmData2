@@ -11,18 +11,91 @@ describe('Test the default SelectorBase content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check all of the data-cy elements', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
+  it('Check all of the data-cy elements exist', () => {
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+      },
+    });
 
-    cy.mount(SelectorBase);
-
-    cy.get('[data-cy="new-comp-group"]').should('exist');
-    cy.get('[data-cy="placeholder"]').should(
-      'have.text',
-      'Component content goes here.'
+    cy.get('[data-cy="selector-group"]').should('exist');
+    cy.get('[data-cy="selector-label"]').should('have.text', 'TheLabel:');
+    cy.get('[data-cy="selector-required"]').should('not.exist');
+    cy.get('[data-cy="selector-input"]').should('exist');
+    cy.get('[data-cy="selector-input"]')
+      .find('option')
+      .should('have.length', 6);
+    cy.get('[data-cy="selector-option-0"]').should('have.value', '');
+    cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+    cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
+    cy.get('[data-cy="selector-add-button"]').should('not.exist');
+    cy.get('[data-cy="selector-invalid-feedback"]').should(
+      'contain.text',
+      'Invalid feedback text.'
     );
+    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+  });
+
+  it('Test required prop', () => {
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+      },
+    });
+
+    cy.get('[data-cy="selector-group"]').should('exist');
+    cy.get('[data-cy="selector-label"]').should('have.text', 'TheLabel:');
+    cy.get('[data-cy="selector-required"]').should('exist');
+    cy.get('[data-cy="selector-input"]').should('exist');
+    cy.get('[data-cy="selector-input"]')
+      .find('option')
+      .should('have.length', 6);
+    cy.get('[data-cy="selector-option-0"]').should('have.value', '');
+    cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+    cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
+    cy.get('[data-cy="selector-add-button"]').should('not.exist');
+    cy.get('[data-cy="selector-invalid-feedback"]').should(
+      'contain.text',
+      'Invalid feedback text.'
+    );
+    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+  });
+
+  it('Test selected prop', () => {
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+      },
+    });
+
+    cy.get('[data-cy="selector-input"]').should('have.value', null);
+    cy.get('[data-cy="selector-input"]').select('One');
+    cy.get('[data-cy="selector-input"]').should('have.value', 'One');
+  });
+
+  it('Test addOptionUrl prop', () => {
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        addOptionUrl: 'add/option/url',
+      },
+    });
+
+    cy.get('[data-cy="selector-add-button"]').should('exist');
+    cy.get('[data-cy="selector-add-button"]')
+      .should('have.attr', 'href')
+      .then((href) => href)
+      .should('eq', 'add/option/url');
   });
 });
