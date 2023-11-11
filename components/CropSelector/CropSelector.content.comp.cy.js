@@ -44,7 +44,7 @@ describe('Test the CropSelector content', () => {
     cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
   });
 
-  it('Test showInvalid true when not required', () => {
+  it('Test showInvalidStyling true when not required', () => {
     cy.mount(CropSelector, {
       props: {
         showinvalidStyling: true,
@@ -57,7 +57,7 @@ describe('Test the CropSelector content', () => {
     cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
   });
 
-  it('Test showInvalid true when required', () => {
+  it('Test showInvalidStyling true when required', () => {
     cy.mount(CropSelector, {
       props: {
         required: true,
