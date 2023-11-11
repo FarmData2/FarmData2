@@ -29,6 +29,25 @@ describe('Test the CropSelector events', () => {
       });
   });
 
+  it('Emits "valid" on creation', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
   it('Verify that `selected` prop is watched', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
@@ -85,9 +104,10 @@ describe('Test the CropSelector events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
+        cy.get('@validSpy').should('have.been.calledWith', false); // during creation.
         cy.get('[data-cy="crop-select"]').select('ARUGULA');
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
+        cy.get('@validSpy').should('have.been.calledTwice'); // on creation and on selection.
+        cy.get('@validSpy').should('have.been.calledWith', true); // during selection.
       });
   });
 
@@ -106,10 +126,13 @@ describe('Test the CropSelector events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce'); // on creation.
         cy.get('[data-cy="crop-select"]').select('ARUGULA');
+        cy.get('@validSpy').should('have.been.calledTwice'); // on selection.
         cy.get('[data-cy="crop-select"]').select('BROCCOLI');
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
+        cy.get('@validSpy').should('have.been.calledTwice'); // but not again - no change in validity.
+        cy.get('[data-cy="crop-select"]').select('ZUCCHINI');
+        cy.get('@validSpy').should('have.been.calledTwice');
       });
   });
 
@@ -134,7 +157,7 @@ describe('Test the CropSelector events', () => {
             'is-invalid'
           );
 
-          wrapper.setProps({ showValidity: true });
+          wrapper.setProps({ showInvalidStyling: true });
 
           cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
         });
@@ -159,7 +182,7 @@ describe('Test the CropSelector events', () => {
     cy.get('@errorSpy').should('have.been.calledOnce');
     cy.get('@errorSpy').should(
       'have.been.calledWith',
-      'Unable to connect to farm.'
+      'Unable to connect to farmOS server.'
     );
   });
 

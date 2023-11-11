@@ -22,12 +22,12 @@ describe('Test the default DateSelector content', () => {
       'have.value',
       dayjs().format('YYYY-MM-DD')
     );
-    cy.get('[data-cy="date-valid-text"]').should('be.visible');
-    cy.get('[data-cy="date-valid-text"]').should('have.text', 'Select date.');
-    cy.get('[data-cy="date-invalid-text"]').should('not.be.visible');
-    cy.get('[data-cy="date-invalid-text"]').should(
-      'have.text',
-      'Date selection is required.'
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+    cy.get('[data-cy="date-invalid-feedback"]').should(
+      'contain.text',
+      'A valid date is required.'
     );
   });
 
@@ -40,26 +40,9 @@ describe('Test the default DateSelector content', () => {
 
     cy.get('[data-cy="required-star"]').should('exist');
     cy.get('[data-cy="required-star"]').should('have.text', '*');
-    cy.get('[data-cy="date-valid-text"]').should('be.visible');
-    cy.get('[data-cy="date-invalid-text"]').should('not.be.visible');
-  });
-
-  it('Test props for validText and invalidText', () => {
-    cy.mount(DateSelector, {
-      props: {
-        validText: 'The valid text.',
-        invalidText: 'The invalid text.',
-      },
-    });
-
-    cy.get('[data-cy="date-valid-text"]').should(
-      'have.text',
-      'The valid text.'
-    );
-    cy.get('[data-cy="date-invalid-text"]').should(
-      'have.text',
-      'The invalid text.'
-    );
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
   });
 
   it('Test the date prop', () => {
@@ -72,39 +55,101 @@ describe('Test the default DateSelector content', () => {
     cy.get('[data-cy="date-input"]').should('have.value', '1999-01-02');
   });
 
-  it('Test valid with date set to null', () => {
+  /*
+   *There are 8 possibilities here...
+   *
+   * required    validDate    showValidStyling  Test
+   * false       false        false             Not required with valid date not showing invalid styling
+   * false       false        true              Not required with invalid date showing invalid styling
+   * false       true         false             Check all of the data-cy elements. (above)
+   * false       true         true              Not required with valid date not showing invalid styling
+   * true        false        false             Required with invalid valid date not showing invalid styling
+   * true        false        true              Required with invalid valid date not showing invalid styling
+   * true        true         false             Test defaults when DateSelector is required. (above)
+   * true        true         true              Required with valid date showing invalid styling
+   */
+
+  it('Not required with invalid date not showing invalid styling', () => {
     cy.mount(DateSelector, {
       props: {
-        required: true,
-        date: null,
+        requried: false,
+        date: '1999-01-02',
+        showInvalidStyling: false,
       },
     });
 
-    cy.get('[data-cy="date-valid-text"]').should('not.be.visible');
-    cy.get('[data-cy="date-invalid-text"]').should('be.visible');
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
   });
 
-  it('Test valid with date set to empty string', () => {
+  it('Not required with invalid date showing invalid styling', () => {
     cy.mount(DateSelector, {
       props: {
-        required: true,
-        date: '',
+        reqiured: false,
+        date: 'invalid-date',
+        showInvalidStyling: true,
       },
     });
 
-    cy.get('[data-cy="date-valid-text"]').should('not.be.visible');
-    cy.get('[data-cy="date-invalid-text"]').should('be.visible');
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
   });
 
-  it('Test valid with date set to an invalid date', () => {
+  it('Not required with valid date not showing invalid styling', () => {
+    cy.mount(DateSelector, {
+      props: {
+        requried: false,
+        date: '1999-01-02',
+        showInvalidStyling: true,
+      },
+    });
+
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+  });
+
+  it('Required with invalid valid date not showing invalid styling', () => {
     cy.mount(DateSelector, {
       props: {
         required: true,
         date: 'invalid-date',
+        showInvalidStyling: false,
       },
     });
 
-    cy.get('[data-cy="date-valid-text"]').should('not.be.visible');
-    cy.get('[data-cy="date-invalid-text"]').should('be.visible');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+  });
+
+  it('Required with invalid valid date not showing invalid styling', () => {
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        date: 'invalid-date',
+        showInvalidStyling: false,
+      },
+    });
+
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+  });
+
+  it('Required with valid date showing invalid styling', () => {
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        date: '1999-01-02',
+        showInvalidStyling: true,
+      },
+    });
+
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+    cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
   });
 });
