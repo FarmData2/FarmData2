@@ -46,20 +46,14 @@ export function showToast(title, message, placement, variant, duration) {
  *   - the red X when submit is clicked and the value is invalid.
  *
  * @param {boolean} isValid - the value of the `isValid` computed property in the component.
- * @param {boolean} showValidity - the value of the `showValidity`
+ * @param {boolean} showInvalidStyling - the value of the `showInvalidStyling` prop in the component.
  * @returns {*} `true`, `false`, or `null`. `true` indicates that valid styling should be applied. `false` indicates that invalid styling should be applied. `null` indicates that no styling should be applied.
  */
-export function validationStyling(isValid, showValidity) {
-  /*
-
-   *
-   * This computed property should not be edited.
-   * Use the `isValid` computed property to indicate when the values are valid.
-   */
+export function validationStyling(isValid, showInvalidStyling) {
   if (isValid) {
     return true;
   } else {
-    if (showValidity) {
+    if (showInvalidStyling) {
       return isValid;
     } else {
       return null;
