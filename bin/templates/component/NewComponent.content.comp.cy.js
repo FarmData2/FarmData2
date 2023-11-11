@@ -10,7 +10,7 @@ describe('Test the default %COMPONENT_NAME% content', () => {
     cy.saveLocalStorage();
     cy.saveSessionStorage();
   });
-  
+
   it('Check all of the data-cy elements', () => {
     /*
      * See `components/README.md` for information about component testing.

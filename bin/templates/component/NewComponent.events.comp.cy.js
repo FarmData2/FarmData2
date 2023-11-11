@@ -10,7 +10,7 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     cy.saveLocalStorage();
     cy.saveSessionStorage();
   });
-  
+
   it('Emits "ready" when component has been created', () => {
     /*
      * See `components/README.md` for information about component testing.
@@ -25,7 +25,9 @@ describe('Test the %COMPONENT_NAME% component events', () => {
       },
     });
 
-    cy.get('@readySpy').should('have.been.calledOnce').then(() => {
+    cy.get('@readySpy')
+    .should('have.been.calledOnce')
+    .then(() => {
       cy.get('[data-cy="new-comp-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
         'have.text',
