@@ -21,8 +21,6 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <!-- Seeding Date -->
       <DateSelector
         required
-        validText="Date that the seeding occurred."
-        invalidText="A seeding date is required."
         v-model:date="form.seedingDate"
         v-bind:showInvalidStyling="validity.show"
         v-on:valid="validity.seedingDate = $event"
@@ -32,8 +30,6 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <!-- Crop Selection -->
       <CropSelector
         required
-        validText="The crop that was seeded."
-        invalidText="A seeded crop is required."
         v-model:selected="form.crop"
         v-bind:showInvalidStyling="validity.show"
         v-on:valid="validity.crop = $event"
@@ -105,4 +101,9 @@ export default {
 
 <style>
 @import url('@css/fd2-mobile.css');
+
+#date-group,
+#crop-group {
+  margin-bottom: 8px;
+}
 </style>
