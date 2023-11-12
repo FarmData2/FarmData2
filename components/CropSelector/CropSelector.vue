@@ -128,7 +128,7 @@ export default {
   },
   data() {
     return {
-      cropList: [],
+      cropList: null,
       crop: this.selected,
     };
   },
@@ -205,3 +205,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#crop-group {
+  min-width: 215px;
+}
+</style>
