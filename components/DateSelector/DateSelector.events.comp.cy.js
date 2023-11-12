@@ -86,7 +86,7 @@ describe('Test the  DateSelector component events', () => {
       });
   });
 
-  it('Component reacts to changed showInvalidStyling prop', () => {
+  it('Component reacts to changed showValidityStyling prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(DateSelector, {
@@ -105,7 +105,7 @@ describe('Test the  DateSelector component events', () => {
             'is-invalid'
           );
 
-          wrapper.setProps({ showInvalidStyling: true });
+          wrapper.setProps({ showValidityStyling: true });
 
           cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
           cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');

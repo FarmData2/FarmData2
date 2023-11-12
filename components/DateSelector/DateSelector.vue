@@ -22,13 +22,13 @@
       data-cy="date-input"
       type="date"
       v-model="chosenDate"
-      v-bind:state="validationStyling"
+      v-bind:state="validityStyling"
       v-bind:required="required"
     />
     <BFormInvalidFeedback
       id="date-invalid-feedback"
       data-cy="date-invalid-feedback"
-      v-bind:state="validationStyling"
+      v-bind:state="validityStyling"
     >
       A valid date is required.
     </BFormInvalidFeedback>
@@ -37,7 +37,6 @@
 
 <script>
 import dayjs from 'dayjs';
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
 /**
  * A component for selecting a date.
@@ -76,9 +75,9 @@ export default {
       default: false,
     },
     /**
-     * Whether validity styling should appear on input elements with invalid values.
+     * Whether validity styling should appear on input elements.
      */
-    showInvalidStyling: {
+    showValidityStyling: {
       type: Boolean,
       default: false,
     },
@@ -98,16 +97,21 @@ export default {
   },
   computed: {
     isValid() {
-      // Indicates if the current value of the component is valid.
-      if (this.required) {
-        return this.chosenDate != null && this.chosenDate.length === 10;
-      } else {
-        return true;
-      }
+      return dayjs(this.chosenDate).isValid();
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validationStyling() {
-      return uiUtil.validationStyling(this.isValid, this.showInvalidStyling);
+    validityStyling() {
+      const R = this.required;
+      const V = this.isValid;
+      const S = this.showValidityStyling;
+
+      if (V && S) {
+        return true;
+      } else if (R && !V && S) {
+        return false;
+      } else {
+        return null;
+      }
     },
   },
   methods: {},
