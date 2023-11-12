@@ -63,8 +63,6 @@
 </template>
 
 <script>
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-
 /**
  * The SelectorBase component is a base component used to build other components
  * that provide a dropdown menu for the user to choose from a list of options.
@@ -165,20 +163,21 @@ export default {
   },
   computed: {
     isValid() {
-      /*
-       * A dropdown is valid when:
-       *   - It is not required.
-       *   - Any option other than the null item is selected.
-       */
-      if (!this.required) {
-        return true;
-      } else {
-        return this.selectedOption != '';
-      }
+      return this.selectedOption != '';
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
+      const R = this.required;
+      const V = this.isValid;
+      const S = this.showValidityStyling;
+
+      if (V && S) {
+        return true;
+      } else if (R && !V && S) {
+        return false;
+      } else {
+        return null;
+      }
     },
   },
   methods: {},

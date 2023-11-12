@@ -39,7 +39,7 @@
 import dayjs from 'dayjs';
 
 /**
- * A component for selecting a date.
+ * The DateSelector component provides a UI element for selecting a date.
  *
  * ## Usage Example
  *

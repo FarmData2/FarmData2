@@ -88,7 +88,7 @@ describe('Test the styling of the SelectorBase component', () => {
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
     cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
     cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
   });

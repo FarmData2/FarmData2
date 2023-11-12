@@ -63,7 +63,6 @@
 
 <script>
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
 /**
  * A component that allows the user to select a crop.
@@ -133,13 +132,21 @@ export default {
   },
   computed: {
     isValid() {
-      // Returns true if the component's values are valid and false otherwise.
-      // This is to be determined independent of the `showInvalid` prop.
-      return this.required && this.crop != null;
+      return this.crop != null;
     },
-    // Controls when the invalid styling (i.e. red X) should be displayed.
+
     validityStyling() {
-      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
+      const R = this.required;
+      const V = this.isValid;
+      const S = this.showValidityStyling;
+
+      if (V && S) {
+        return true;
+      } else if (R && !V && S) {
+        return false;
+      } else {
+        return null;
+      }
     },
   },
   methods: {},

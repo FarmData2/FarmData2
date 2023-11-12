@@ -39,7 +39,7 @@ Custom FarmData2 Vue Components.
   - e.g. every input element must have a `data-cy` attribute.
   - all `data-cy` in a component should be prefixed by the component name or abbreviation.
     - E.g. `data-cy="crop-group` or `location-0`.
-- their `state` prop `v-bound` to the `invalidStyling` prop
+- their `state` prop `v-bound` to the `invalidStyling` computed property
 - `BRow` and `BCol` can be used to create more complex layouts.
 - `BFormSelect` elements should begin with `{ value: null, text: '' }`.
   - to allow them to be blank when form is reset.
@@ -74,16 +74,20 @@ Custom FarmData2 Vue Components.
   - Indicates that inputs are required field if present.
   - required fields are indicated by a red asterisk
 
-- All components must have a `showInvalid` prop
+- All components must have a `showValidityStyling` prop
 
-  - This prop is set by the entry point to indicates that bootstrap styling should be shown for invalid inputs.
-  - The component indicates the validity of inputs using its `isValid` computed property as described below.
-  - The validity styling is shown:
+  - This prop is set by the entry point to indicates that bootstrap styling should be shown for inputs.
+  - The component indicates the validity of inputs using its `isValid` computed property.
 
-    - When `isValid` is true (regardless of the value of the `showInvalid` prop).
-    - When `isValid` is false and `showInvalid` is true.
+    - Returns true if the input value is valid for the component.
 
-  - This prop should be is set by the entry point to
+  - The component indicates the type of styling to be used using its `invalidStyling` computed property.
+    - This function returns:
+      - `true` to apply valid styling (green check)
+      - `false` to apply invalid styling (red x and invalidFeedbackText)
+      - `null` to not apply either styling.
+
+  - The `showValidityStyling` prop should be is set by the entry point to
     - `true` when "Submit" is clicked
     - `false` when "Reset" is clicked
 
@@ -105,21 +109,10 @@ Custom FarmData2 Vue Components.
 
   - The entrypoint will handle the error.
 
-- Components will have a `isValid()` computed property
-
-  - true if the component's value is valid
-  - false if the component's value is invalid
-  - is bound to `state` on `<BFormValidFeedback>` and `<BFormInvalidFeedback>`
-  - watched and a `valid` event is emitted when validity changes.
-
-- All components must emit a `valid` event any time their validity changes.
+- All components must emit a `valid` event any time their `isValid` computed property changes.
 
   - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - The component `watch`es the `isValid` computed property for changes and emits this event.
-
-- Components have a `invalidStyling()` computed property
-  - uses `isValid` computed property and `showInvalid` prop to determine if the component should show its validity styling.
-  - provided by `uiUtil.invalidStyling` so that it is consistent across components.
 
 ## Component Testing
 
