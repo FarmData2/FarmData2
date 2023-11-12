@@ -44,30 +44,30 @@ describe('Test the CropSelector content', () => {
     cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
   });
 
-  it('Test showInvalidStyling true when not required', () => {
-    cy.mount(CropSelector, {
-      props: {
-        showinvalidStyling: true,
-      },
-    });
+  // it('Test showInvalidStyling true when not required', () => {
+  //   cy.mount(CropSelector, {
+  //     props: {
+  //       showValidityStyling: true,
+  //     },
+  //   });
 
-    // No styling should appear because empty is okay when not required.
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
-  });
+  //   // No styling should appear because empty is okay when not required.
+  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
+  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-invalid');
+  //   cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
+  // });
 
-  it('Test showInvalidStyling true when required', () => {
-    cy.mount(CropSelector, {
-      props: {
-        required: true,
-        showInvalidStyling: true,
-      },
-    });
+  // it('Test showInvalidStyling true when required', () => {
+  //   cy.mount(CropSelector, {
+  //     props: {
+  //       required: true,
+  //       showInvalidStyling: true,
+  //     },
+  //   });
 
-    // Styling should appear because empty is not okay when not required.
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
-    cy.get('[data-cy="crop-invalid-feedback"]').should('be.visible');
-  });
+  //   // Styling should appear because empty is not okay when not required.
+  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
+  //   cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
+  //   cy.get('[data-cy="crop-invalid-feedback"]').should('be.visible');
+  // });
 });

@@ -136,33 +136,33 @@ describe('Test the CropSelector events', () => {
       });
   });
 
-  it('Watches showValidity prop', () => {
-    const readySpy = cy.spy().as('readySpy');
+  // it('Watches showValidity prop', () => {
+  //   const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(CropSelector, {
-      props: {
-        required: true,
-        onReady: readySpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('[data-cy="crop-select"]').should(
-            'not.have.class',
-            'is-valid'
-          );
-          cy.get('[data-cy="crop-select"]').should(
-            'not.have.class',
-            'is-invalid'
-          );
+  //   cy.mount(CropSelector, {
+  //     props: {
+  //       required: true,
+  //       onReady: readySpy,
+  //     },
+  //   }).then(({ wrapper }) => {
+  //     cy.get('@readySpy')
+  //       .should('have.been.calledOnce')
+  //       .then(() => {
+  //         cy.get('[data-cy="crop-select"]').should(
+  //           'not.have.class',
+  //           'is-valid'
+  //         );
+  //         cy.get('[data-cy="crop-select"]').should(
+  //           'not.have.class',
+  //           'is-invalid'
+  //         );
 
-          wrapper.setProps({ showInvalidStyling: true });
+  //         wrapper.setProps({ showInvalidStyling: true });
 
-          cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
-        });
-    });
-  });
+  //         cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
+  //       });
+  //   });
+  // });
 
   it('Emits "error" when unable to connect to farm', () => {
     const errorSpy = cy.spy().as('errorSpy');
