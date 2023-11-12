@@ -39,7 +39,7 @@ export default {
       default: false,
     },
     /**
-     * Whether validity styling should appear on input elements with invalid values.
+     * Whether validity styling should appear on input elements.
      */
     showInvalidStyling: {
       type: Boolean,
@@ -52,14 +52,20 @@ export default {
   computed: {
     isValid() {
       /*
-       * Edit this computed property to indicate when the values are valid.
-       * This should account for the `required` prop but should be independent of the `showInvalid` prop.
+       * Edit this computed property to return true if the component's value is valid,
+       * or false if it is invalid.
        */
-      return true;
+      return false;
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
+      /*
+       * Edit this computed property to indicted the type of styling that should be applied 
+       * to the component based upon `required`, `isValid`, `showInvalidStyling`.
+       * 
+       * Bind this computed property to the `state` prop of the components to be styled.
+       */
+      return false;
     },
   },
   methods: {},
