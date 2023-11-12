@@ -33,7 +33,7 @@
 
 <script>
 /**
- * A component containing the Submit and Reset buttons used on forms.
+ * The SubmitResetButtons component provides the Submit and Reset buttons used on forms.
  *
  * ## Usage Example
  *
@@ -51,27 +51,27 @@
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `submit-reset`        | The `<row> element containing the submit and reset buttons.
- * `submit`              | The submit button.
- * `reset`               | The reset button.
+ * submit-reset          | The `<row> element containing the submit and reset buttons.
+ * submit-button         | The submit button.
+ * reset-button          | The reset button.
  */
 export default {
   name: 'SubmitResetButtons',
   emits: ['submit', 'ready', 'reset'],
   props: {
     /**
-     * Indicates if the submit button should be enabled.
-     * This prop is watched by the component.
-     */
-    enableSubmit: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * Indicates if the reset button should be enabled.
      * This prop is watched by the component.
      */
     enableReset: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Indicates if the submit button should be enabled.
+     * This prop is watched by the component.
+     */
+    enableSubmit: {
       type: Boolean,
       default: false,
     },

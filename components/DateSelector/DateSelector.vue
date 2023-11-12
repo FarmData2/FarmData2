@@ -55,18 +55,26 @@ import dayjs from 'dayjs';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name            | Description
- * --------------------------| -----------
- * `date-group`              | The `BFormGroup` component containing this component.
- * `date-label`              | The `span` component containing the "Date:" label.
- * `required-star`           | The `*` that appears in the label if the input is required.
- * `date-input`              | The `BFormInput` component used to select a date.
- * `date-invalid-feedback`   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
+ * Attribute Name          | Description
+ * ------------------------| -----------
+ * date-group              | The `BFormGroup` component containing this component.
+ * date-label              | The `span` component containing the "Date:" label.
+ * required-star           | The `*` that appears in the label if the input is required.
+ * date-input              | The `BFormInput` component used to select a date.
+ * date-invalid-feedback   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
  */
 export default {
   name: 'DateSelector',
   emits: ['ready', 'update:date', 'valid'],
   props: {
+    /**
+     * The selected date.
+     * This prop is watched and changes are relayed to the component's internal state..
+     */
+    date: {
+      type: String,
+      default: dayjs().format('YYYY-MM-DD'), // default to today.
+    },
     /**
      * Whether a crop selection is required or not.
      */
@@ -80,14 +88,6 @@ export default {
     showValidityStyling: {
       type: Boolean,
       default: false,
-    },
-    /**
-     * The selected date.
-     * This prop is watched and changes are relayed to the component's internal state..
-     */
-    date: {
-      type: String,
-      default: dayjs().format('YYYY-MM-DD'), // default to today.
     },
   },
   data() {
@@ -119,7 +119,7 @@ export default {
     chosenDate() {
       /**
        * The selected date has changed.
-       * @property {string} date the newly chosen date (YYYY-MM-DD).
+       * @property {String} date the newly chosen date (YYYY-MM-DD).
        */
       this.$emit('update:date', this.chosenDate);
     },
@@ -129,7 +129,7 @@ export default {
     isValid() {
       /**
        * The validity of the component has changed.
-       * @property {boolean} valid whether the component's value is valid or not.
+       * @property {Boolean} valid whether the component's value is valid or not.
        */
       this.$emit('valid', this.isValid);
     },

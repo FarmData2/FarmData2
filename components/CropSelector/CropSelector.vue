@@ -65,7 +65,9 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
- * A component that allows the user to select a crop.
+ * The CropSelector component is a UI element that allows the user to select a crop.
+ *
+ * It fetches the list for crops (farmOS `taxonomy_term--plant_type` records) from the farmOS server.
  *
  * ## Usage Example
  *
@@ -85,16 +87,16 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name          | Description
- * ------------------------| -----------
- * `crop-group`            | The `BFormGroup` component containing this component.
- * `crop-label`            | The `span` component containing the "Crop" label.
- * `required-star`         | The `*` that appears in the label if the input is required.
- * `crop-select`           | The `BFormSelect` component used to select a crop.
- * `option-0`              | The disabled "Choose crop..." option in the `BFormSelect` component.
- * `option-n`              | The nth option in the `BFormSelect` component [1...n].
- * `add-crop-button`       | The `BButton` component that redirects to the page for adding a new crop.
- * `crop-invalid-feedback` | The `BFormInvalidFeedback` component that displays help when input is invalid.
+ * Attribute Name        | Description
+ * ----------------------| -----------
+ * crop-group            | The `BFormGroup` component containing this component.
+ * crop-label            | The `span` component containing the "Crop" label.
+ * required-star         | The `*` that appears in the label if the input is required.
+ * crop-select           | The `BFormSelect` component used to select a crop.
+ * option-0              | The disabled blank option in the `BFormSelect` component.
+ * option-n              | The nth option in the `BFormSelect` component [1...n].
+ * add-crop-button       | The `BButton` component that redirects to the page for adding a new crop.
+ * crop-invalid-feedback | The `BFormInvalidFeedback` component that displays help when input is invalid.
  */
 export default {
   name: 'CropSelector',
@@ -109,19 +111,19 @@ export default {
       default: false,
     },
     /**
-     * Whether validity styling should appear on input elements.
-     */
-    showValidityStyling: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * The name of the selected crop.
      * This prop is watched and changes are relayed to the component's internal state.
      */
     selected: {
       type: String,
       default: null,
+    },
+    /**
+     * Whether validity styling should appear on input elements.
+     */
+    showValidityStyling: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -154,7 +156,7 @@ export default {
     crop() {
       /**
        * The selected crop has changed.
-       * @property {string} crop the name of the newly selected crop.
+       * @property {String} crop the name of the newly selected crop.
        */
       this.$emit('update:selected', this.crop);
     },
@@ -164,7 +166,7 @@ export default {
     isValid() {
       /**
        * The validity of the component has changed.  Also emitted when the component is created.
-       * @property {*} valid `true` if the component's value is valid; `false` if it is invalid.
+       * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
     },
