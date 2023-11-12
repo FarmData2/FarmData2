@@ -5,8 +5,7 @@
     label-for="crop-select"
     label-cols="auto"
     label-align="end"
-    content-cols="9"
-    content-cols-sm="auto"
+    content-cols="auto"
   >
     <template v-slot:label>
       <span data-cy="selector-label">{{ label }}:</span>
@@ -166,7 +165,7 @@ export default {
   },
   computed: {
     isValid() {
-      return this.selectedOption != '';
+      return this.selectedOption != null && this.selectedOption != '';
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
