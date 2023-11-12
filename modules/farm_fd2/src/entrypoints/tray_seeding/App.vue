@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
+import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
@@ -40,6 +41,20 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         "
       />
 
+      <!-- Location Selection -->
+      <LocationSelector
+        required
+        includeGreenhouses
+        v-model:selected="form.location"
+        v-bind:showValidityStyling="validity.show"
+        v-on:valid="validity.location = $event"
+        v-on:ready="createdCount++"
+        v-on:error="
+          (msg) =>
+            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+        "
+      />
+
       <!-- Submit and Reset Buttons -->
       <SubmitResetButtons
         v-model:enableSubmit="enableSubmit"
@@ -66,11 +81,13 @@ export default {
       form: {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         crop: null,
+        location: null,
       },
       validity: {
         show: false,
         seedingDate: false,
         crop: false,
+        location: false,
       },
       enableSubmit: true,
       enableReset: true,
@@ -86,11 +103,12 @@ export default {
       this.validity.show = false;
       this.form.seedingDate = dayjs().format('YYYY-MM-DD');
       this.form.crop = null;
+      this.form.location = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 4;
+      return this.createdCount == 5;
     },
   },
   created() {
@@ -99,11 +117,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import url('@css/fd2-mobile.css');
 
 #date-group,
-#crop-group {
+#crop-group,
+#location-selector {
   margin-bottom: 8px;
 }
 </style>

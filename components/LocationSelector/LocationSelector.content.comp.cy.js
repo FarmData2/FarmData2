@@ -19,10 +19,6 @@ describe('Test the default LocationSelector content', () => {
 
     cy.mount(LocationSelector);
 
-    cy.get('[data-cy="new-comp-group"]').should('exist');
-    cy.get('[data-cy="placeholder"]').should(
-      'have.text',
-      'Component content goes here.'
-    );
+    cy.get('[data-cy="location-selector"]').should('exist');
   });
 });

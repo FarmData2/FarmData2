@@ -1,17 +1,28 @@
+<script setup>
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+</script>
+
 <template>
-  <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
-  >
-    <p data-cy="placeholder">Component content goes here.</p>
-  </BFormGroup>
+  <SelectorBase
+    id="location-selector"
+    data-cy="location-selector"
+    label="Location"
+    invalidFeedbackText="A location is required"
+    v-bind:addOptionUrl="addLocationUrl"
+    v-bind:options="locationList"
+    v-bind:required="required"
+    v-bind:selected="selected"
+    v-bind:showValidityStyling="showValidityStyling"
+    v-on:update:selected="handleUpdateSelected($event)"
+    v-on:valid="handleValid($event)"
+  />
 </template>
 
 <script>
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
- * A new component.
+ * The LocationSelector component provides a UI element that allows the user to select a location.
  *
  * ## Usage Example
  *
@@ -24,63 +35,143 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * `location-selector`   | The `SelectorBase` component containing the dropdown.
  */
 export default {
   name: 'LocationSelector',
   components: {},
-  emits: ['ready', 'valid'],
+  emits: ['ready', 'update:selected', 'valid'],
   props: {
     /**
-     * Whether a value for the input element is required or not.
+     * Whether to include fields in the list of locations.
+     */
+    includeFields: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether to include greenhouses in the list of locations.
+     */
+    includeGreenhouses: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether a location selection is required or not.
      */
     required: {
       type: Boolean,
       default: false,
     },
     /**
-     * Whether validity styling should appear on input elements with invalid values.
-     * This prop is watched by the component.
+     * The name of the selected location.
+     * This prop is watched and changes are relayed to the component's internal state.
      */
-    showInvalidStyling: {
+    selected: {
+      type: String,
+      default: null,
+    },
+    /**
+     * Whether validity styling should appear on the location dropdown.
+     */
+    showValidityStyling: {
       type: Boolean,
       default: false,
     },
   },
   data() {
-    return {};
+    return {
+      locationList: [],
+    };
   },
   computed: {
-    isValid() {
-      /*
-       * Edit this computed property to indicate when the values are valid.
-       * This should account for the `required` prop but should be independent of the `showInvalid` prop.
-       */
-      return true;
-    },
-    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validationStyling() {
-      return uiUtil.validityStyling(this.isValid, this.showValidityStyling);
-    },
-  },
-  methods: {},
-  watch: {
-    isValid() {
-      /**
-       * The validity of the component has changed.  Also emitted when the component is created.
-       * @property {*} valid `true` if the component's value is valid; `false` if it is invalid.
-       */
-      this.$emit('valid', this.isValid);
+    addLocationUrl() {
+      // return the appropriate url for land, structure or just asset if both
+      if (this.includeFields && this.includeGreenhouses) {
+        return 'http://farmos/asset/add';
+      } else if (this.includeFields) {
+        return 'http://farmos/asset/add/land';
+      } else {
+        return 'http://farmos/asset/add/structure';
+      }
     },
   },
+  methods: {
+    handleUpdateSelected(event) {
+      this.$emit('update:selected', event);
+    },
+    handleValid(event) {
+      this.$emit('valid', event);
+    },
+  },
+  watch: {},
   created() {
-    //Emit the initial valid state of the component's value.
-    this.$emit('valid', this.isValid);
+    farmosUtil
+      .getFarmOSInstance()
+      .then((farm) => {
+        if (this.includeFields) {
+          return farmosUtil
+            .getFieldOrBedNameToAssetMap(farm)
+            .then((fieldMap) => {
+              let fields = Array.from(fieldMap.keys());
+              return { farm, fields };
+            })
+            .catch((error) => {
+              console.error('LocationSelector: Error fetching fields.');
+              console.error(error);
+              /**
+               * An error occurred when communicating with the farmOS server.
+               * @property {string} msg an error message.
+               */
+              this.$emit('error', 'Unable to fetch fields.');
+            });
+        } else {
+          let fields = [];
+          return { farm, fields };
+        }
+      })
+      .then(({ farm, fields }) => {
+        if (this.includeGreenhouses) {
+          return farmosUtil
+            .getGreenhouseNameToAssetMap(farm)
+            .then((greenhouseMap) => {
+              let greenhouses = Array.from(greenhouseMap.keys());
+              let allLocations = [...fields, ...greenhouses];
+              return allLocations;
+            })
+            .catch((error) => {
+              console.error('LocationSelector: Error fetching greenhouses.');
+              console.error(error);
+              /**
+               * An error occurred when communicating with the farmOS server.
+               * @property {string} msg an error message.
+               */
+              this.$emit('error', 'Unable to fetch greenhouses.');
+            });
+        } else {
+          let allLocations = fields;
+          return allLocations;
+        }
+      })
+      .then((allLocations) => {
+        this.locationList = allLocations.sort();
 
-    /**
-     * The component is ready for use.
-     */
-    this.$emit('ready');
+        /**
+         * The select has been populated with the list of locations and the component is ready to be used.
+         */
+        this.$emit('ready');
+      })
+      .catch((error) => {
+        console.error('LocationSelector: Error connecting to farm.');
+        console.error(error);
+        this.$emit('error', 'Unable to connect to farmOS server.');
+      });
   },
 };
 </script>
+
+<style>
+#selector-input {
+  min-width: 192px;
+}
+</style>

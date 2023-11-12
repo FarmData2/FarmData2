@@ -114,11 +114,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .fd2-submit {
-  width: 210px !important;
-  min-width: 210px;
-  max-width: 210px;
+  width: 245px !important;
+  min-width: 245px;
+  max-width: 245px;
 }
 
 .fd2-reset {
