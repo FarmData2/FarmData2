@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
@@ -21,6 +22,8 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
     <BForm>
       <!-- Seeding Date -->
       <DateSelector
+        id="seeding-date"
+        data-cy="seeding-date"
         required
         v-model:date="form.seedingDate"
         v-bind:showValidityStyling="validity.show"
@@ -30,6 +33,8 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
       <!-- Crop Selection -->
       <CropSelector
+        id="seeded-crop"
+        data-cy="seeded-crop"
         required
         v-model:selected="form.crop"
         v-bind:showValidityStyling="validity.show"
@@ -43,6 +48,8 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
       <!-- Location Selection -->
       <LocationSelector
+        id="seeding-location"
+        data-cy="seeding-location"
         required
         includeGreenhouses
         v-model:selected="form.location"
@@ -55,8 +62,31 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         "
       />
 
+      <hr />
+
+      <p>Placeholder space for</p>
+      <ul>
+        <li>Trays</li>
+        <li>Tray Size</li>
+        <li>Seeds / Cell</li>
+        <li>Total Seeds</li>
+      </ul>
+
+      <hr />
+
+      <!-- Comment Box -->
+      <CommentBox
+        id="seeding-comment"
+        data-cy="seeding-comment"
+        v-model="form.comment"
+        v-on:valid="validity.comment = $event"
+        v-on:ready="createdCount++"
+      />
+
       <!-- Submit and Reset Buttons -->
       <SubmitResetButtons
+        id="seeding-submit-reset"
+        data-cy="seeding-submit-reset"
         v-model:enableSubmit="enableSubmit"
         v-model:enableReset="enableReset"
         v-on:ready="createdCount++"
@@ -82,12 +112,14 @@ export default {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         crop: null,
         location: null,
+        comment: null,
       },
       validity: {
         show: false,
         seedingDate: false,
         crop: false,
         location: false,
+        comment: false,
       },
       enableSubmit: true,
       enableReset: true,
@@ -104,11 +136,12 @@ export default {
       this.form.seedingDate = dayjs().format('YYYY-MM-DD');
       this.form.crop = null;
       this.form.location = null;
+      this.form.comment = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 5;
+      return this.createdCount == 6;
     },
   },
   created() {
@@ -117,12 +150,20 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('@css/fd2-mobile.css');
 
-#date-group,
-#crop-group,
-#location-selector {
+#seeding-date {
+  margin-top: 10px;
   margin-bottom: 8px;
+}
+
+#seeded-crop,
+#seeding-location {
+  margin-bottom: 8px;
+}
+
+#seeding-comment {
+  margin-bottom: 15px;
 }
 </style>
