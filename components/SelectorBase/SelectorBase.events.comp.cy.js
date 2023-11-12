@@ -74,26 +74,6 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Verify that `selected` prop is reactive', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(SelectorBase, {
-      props: {
-        invalidFeedbackText: 'Invalid feedback text.',
-        label: `TheLabel`,
-        options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        onReady: readySpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          wrapper.setProps({ selected: 'Two' });
-          cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
-        });
-    });
-  });
-
   it('Emits "update:selected" when selection is changed', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
@@ -168,40 +148,5 @@ describe('Test the SelectorBase component events', () => {
         cy.get('[data-cy="selector-input"]').select('Four');
         cy.get('@validSpy').should('have.been.calledTwice');
       });
-  });
-
-  it('showValidity prop is reactive', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(SelectorBase, {
-      props: {
-        required: true,
-        showValidStyling: false,
-        invalidFeedbackText: 'Invalid feedback text.',
-        label: `TheLabel`,
-        options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        onReady: readySpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('[data-cy="selector-input"]').should(
-            'not.have.class',
-            'is-valid'
-          );
-          cy.get('[data-cy="selector-input"]').should(
-            'not.have.class',
-            'is-invalid'
-          );
-
-          wrapper.setProps({ showValidityStyling: true });
-
-          cy.get('[data-cy="selector-input"]').should(
-            'have.class',
-            'is-invalid'
-          );
-        });
-    });
   });
 });

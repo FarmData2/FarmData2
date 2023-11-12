@@ -136,16 +136,14 @@ Custom FarmData2 Vue Components.
 
   - check events (`*.events.comp.cy.js`)
 
-    - test the `ready` event
-      - ie. check that data is populated into elements (e.g. by API call) after `ready` is emitted.
-    - check watched props
+    - check that all events are emitted properly
 
-      - i.e. check that changing each watched prop has the desired effect in the component.
-
-    - check that all other events are emitted properly
-
-      - i.e. do something to cause the event and check that it is emitted properly and has the correct payload.
+      - check that data is populated into elements (e.g. by API call) after `ready` is emitted.
+      - check that `update:prop_name` and `valid` are emitted as appropriate.
       - include all error events (including network errors) are emitted properly
+
+      - do something to cause the event and check that it is emitted properly and has the correct payload.
+
         - i.e. Use `cy.intercept` to generate network errors on the appropriate route.
 
     - Give or point to examples that illustrate structure for:
@@ -155,9 +153,16 @@ Custom FarmData2 Vue Components.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 
+    - check that watched props have the proper effect.
+
+      - e.g. changes to prop changes the component as desired.
+      - e.g. watches and deep watches work.
+
     - check that actions in the component have the proper effect.
+
       - e.g. clicking buttons, validating value (required, length, values, format, etc.) etc.
-    - Note: do not retest things tested in events.
+
+    - Do not retest things tested in events.
 
 ## Documenting components
 

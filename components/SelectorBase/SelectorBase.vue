@@ -35,7 +35,7 @@
           />
         </template>
         <BFormSelectOption
-          v-for="(option, i) in optionList"
+          v-for="(option, i) in options"
           v-bind:key="option"
           v-bind:value="option"
           v-bind:data-cy="'selector-option-' + (i + 1)"
@@ -126,6 +126,10 @@ export default {
     },
     /**
      * The list of options for the dropdown.
+     *
+     * The options shown will update if the prop is set to a new array.
+     *
+     * However, the options shown will not change if only the contents of the array are changed.
      */
     options: {
       type: Array,
@@ -157,7 +161,6 @@ export default {
   },
   data() {
     return {
-      optionList: this.options,
       selectedOption: this.selected,
     };
   },
@@ -182,22 +185,22 @@ export default {
   },
   methods: {},
   watch: {
-    selectedOption() {
-      /**
-       * The selected option has changed.
-       * @property {String} option the name of the newly selected option.
-       */
-      this.$emit('update:selected', this.selectedOption);
-    },
-    selected() {
-      this.selectedOption = this.selected;
-    },
     isValid() {
       /**
        * The validity of the component has changed.  Also emitted when the component is created.
        * @property {Boolean} valid `true` if an option is selected; `false` if not.
        */
       this.$emit('valid', this.isValid);
+    },
+    selected() {
+      this.selectedOption = this.selected;
+    },
+    selectedOption() {
+      /**
+       * The selected option has changed.
+       * @property {String} option the name of the newly selected option.
+       */
+      this.$emit('update:selected', this.selectedOption);
     },
   },
   created() {
