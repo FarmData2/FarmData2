@@ -22,7 +22,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <DateSelector
         required
         v-model:date="form.seedingDate"
-        v-bind:showInvalidStyling="validity.show"
+        v-bind:showValidityStyling="validity.show"
         v-on:valid="validity.seedingDate = $event"
         v-on:ready="createdCount++"
       />
@@ -31,7 +31,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
       <CropSelector
         required
         v-model:selected="form.crop"
-        v-bind:showInvalidStyling="validity.show"
+        v-bind:showValidityStyling="validity.show"
         v-on:valid="validity.crop = $event"
         v-on:ready="createdCount++"
         v-on:error="

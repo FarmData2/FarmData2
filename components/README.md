@@ -82,6 +82,7 @@ Custom FarmData2 Vue Components.
     - Returns true if the input value is valid for the component.
 
   - The component indicates the type of styling to be used using its `invalidStyling` computed property.
+
     - This function returns:
       - `true` to apply valid styling (green check)
       - `false` to apply invalid styling (red x and invalidFeedbackText)
