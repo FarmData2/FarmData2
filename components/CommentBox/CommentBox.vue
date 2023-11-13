@@ -3,6 +3,8 @@
     id="comment-input"
     data-cy="comment-input"
     placeholder="Enter a comment..."
+    lazy-formatter
+    lazy
     v-model="comment"
   />
 </template>

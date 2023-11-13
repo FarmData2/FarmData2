@@ -12,13 +12,13 @@ describe('Test the default CommentBox content', () => {
   });
 
   it('Check all of the default data-cy elements', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
     cy.mount(CommentBox);
+    cy.get('[data-cy="comment-input"]').should('be.visible');
+  });
 
-    cy.get('[data-cy="comment-input"]').should('exist');
+  it('Check that text is trimmed', () => {
+    cy.mount(CommentBox);
+    cy.get('[data-cy="comment-input"]').type('  This is a test comment.  ');
+    cy.get('[data-cy="comment-input"]').blur(); // lazy v-model handling.
   });
 });
