@@ -77,8 +77,19 @@
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <SelectorBase
+ *   id="location-selector"
+ *   data-cy="location-selector"
+ *   label="Location"
+ *   invalidFeedbackText="A location is required"
+ *   v-bind:addOptionUrl="addLocationUrl"
+ *   v-bind:options="locationList"
+ *   v-bind:required="required"
+ *   v-bind:selected="selected"
+ *   v-bind:showValidityStyling="showValidityStyling"
+ *   v-on:update:selected="handleUpdateSelected($event)"
+ *   v-on:valid="handleValid($event)"
+ * />
  * ```
  *
  * ## `data-cy` Attributes

@@ -128,8 +128,8 @@ export default {
     },
     isValid() {
       /**
-       * The validity of the component has changed.
-       * @property {Boolean} valid whether the component's value is valid or not.
+       * The validity of the date has changed.
+       * @property {Boolean} valid whether the date is valid or not.
        */
       this.$emit('valid', this.isValid);
     },

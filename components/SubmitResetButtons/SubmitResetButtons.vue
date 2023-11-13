@@ -51,7 +51,7 @@
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * submit-reset          | The `<row> element containing the submit and reset buttons.
+ * submit-reset          | The `<row>` element containing the submit and reset buttons.
  * submit-button         | The submit button.
  * reset-button          | The reset button.
  */

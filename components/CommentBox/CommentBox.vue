@@ -9,13 +9,18 @@
 
 <script>
 /**
- * A CommentBox provides a UI element that allows the user to enter a comment.
+ * The CommentBox component provides a UI element that allows the user to enter a comment.
  *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <CommentBox
+ *   id="seeding-comment"
+ *   data-cy="seeding-comment"
+ *   v-model="form.comment"
+ *   v-on:valid="validity.comment = $event"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes

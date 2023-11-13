@@ -56,10 +56,13 @@ Custom FarmData2 Vue Components.
 
 - imports appear after `<script>` and before the component comment.
 
+  - This is where custom components are imported.
+
 - elements of the script should be in the order:
 
   - name
   - components - may be empty as Bootstrap-Vue-Next components are automatically imported.
+    - When using custom components they should be imported and then listed here.
   - emits
   - props
   - data

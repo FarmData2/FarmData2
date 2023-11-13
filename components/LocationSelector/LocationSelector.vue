@@ -1,7 +1,3 @@
-<script setup>
-import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
-</script>
-
 <template>
   <SelectorBase
     id="location-selector"
@@ -19,6 +15,7 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 </template>
 
 <script>
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -27,8 +24,20 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <LocationSelector
+ *   id="seeding-location"
+ *   data-cy="seeding-location"
+ *   required
+ *   includeGreenhouses
+ *   v-model:selected="form.location"
+ *   v-bind:showValidityStyling="validity.show"
+ *   v-on:valid="validity.location = $event"
+ *   v-on:ready="createdCount++"
+ *   v-on:error="
+ *     (msg) =>
+ *       uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+ *   "
+ * />
  * ```
  *
  * ## `data-cy` Attributes
@@ -39,7 +48,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  */
 export default {
   name: 'LocationSelector',
-  components: {},
+  components: { SelectorBase },
   emits: ['ready', 'update:selected', 'valid'],
   props: {
     /**
@@ -98,9 +107,17 @@ export default {
   },
   methods: {
     handleUpdateSelected(event) {
+      /**
+       * The selected location has changed.
+       * @property {string} event the name of the new selected location.
+       */
       this.$emit('update:selected', event);
     },
     handleValid(event) {
+      /**
+       * The validity of the selected location has changed.
+       * @property {boolean} event whether the selected location is valid or not.
+       */
       this.$emit('valid', event);
     },
   },

@@ -72,7 +72,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Usage Example
  *
  * ```html
- * CropSelector
+ * <CropSelector
  *   required
  *   v-model:selected="form.crop"
  *   v-bind:showInvalidStyling="validity.show"
