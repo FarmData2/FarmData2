@@ -186,9 +186,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#selector-input {
-  min-width: 192px;
-}
-</style>

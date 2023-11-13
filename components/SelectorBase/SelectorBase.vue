@@ -5,7 +5,6 @@
     label-for="crop-select"
     label-cols="auto"
     label-align="end"
-    content-cols="auto"
   >
     <template v-slot:label>
       <span data-cy="selector-label">{{ label }}:</span>

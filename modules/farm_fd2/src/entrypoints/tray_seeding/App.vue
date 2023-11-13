@@ -1,14 +1,3 @@
-<script setup>
-import dayjs from 'dayjs';
-import CropSelector from '@comps/CropSelector/CropSelector.vue';
-import DateSelector from '@comps/DateSelector/DateSelector.vue';
-import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
-import CommentBox from '@comps/CommentBox/CommentBox.vue';
-import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
-
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-</script>
-
 <template>
   <BToaster />
   <BCard
@@ -62,13 +51,9 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         "
       />
       <hr />
-      <p>Placeholder space for</p>
-      <ul>
-        <li>Trays</li>
-        <li>Tray Size</li>
-        <li>Seeds / Cell</li>
-        <li>Total Seeds</li>
-      </ul>
+
+      <InputPlayground />
+
       <hr />
       <!-- Comment Box -->
       <CommentBox
@@ -101,7 +86,24 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import CropSelector from '@comps/CropSelector/CropSelector.vue';
+import DateSelector from '@comps/DateSelector/DateSelector.vue';
+import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import CommentBox from '@comps/CommentBox/CommentBox.vue';
+import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
+
+import InputPlayground from '@comps/InputPlayground/InputPlayground.vue';
+
 export default {
+  components: {
+    CropSelector,
+    DateSelector,
+    LocationSelector,
+    CommentBox,
+    SubmitResetButtons,
+    InputPlayground,
+  },
   data() {
     return {
       form: {

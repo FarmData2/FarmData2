@@ -5,8 +5,6 @@
     label-for="crop-select"
     label-cols="auto"
     label-align="end"
-    content-cols="9"
-    content-cols-sm="auto"
   >
     <template v-slot:label>
       <span data-cy="crop-label">Crop:</span>

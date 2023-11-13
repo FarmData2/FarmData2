@@ -5,7 +5,6 @@
     label-for="date"
     label-cols="auto"
     label-align="end"
-    content-cols="auto"
   >
     <template v-slot:label>
       <span data-cy="date-label">Date:</span>
