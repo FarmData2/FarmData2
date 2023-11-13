@@ -97,11 +97,11 @@ export default {
     addLocationUrl() {
       // return the appropriate url for land, structure or just asset if both
       if (this.includeFields && this.includeGreenhouses) {
-        return 'http://farmos/asset/add';
+        return '/asset/add';
       } else if (this.includeFields) {
-        return 'http://farmos/asset/add/land';
+        return '/asset/add/land';
       } else {
-        return 'http://farmos/asset/add/structure';
+        return '/asset/add/structure';
       }
     },
   },

@@ -61,9 +61,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
             uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
         "
       />
-
       <hr />
-
       <p>Placeholder space for</p>
       <ul>
         <li>Trays</li>
@@ -71,9 +69,7 @@ import * as uiUtil from '@libs/uiUtil/uiUtil.js';
         <li>Seeds / Cell</li>
         <li>Total Seeds</li>
       </ul>
-
       <hr />
-
       <!-- Comment Box -->
       <CommentBox
         id="seeding-comment"
@@ -154,7 +150,7 @@ export default {
 @import url('@css/fd2-mobile.css');
 
 #seeding-date {
-  margin-top: 10px;
+  margin-top: 2px;
   margin-bottom: 8px;
 }
 

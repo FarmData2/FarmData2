@@ -2,10 +2,20 @@
  * This css adjusts and removes some of the default
  * farmOS and Bootstrap Vue next styling so that we 
  * get more screen real estate on small devices.
+ *
+ * It is designed to be the last piece imported and
+ * should override every other setting to ensure that
+ * the mobile pages are styled as intended.  Thus, all
+ * of the `!important`s.
  */
 
 #block-gin-page-title {
   display: none;
+}
+
+hr {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
 }
 
 h2.text-center {

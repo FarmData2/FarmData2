@@ -46,7 +46,7 @@
         <BButton
           data-cy="add-crop-button"
           variant="info"
-          href="http://farmos/admin/structure/taxonomy/manage/plant_type/add"
+          href="/admin/structure/taxonomy/manage/plant_type/add"
           >+</BButton
         >
       </BInputGroupAppend>
