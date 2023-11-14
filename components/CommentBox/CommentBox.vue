@@ -3,9 +3,9 @@
     id="comment-input"
     data-cy="comment-input"
     placeholder="Enter a comment..."
-    lazy-formatter
     lazy
     v-model="comment"
+    v-bind:formatter="(value) => value.trim()"
   />
 </template>
 
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       comment: '',
+      trimmedComment: '',
     };
   },
   computed: {
@@ -51,7 +52,7 @@ export default {
     comment() {
       /**
        * The comment has been edited.
-       * @property {String} comment the new comment.
+       * @property {String} comment the new comment trimmed of leading and trailing whitespace.
        */
       this.$emit('update:comment', this.comment);
     },

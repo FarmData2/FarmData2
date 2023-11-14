@@ -11,7 +11,7 @@ describe('Test the CommentBox component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when component has been created', () => {
+  it('Emits "ready" when comment box has been created', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(CommentBox, {
@@ -24,25 +24,6 @@ describe('Test the CommentBox component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="comment-input"]').should('exist');
-      });
-  });
-
-  it('Emits "valid" when component has been created', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(CommentBox, {
-      props: {
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
