@@ -27,8 +27,8 @@ describe('Test the CropSelector behaviors', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          cy.get('[data-cy="add-crop-button"]').should('exist');
-          cy.get('[data-cy="add-crop-button"]').click();
+          cy.get('[data-cy="selector-add-button"]').should('exist');
+          cy.get('[data-cy="selector-add-button"]').click();
           cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
         });
     });

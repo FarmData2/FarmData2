@@ -12,7 +12,18 @@ describe('Test the default CommentBox content', () => {
   });
 
   it('Check that the comment box is visible', () => {
-    cy.mount(CommentBox);
-    cy.get('[data-cy="comment-input"]').should('be.visible');
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CommentBox, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="comment-input"]').should('be.visible');
+      });
   });
 });

@@ -11,63 +11,77 @@ describe('Test the CropSelector content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check all of the data-cy elements exist', () => {
-    cy.mount(CropSelector);
+  it('Check for the SelectorBase element being used for the CropSelector', () => {
+    const readySpy = cy.spy().as('readySpy');
 
-    cy.get('[data-cy="crop-group"]').should('exist');
-    cy.get('[data-cy="crop-label"]').should('have.text', 'Crop:');
-    cy.get('[data-cy="required-star"]').should('not.exist');
-    cy.get('[data-cy="crop-select"]').should('exist');
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="option-0"]').should('have.value', '');
-    cy.get('[data-cy="add-crop-button"]').should('exist');
-    cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
-    cy.get('[data-cy="crop-invalid-feedback"]').should(
-      'contain.text',
-      'A crop selection is required.'
-    );
+    cy.mount(CropSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="crop-selector"]').should('exist');
+      });
   });
 
-  it('Test required prop', () => {
+  it('Check that required prop is false by default', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-required"]').should('not.exist');
+      });
+  });
+
+  it('Check that props are passed through to the SelectorBase', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(CropSelector, {
       props: {
         required: true,
+        onReady: readySpy,
       },
     });
-    cy.get('[data-cy="required-star"]').should('exist');
-    cy.get('[data-cy="required-star"]').should('have.text', '*');
 
-    // No styling should appear because show invalid is false and initially empty is okay.
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-label"]').should('have.text', 'Crop:');
+        cy.get('[data-cy="selector-required"]').should('have.text', '*');
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'contain.text',
+          'A crop is required'
+        );
+      });
   });
 
-  // it('Test showInvalidStyling true when not required', () => {
-  //   cy.mount(CropSelector, {
-  //     props: {
-  //       showValidityStyling: true,
-  //     },
-  //   });
+  it('Test add url for crops', () => {
+    const readySpy = cy.spy().as('readySpy');
 
-  //   // No styling should appear because empty is okay when not required.
-  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-invalid');
-  //   cy.get('[data-cy="crop-invalid-feedback"]').should('not.be.visible');
-  // });
+    cy.mount(CropSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+      },
+    });
 
-  // it('Test showInvalidStyling true when required', () => {
-  //   cy.mount(CropSelector, {
-  //     props: {
-  //       required: true,
-  //       showInvalidStyling: true,
-  //     },
-  //   });
-
-  //   // Styling should appear because empty is not okay when not required.
-  //   cy.get('[data-cy="crop-select"]').should('not.have.class', 'is-valid');
-  //   cy.get('[data-cy="crop-select"]').should('have.class', 'is-invalid');
-  //   cy.get('[data-cy="crop-invalid-feedback"]').should('be.visible');
-  // });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-add-button"]')
+          .should('have.attr', 'href')
+          .then((href) => href)
+          .should('eq', '/admin/structure/taxonomy/manage/plant_type/add');
+      });
+  });
 });

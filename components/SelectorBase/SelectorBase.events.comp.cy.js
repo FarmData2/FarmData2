@@ -11,21 +11,6 @@ describe('Test the SelectorBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when dropdown is created', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(SelectorBase, {
-      props: {
-        invalidFeedbackText: 'Invalid feedback text.',
-        label: `TheLabel`,
-        options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy').should('have.been.calledOnce');
-  });
-
   it('Emits "valid" with true on creation', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');

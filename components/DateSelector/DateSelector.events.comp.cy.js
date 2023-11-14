@@ -11,22 +11,6 @@ describe('Test the  DateSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when component has been created', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(DateSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="date-group"]').should('exist');
-      });
-  });
-
   it('Emits "valid" on creation', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');

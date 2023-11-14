@@ -125,23 +125,64 @@ Custom FarmData2 Vue Components.
   - `test.bash --comp --gui` - initially to run individual tests.
   - `test.bash --comp --glob="**/CompName/*.comp.cy.js"` - to run all test on the component headless.
 
+### Component Test Structure
+
+Each test file is structured as follows:
+
+```Javascript
+import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+
+describe('Test the default LocationSelector content', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
+  it('Check for the SelectorBase element', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="location-selector"]').should('exist');
+      });
+  });
+});
+```
+
+Note: Every test `it` should wait for the `ready` event to be emitted before performing any tests. In some components this will be immediately, in others it will wait for an API call to complete. This is included in all tests for consistency and to reduce test flake.
+
+### Component Tests Organization
+
 - Every component should have tests that:
 
   - These should be in approximately the order they can be written as a new component is created.
 
   - check static content (`*.content.comp.cy.js`)
 
-    - check the default configuration of the component (i.e. no props set)
+    - check everything that does not depend upon a prop change or an action.
       - e.g. check that all of the `data-cy` elements exist / `have.text` / `have .value` (as appropriate)
     - check that content set by static props (i.e. not watched)
       - e.g. check that the required element indicators are not present by default but can be added using the `required` prop.
-    - NOTE: Do not test content that relies on watched props or API requests.
+    - check that content is loaded via API calls.
+      - e.g. fields vs greenhouses in LocationSelector.
 
   - check events (`*.events.comp.cy.js`)
 
     - check that all events are emitted properly
 
-      - check that data is populated into elements (e.g. by API call) after `ready` is emitted.
+      - Note that the `ready` event is used in all tests so does not need to be tested separately.
       - check that `update:prop_name` and `valid` are emitted as appropriate.
       - include all error events (including network errors) are emitted properly
 
@@ -151,12 +192,11 @@ Custom FarmData2 Vue Components.
 
     - Give or point to examples that illustrate structure for:
 
-      - waiting for `ready` before doing more.
       - changing props.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 
-    - check that watched props have the proper effect.
+    - check that changing a reactive or watched prop has the proper effect.
 
       - e.g. changes to prop changes the component as desired.
       - e.g. watches and deep watches work.
@@ -164,8 +204,6 @@ Custom FarmData2 Vue Components.
     - check that actions in the component have the proper effect.
 
       - e.g. clicking buttons, validating value (required, length, values, format, etc.) etc.
-
-    - Do not retest things tested in events.
 
 ## Documenting components
 

@@ -1,65 +1,21 @@
 <template>
-  <BFormGroup
-    id="crop-group"
-    data-cy="crop-group"
-    label-for="crop-select"
-    label-cols="auto"
-    label-align="end"
-  >
-    <template v-slot:label>
-      <span data-cy="crop-label">Crop:</span>
-      <sup
-        data-cy="required-star"
-        v-if="required"
-        class="text-danger"
-        >*</sup
-      >
-    </template>
-
-    <BInputGroup>
-      <BFormSelect
-        id="crop-select"
-        data-cy="crop-select"
-        v-model="crop"
-        v-bind:state="validityStyling"
-        v-bind:required="required"
-      >
-        <template v-slot:first>
-          <BFormSelectOption
-            v-bind:value="null"
-            data-cy="option-0"
-            disabled
-          />
-        </template>
-        <BFormSelectOption
-          v-for="(crop, i) in cropList"
-          v-bind:key="crop"
-          v-bind:value="crop"
-          v-bind:data-cy="'option-' + (i + 1)"
-        >
-          {{ crop }}
-        </BFormSelectOption>
-      </BFormSelect>
-      <BInputGroupAppend>
-        <BButton
-          data-cy="add-crop-button"
-          variant="outline-success"
-          href="/admin/structure/taxonomy/manage/plant_type/add"
-          >+</BButton
-        >
-      </BInputGroupAppend>
-      <BFormInvalidFeedback
-        id="crop-invalid-feedback"
-        data-cy="crop-invalid-feedback"
-        v-bind:state="validityStyling"
-      >
-        A crop selection is required.
-      </BFormInvalidFeedback>
-    </BInputGroup>
-  </BFormGroup>
+  <SelectorBase
+    id="crop-selector"
+    data-cy="crop-selector"
+    label="Crop"
+    invalidFeedbackText="A crop is required"
+    v-bind:addOptionUrl="addCropUrl"
+    v-bind:options="cropList"
+    v-bind:required="required"
+    v-bind:selected="selected"
+    v-bind:showValidityStyling="showValidityStyling"
+    v-on:update:selected="handleUpdateSelected($event)"
+    v-on:valid="handleValid($event)"
+  />
 </template>
 
 <script>
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -87,18 +43,11 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * crop-group            | The `BFormGroup` component containing this component.
- * crop-label            | The `span` component containing the "Crop" label.
- * required-star         | The `*` that appears in the label if the input is required.
- * crop-select           | The `BFormSelect` component used to select a crop.
- * option-0              | The disabled blank option in the `BFormSelect` component.
- * option-n              | The nth option in the `BFormSelect` component [1...n].
- * add-crop-button       | The `BButton` component that redirects to the page for adding a new crop.
- * crop-invalid-feedback | The `BFormInvalidFeedback` component that displays help when input is invalid.
+ * crop-selector         | The `SelectorBase` component containing the dropdown.
  */
 export default {
   name: 'CropSelector',
-  components: {},
+  components: { SelectorBase },
   emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
@@ -126,49 +75,31 @@ export default {
   },
   data() {
     return {
-      cropList: null,
-      crop: this.selected,
+      cropList: [],
     };
   },
   computed: {
-    isValid() {
-      return this.crop != null;
-    },
-
-    validityStyling() {
-      const R = this.required;
-      const V = this.isValid;
-      const S = this.showValidityStyling;
-
-      if (V && S) {
-        return true;
-      } else if (R && !V && S) {
-        return false;
-      } else {
-        return null;
-      }
+    addCropUrl() {
+      return '/admin/structure/taxonomy/manage/plant_type/add';
     },
   },
-  methods: {},
-  watch: {
-    crop() {
+  methods: {
+    handleUpdateSelected(event) {
       /**
        * The selected crop has changed.
-       * @property {String} crop the name of the newly selected crop.
+       * @property {string} event the name of the new selected crop.
        */
-      this.$emit('update:selected', this.crop);
+      this.$emit('update:selected', event);
     },
-    selected() {
-      this.crop = this.selected;
-    },
-    isValid() {
+    handleValid(event) {
       /**
-       * The validity of the component has changed.  Also emitted when the component is created.
-       * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
+       * The validity of the selected crop has changed.
+       * @property {boolean} event whether the selected crop is valid or not.
        */
-      this.$emit('valid', this.isValid);
+      this.$emit('valid', event);
     },
   },
+  watch: {},
   created() {
     farmosUtil
       .getFarmOSInstance()
@@ -177,8 +108,6 @@ export default {
           .getCropNameToTermMap(farm)
           .then((cropMap) => {
             this.cropList = Array.from(cropMap.keys());
-            // Emit the initial valid state of the component's value.
-            this.$emit('valid', this.isValid);
 
             /**
              * The select has been populated with the list of crops and the component is ready to be used.

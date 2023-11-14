@@ -26,6 +26,8 @@ describe('Test the styling of the SelectorBase component', () => {
    */
 
   it('1. Not required - not empty - not showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: false,
@@ -34,15 +36,30 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
   it('2. Not required - not empty - showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: false,
@@ -51,15 +68,27 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
   it('3. Not required - empty - not showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: false,
@@ -68,15 +97,30 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
   it('4. Not required - empty - showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: false,
@@ -85,15 +129,30 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
   it('5. Required - not empty - not showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -102,15 +161,30 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
   it('6. Required - not empty - showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -119,15 +193,27 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
-  it('Required - empty - not showing', () => {
+  it('7. Required - empty - not showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -136,15 +222,30 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('not.be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
+        cy.get('[data-cy="selector-invalid-feedback"]').should(
+          'not.be.visible'
+        );
+      });
   });
 
-  it(' 8. Required - empty - showing', () => {
+  it('8. Required - empty - showing', () => {
+    const readySpy = cy.spy().as('readySpy');
+
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -153,11 +254,19 @@ describe('Test the styling of the SelectorBase component', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
       },
     });
 
-    cy.get('[data-cy="selector-input"]').should('not.have.class', 'is-valid');
-    cy.get('[data-cy="selector-input"]').should('have.class', 'is-invalid');
-    cy.get('[data-cy="selector-invalid-feedback"]').should('be.visible');
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should(
+          'not.have.class',
+          'is-valid'
+        );
+        cy.get('[data-cy="selector-input"]').should('have.class', 'is-invalid');
+        cy.get('[data-cy="selector-invalid-feedback"]').should('be.visible');
+      });
   });
 });
