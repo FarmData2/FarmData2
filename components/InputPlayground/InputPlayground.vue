@@ -8,17 +8,17 @@
     <BInputGroup id="trays-group">
       <BInputGroupPrepend>
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(-25)"
           >&#x27EA;</BButton
         >
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(-5)"
           >&#x27E8;</BButton
         >
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(-1)"
           >&#x2039;</BButton
         >
@@ -31,17 +31,17 @@
       />
       <BInputGroupAppend>
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(1)"
           >&#x203A;</BButton
         >
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(5)"
-          >&#x203A;</BButton
+          >&#x27E9;</BButton
         >
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickOne(25)"
           >&#x27EB;</BButton
         >
@@ -82,7 +82,7 @@
     <BInputGroup id="seeds-group">
       <BInputGroupPrepend>
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickTwo(-1)"
           >&#x2039;</BButton
         >
@@ -95,7 +95,7 @@
       />
       <BInputGroupAppend>
         <BButton
-          variant="outline-primary"
+          variant="outline-success"
           v-on:click="clickTwo(1)"
           >&#x203A;</BButton
         >
