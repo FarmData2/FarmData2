@@ -11,16 +11,12 @@ describe('Test the LocationSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when component has been created', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
+  it('Emits "ready" when component when locations have been fetched.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
       props: {
+        includeGreenhouses: true,
         onReady: readySpy,
       },
     });
@@ -28,7 +24,52 @@ describe('Test the LocationSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
+        cy.get('[data-cy="selector-input"] option').should('have.length', 6);
+        cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
+        cy.get('[data-cy="selector-option-5"]').should(
+          'have.text',
+          'SEEDING BENCH'
+        );
+      });
+  });
+
+  it('Test that "valid" event is propagated', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('Test that "update:selection" event is propagated', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', 'CHUAU');
       });
   });
 });

@@ -44,7 +44,7 @@
       <BInputGroupAppend v-if="addOptionUrl != null">
         <BButton
           data-cy="selector-add-button"
-          variant="info"
+          variant="outline-success"
           v-bind:href="addOptionUrl"
           >+</BButton
         >

@@ -43,7 +43,7 @@
       <BInputGroupAppend>
         <BButton
           data-cy="add-crop-button"
-          variant="info"
+          variant="outline-success"
           href="/admin/structure/taxonomy/manage/plant_type/add"
           >+</BButton
         >

@@ -59,7 +59,7 @@
       <CommentBox
         id="seeding-comment"
         data-cy="seeding-comment"
-        v-model="form.comment"
+        v-model:comment="form.comment"
         v-on:valid="validity.comment = $event"
         v-on:ready="createdCount++"
       />
