@@ -19,6 +19,7 @@ farmos
 getopt
 gids
 isready
+jsdoc
 jsdocrc
 linkcheck
 lintstagedrc
