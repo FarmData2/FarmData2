@@ -57,6 +57,13 @@ echo "$REL_INFO" | eval grep "$DB" > /dev/null
 error_check "Unable to verify that database asset exists."
 echo "  Database asset exists."
 
+if [ -f "$DB" ]; then
+  echo "Deleting existing database archives..."
+  rm /var/tmp/"$DB" 2 &> /dev/null
+  error_check "Unable to delete existing database archives."
+  echo "  Deleted."
+fi
+
 echo "Downloading database $DB from release $RELEASE..."
 gh release download \
   --repo FarmData2/FD2-SampleDBs \
