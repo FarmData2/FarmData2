@@ -178,7 +178,7 @@ module.exports = {
   'components/**/*.comp.cy.js': (files) => {
     return getCompTestCommandsForCyJsFiles(files);
   },
-  'library/**/!(*unit.cy).js': (files) => {
+  'library/!(cypress)/!(*unit.cy).js': (files) => {
     return getLibTestCommandsForVueFiles(files);
   },
   'library/**/*.unit.cy.js': (files) => {

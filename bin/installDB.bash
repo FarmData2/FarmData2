@@ -59,7 +59,7 @@ echo "  Database asset exists."
 
 if [ -f "$DB" ]; then
   echo "Deleting existing database archives..."
-  rm /var/tmp/"$DB" 2&> /dev/null
+  rm /var/tmp/"$DB" 2 &> /dev/null
   error_check "Unable to delete existing database archives."
   echo "  Deleted."
 fi

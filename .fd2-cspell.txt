@@ -7,6 +7,7 @@ CHUAU
 contconf
 conventionalcommits
 datacy
+docdash
 docgen
 dockercompose
 dockerlint
@@ -18,12 +19,18 @@ farmos
 getopt
 gids
 isready
+jsdoc
 jsdocrc
 linkcheck
 lintstagedrc
+localstorage
 mfinelli
+Michal
+mryhryki
 novnc
 pgid
+pietmichal
+Pietraszko
 pinia
 preprocess
 readlink
@@ -33,6 +40,7 @@ setsid
 shellcheck
 shfmt
 toplevel
+unplugin
 vite
 vuejs
 vuese

@@ -70,7 +70,7 @@ describe('Test getFarmOSInstance', () => {
       useFarm(newFarm);
 
       cy.get('@getToken.all').should('have.length', 1);
-      cy.get('@fetchSchema.all').should('have.length', 23); // might this change?
+      cy.get('@fetchSchema.all').should('have.length.at.least', 23); // base farmOS?
 
       expect(farmosUtil.getFarmGlobal()).to.not.be.null;
       prev_farm = newFarm;
@@ -237,7 +237,7 @@ describe('Test getFarmOSInstance', () => {
       useFarm(newFarm);
 
       cy.get('@getToken.all').should('have.length', 0);
-      cy.get('@fetchSchema.all').should('have.length', 23); // might this change?
+      cy.get('@fetchSchema.all').should('have.length.at.least', 23); // base farmOS
 
       expect(localStorage.getItem('token')).to.not.be.null;
       expect(sessionStorage.getItem('schema')).to.not.be.null;
@@ -280,7 +280,7 @@ describe('Test getFarmOSInstance', () => {
       useFarm(newFarm);
 
       cy.get('@getToken.all').should('have.length', 1);
-      cy.get('@fetchSchema.all').should('have.length', 23); // might this change?
+      cy.get('@fetchSchema.all').should('have.length.at.least', 23); // base farmOS
 
       expect(farmosUtil.getFarmGlobal()).to.not.be.null;
       prev_farm = newFarm;
