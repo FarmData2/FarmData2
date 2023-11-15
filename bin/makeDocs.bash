@@ -33,7 +33,7 @@ echo "" >> "$INDEX_PATH"
 echo "    Added."
 
 safe_cd "$REPO_ROOT_DIR/components"
-DIRS=$(ls -d ./*/)
+DIRS=$(ls -d -- */)
 safe_cd "$REPO_ROOT_DIR"
 
 for DIR in $DIRS; do                     # Names of the components with a trailing /
@@ -79,7 +79,7 @@ echo "" >> "$INDEX_PATH"
 echo "    Added."
 
 safe_cd "$REPO_ROOT_DIR/library"
-LIBS=$(ls -d ./*/)
+LIBS=$(ls -d -- */)
 safe_cd "$REPO_ROOT_DIR"
 
 for LIB in $LIBS; do                      # Names of the libraries with a trailing /
