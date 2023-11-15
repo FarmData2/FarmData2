@@ -12,6 +12,7 @@ module.exports = defineConfig({
   screenshotOnRunFailure: false,
   video: false,
   trashAssetsBeforeRuns: true,
+  chromeWebSecurity: false,
   e2e: {
     specPattern: 'src/entrypoints/**/*.cy.js',
   },

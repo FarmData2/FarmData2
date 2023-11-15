@@ -164,6 +164,7 @@ echo ""
 
 # Make the directory for the entrypoint and populate it with the template files.
 mkdir "$ENTRY_POINT_SRC_DIR"
+error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
 echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
@@ -180,6 +181,9 @@ cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
 echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
+
+cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
+echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
