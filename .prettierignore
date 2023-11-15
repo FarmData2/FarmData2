@@ -3,5 +3,10 @@ package-lock.json
 node_modules
 docker/db
 bin/templates/entrypoints/*.yml
+bin/templates/component
 licenses
 CHANGELOG.md
+docs/library
+docs/components
+docs/FarmData2.md
+modules/**/components.d.ts
