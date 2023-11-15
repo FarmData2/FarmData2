@@ -25,7 +25,7 @@
  * `attr-value`          | identify element with the `data-cy="attr-value"`
  */
 export default {
-  name: '%COMPONENT_NAME%',
+  name: 'NumericInput',
   components: {},
   emits: ['ready', 'valid'],
   props: {
@@ -58,9 +58,9 @@ export default {
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
       /*
-       * Edit this computed property to indicted the type of styling that should be applied 
+       * Edit this computed property to indicted the type of styling that should be applied
        * to the component based upon `required`, `isValid`, `showInvalidStyling`.
-       * 
+       *
        * Bind this computed property to the `state` prop of the components to be styled.
        */
       return false;
