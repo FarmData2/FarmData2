@@ -24,9 +24,12 @@ linkcheck
 lintstagedrc
 localstorage
 mfinelli
+Michal
 mryhryki
 novnc
 pgid
+pietmichal
+Pietraszko
 pinia
 preprocess
 readlink
