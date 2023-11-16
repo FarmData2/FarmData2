@@ -11,28 +11,27 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "ready" when component has been created', () => {
+  it('Emits "valid" when component has been created', () => {
     /*
      * See `components/README.md` for information about component testing.
      * See other components in the `components/` directory for examples.
      */
 
     const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
 
     cy.mount(%COMPONENT_NAME%, {
       props: {
         onReady: readySpy,
+        onValid: validSpy,
       },
     });
 
     cy.get('@readySpy')
     .should('have.been.calledOnce')
     .then(() => {
-      cy.get('[data-cy="new-comp-group"]').should('exist');
-      cy.get('[data-cy="placeholder"]').should(
-        'have.text',
-        'Component content goes here.'
-      );
+      cy.get('@validSpy').shoud('have.been.calledOnce');
+      cy.get('@validSpy').shoud('have.been.calledWith', true);
     });
   });
 });
