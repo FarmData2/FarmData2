@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-
 /**
  * A new component.
  *
