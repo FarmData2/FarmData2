@@ -178,6 +178,11 @@ Note: Every test `it` should wait for the `ready` event to be emitted before per
     - check that content is loaded via API calls.
       - e.g. fields vs greenhouses in LocationSelector.
 
+  - check styling (`*.styling.comp.cy.js`)
+
+    - check that the valid/invalid styling is applied as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
+    - if component uses a sub-component (e.g. `SelectorBase`) then just check that the `showValidityStyling` prop is passed, because the sub-component will have tested the actual styling that is applied.
+
   - check events (`*.events.comp.cy.js`)
 
     - check that all events are emitted properly

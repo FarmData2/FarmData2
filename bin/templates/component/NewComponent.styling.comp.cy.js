@@ -1,6 +1,6 @@
 import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
 
-describe('Test the default %COMPONENT_NAME% content', () => {
+describe('Test the %COMPONENT_NAME% component styling', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -11,7 +11,7 @@ describe('Test the default %COMPONENT_NAME% content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check all of the default data-cy elements', () => {
+  it('Add tests for styling here', () => {
     /*
      * See `components/README.md` for information about component testing.
      * See other components in the `components/` directory for examples.
@@ -27,10 +27,13 @@ describe('Test the default %COMPONENT_NAME% content', () => {
     cy.get('@readySpy')
     .should('have.been.calledOnce')
     .then(() => {
-      cy.get('[data-cy="new-comp-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
-        'have.text',
-        'Component content goes here.'
+        'not.have.class',
+        'is-valid'
+      );
+      cy.get('[data-cy="placeholder"]').should(
+        'not.have.class',
+        'is-invalid'
       );
     });
   });
