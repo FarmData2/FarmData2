@@ -58,13 +58,29 @@
         data-cy="seeding-trays"
         required
         label="Trays"
-        invalidFeedbackText="Trays must be a positive number."
+        invalidFeedbackText="Trays must be positive."
         v-model:value="form.trays"
         v-bind:showValidityStyling="validity.show"
         v-bind:decimalPlaces="2"
         v-bind:incDecValues="[1, 5, 20]"
         v-bind:minValue="0.01"
         v-on:valid="validity.trays = $event"
+        v-on:ready="createdCount++"
+      />
+
+      <!-- Number of Seed / Cell -->
+      <NumericInput
+        id="seeding-seeds"
+        data-cy="seeding-seeds"
+        required
+        label="Seeds/Cell"
+        invalidFeedbackText="Seeds must be positive."
+        v-model:value="form.seeds"
+        v-bind:showValidityStyling="validity.show"
+        v-bind:decimalPlaces="0"
+        v-bind:incDecValues="[1]"
+        v-bind:minValue="1"
+        v-on:valid="validity.seeds = $event"
         v-on:ready="createdCount++"
       />
 
@@ -124,6 +140,7 @@ export default {
         crop: null,
         location: null,
         trays: 1,
+        seeds: 1,
         comment: null,
       },
       validity: {
@@ -132,6 +149,7 @@ export default {
         crop: false,
         location: false,
         trays: false,
+        seeds: false,
         comment: false,
       },
       enableSubmit: true,
@@ -150,12 +168,13 @@ export default {
       this.form.crop = null;
       this.form.location = null;
       this.form.trays = 1;
+      this.form.seeds = 1;
       this.form.comment = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 7;
+      return this.createdCount == 8;
     },
   },
   created() {
@@ -174,6 +193,11 @@ export default {
 
 #seeded-crop,
 #seeding-location {
+  margin-bottom: 8px;
+}
+
+#seeding-trays {
+  margin-top: 2px;
   margin-bottom: 8px;
 }
 
