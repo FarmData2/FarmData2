@@ -103,8 +103,20 @@ import { BButton } from 'bootstrap-vue-next';
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <NumericInput
+ *   id="seeding-trays"
+ *   data-cy="seeding-trays"
+ *   required
+ *   label="Trays"
+ *   invalidFeedbackText="Trays must be positive."
+ *   v-model:value="form.trays"
+ *   v-bind:showValidityStyling="validity.show"
+ *   v-bind:decimalPlaces="2"
+ *   v-bind:incDecValues="[1, 5, 20]"
+ *   v-bind:minValue="0.01"
+ *   v-on:valid="validity.trays = $event"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
