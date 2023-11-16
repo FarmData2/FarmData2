@@ -52,7 +52,21 @@
       />
       <hr />
 
-      <InputPlayground />
+      <!-- Number of Trays -->
+      <NumericInput
+        id="seeding-trays"
+        data-cy="seeding-trays"
+        required
+        label="Trays"
+        invalidFeedbackText="Trays must be a positive number."
+        v-model:value="form.trays"
+        v-bind:showValidityStyling="validity.show"
+        v-bind:decimalPlaces="2"
+        v-bind:incDecValues="[1, 5, 20]"
+        v-bind:minValue="0.01"
+        v-on:valid="validity.trays = $event"
+        v-on:ready="createdCount++"
+      />
 
       <hr />
       <!-- Comment Box -->
@@ -90,19 +104,18 @@ import dayjs from 'dayjs';
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import NumericInput from '@comps/NumericInput/NumericInput.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
-
-import InputPlayground from '@comps/InputPlayground/InputPlayground.vue';
 
 export default {
   components: {
     CropSelector,
     DateSelector,
     LocationSelector,
+    NumericInput,
     CommentBox,
     SubmitResetButtons,
-    InputPlayground,
   },
   data() {
     return {
@@ -110,6 +123,7 @@ export default {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         crop: null,
         location: null,
+        trays: 1,
         comment: null,
       },
       validity: {
@@ -117,6 +131,7 @@ export default {
         seedingDate: false,
         crop: false,
         location: false,
+        trays: false,
         comment: false,
       },
       enableSubmit: true,
@@ -134,12 +149,13 @@ export default {
       this.form.seedingDate = dayjs().format('YYYY-MM-DD');
       this.form.crop = null;
       this.form.location = null;
+      this.form.trays = 1;
       this.form.comment = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 6;
+      return this.createdCount == 7;
     },
   },
   created() {
