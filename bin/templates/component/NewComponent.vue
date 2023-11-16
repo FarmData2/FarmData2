@@ -51,7 +51,8 @@ export default {
     isValid() {
       /*
        * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.
+       * or false if it is invalid.  This should account for whether the value is 
+       * required or not if necessary.
        */
       return false;
     },
@@ -59,7 +60,8 @@ export default {
     validityStyling() {
       /*
        * Edit this computed property to indicted the type of styling that should be applied 
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`.
+       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
+       * other criteria that is necessary.
        * 
        * Bind this computed property to the `state` prop of the components to be styled.
        */
