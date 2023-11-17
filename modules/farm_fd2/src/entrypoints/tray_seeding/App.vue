@@ -90,12 +90,21 @@
         required
         label="Seeds/Cell"
         invalidFeedbackText="Seeds must be positive."
-        v-model:value="form.seeds"
+        v-model:value="form.seedsPerCell"
         v-bind:showValidityStyling="validity.show"
         v-bind:decimalPlaces="0"
         v-bind:incDecValues="[1]"
         v-bind:minValue="1"
-        v-on:valid="validity.seeds = $event"
+        v-on:valid="validity.seedsPerCell = $event"
+        v-on:ready="createdCount++"
+      />
+
+      <!-- Total Seeds -->
+      <TextDisplay
+        id="seeding-total-seeds"
+        data-cy="seeding-total-seeds"
+        label="Total Seeds"
+        v-bind:text="totalSeeds"
         v-on:ready="createdCount++"
       />
 
@@ -137,6 +146,7 @@ import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
 import TraySizeSelector from '@comps/TraySizeSelector/TraySizeSelector.vue';
+import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
@@ -147,6 +157,7 @@ export default {
     LocationSelector,
     NumericInput,
     TraySizeSelector,
+    TextDisplay,
     CommentBox,
     SubmitResetButtons,
   },
@@ -158,7 +169,7 @@ export default {
         location: null,
         trays: 1,
         traySize: null,
-        seeds: 1,
+        seedsPerCell: 1,
         comment: null,
       },
       validity: {
@@ -168,13 +179,25 @@ export default {
         location: false,
         trays: false,
         traySize: false,
-        seeds: false,
+        seedsPerCell: false,
         comment: false,
       },
       enableSubmit: true,
       enableReset: true,
       createdCount: 0,
     };
+  },
+  computed: {
+    totalSeeds() {
+      return (
+        this.form.trays *
+        parseFloat(this.form.traySize) *
+        this.form.seedsPerCell
+      );
+    },
+    pageDoneLoading() {
+      return this.createdCount == 9;
+    },
   },
   methods: {
     submit() {
@@ -190,11 +213,6 @@ export default {
       this.form.traySize = null;
       this.form.seeds = 1;
       this.form.comment = null;
-    },
-  },
-  computed: {
-    pageDoneLoading() {
-      return this.createdCount == 9;
     },
   },
   created() {
@@ -213,7 +231,8 @@ export default {
 
 #seeded-crop,
 #seeding-location,
-#seeding-tray-size {
+#seeding-tray-size,
+#seeding-seeds {
   margin-bottom: 8px;
 }
 
