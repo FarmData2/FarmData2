@@ -31,7 +31,7 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     .should('have.been.calledOnce')
     .then(() => {
       cy.get('@validSpy').shoud('have.been.calledOnce');
-      cy.get('@validSpy').shoud('have.been.calledWith', true);
+      cy.get('@validSpy').shoud('have.been.calledWith', false);
     });
   });
 });
