@@ -193,7 +193,7 @@ export default {
         this.form.trays *
         parseFloat(this.form.traySize) *
         this.form.seedsPerCell
-      );
+      ).toString();
     },
     pageDoneLoading() {
       return this.createdCount == 9;
