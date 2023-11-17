@@ -13,6 +13,7 @@
       id="text-text"
       data-cy="text-text"
       disabled
+      plaintext
       v-model="displayText"
     />
   </BFormGroup>
@@ -61,11 +62,19 @@ export default {
   },
   data() {
     return {
-      displayText: this.text,
+      displayText: this.processedText(),
     };
   },
   computed: {},
-  methods: {},
+  methods: {
+    processedText() {
+      if (this.text == null) {
+        return '';
+      } else {
+        return this.text;
+      }
+    },
+  },
   watch: {},
   created() {
     /**
