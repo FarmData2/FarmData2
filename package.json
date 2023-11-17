@@ -2,6 +2,7 @@
   "name": "fd2",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev:fd2": "vite --config modules/farm_fd2/vite.config.js",
     "dev:examples": "vite --config modules/farm_fd2_examples/vite.config.js",
@@ -27,7 +28,8 @@
     "tgz:fd2": "tar -C modules/farm_fd2/dist/ -czf modules/farm_fd2/dist/farmdata2.tar.gz farmdata2",
     "zip:fd2": "cd modules/farm_fd2/dist/; zip -r farmdata2.zip farmdata2",
     "docs:gen": "makeDocs.bash",
-    "docs:view": "npx @mryhryki/markdown-preview --file docs/FarmData2.md --port 8082"
+    "docs:view": "npx @mryhryki/markdown-preview --file docs/FarmData2.md --port 8082",
+    "printlog": "node bin/printFarmosLogs"
   },
   "dependencies": {
     "bootstrap": "^5.3.2",
