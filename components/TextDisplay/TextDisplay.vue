@@ -25,6 +25,8 @@
  *
  * The text is displayed in a disabled `<BFormInput>` element.
  *
+ * If the `text` prop is `null` or is the string `'NaN'`, the text will be displayed as an empty string.
+ *
  * ## Usage Example
  *
  * ```html
@@ -68,7 +70,7 @@ export default {
   computed: {},
   methods: {
     processedText() {
-      if (this.text == null) {
+      if (this.text == null || this.text == 'NaN') {
         return '';
       } else {
         return this.text;

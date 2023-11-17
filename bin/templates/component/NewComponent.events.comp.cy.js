@@ -28,10 +28,10 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     });
 
     cy.get('@readySpy')
-    .should('have.been.calledOnce')
-    .then(() => {
-      cy.get('@validSpy').shoud('have.been.calledOnce');
-      cy.get('@validSpy').shoud('have.been.calledWith', false);
-    });
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
   });
 });
