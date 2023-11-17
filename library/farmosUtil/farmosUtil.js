@@ -488,3 +488,72 @@ export async function getCropIdToTermMap(farm) {
 
   return map;
 }
+
+/**
+ * Get taxonomy term objects for all of the tray sizes.
+ * These are the taxonomy terms of type `taxonomy_term--tray_size`.
+ * The tray sizes will appear in numerical order
+ * by the value of the `attributes.name` property.
+ *
+ * NOTE: This function makes an API call to the farmOS host.  Thus,
+ * if the array is to be used multiple times it should be cached
+ * by the calling code.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @throws {Error} if unable to fetch the tray sizes.
+ * @returns an array of all of taxonomy terms representing tray sizes.
+ */
+export async function getTraySizes(farm) {
+  const traySizes = await farm.term.fetch({
+    filter: {
+      type: 'taxonomy_term--tray_size',
+    },
+    limit: Infinity,
+  });
+
+  if (traySizes.rejected.length != 0) {
+    throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
+  }
+
+  traySizes.data.sort((o1, o2) => {
+    let size1 = parseFloat(o1.attributes.name);
+    let size2 = parseFloat(o2.attributes.name);
+    return size1 - size2;
+  });
+
+  return traySizes.data;
+}
+
+/**
+ * Get a map from the name of a tray size taxonomy term to the
+ * farmOS taxonomy term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link getTraySizes}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the tray size `name` to the `taxonomy_term--tray-size` object.
+ */
+export async function getTraySizeToTermMap(farm) {
+  const sizes = await getTraySizes(farm);
+
+  const map = new Map(sizes.map((sz) => [sz.attributes.name, sz]));
+
+  return map;
+}
+
+/**
+ * Get a map from the id of a tray size taxonomy term to the
+ * farmOS taxonomy term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link getTraySizes}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the tray size `id` to the `taxonomy_term--tray_size` object.
+ */
+export async function getTraySizeIdToTermMap(farm) {
+  const sizes = await getTraySizes(farm);
+
+  const map = new Map(sizes.map((sz) => [sz.id, sz]));
+
+  return map;
+}
