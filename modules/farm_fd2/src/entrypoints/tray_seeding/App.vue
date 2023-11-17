@@ -122,8 +122,8 @@
       <SubmitResetButtons
         id="seeding-submit-reset"
         data-cy="seeding-submit-reset"
-        v-model:enableSubmit="enableSubmit"
-        v-model:enableReset="enableReset"
+        v-bind:enableSubmit="enableSubmit"
+        v-bind:enableReset="true"
         v-on:ready="createdCount++"
         v-on:submit="submit()"
         v-on:reset="reset()"
@@ -183,7 +183,6 @@ export default {
         comment: false,
       },
       enableSubmit: true,
-      enableReset: true,
       createdCount: 0,
     };
   },
@@ -193,7 +192,7 @@ export default {
         this.form.trays *
         parseFloat(this.form.traySize) *
         this.form.seedsPerCell
-      ).toString();
+      ).toLocaleString(undefined);
     },
     pageDoneLoading() {
       return this.createdCount == 9;
@@ -202,7 +201,12 @@ export default {
   methods: {
     submit() {
       this.validity.show = true;
-      console.log(this.form);
+
+      if (Object.values(this.validity).every((item) => item === true)) {
+        console.log(this.form);
+      } else {
+        this.enableSubmit = false;
+      }
     },
     reset() {
       this.validity.show = false;
@@ -211,8 +215,19 @@ export default {
       this.form.location = null;
       this.form.trays = 1;
       this.form.traySize = null;
-      this.form.seeds = 1;
+      this.form.seedsPerCell = 1;
       this.form.comment = null;
+      this.enableSubmit = true;
+    },
+  },
+  watch: {
+    validity: {
+      handler() {
+        if (Object.values(this.validity).every((item) => item === true)) {
+          this.enableSubmit = true;
+        }
+      },
+      deep: true,
     },
   },
   created() {
