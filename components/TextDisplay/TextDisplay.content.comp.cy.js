@@ -12,14 +12,12 @@ describe('Test the default TextDisplay content', () => {
   });
 
   it('Check all of the default data-cy elements', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(TextDisplay, {
       props: {
+        label: 'Test Label',
+        text: 'Test Text',
         onReady: readySpy,
       },
     });
@@ -27,11 +25,27 @@ describe('Test the default TextDisplay content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="new-comp-group"]').should('exist');
-        cy.get('[data-cy="placeholder"]').should(
-          'have.text',
-          'Component content goes here.'
-        );
+        cy.get('[data-cy="text-label"]').should('have.text', 'Test Label:');
+        cy.get('[data-cy="text-text"]').should('have.value', 'Test Text');
+      });
+  });
+
+  it('Check null text renders as empty string', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(TextDisplay, {
+      props: {
+        label: 'Test Label',
+        text: null,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="text-label"]').should('have.text', 'Test Label:');
+        cy.get('[data-cy="text-text"]').should('have.value', '');
       });
   });
 });

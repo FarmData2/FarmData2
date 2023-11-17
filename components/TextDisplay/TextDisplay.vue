@@ -1,15 +1,29 @@
 <template>
   <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
+    id="text-group"
+    data-cy="text-group"
+    v-bind:label="label"
+    label-for="text-text"
+    label-cols="auto"
   >
-    <p data-cy="placeholder">Component content goes here.</p>
+    <template v-slot:label>
+      <span data-cy="text-label">{{ label }}:</span>
+    </template>
+    <BFormInput
+      id="text-text"
+      data-cy="text-text"
+      disabled
+      plaintext
+      v-model="displayText"
+    />
   </BFormGroup>
 </template>
 
 <script>
 /**
- * A new component.
+ * A TextDisplay component provides a UI element for displaying a labeled text string.
+ *
+ * The text is displayed in a disabled `<BFormInput>` element.
  *
  * ## Usage Example
  *
@@ -22,66 +36,47 @@
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * `text-group`          | the `BFormGroup` component containing the text display.
+ * `text-label`          | the `span` component containing the label for the displayed text.
+ * `text-text`           | the disabled `BFormInput` component used to display the text.
  */
 export default {
   name: 'TextDisplay',
   components: {},
-  emits: ['ready', 'valid'],
+  emits: ['ready'],
   props: {
     /**
-     * Whether a value for the input element is required or not.
+     * The label for the text that is displayed.
      */
-    required: {
-      type: Boolean,
-      default: false,
+    label: {
+      type: String,
+      required: true,
     },
     /**
-     * Whether validity styling should appear on input elements.
+     * The text that is to be displayed.
      */
-    showValidityStyling: {
-      type: Boolean,
-      default: false,
+    text: {
+      type: String,
+      required: true,
     },
   },
   data() {
-    return {};
+    return {
+      displayText: this.processedText(),
+    };
   },
-  computed: {
-    isValid() {
-      /*
-       * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.  This should account for whether the value is
-       * required or not if necessary.
-       */
-      return false;
-    },
-    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validityStyling() {
-      /*
-       * Edit this computed property to indicted the type of styling that should be applied
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
-       * other criteria that is necessary.
-       *
-       * Bind this computed property to the `state` prop of the components to be styled.
-       */
-      return false;
+  computed: {},
+  methods: {
+    processedText() {
+      if (this.text == null) {
+        return '';
+      } else {
+        return this.text;
+      }
     },
   },
-  methods: {},
-  watch: {
-    isValid() {
-      /**
-       * The validity of the component has changed.  Also emitted when the component is created.
-       * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
-       */
-      this.$emit('valid', this.isValid);
-    },
-  },
+  watch: {},
   created() {
-    //Emit the initial valid state of the component's value.
-    this.$emit('valid', this.isValid);
-
     /**
      * The component is ready for use.
      */
