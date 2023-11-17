@@ -14,7 +14,7 @@
       data-cy="text-text"
       disabled
       plaintext
-      v-model="displayText"
+      v-model="processedText"
     />
   </BFormGroup>
 </template>
@@ -62,13 +62,8 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      displayText: this.processedText(),
-    };
-  },
-  computed: {},
-  methods: {
+  data() {},
+  computed: {
     processedText() {
       if (this.text == null || this.text == 'NaN') {
         return '';
@@ -77,6 +72,7 @@ export default {
       }
     },
   },
+  methods: {},
   watch: {},
   created() {
     /**
