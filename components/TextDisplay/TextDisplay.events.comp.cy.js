@@ -1,6 +1,6 @@
-import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
+import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 
-describe('Test the %COMPONENT_NAME% component events', () => {
+describe('Test the TextDisplay component events', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -20,7 +20,7 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(%COMPONENT_NAME%, {
+    cy.mount(TextDisplay, {
       props: {
         onReady: readySpy,
         onValid: validSpy,

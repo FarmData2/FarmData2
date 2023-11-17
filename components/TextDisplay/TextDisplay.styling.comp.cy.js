@@ -1,6 +1,6 @@
-import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
+import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 
-describe('Test the %COMPONENT_NAME% component events', () => {
+describe('Test the TextDisplay component styling', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -11,27 +11,27 @@ describe('Test the %COMPONENT_NAME% component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" when component has been created', () => {
+  it('Add tests for styling here', () => {
     /*
      * See `components/README.md` for information about component testing.
      * See other components in the `components/` directory for examples.
      */
-
     const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(%COMPONENT_NAME%, {
+    cy.mount(TextDisplay, {
       props: {
         onReady: readySpy,
-        onValid: validSpy,
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', false);
+        cy.get('[data-cy="placeholder"]').should('not.have.class', 'is-valid');
+        cy.get('[data-cy="placeholder"]').should(
+          'not.have.class',
+          'is-invalid'
+        );
       });
   });
 });
