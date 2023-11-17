@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {}
+name: 'Tray Size'
+vid: tray_size
+description: 'Seeding tray sizes.'
+weight: 0
