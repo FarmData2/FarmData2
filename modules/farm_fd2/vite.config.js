@@ -28,6 +28,10 @@ let viteConfig = {
           dest: 'src/',
         },
         {
+          src: '../module/config',
+          dest: '.',
+        },
+        {
           src: '../composer.json',
           dest: '.',
         },

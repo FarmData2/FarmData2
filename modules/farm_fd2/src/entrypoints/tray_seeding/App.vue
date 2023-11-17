@@ -68,6 +68,21 @@
         v-on:ready="createdCount++"
       />
 
+      <!-- Tray Size -->
+      <TraySizeSelector
+        id="seeding-tray-size"
+        data-cy="seeding-tray-size"
+        required
+        v-model:selected="form.traySize"
+        v-bind:showValidityStyling="validity.show"
+        v-on:valid="validity.traySize = $event"
+        v-on:ready="createdCount++"
+        v-on:error="
+          (msg) =>
+            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+        "
+      />
+
       <!-- Number of Seed / Cell -->
       <NumericInput
         id="seeding-seeds"
@@ -121,6 +136,7 @@ import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
+import TraySizeSelector from '@comps/TraySizeSelector/TraySizeSelector.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
@@ -130,6 +146,7 @@ export default {
     DateSelector,
     LocationSelector,
     NumericInput,
+    TraySizeSelector,
     CommentBox,
     SubmitResetButtons,
   },
@@ -140,6 +157,7 @@ export default {
         crop: null,
         location: null,
         trays: 1,
+        traySize: null,
         seeds: 1,
         comment: null,
       },
@@ -149,6 +167,7 @@ export default {
         crop: false,
         location: false,
         trays: false,
+        traySize: false,
         seeds: false,
         comment: false,
       },
@@ -168,13 +187,14 @@ export default {
       this.form.crop = null;
       this.form.location = null;
       this.form.trays = 1;
+      this.form.traySize = null;
       this.form.seeds = 1;
       this.form.comment = null;
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 8;
+      return this.createdCount == 9;
     },
   },
   created() {
@@ -192,7 +212,8 @@ export default {
 }
 
 #seeded-crop,
-#seeding-location {
+#seeding-location,
+#seeding-tray-size {
   margin-bottom: 8px;
 }
 
