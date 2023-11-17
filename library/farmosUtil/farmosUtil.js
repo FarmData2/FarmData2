@@ -8,31 +8,35 @@
  */
 
 import farmOS from 'farmos';
-//import { LocalStorage } from 'node-localstorage';
+import { LocalStorage } from 'node-localstorage';
 
-//import { dirname } from 'path';
-//import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Handle the localStorage in a way that will accommodate running
  * in both node.js and a web browser.  In node.js we need to create
  * our own localStorage, where as in a browser it already exists.
  */
-// function getLocalStorage() {
-//   let ls = null;
-//   try {
-//     localStorage;
-//   } catch (e) {
-//     const rootDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-//     ls = new LocalStorage(rootDir + '/scratch');
-//   }
+function getLocalStorage() {
+  let ls = null;
+  try {
+    localStorage;
+  } catch (e) {
+    const rootDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
+    ls = new LocalStorage(rootDir + '/scratch');
+  }
 
-//   if (ls == null) {
-//     ls = localStorage;
-//   }
+  if (ls == null) {
+    ls = localStorage;
+  }
 
-//   return ls;
-// }
+  return ls;
+}
+
+function getSessionStorage() {
+  return getLocalStorage();
+}
 
 /*
  * Ensure that we only create one instance of the farmOS object
@@ -90,11 +94,11 @@ export async function getFarmOSInstance(
   const config = {
     host: hostURL,
     clientId: client,
-    //getToken: () => JSON.parse(getLocalStorage().getItem('token')),
-    getToken: () => JSON.parse(localStorage.getItem('token')),
+    getToken: () => JSON.parse(getLocalStorage().getItem('token')),
+    //getToken: () => JSON.parse(localStorage.getItem('token')),
     setToken: (token) =>
-      //getLocalStorage().setItem('token', JSON.stringify(token)),
-      localStorage.setItem('token', JSON.stringify(token)),
+      getLocalStorage().setItem('token', JSON.stringify(token)),
+      //localStorage.setItem('token', JSON.stringify(token)),
   };
   const options = { remote: config };
 
@@ -125,13 +129,13 @@ export async function getFarmOSInstance(
   // Only set the schema if this is a new farm object.
   if (newfarm) {
     //Try the session storage first...
-    let schema = JSON.parse(sessionStorage.getItem('schema'));
+    let schema = JSON.parse(getSessionStorage().getItem('schema'));
     if (schema == null) {
       // Not in session storage, so fetch schema from the farmOS host.
       await global_farm.schema.fetch();
       schema = global_farm.schema.get();
       // Cache in the session storage for next time.
-      sessionStorage.setItem('schema', JSON.stringify(schema));
+      getSessionStorage().setItem('schema', JSON.stringify(schema));
     }
     await global_farm.schema.set(schema);
   }

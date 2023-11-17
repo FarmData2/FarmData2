@@ -1,6 +1,6 @@
 /** @module farmosUtil */
 
-import * as farmosUtil from './farmosUtil.js';
+import * as farmosUtil from '../library/farmosUtil/farmosUtil.js';
 
 /*
  * Setup the information for connecting to the farmOS instance
@@ -18,31 +18,13 @@ const pass = 'admin';
  */
 const farm = await farmosUtil.getFarmOSInstance(URL, client, user, pass);
 
-const logTypes = [
-  'asset--water',
-  'asset--animal',
-  'asset--equipment',
-  'asset--plant',
-  'asset--land',
-  'asset--structure',
-  'file--file',
-  'log--input',
-  'log--observation',
-  'log--maintenance',
-  'log--activity',
-  'log--harvest',
-  'log--seeding',
-  'quantity--material',
-  'quantity--standard',
-  'taxonomy_term--animal_type',
-  'taxonomy_term--material_type',
-  'taxonomy_term--season',
-  'taxonomy_term--log_category',
-  'taxonomy_term--crop_family',
-  'taxonomy_term--unit',
-  'taxonomy_term--plant_type',
-  'user--user',
-];
+let logTypes = [];
+let schema = farm.schema.get();
+for (const recordType in schema) {
+  for (const record in schema[recordType]) {
+    logTypes.push(recordType + '--' + record);
+  }
+}
 
 // eslint-disable-next-line no-undef
 let types = process.argv.slice(2);
