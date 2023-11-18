@@ -30,7 +30,8 @@
     "docs/library",
     "docs/FarmData2.md",
     "modules/**/components.d.ts",
-    "modules/**/module/config"
+    "modules/**/module/config",
+    "scratch"
   ],
   "enableFiletypes": [
     "dockercompose",
