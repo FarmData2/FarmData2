@@ -20,7 +20,7 @@
     "eslint:fix": "eslint --ext .vue,.js,.jsx,.cjs,.mjs,.json,.yml,.md --fix .",
     "bashlint": "shellcheck $(find . -path ./docker/db -prune -false -o -name '*.bash')",
     "spellcheck": "cspell --no-progress --no-summary -c .cspell.json .",
-    "linkcheck": "markdown-link-check -q $(find . -path ./node_modules -prune -false -o -path ./docker/db -prune -false -o -name '*.md')",
+    "linkcheck": "markdown-link-check --config .markdown-link-check.json -q $(find . -path ./node_modules -prune -false -o -path ./docker/db -prune -false -o -name '*.md')",
     "lint": "npm run eslint; npm run bashlint; npm run spellcheck; npm run linkcheck",
     "format:all": "prettier --write --check '!./docker/db' --check '!./bin/templates/entrypoints/*.yml' .",
     "format:staged": "pretty-quick --write --staged .",

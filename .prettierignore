@@ -10,3 +10,5 @@ docs/library
 docs/components
 docs/FarmData2.md
 modules/**/components.d.ts
+modules/**/src/module/config
+scratch

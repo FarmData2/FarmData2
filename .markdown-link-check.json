@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "module_farmosUtil"
+    },
+    {
+      "pattern": "module_uiUtil"
+    },
+    {
+      "pattern": "https://www.drupal.org/"
+    }
+  ]
+}
