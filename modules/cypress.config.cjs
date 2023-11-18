@@ -15,6 +15,10 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   e2e: {
     specPattern: 'src/entrypoints/**/*.cy.js',
+    devServer: {
+      framework: 'vue',
+      bundler: 'vite',
+    },
   },
   component: {
     specPattern: '../../components/**/*.comp.cy.js',
