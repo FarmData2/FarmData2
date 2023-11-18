@@ -161,7 +161,7 @@ module.exports = {
     'shellcheck',
     'shfmt --write --indent 2 --space-redirects',
   ],
-  '**/*.md': 'markdown-link-check --quiet',
+  '**/*.md': 'markdown-link-check --config .markdown-link-check.json --quiet',
   '*.vue|*.js|*.jsx|*.cjs|*.mjs|*.json|*.md': async (files) => {
     const filesToLint = await removeIgnoredFiles(files);
     return [`eslint --max-warnings=0 ${filesToLint}`];

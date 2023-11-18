@@ -175,7 +175,8 @@ export async function getUsers(farm) {
  * Get a map from the user 'display_name` to the corresponding
  * farmOS user object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getUsers}.
+ * NOTE: The returned `Map` is built on the value returned by
+ * [getUsers]{@link #module_farmosUtil.getUsers}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an `Map` from the user `display_name` to the `user--user` object.
@@ -307,7 +308,7 @@ export async function getFieldsAndBeds(farm) {
  * Get a map from the name of a field or bed land asset to the
  * farmOS land asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getFieldsAndBeds}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the field or bed `name` to the `asset--land` object.
@@ -326,7 +327,7 @@ export async function getFieldOrBedNameToAssetMap(farm) {
  * Get a map from the id of a field or bed land asset to the
  * farmOS land asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getFieldsAndBeds}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the field or bed `id` to the `asset--land` object.
@@ -377,7 +378,7 @@ export async function getGreenhouses(farm) {
  * Get a map from the name of a greenhouse asset to the
  * farmOS structure asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getGreenhouses}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the greenhouse `name` to the `asset--structure` object.
@@ -394,7 +395,7 @@ export async function getGreenhouseNameToAssetMap(farm) {
  * Get a map from the id of a greenhouse asset to the
  * farmOS structure asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getGreenhouses}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the greenhouse `id` to the `asset--structure` object.
@@ -444,7 +445,7 @@ export async function getCrops(farm) {
  * Get a map from the name of a crop taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getCrops}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the crop `name` to the `taxonomy_term--plant_type` object.
@@ -461,7 +462,7 @@ export async function getCropNameToTermMap(farm) {
  * Get a map from the id of a crop taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getCrops}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the crop `id` to the `taxonomy_term--plant_type` object.
@@ -513,7 +514,7 @@ export async function getTraySizes(farm) {
  * Get a map from the name of a tray size taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getTraySizes}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the tray size `name` to the `taxonomy_term--tray-size` object.
@@ -530,7 +531,7 @@ export async function getTraySizeToTermMap(farm) {
  * Get a map from the id of a tray size taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link getTraySizes}.
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the tray size `id` to the `taxonomy_term--tray_size` object.

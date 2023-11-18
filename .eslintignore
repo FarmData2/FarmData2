@@ -12,10 +12,13 @@ bin/templates/component
 **/dist
 modules/farm_fd2/src/public
 modules/**/components.d.ts
+modules/**/src/module/config
 
 docs/library
 docs/components
 docs/FarmData2.md
+
+scratch
 
 licenses
 CHANGELOG.md
