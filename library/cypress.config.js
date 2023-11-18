@@ -1,12 +1,14 @@
-/* eslint-disable no-undef */
-const { defineConfig } = require('cypress');
+import { defineConfig } from 'cypress';
 
-module.exports = defineConfig({
+export default defineConfig({
   screenshotOnRunFailure: false,
   video: false,
   trashAssetsBeforeRuns: true,
   e2e: {
     baseUrl: 'http://farmos',
     specPattern: '**/*.unit.cy.js',
+    devServer: {
+      bundler: 'vite',
+    },
   },
 });
