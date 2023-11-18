@@ -62,7 +62,9 @@ export default {
       required: true,
     },
   },
-  data() {},
+  data() {
+    return {};
+  },
   computed: {
     processedText() {
       if (this.text == null || this.text == 'NaN') {
