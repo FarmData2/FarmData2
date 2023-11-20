@@ -6,18 +6,9 @@ source lib.bash
 PWD="$(pwd)"
 
 # Get the path to the main repo directory.
-SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
-
-# Check that the development branch is checked out
-CUR_GIT_BRANCH=$(git branch)
-if [[ ! "$CUR_GIT_BRANCH" == *"* development"* ]]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} You must have the development branch checked out to add an entry point."
-  echo "Switch to the development branch."
-  echo "Then run this script again."
-  exit 255
-fi
+SCRIPT_PATH=$(readlink -f "$0")                     
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) 
 
 # Check that working tree is clean
 GIT_STATUS=$(git status | tail -1)
@@ -27,6 +18,13 @@ if [[ ! "$GIT_STATUS" =~ ^"nothing to commit, working tree clean"$ ]]; then
   echo "Then run this script again."
   exit 255
 fi
+
+# Update the development branch from origin
+echo "Updating development branch from origin..."
+git checkout development
+git pull origin development
+error_check "Failed to update development branch."
+echo "Development branch updated."
 
 # Get the module to which the endpoint should be added.
 ALLOWED_MODULES=("farm_fd2" "farm_fd2_examples" "farm_fd2_school")
@@ -51,7 +49,7 @@ echo ""
 
 DRUPAL_ROUTE="$DRUPAL_ROUTE_PREFIX""\/$ENTRY_POINT"
 ENTRY_POINT_SRC_DIR="$MODULE_DIR/src/entrypoints/$ENTRY_POINT"
-ENTRY_POINT_TEMPLATE_DIR="$SCRIPT_DIR/templates/entrypoints"
+ENTRY_POINT_TEMPLATE_DIR="$SCRIPT_DIR/templates/entrypoint" # Updated directory name
 DRUPAL_ROUTE_NAME="$DRUPAL_ROUTE_PREFIX""_$ENTRY_POINT"
 FEATURE_BRANCH_NAME="add_$ENTRY_POINT""_entry_point"
 
@@ -65,17 +63,13 @@ if [[ ! "$FEATURE_BRANCH_EXISTS" == "" ]]; then
   exit 255
 fi
 
-# Check if the directory for the entry point exits...
+# Check if the directory for the entry point exists...
 if [ -d "src/entrypoints/$ENTRY_POINT" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the entry point $ENTRY_POINT already exists"
-  echo "in the directory $$ENTRY_POINT_SRC_DIR."
+  echo "in the directory $ENTRY_POINT_SRC_DIR."
   echo "Pick a different name for your entry point."
   echo "OR:"
   echo "  Remove the src/entrypoints/$ENTRY_POINT directory"
-  echo "  And remove any definitions related to the entry point $ENTRY_POINT from the files:"
-  echo "    $ROUTING_YML_FILE"
-  echo "    $LINKS_YML_FILE"
-  echo "    $LIBRARIES_YML_FILE"
   echo "Then run this script again."
   exit 255
 fi
