@@ -11,12 +11,23 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) 
 
 # Check that working tree is clean
-GIT_STATUS=$(git status | tail -1)
-if [[ ! "$GIT_STATUS" =~ ^"nothing to commit, working tree clean"$ ]]; then
+GIT_STATUS=$(git status --porcelain)
+if [ -n "$GIT_STATUS" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} The working tree must be clean to add an entry point."
   echo "Commit changes to a feature branch or use git stash."
   echo "Then run this script again."
   exit 255
+fi
+
+# Get the current Git branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Update the development branch from origin if not on development branch
+if [ "$CURRENT_BRANCH" != "development" ]; then
+    echo "Updating development branch from origin..."
+    git fetch origin development:development
+    error_check "Failed to update development branch."
+    echo "Development branch updated."
 fi
 
 # Update the development branch from origin
