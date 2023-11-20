@@ -130,6 +130,11 @@ select ENTRY_POINT_PARENT in "${MENUS[@]}"; do
 done
 echo ""
 
+# Create the feature branch
+FEATURE_BRANCH_NAME="add_$ENTRY_POINT""_entry_point"
+git checkout -b "$FEATURE_BRANCH_NAME" development
+error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+
 # ****
 # *** NEED TO DEAL WITH Permissions - ????
 # ***
