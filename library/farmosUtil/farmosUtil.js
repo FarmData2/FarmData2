@@ -543,3 +543,137 @@ export async function getTraySizeIdToTermMap(farm) {
 
   return map;
 }
+
+/**
+ * Get taxonomy term objects for all of the units.
+ * These are the taxonomy terms of type `taxonomy_term--unit`.
+ * The units will appear in alphabetical order.
+ *
+ * NOTE: This function makes an API call to the farmOS host.  Thus,
+ * if the array is to be used multiple times it should be cached
+ * by the calling code.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @throws {Error} if unable to fetch the units.
+ * @returns an array of all of taxonomy terms representing units.
+ */
+export async function getUnits(farm) {
+  const units = await farm.term.fetch({
+    filter: {
+      type: 'taxonomy_term--unit',
+    },
+    limit: Infinity,
+  });
+
+  if (units.rejected.length != 0) {
+    throw new Error('Unable to fetch units.', units.rejected);
+  }
+
+  units.data.sort((o1, o2) =>
+    o1.attributes.name.localeCompare(o2.attributes.name)
+  );
+
+  return units.data;
+}
+
+/**
+ * Get a map from the name of a unit taxonomy term to the
+ * farmOS unit term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the unit `name` to the `taxonomy_term--unit` object.
+ */
+export async function getUnitToTermMap(farm) {
+  const sizes = await getUnits(farm);
+
+  const map = new Map(sizes.map((unit) => [unit.attributes.name, unit]));
+
+  return map;
+}
+
+/**
+ * Get a map from the id of a unit taxonomy term to the
+ * farmOS taxonomy term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the unit `id` to the `taxonomy_term--unit` object.
+ */
+export async function getUnitIdToTermMap(farm) {
+  const units = await getUnits(farm);
+
+  const map = new Map(units.map((unit) => [unit.id, unit]));
+
+  return map;
+}
+
+/**
+ * Get taxonomy term objects for all of the log categories.
+ * These are the taxonomy terms of type `taxonomy_term--log_category`.
+ * The log categories will appear in alphabetical order.
+ *
+ * NOTE: This function makes an API call to the farmOS host.  Thus,
+ * if the array is to be used multiple times it should be cached
+ * by the calling code.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @throws {Error} if unable to fetch the log categories.
+ * @returns an array of all of taxonomy terms representing log categories.
+ */
+export async function getLogCategories(farm) {
+  const categories = await farm.term.fetch({
+    filter: {
+      type: 'taxonomy_term--log_category',
+    },
+    limit: Infinity,
+  });
+
+  if (categories.rejected.length != 0) {
+    throw new Error('Unable to fetch log categories.', categories.rejected);
+  }
+
+  categories.data.sort((o1, o2) =>
+    o1.attributes.name.localeCompare(o2.attributes.name)
+  );
+
+  return categories.data;
+}
+
+/**
+ * Get a map from the name of a log category taxonomy term to the
+ * farmOS unit term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the log category `name` to the `taxonomy_term--log_category` object.
+ */
+export async function getLogCategoryToTermMap(farm) {
+  const categories = await getLogCategories(farm);
+
+  const map = new Map(
+    categories.map((category) => [category.attributes.name, category])
+  );
+
+  return map;
+}
+
+/**
+ * Get a map from the id of a log category taxonomy term to the
+ * farmOS taxonomy term object.
+ *
+ * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
+ *
+ * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
+ * @returns a `Map` from the log category `id` to the `taxonomy_term--log_category` object.
+ */
+export async function getLogCategoryIdToTermMap(farm) {
+  const categories = await getLogCategories(farm);
+
+  const map = new Map(categories.map((category) => [category.id, category]));
+
+  return map;
+}

@@ -3,26 +3,109 @@
 ## Log Categories
 
 - Seeding Logs
+  - `tray_seeding`
+  - `direct_seeding`
+  - `cover_crop_seeding`
 
-  - tray_seeding
-  - direct_seeding
-  - cover_crop_seeding
+## Units
 
-- Plant Logs
-  - tray_planting
-  - direct_planting
+## Naming Conventions
 
-## Quantities
+- check the PASA schema to see if there is a convention.
 
-## Seeding
+### Assets
+
+### Logs
+
+### Quantities
+
+## Seeding Operations
 
 ### Tray Seeding
 
 - Creates
-  - A _Plant Asset_ with category `tray_planting`
-  - A _Seeding Log_ with category `tray_seeding`
-    - Has a _Quantity_ that is an `inventory_adjustment`
+
+  - A _Plant Asset_:
+
+  ```JavaScript
+  {
+    name: '???',
+    status: 'active',
+    inventory: [ '** Trays will be managed by Inventory **' ]
+    relationships: {
+      plant_type: [ { type: 'taxonomy_term--plant_type', id: '** Plant Type ID **}' ]
+    }
+  }
+  ```
+
+  - A _Seeding Log_:
+
+  ```JavaScript
+  {
+    attributes: {
+      name: '???',
+      status: 'done',
+      notes: '** Comment **',
+      is_movement: true,
+    },
+    relationships: {
+      location: [ { type: 'asset--structure', id: '** Greenhouse ID **'} ],
+      asset: [ { type: 'asset--plant', id: '** Plant Asset ID **'} ],
+      category: [ { type: 'taxonomy_term--log_category', id: '** Log Category ID **' } ],
+      quantity: [
+        {
+          attributes: {
+            measure: 'count',
+            value: '** Trays **',
+            label: 'Trays',
+            inventory_adjustment: 'increment'
+          },
+          relationships: {
+            units: { type: 'taxonomy_term--unit', id: '** Trays Unit ID **' },
+            inventory_asset: { type: 'asset--plant', id: '** Plant Asset ID **' }
+          }
+        },
+        {
+          attributes: {
+            measure: 'ratio',
+            value: '** Tray Size **',
+            label: 'Cells/Tray',
+          },
+          relationships: {
+            units: { type: 'taxonomy_term--unit', id: '** Cell/Tray ID **' },
+          }
+        },
+        {
+          attributes: {
+            measure: 'ratio',
+            value: '** Seeds/Cell **',
+            label: 'Seeds/Cell',
+          },
+          relationships: {
+            units: { type: 'taxonomy_term--unit', id: '** Seeds/Cell ID **' },
+          }
+        }
+      ]
+    }
+  }
+  ```
+
+### Direct Seeding
+
+- Keep row/feet as inventory on the planting.
+
+### Cover Crop Seeding
 
 ## Transplanting
 
+- Decrease Trays inventory on the planting and create new in ground planting for each transplant operation.
+
+NOTE: There is no transplant log type.
+
+- Possibly just use an Activity log with a transplanting log category?
+
 ## Harvesting
+
+- Decrease row/feed inventory on the in ground planting.
+
+## Soil Disturbance
