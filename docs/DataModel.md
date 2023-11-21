@@ -56,7 +56,9 @@
         {
           attributes: {
             measure: 'count',
-            value: '** Trays **',
+            value: {
+              decimal: '** Trays **',
+            },
             label: 'Trays',
             inventory_adjustment: 'increment'
           },
@@ -68,21 +70,25 @@
         {
           attributes: {
             measure: 'ratio',
-            value: '** Tray Size **',
+            value: {
+              decimal: '** Tray Size **',
+            },
             label: 'Cells/Tray',
           },
           relationships: {
-            units: { type: 'taxonomy_term--unit', id: '** Cell/Tray ID **' },
+            units: { type: 'taxonomy_term--unit', id: '** CELLS/TRAY ID **' },
           }
         },
         {
           attributes: {
             measure: 'ratio',
-            value: '** Seeds/Cell **',
+            value: {
+              decimal: '** Seeds/Cell **',
+            },
             label: 'Seeds/Cell',
           },
           relationships: {
-            units: { type: 'taxonomy_term--unit', id: '** Seeds/Cell ID **' },
+            units: { type: 'taxonomy_term--unit', id: '** SEEDS/CELL ID **' },
           }
         }
       ]

@@ -16,9 +16,10 @@ if [ "$1" == "" ]; then
       --exclude-drafts \
       --exclude-pre-releases \
       --repo FarmData2/FD2-SampleDBs |
-      cut -f1)
+      head -n5 | cut -f1)
   )
 
+  echo "The 5 most recent releases are shown."
   echo "Choose the release to use..."
   select RELEASE in "${RELEASES[@]}"; do
     if (("$REPLY" <= 0 || "$REPLY" > "${#RELEASES[@]}")); then
@@ -38,7 +39,6 @@ echo "  Release exists."
 
 # shellcheck disable=SC2207
 DBS=($(echo "$REL_INFO" | grep "asset:" | cut -f2))
-
 if [ "$2" == "" ]; then
   echo "Choose which database asset from the release to use..."
   select DB in "${DBS[@]}"; do
