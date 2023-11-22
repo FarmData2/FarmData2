@@ -458,9 +458,9 @@ export function getGlobalGreenhouses() {
  * `greenhouse`.  The greenhouses will appear in alphabetical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedGreenhouses`]{@link #module_farmosUtil.clearCachedGreenhouses}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an array of all of land assets representing greenhouses.
@@ -562,9 +562,9 @@ export function getGlobalCrops() {
  * The crops will appear in alphabetical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedCrops`]{@link #module_farmosUtil.clearCachedCrops}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the crops.
@@ -665,9 +665,9 @@ export function getGlobalTraySizes() {
  * The tray sizes will appear in numerical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedTraySizes`]{@link #module_farmosUtil.clearCachedTraySizes}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the tray sizes.
@@ -769,9 +769,9 @@ export function getGlobalUnits() {
  * These are the taxonomy terms of type `taxonomy_term--unit`.
  * The units will appear in alphabetical order.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedUnits`]{@link #module_farmosUtil.clearCachedUnits}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the units.
@@ -871,9 +871,9 @@ export function getGlobalLogCategories() {
  * These are the taxonomy terms of type `taxonomy_term--log_category`.
  * The log categories will appear in alphabetical order.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedLogCategories`]{@link #module_farmosUtil.clearCachedLogCategories}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the log categories.
@@ -947,30 +947,31 @@ export async function getLogCategoryIdToTermMap(farm) {
   return map;
 }
 
-// export async function createPlantAsset(
-//   farm,
-//   { assetName, cropName, status = `active` },
-//   opts = {}
-// ) {
+export async function createPlantAsset(
+  farm,
+  { assetName, status, cropName },
+  opts = {}
+) {
+  const plant = {
+    ...{
+      type: 'asset--plant',
+      name: assetName,
+      status: status,
+      plant_type: {
+        type: 'taxonomy_term--plant_type',
+        id: getCropNameToTermMap(farm).get(cropName).id,
+      },
+    },
+    ...opts,
+  };
 
-//   const planting_asset = farm.asset.create({
-//     type: 'asset--plant',
-//     name: assetName,
-//     status: status,
-//     plant_type: {
-//       type: 'taxonomy_term--plant_type',
-//       id: global_plantMap.get(cropName).id,
-//     },
-//   });
+  const planting_asset = farm.asset.create(plant);
 
-//   let plantId = null;
-//   try {
-//     const result = await farm.asset.send(planting_asset);
-//     console.log(result);
-//     plantId = result.id;
-//   } catch (e) {
-//     console.log('API error sending asset');
-//     console.log(e);
-//     exit(1);
-//   }
-//}
+  try {
+    const result = await farm.asset.send(planting_asset);
+    return result;
+  } catch (e) {
+    console.log(e);
+    throw new Error('Unable to create plant asset.');
+  }
+}
