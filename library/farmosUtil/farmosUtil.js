@@ -841,6 +841,31 @@ export async function getUnitIdToTermMap(farm) {
   return map;
 }
 
+// Used to cache result of the getLogCategories function.
+var global_log_categories = null;
+
+/**
+ * Clear the cached results from prior calls to the `getLogCategories` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedLogCategories() {
+  global_log_categories = null;
+  libSessionStorage.removeItem('log_categories');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_units` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_units` object
+ */
+export function getGlobalLogCategories() {
+  return global_log_categories;
+}
+
 /**
  * Get taxonomy term objects for all of the log categories.
  * These are the taxonomy terms of type `taxonomy_term--log_category`.
@@ -855,6 +880,17 @@ export async function getUnitIdToTermMap(farm) {
  * @returns an array of all of taxonomy terms representing log categories.
  */
 export async function getLogCategories(farm) {
+  if (global_log_categories) {
+    return global_log_categories;
+  }
+
+  if (libSessionStorage.getItem('log_categories') != null) {
+    global_log_categories = JSON.parse(
+      libSessionStorage.getItem('log_categories')
+    );
+    return global_log_categories;
+  }
+
   const categories = await farm.term.fetch({
     filter: {
       type: 'taxonomy_term--log_category',
@@ -870,7 +906,9 @@ export async function getLogCategories(farm) {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  return categories.data;
+  libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
+  global_log_categories = categories.data;
+  return global_log_categories;
 }
 
 /**

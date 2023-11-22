@@ -42,20 +42,31 @@ describe('Test the log categories utility functions', () => {
   });
 
   it('Test that get units throws error if fetch fails', () => {
+    farmosUtil.clearCachedLogCategories();
+
     cy.intercept('GET', '**/api/taxonomy_term/log_category?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getLogCategories(farm)
-        .then(() => {
-          throw new Error('Fetching log categories should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch log categories.');
-        })
-    );
+    farmosUtil
+      .getLogCategories(farm)
+      .then(() => {
+        throw new Error('Fetching log categories should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch log categories.');
+      });
+  });
+
+  it('Test that getLogCategories result is cached', () => {
+    farmosUtil.clearCachedLogCategories();
+    expect(farmosUtil.getGlobalLogCategories()).to.be.null;
+    expect(sessionStorage.getItem('log_categories')).to.be.null;
+
+    farmosUtil.getLogCategories(farm).then(() => {
+      expect(farmosUtil.getGlobalLogCategories()).to.not.be.null;
+      expect(sessionStorage.getItem('log_categories')).to.not.be.null;
+    });
   });
 
   it('Get the logCategoryToTerm map', () => {
