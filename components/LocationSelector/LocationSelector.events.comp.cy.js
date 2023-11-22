@@ -1,4 +1,5 @@
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the LocationSelector component events', () => {
   beforeEach(() => {
@@ -49,5 +50,47 @@ describe('Test the LocationSelector component events', () => {
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', 'CHUAU');
       });
+  });
+
+  it('Test that error event is emitted when fetching fields and beds fails', () => {
+    farmosUtil.clearCachedFieldsAndBeds();
+
+    const errorSpy = cy.spy().as('errorSpy');
+
+    cy.intercept('GET', '**/api/asset/land?*', {
+      forceNetworkError: true,
+    });
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeFields: true,
+        onError: errorSpy,
+      },
+    }).then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledOnce')
+        .should('have.been.calledWith', 'Unable to fetch locations.');
+    });
+  });
+
+  it('Test that error event is emitted when fetching greenhouses fails', () => {
+    farmosUtil.clearCachedGreenhouses();
+
+    const errorSpy = cy.spy().as('errorSpy');
+
+    cy.intercept('GET', '**/api/asset/structure?*', {
+      forceNetworkError: true,
+    });
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onError: errorSpy,
+      },
+    }).then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledOnce')
+        .should('have.been.calledWith', 'Unable to fetch locations.');
+    });
   });
 });
