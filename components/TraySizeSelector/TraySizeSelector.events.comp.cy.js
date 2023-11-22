@@ -1,4 +1,5 @@
 import TraySizeSelector from '@comps/TraySizeSelector/TraySizeSelector.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the TraySizeSelector events', () => {
   beforeEach(() => {
@@ -47,5 +48,25 @@ describe('Test the TraySizeSelector events', () => {
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', '50');
       });
+  });
+
+  it('Test that error event is emitted', () => {
+    farmosUtil.clearCachedTraySizes();
+
+    const errorSpy = cy.spy().as('errorSpy');
+
+    cy.intercept('GET', '**/api/taxonomy_term/tray_size?*', {
+      forceNetworkError: true,
+    });
+
+    cy.mount(TraySizeSelector, {
+      props: {
+        onError: errorSpy,
+      },
+    }).then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledOnce')
+        .should('have.been.calledWith', 'Unable to fetch tray sizes.');
+    });
   });
 });

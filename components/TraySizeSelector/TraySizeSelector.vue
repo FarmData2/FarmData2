@@ -104,32 +104,23 @@ export default {
   watch: {},
   created() {
     farmosUtil
-      .getFarmOSInstance()
-      .then((farm) => {
-        farmosUtil
-          .getTraySizeToTermMap(farm)
-          .then((traySizeMap) => {
-            this.traySizeList = Array.from(traySizeMap.keys());
+      .getTraySizeToTermMap()
+      .then((traySizeMap) => {
+        this.traySizeList = Array.from(traySizeMap.keys());
 
-            /**
-             * The select has been populated with the list of tray sizes and the component is ready to be used.
-             */
-            this.$emit('ready');
-          })
-          .catch((error) => {
-            console.error('TraySizeSelector: Error fetching tray sizes.');
-            console.error(error);
-            /**
-             * An error occurred when communicating with the farmOS server.
-             * @property {string} msg an error message.
-             */
-            this.$emit('error', 'Unable to fetch tray sizes.');
-          });
+        /**
+         * The select has been populated with the list of tray sizes and the component is ready to be used.
+         */
+        this.$emit('ready');
       })
       .catch((error) => {
-        console.error('TraySizeSelector: Error connecting to farm.');
+        console.error('TraySizeSelector: Error fetching tray sizes.');
         console.error(error);
-        this.$emit('error', 'Unable to connect to farmOS server.');
+        /**
+         * An error occurred when communicating with the farmOS server.
+         * @property {string} msg an error message.
+         */
+        this.$emit('error', 'Unable to fetch tray sizes.');
       });
   },
 };

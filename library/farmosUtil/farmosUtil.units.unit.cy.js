@@ -1,17 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the units utility functions', () => {
-  var farm = null;
-  before(() => {
-    cy.wrap(
-      farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-        .then((newFarm) => {
-          farm = newFarm;
-        })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -23,7 +12,7 @@ describe('Test the units utility functions', () => {
   });
 
   it('Get the units', () => {
-    cy.wrap(farmosUtil.getUnits(farm)).then((units) => {
+    cy.wrap(farmosUtil.getUnits()).then((units) => {
       expect(units).to.not.be.null;
       expect(units.length).to.equal(5);
 
@@ -49,7 +38,7 @@ describe('Test the units utility functions', () => {
     });
 
     farmosUtil
-      .getUnits(farm)
+      .getUnits()
       .then(() => {
         throw new Error('Fetching units should have failed.');
       })
@@ -63,14 +52,14 @@ describe('Test the units utility functions', () => {
     expect(farmosUtil.getGlobalUnits()).to.be.null;
     expect(sessionStorage.getItem('units')).to.be.null;
 
-    farmosUtil.getUnits(farm).then(() => {
+    farmosUtil.getUnits().then(() => {
       expect(farmosUtil.getGlobalUnits()).to.not.be.null;
       expect(sessionStorage.getItem('units')).to.not.be.null;
     });
   });
 
   it('Get the unitToTerm map', () => {
-    cy.wrap(farmosUtil.getUnitToTermMap(farm)).then((unitMap) => {
+    cy.wrap(farmosUtil.getUnitToTermMap()).then((unitMap) => {
       expect(unitMap).to.not.be.null;
       expect(unitMap.size).to.equal(5);
 
@@ -83,11 +72,11 @@ describe('Test the units utility functions', () => {
   });
 
   it('Get the UnitIdToAsset map', () => {
-    cy.wrap(farmosUtil.getUnitIdToTermMap(farm)).then((unitIdMap) => {
+    cy.wrap(farmosUtil.getUnitIdToTermMap()).then((unitIdMap) => {
       expect(unitIdMap).to.not.be.null;
       expect(unitIdMap.size).to.equal(5);
 
-      cy.wrap(farmosUtil.getUnitToTermMap(farm)).then((unitNameMap) => {
+      cy.wrap(farmosUtil.getUnitToTermMap()).then((unitNameMap) => {
         const countId = unitNameMap.get('Count').id;
         expect(unitIdMap.get(countId).attributes.name).to.equal('Count');
         expect(unitIdMap.get(countId).type).to.equal('taxonomy_term--unit');

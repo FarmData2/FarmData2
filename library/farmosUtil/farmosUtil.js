@@ -87,19 +87,19 @@ export async function getFarmOSInstance(
     libSessionStorage = sessionStorage;
   }
 
-  const config = {
-    host: hostURL,
-    clientId: client,
-    getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-    setToken: (token) =>
-      libLocalStorage.setItem('token', JSON.stringify(token)),
-  };
-  const options = { remote: config };
-
   // Only create a new farm object if we don't already have one in global_farm.
   let newfarm = false;
   if (!global_farm) {
     newfarm = true;
+
+    const config = {
+      host: hostURL,
+      clientId: client,
+      getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+      setToken: (token) =>
+        libLocalStorage.setItem('token', JSON.stringify(token)),
+    };
+    const options = { remote: config };
 
     /*
      * Enable this to be used both in Node, where farmOS is
@@ -236,13 +236,14 @@ export function getGlobalUsers() {
  * Use the [`clearCachedUsers`]{@link #module_farmosUtil.clearCachedUsers}
  * function to clear the cache.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an array of farmOS `user--user` objects.
  */
-export async function getUsers(farm) {
+export async function getUsers() {
   if (global_users) {
     return global_users;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('users') != null) {
     global_users = JSON.parse(libSessionStorage.getItem('users'));
@@ -277,11 +278,10 @@ export async function getUsers(farm) {
  * NOTE: The returned `Map` is built on the value returned by
  * [getUsers]{@link #module_farmosUtil.getUsers}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an `Map` from the user `display_name` to the `user--user` object.
  */
-export async function getUsernameToUserMap(farm) {
-  const users = await getUsers(farm);
+export async function getUsernameToUserMap() {
+  const users = await getUsers();
 
   const map = new Map(
     users.map((user) => [user.attributes.display_name, user])
@@ -296,11 +296,10 @@ export async function getUsernameToUserMap(farm) {
  * NOTE: The returned `Map` is built on the value returned by
  * [getUsers]{@link #module_farmosUtil.getUsers}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an `Map` from the user `display_name` to the `user--user` object.
  */
-export async function getUserIdToUserMap(farm) {
-  const users = await getUsers(farm);
+export async function getUserIdToUserMap() {
+  const users = await getUsers();
 
   const map = new Map(users.map((user) => [user.id, user]));
 
@@ -342,16 +341,17 @@ export function getGlobalFieldsAndBeds() {
  * Use the [`clearCachedFieldsAndBeds`]{@link #module_farmosUtil.clearCachedFieldsAndBeds}
  * function to clear the cache.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a array of all of land assets representing fields or beds.
  */
-export async function getFieldsAndBeds(farm) {
+export async function getFieldsAndBeds() {
   // Done as two requests for now because of a bug in the farmOS.js library.
   // https://github.com/farmOS/farmOS.js/issues/86
 
   if (global_fields_and_beds) {
     return global_fields_and_beds;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('fields_and_beds') != null) {
     global_fields_and_beds = JSON.parse(
@@ -397,11 +397,10 @@ export async function getFieldsAndBeds(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the field or bed `name` to the `asset--land` object.
  */
-export async function getFieldOrBedNameToAssetMap(farm) {
-  const fieldsAndBeds = await getFieldsAndBeds(farm);
+export async function getFieldOrBedNameToAssetMap() {
+  const fieldsAndBeds = await getFieldsAndBeds();
 
   const map = new Map(
     fieldsAndBeds.map((land) => [land.attributes.name, land])
@@ -416,11 +415,10 @@ export async function getFieldOrBedNameToAssetMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the field or bed `id` to the `asset--land` object.
  */
-export async function getFieldOrBedIdToAssetMap(farm) {
-  const fieldsAndBeds = await getFieldsAndBeds(farm);
+export async function getFieldOrBedIdToAssetMap() {
+  const fieldsAndBeds = await getFieldsAndBeds();
 
   const map = new Map(fieldsAndBeds.map((land) => [land.id, land]));
 
@@ -462,13 +460,14 @@ export function getGlobalGreenhouses() {
  * if the array is to be used multiple times it should be cached
  * by the calling code.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an array of all of land assets representing greenhouses.
  */
-export async function getGreenhouses(farm) {
+export async function getGreenhouses() {
   if (global_greenhouses) {
     return global_greenhouses;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('greenhouses') != null) {
     global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
@@ -503,11 +502,10 @@ export async function getGreenhouses(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the greenhouse `name` to the `asset--structure` object.
  */
-export async function getGreenhouseNameToAssetMap(farm) {
-  const greenhouses = await getGreenhouses(farm);
+export async function getGreenhouseNameToAssetMap() {
+  const greenhouses = await getGreenhouses();
 
   const map = new Map(greenhouses.map((gh) => [gh.attributes.name, gh]));
 
@@ -520,11 +518,10 @@ export async function getGreenhouseNameToAssetMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the greenhouse `id` to the `asset--structure` object.
  */
-export async function getGreenhouseIdToAssetMap(farm) {
-  const greenhouses = await getGreenhouses(farm);
+export async function getGreenhouseIdToAssetMap() {
+  const greenhouses = await getGreenhouses();
 
   const map = new Map(greenhouses.map((gh) => [gh.id, gh]));
 
@@ -566,14 +563,15 @@ export function getGlobalCrops() {
  * if the array is to be used multiple times it should be cached
  * by the calling code.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the crops.
  * @returns an array of all of taxonomy terms representing crops.
  */
-export async function getCrops(farm) {
+export async function getCrops() {
   if (global_crops) {
     return global_crops;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('crops') != null) {
     global_crops = JSON.parse(libSessionStorage.getItem('crops'));
@@ -606,11 +604,10 @@ export async function getCrops(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the crop `name` to the `taxonomy_term--plant_type` object.
  */
-export async function getCropNameToTermMap(farm) {
-  const crops = await getCrops(farm);
+export async function getCropNameToTermMap() {
+  const crops = await getCrops();
 
   const map = new Map(crops.map((cr) => [cr.attributes.name, cr]));
 
@@ -623,11 +620,10 @@ export async function getCropNameToTermMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the crop `id` to the `taxonomy_term--plant_type` object.
  */
-export async function getCropIdToTermMap(farm) {
-  const crops = await getCrops(farm);
+export async function getCropIdToTermMap() {
+  const crops = await getCrops();
 
   const map = new Map(crops.map((cr) => [cr.id, cr]));
 
@@ -669,14 +665,15 @@ export function getGlobalTraySizes() {
  * if the array is to be used multiple times it should be cached
  * by the calling code.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the tray sizes.
  * @returns an array of all of taxonomy terms representing tray sizes.
  */
-export async function getTraySizes(farm) {
+export async function getTraySizes() {
   if (global_tray_sizes) {
     return global_tray_sizes;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('tray_sizes') != null) {
     global_tray_sizes = JSON.parse(libSessionStorage.getItem('tray_sizes'));
@@ -711,11 +708,10 @@ export async function getTraySizes(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the tray size `name` to the `taxonomy_term--tray-size` object.
  */
-export async function getTraySizeToTermMap(farm) {
-  const sizes = await getTraySizes(farm);
+export async function getTraySizeToTermMap() {
+  const sizes = await getTraySizes();
 
   const map = new Map(sizes.map((sz) => [sz.attributes.name, sz]));
 
@@ -728,11 +724,10 @@ export async function getTraySizeToTermMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the tray size `id` to the `taxonomy_term--tray_size` object.
  */
-export async function getTraySizeIdToTermMap(farm) {
-  const sizes = await getTraySizes(farm);
+export async function getTraySizeIdToTermMap() {
+  const sizes = await getTraySizes();
 
   const map = new Map(sizes.map((sz) => [sz.id, sz]));
 
@@ -773,14 +768,15 @@ export function getGlobalUnits() {
  * if the array is to be used multiple times it should be cached
  * by the calling code.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the units.
  * @returns an array of all of taxonomy terms representing units.
  */
-export async function getUnits(farm) {
+export async function getUnits() {
   if (global_units) {
     return global_units;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('units') != null) {
     global_units = JSON.parse(libSessionStorage.getItem('units'));
@@ -813,11 +809,10 @@ export async function getUnits(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the unit `name` to the `taxonomy_term--unit` object.
  */
-export async function getUnitToTermMap(farm) {
-  const sizes = await getUnits(farm);
+export async function getUnitToTermMap() {
+  const sizes = await getUnits();
 
   const map = new Map(sizes.map((unit) => [unit.attributes.name, unit]));
 
@@ -830,11 +825,10 @@ export async function getUnitToTermMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the unit `id` to the `taxonomy_term--unit` object.
  */
-export async function getUnitIdToTermMap(farm) {
-  const units = await getUnits(farm);
+export async function getUnitIdToTermMap() {
+  const units = await getUnits();
 
   const map = new Map(units.map((unit) => [unit.id, unit]));
 
@@ -875,14 +869,15 @@ export function getGlobalLogCategories() {
  * if the array is to be used multiple times it should be cached
  * by the calling code.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @throws {Error} if unable to fetch the log categories.
  * @returns an array of all of taxonomy terms representing log categories.
  */
-export async function getLogCategories(farm) {
+export async function getLogCategories() {
   if (global_log_categories) {
     return global_log_categories;
   }
+
+  const farm = await getFarmOSInstance();
 
   if (libSessionStorage.getItem('log_categories') != null) {
     global_log_categories = JSON.parse(
@@ -917,11 +912,10 @@ export async function getLogCategories(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the log category `name` to the `taxonomy_term--log_category` object.
  */
-export async function getLogCategoryToTermMap(farm) {
-  const categories = await getLogCategories(farm);
+export async function getLogCategoryToTermMap() {
+  const categories = await getLogCategories();
 
   const map = new Map(
     categories.map((category) => [category.attributes.name, category])
@@ -936,11 +930,10 @@ export async function getLogCategoryToTermMap(farm) {
  *
  * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
  *
- * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a `Map` from the log category `id` to the `taxonomy_term--log_category` object.
  */
-export async function getLogCategoryIdToTermMap(farm) {
-  const categories = await getLogCategories(farm);
+export async function getLogCategoryIdToTermMap() {
+  const categories = await getLogCategories();
 
   const map = new Map(categories.map((category) => [category.id, category]));
 

@@ -1,17 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the log categories utility functions', () => {
-  var farm = null;
-  before(() => {
-    cy.wrap(
-      farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-        .then((newFarm) => {
-          farm = newFarm;
-        })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -23,7 +12,7 @@ describe('Test the log categories utility functions', () => {
   });
 
   it('Get the log categories', () => {
-    cy.wrap(farmosUtil.getLogCategories(farm)).then((categories) => {
+    cy.wrap(farmosUtil.getLogCategories()).then((categories) => {
       expect(categories).to.not.be.null;
       expect(categories.length).to.equal(3);
 
@@ -49,7 +38,7 @@ describe('Test the log categories utility functions', () => {
     });
 
     farmosUtil
-      .getLogCategories(farm)
+      .getLogCategories()
       .then(() => {
         throw new Error('Fetching log categories should have failed.');
       })
@@ -63,14 +52,14 @@ describe('Test the log categories utility functions', () => {
     expect(farmosUtil.getGlobalLogCategories()).to.be.null;
     expect(sessionStorage.getItem('log_categories')).to.be.null;
 
-    farmosUtil.getLogCategories(farm).then(() => {
+    farmosUtil.getLogCategories().then(() => {
       expect(farmosUtil.getGlobalLogCategories()).to.not.be.null;
       expect(sessionStorage.getItem('log_categories')).to.not.be.null;
     });
   });
 
   it('Get the logCategoryToTerm map', () => {
-    cy.wrap(farmosUtil.getLogCategoryToTermMap(farm)).then((categoryMap) => {
+    cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((categoryMap) => {
       expect(categoryMap).to.not.be.null;
       expect(categoryMap.size).to.equal(3);
 
@@ -87,31 +76,27 @@ describe('Test the log categories utility functions', () => {
   });
 
   it('Get the logCategoryIdToAsset map', () => {
-    cy.wrap(farmosUtil.getLogCategoryIdToTermMap(farm)).then(
-      (categoryIdMap) => {
-        expect(categoryIdMap).to.not.be.null;
-        expect(categoryIdMap.size).to.equal(3);
+    cy.wrap(farmosUtil.getLogCategoryIdToTermMap()).then((categoryIdMap) => {
+      expect(categoryIdMap).to.not.be.null;
+      expect(categoryIdMap.size).to.equal(3);
 
-        cy.wrap(farmosUtil.getLogCategoryToTermMap(farm)).then(
-          (categoryNameMap) => {
-            const coverId = categoryNameMap.get('seeding_cover_crop').id;
-            expect(categoryIdMap.get(coverId).attributes.name).to.equal(
-              'seeding_cover_crop'
-            );
-            expect(categoryIdMap.get(coverId).type).to.equal(
-              'taxonomy_term--log_category'
-            );
-
-            const trayId = categoryNameMap.get('seeding_tray').id;
-            expect(categoryIdMap.get(trayId).attributes.name).to.equal(
-              'seeding_tray'
-            );
-            expect(categoryIdMap.get(trayId).type).to.equal(
-              'taxonomy_term--log_category'
-            );
-          }
+      cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((categoryNameMap) => {
+        const coverId = categoryNameMap.get('seeding_cover_crop').id;
+        expect(categoryIdMap.get(coverId).attributes.name).to.equal(
+          'seeding_cover_crop'
         );
-      }
-    );
+        expect(categoryIdMap.get(coverId).type).to.equal(
+          'taxonomy_term--log_category'
+        );
+
+        const trayId = categoryNameMap.get('seeding_tray').id;
+        expect(categoryIdMap.get(trayId).attributes.name).to.equal(
+          'seeding_tray'
+        );
+        expect(categoryIdMap.get(trayId).type).to.equal(
+          'taxonomy_term--log_category'
+        );
+      });
+    });
   });
 });

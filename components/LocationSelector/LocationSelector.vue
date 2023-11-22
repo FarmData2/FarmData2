@@ -123,55 +123,31 @@ export default {
   },
   watch: {},
   created() {
-    farmosUtil
-      .getFarmOSInstance()
-      .then((farm) => {
-        if (this.includeFields) {
-          return farmosUtil
-            .getFieldOrBedNameToAssetMap(farm)
-            .then((fieldMap) => {
-              let fields = Array.from(fieldMap.keys());
-              return { farm, fields };
-            })
-            .catch((error) => {
-              console.error('LocationSelector: Error fetching fields.');
-              console.error(error);
-              /**
-               * An error occurred when communicating with the farmOS server.
-               * @property {string} msg an error message.
-               */
-              this.$emit('error', 'Unable to fetch fields.');
-            });
-        } else {
-          let fields = [];
-          return { farm, fields };
-        }
-      })
-      .then(({ farm, fields }) => {
-        if (this.includeGreenhouses) {
-          return farmosUtil
-            .getGreenhouseNameToAssetMap(farm)
-            .then((greenhouseMap) => {
-              let greenhouses = Array.from(greenhouseMap.keys());
-              let allLocations = [...fields, ...greenhouses];
-              return allLocations;
-            })
-            .catch((error) => {
-              console.error('LocationSelector: Error fetching greenhouses.');
-              console.error(error);
-              /**
-               * An error occurred when communicating with the farmOS server.
-               * @property {string} msg an error message.
-               */
-              this.$emit('error', 'Unable to fetch greenhouses.');
-            });
-        } else {
-          let allLocations = fields;
-          return allLocations;
-        }
-      })
+    let fieldsAndBeds = [];
+    if (this.includeFields) {
+      fieldsAndBeds = farmosUtil
+        .getFieldOrBedNameToAssetMap()
+        .then((fieldMap) => {
+          let fields = Array.from(fieldMap.keys());
+          return fields;
+        });
+    }
+
+    let greenhouses = [];
+    if (this.includeGreenhouses) {
+      greenhouses = farmosUtil
+        .getGreenhouseNameToAssetMap()
+        .then((greenhouseMap) => {
+          let greenhouses = Array.from(greenhouseMap.keys());
+          return greenhouses;
+        });
+    }
+
+    Promise.all([fieldsAndBeds, greenhouses])
       .then((allLocations) => {
-        this.locationList = allLocations.sort();
+        //const allLocationsList = allLocations[0].concat(allLocations[1]);
+        const allLocationsList = [...allLocations[0], ...allLocations[1]];
+        this.locationList = allLocationsList.sort();
 
         /**
          * The select has been populated with the list of locations and the component is ready to be used.
@@ -179,9 +155,9 @@ export default {
         this.$emit('ready');
       })
       .catch((error) => {
-        console.error('LocationSelector: Error connecting to farm.');
+        console.error('LocationSelector: Error fetching locations.');
         console.error(error);
-        this.$emit('error', 'Unable to connect to farmOS server.');
+        this.$emit('error', 'Unable to fetch locations.');
       });
   },
 };
