@@ -42,20 +42,31 @@ describe('Test the units utility functions', () => {
   });
 
   it('Test that get units throws error if fetch fails', () => {
+    farmosUtil.clearCachedUnits();
+
     cy.intercept('GET', '**/api/taxonomy_term/unit?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getUnits(farm)
-        .then(() => {
-          throw new Error('Fetching units should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch units.');
-        })
-    );
+    farmosUtil
+      .getUnits(farm)
+      .then(() => {
+        throw new Error('Fetching units should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch units.');
+      });
+  });
+
+  it('Test that getUnits result is cached', () => {
+    farmosUtil.clearCachedUnits();
+    expect(farmosUtil.getGlobalUnits()).to.be.null;
+    expect(sessionStorage.getItem('units')).to.be.null;
+
+    farmosUtil.getUnits(farm).then(() => {
+      expect(farmosUtil.getGlobalUnits()).to.not.be.null;
+      expect(sessionStorage.getItem('units')).to.not.be.null;
+    });
   });
 
   it('Get the unitToTerm map', () => {
