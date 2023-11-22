@@ -531,6 +531,31 @@ export async function getGreenhouseIdToAssetMap(farm) {
   return map;
 }
 
+// Used to cache result of the getCrops function.
+var global_crops = null;
+
+/**
+ * Clear the cached results from prior calls to the `getCrops` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedCrops() {
+  global_crops = null;
+  libSessionStorage.removeItem('crops');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_crops` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_crops` object
+ */
+export function getGlobalCrops() {
+  return global_crops;
+}
+
 /**
  * Get taxonomy term objects for all of the crops.
  * These are the taxonomy terms of type `taxonomy_term--plant_type`.
@@ -546,6 +571,15 @@ export async function getGreenhouseIdToAssetMap(farm) {
  * @returns an array of all of taxonomy terms representing crops.
  */
 export async function getCrops(farm) {
+  if (global_crops) {
+    return global_crops;
+  }
+
+  if (libSessionStorage.getItem('crops') != null) {
+    global_crops = JSON.parse(libSessionStorage.getItem('crops'));
+    return global_crops;
+  }
+
   const crops = await farm.term.fetch({
     filter: {
       type: 'taxonomy_term--plant_type',
@@ -561,7 +595,9 @@ export async function getCrops(farm) {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  return crops.data;
+  libSessionStorage.setItem('crops', JSON.stringify(crops.data));
+  global_crops = crops.data;
+  return global_crops;
 }
 
 /**

@@ -36,20 +36,31 @@ describe('Test the crop utility functions', () => {
   });
 
   it('Test that getCrop throws error if fetch fails', () => {
+    farmosUtil.clearCachedCrops();
+
     cy.intercept('GET', '**/api/taxonomy_term/plant_type?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getCrops(farm)
-        .then(() => {
-          throw new Error('Fetching crops should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch crops.');
-        })
-    );
+    farmosUtil
+      .getCrops(farm)
+      .then(() => {
+        throw new Error('Fetching crops should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch crops.');
+      });
+  });
+
+  it('Test that getCrops result is cached', () => {
+    farmosUtil.clearCachedCrops();
+    expect(farmosUtil.getGlobalCrops()).to.be.null;
+    expect(sessionStorage.getItem('crops')).to.be.null;
+
+    farmosUtil.getCrops(farm).then(() => {
+      expect(farmosUtil.getGlobalCrops()).to.not.be.null;
+      expect(sessionStorage.getItem('crops')).to.not.be.null;
+    });
   });
 
   it('Get the cropNameMap', () => {
