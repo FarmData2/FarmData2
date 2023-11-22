@@ -50,7 +50,7 @@ var libLocalStorage = null;
 var libSessionStorage = null;
 
 /**
- * Get an instance of the `farmos.js` `farmOS` object that can be used
+ * Create and return an instance of the `farmos.js` `farmOS` object that will be used
  * to interact with the farmOS host.  The `farmOS` instance will have the
  * same permissions as the `user`/`pass` that are used for authentication.
  * The default 'farm' client is sufficient for most uses, but any client
@@ -58,7 +58,7 @@ var libSessionStorage = null;
  * configured).  The `farmOS` object will also have its schema set.
  *
  * NOTE: There will only be a single instance of `farmOS` object created on the
- * first call to this function from a given page.  Subsequent calls will
+ * first call to this function from a given page. Subsequent calls will
  * authenticate if necessary and then return the same`farmOS` object.
  *
  * @param {string} hostURL url of the farmOS instance to which to connect.
