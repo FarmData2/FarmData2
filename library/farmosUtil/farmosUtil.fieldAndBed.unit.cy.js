@@ -42,16 +42,14 @@ describe('Test the land utility functions', () => {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getFieldsAndBeds(farm)
-        .then(() => {
-          throw new Error('Fetching fields and beds should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch fields and beds.');
-        })
-    );
+    farmosUtil
+      .getFieldsAndBeds(farm)
+      .then(() => {
+        throw new Error('Fetching fields and beds should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch fields and beds.');
+      });
   });
 
   it('Test that getFieldsAndBeds are cached', () => {

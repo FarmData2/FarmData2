@@ -42,16 +42,14 @@ describe('Test the greenhouse utility functions', () => {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getGreenhouses(farm)
-        .then(() => {
-          throw new Error('Fetching greenhouses should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch greenhouses.');
-        })
-    );
+    farmosUtil
+      .getGreenhouses(farm)
+      .then(() => {
+        throw new Error('Fetching greenhouses should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch greenhouses.');
+      });
   });
 
   it('Test that getGreenhouses result is cached', () => {

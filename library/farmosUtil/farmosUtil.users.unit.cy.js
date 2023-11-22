@@ -43,11 +43,11 @@ describe('Test the user utility functions', () => {
   });
 
   it('Test that getUsers throws error if fetch fails', () => {
+    farmosUtil.clearCachedUsers();
+
     cy.intercept('GET', '**/api/user/user?*', {
       forceNetworkError: true,
     });
-
-    farmosUtil.clearCachedUsers();
 
     farmosUtil
       .getUsers(farm)
