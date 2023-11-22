@@ -1,17 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the user utility functions', () => {
-  var farm = null;
-  before(() => {
-    cy.wrap(
-      farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-        .then((newFarm) => {
-          farm = newFarm;
-        })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -23,7 +12,7 @@ describe('Test the user utility functions', () => {
   });
 
   it('Get the users', () => {
-    cy.wrap(farmosUtil.getUsers(farm)).then((users) => {
+    cy.wrap(farmosUtil.getUsers()).then((users) => {
       expect(users).to.not.be.null;
 
       expect(users[0].attributes.name).to.equal('admin');
@@ -50,7 +39,7 @@ describe('Test the user utility functions', () => {
     });
 
     farmosUtil
-      .getUsers(farm)
+      .getUsers()
       .then(() => {
         throw new Error('Fetching users should have failed.');
       })
@@ -64,14 +53,14 @@ describe('Test the user utility functions', () => {
     expect(farmosUtil.getGlobalUsers()).to.be.null;
     expect(sessionStorage.getItem('users')).to.be.null;
 
-    farmosUtil.getUsers(farm).then(() => {
+    farmosUtil.getUsers().then(() => {
       expect(farmosUtil.getGlobalUsers()).to.not.be.null;
       expect(sessionStorage.getItem('users')).to.not.be.null;
     });
   });
 
   it('Get the usernameMap', () => {
-    cy.wrap(farmosUtil.getUsernameToUserMap(farm)).then((usernameMap) => {
+    cy.wrap(farmosUtil.getUsernameToUserMap()).then((usernameMap) => {
       expect(usernameMap).to.not.be.null;
 
       expect(usernameMap.get('Anonymous')).to.be.undefined;
@@ -89,10 +78,10 @@ describe('Test the user utility functions', () => {
   });
 
   it('Get the userIdMap', () => {
-    cy.wrap(farmosUtil.getUserIdToUserMap(farm)).then((userIdMap) => {
+    cy.wrap(farmosUtil.getUserIdToUserMap()).then((userIdMap) => {
       expect(userIdMap).to.not.be.null;
 
-      cy.wrap(farmosUtil.getUsernameToUserMap(farm)).then((usernameMap) => {
+      cy.wrap(farmosUtil.getUsernameToUserMap()).then((usernameMap) => {
         expect(usernameMap.get('Anonymous')).to.be.undefined;
 
         const adminId = usernameMap.get('admin').id;

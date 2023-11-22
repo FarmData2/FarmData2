@@ -102,32 +102,23 @@ export default {
   watch: {},
   created() {
     farmosUtil
-      .getFarmOSInstance()
-      .then((farm) => {
-        farmosUtil
-          .getCropNameToTermMap(farm)
-          .then((cropMap) => {
-            this.cropList = Array.from(cropMap.keys());
+      .getCropNameToTermMap()
+      .then((cropMap) => {
+        this.cropList = Array.from(cropMap.keys());
 
-            /**
-             * The select has been populated with the list of crops and the component is ready to be used.
-             */
-            this.$emit('ready');
-          })
-          .catch((error) => {
-            console.error('CropSelector: Error fetching crops.');
-            console.error(error);
-            /**
-             * An error occurred when communicating with the farmOS server.
-             * @property {string} msg an error message.
-             */
-            this.$emit('error', 'Unable to fetch crops.');
-          });
+        /**
+         * The select has been populated with the list of crops and the component is ready to be used.
+         */
+        this.$emit('ready');
       })
       .catch((error) => {
-        console.error('CropSelector: Error connecting to farm.');
+        console.error('CropSelector: Error fetching crops.');
         console.error(error);
-        this.$emit('error', 'Unable to connect to farmOS server.');
+        /**
+         * An error occurred when communicating with the farmOS server.
+         * @property {string} msg an error message.
+         */
+        this.$emit('error', 'Unable to fetch crops.');
       });
   },
 };
