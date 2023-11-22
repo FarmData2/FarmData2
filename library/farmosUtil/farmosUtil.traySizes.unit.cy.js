@@ -42,20 +42,31 @@ describe('Test the tray sizes utility functions', () => {
   });
 
   it('Test that get tray sizes throws error if fetch fails', () => {
+    farmosUtil.clearCachedTraySizes();
+
     cy.intercept('GET', '**/api/taxonomy_term/tray_size?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getTraySizes(farm)
-        .then(() => {
-          throw new Error('Fetching tray sizes should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch tray sizes.');
-        })
-    );
+    farmosUtil
+      .getTraySizes(farm)
+      .then(() => {
+        throw new Error('Fetching tray sizes should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch tray sizes.');
+      });
+  });
+
+  it('Test that getTraySizes result is cached', () => {
+    farmosUtil.clearCachedTraySizes();
+    expect(farmosUtil.getGlobalTraySizes()).to.be.null;
+    expect(sessionStorage.getItem('tray_sizes')).to.be.null;
+
+    farmosUtil.getTraySizes(farm).then(() => {
+      expect(farmosUtil.getGlobalTraySizes()).to.not.be.null;
+      expect(sessionStorage.getItem('tray_sizes')).to.not.be.null;
+    });
   });
 
   it('Get the TraySizeToTerm map', () => {

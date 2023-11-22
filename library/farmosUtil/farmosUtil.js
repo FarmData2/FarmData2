@@ -634,6 +634,31 @@ export async function getCropIdToTermMap(farm) {
   return map;
 }
 
+// Used to cache result of the getTraySizes function.
+var global_tray_sizes = null;
+
+/**
+ * Clear the cached results from prior calls to the `getTraySizes` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedTraySizes() {
+  global_tray_sizes = null;
+  libSessionStorage.removeItem('tray_sizes');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_tray_sizes` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_tray_sizes` object
+ */
+export function getGlobalTraySizes() {
+  return global_tray_sizes;
+}
+
 /**
  * Get taxonomy term objects for all of the tray sizes.
  * These are the taxonomy terms of type `taxonomy_term--tray_size`.
@@ -649,6 +674,15 @@ export async function getCropIdToTermMap(farm) {
  * @returns an array of all of taxonomy terms representing tray sizes.
  */
 export async function getTraySizes(farm) {
+  if (global_tray_sizes) {
+    return global_tray_sizes;
+  }
+
+  if (libSessionStorage.getItem('tray_sizes') != null) {
+    global_tray_sizes = JSON.parse(libSessionStorage.getItem('tray_sizes'));
+    return global_tray_sizes;
+  }
+
   const traySizes = await farm.term.fetch({
     filter: {
       type: 'taxonomy_term--tray_size',
@@ -666,7 +700,9 @@ export async function getTraySizes(farm) {
     return size1 - size2;
   });
 
-  return traySizes.data;
+  libSessionStorage.setItem('tray_sizes', JSON.stringify(traySizes.data));
+  global_tray_sizes = traySizes.data;
+  return global_tray_sizes;
 }
 
 /**
