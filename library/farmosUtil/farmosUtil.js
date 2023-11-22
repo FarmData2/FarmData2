@@ -34,9 +34,20 @@ export function clearFarmGlobal() {
   global_farm = null;
 }
 
+/**
+ * @private
+ *
+ * Get the `global_farm` object.  This is useful for testing to ensure
+ * that the global is set at appropriate times.
+ *
+ * @returns the `global_farm` object
+ */
 export function getFarmGlobal() {
   return global_farm;
 }
+
+var libLocalStorage = null;
+var libSessionStorage = null;
 
 /**
  * Get an instance of the `farmos.js` `farmOS` object that can be used
@@ -65,21 +76,23 @@ export async function getFarmOSInstance(
   ls = null
 ) {
   /*
-   * Handle local and session storage here so that this function
-   * can be used in both Node and in the browser (live and w/ Cypress).
+   * Handle local and session storage here so that the functions
+   * in this library can be used in both Node and in the browser
+   * (live and w/ Cypress).
    */
-  let myLocalStorage = ls;
-  let mySessionStorage = ls;
+  libLocalStorage = ls;
+  libSessionStorage = ls;
   if (!ls) {
-    myLocalStorage = localStorage;
-    mySessionStorage = sessionStorage;
+    libLocalStorage = localStorage;
+    libSessionStorage = sessionStorage;
   }
 
   const config = {
     host: hostURL,
     clientId: client,
-    getToken: () => JSON.parse(myLocalStorage.getItem('token')),
-    setToken: (token) => myLocalStorage.setItem('token', JSON.stringify(token)),
+    getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+    setToken: (token) =>
+      libLocalStorage.setItem('token', JSON.stringify(token)),
   };
   const options = { remote: config };
 
@@ -110,13 +123,13 @@ export async function getFarmOSInstance(
   // Only set the schema if this is a new farm object.
   if (newfarm) {
     //Try the session storage first...
-    let schema = JSON.parse(mySessionStorage.getItem('schema'));
+    let schema = JSON.parse(libSessionStorage.getItem('schema'));
     if (schema == null) {
       // Not in session storage, so fetch schema from the farmOS host.
       await global_farm.schema.fetch();
       schema = global_farm.schema.get();
       // Cache in the session storage for next time.
-      mySessionStorage.setItem('schema', JSON.stringify(schema));
+      libSessionStorage.setItem('schema', JSON.stringify(schema));
     }
     await global_farm.schema.set(schema);
   }
@@ -137,6 +150,31 @@ export function printObject(farm, recordType) {
   console.dir(obj);
 }
 
+// Used to cache result of the getUsers function.
+var global_users = null;
+
+/**
+ * Clear the cached results from prior calls to the `getUsers` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedUsers() {
+  global_users = null;
+  libSessionStorage.removeItem('users');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_users` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_users` object
+ */
+export function getGlobalUsers() {
+  return global_users;
+}
+
 /**
  * Get an array containing all of the active users from the farmOS host.  The users
  * will appear in the array in order by the value of the `attributes.display_name`
@@ -152,6 +190,15 @@ export function printObject(farm, recordType) {
  * @returns an array of farmOS `user--user` objects.
  */
 export async function getUsers(farm) {
+  if (global_users) {
+    return global_users;
+  }
+
+  if (libSessionStorage.getItem('users') != null) {
+    global_users = JSON.parse(libSessionStorage.getItem('users'));
+    return global_users;
+  }
+
   const users = await farm.user.fetch({
     filter: {
       type: 'user--user',
@@ -168,7 +215,9 @@ export async function getUsers(farm) {
     o1.attributes.display_name.localeCompare(o2.attributes.display_name)
   );
 
-  return users.data;
+  libSessionStorage.setItem('users', JSON.stringify(users.data));
+  global_users = users.data;
+  return global_users;
 }
 
 /**
