@@ -63,8 +63,14 @@
             inventory_adjustment: 'increment'
           },
           relationships: {
-            units: { type: 'taxonomy_term--unit', id: '** Trays Unit ID **' },
-            inventory_asset: { type: 'asset--plant', id: '** Plant Asset ID **' }
+            units: {
+              type: 'taxonomy_term--unit',
+              id: '** Trays Unit ID **'
+            },
+            inventory_asset: {
+              type: 'asset--plant',
+              id: '** Plant Asset ID **'
+            }
           }
         },
         {

@@ -677,3 +677,31 @@ export async function getLogCategoryIdToTermMap(farm) {
 
   return map;
 }
+
+// export async function createPlantAsset(
+//   farm,
+//   { assetName, cropName, status = `active` },
+//   opts = {}
+// ) {
+
+//   const planting_asset = farm.asset.create({
+//     type: 'asset--plant',
+//     name: assetName,
+//     status: status,
+//     plant_type: {
+//       type: 'taxonomy_term--plant_type',
+//       id: global_plantMap.get(cropName).id,
+//     },
+//   });
+
+//   let plantId = null;
+//   try {
+//     const result = await farm.asset.send(planting_asset);
+//     console.log(result);
+//     plantId = result.id;
+//   } catch (e) {
+//     console.log('API error sending asset');
+//     console.log(e);
+//     exit(1);
+//   }
+//}

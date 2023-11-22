@@ -29,10 +29,7 @@
         v-bind:showValidityStyling="validity.show"
         v-on:valid="validity.crop = $event"
         v-on:ready="createdCount++"
-        v-on:error="
-          (msg) =>
-            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
-        "
+        v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
 
       <!-- Location Selection -->
@@ -45,10 +42,7 @@
         v-bind:showValidityStyling="validity.show"
         v-on:valid="validity.location = $event"
         v-on:ready="createdCount++"
-        v-on:error="
-          (msg) =>
-            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
-        "
+        v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
       <hr />
 
@@ -77,10 +71,7 @@
         v-bind:showValidityStyling="validity.show"
         v-on:valid="validity.traySize = $event"
         v-on:ready="createdCount++"
-        v-on:error="
-          (msg) =>
-            uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
-        "
+        v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
 
       <!-- Number of Seed / Cell -->
@@ -123,7 +114,7 @@
         id="seeding-submit-reset"
         data-cy="seeding-submit-reset"
         v-bind:enableSubmit="enableSubmit"
-        v-bind:enableReset="true"
+        v-bind:enableReset="enableReset"
         v-on:ready="createdCount++"
         v-on:submit="submit()"
         v-on:reset="reset()"
@@ -149,6 +140,7 @@ import TraySizeSelector from '@comps/TraySizeSelector/TraySizeSelector.vue';
 import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 
 export default {
   components: {
@@ -183,6 +175,8 @@ export default {
         comment: false,
       },
       enableSubmit: true,
+      enableReset: true,
+      errorShown: false,
       createdCount: 0,
     };
   },
@@ -217,7 +211,27 @@ export default {
       this.form.traySize = null;
       this.form.seedsPerCell = 1;
       this.form.comment = null;
-      this.enableSubmit = true;
+      if (!this.errorShown) {
+        this.enableSubmit = true;
+      }
+
+      this.showErrorToast('Reset', 'Seeding Form Reset.');
+    },
+
+    showErrorToast(title, msg) {
+      if (!this.errorShown) {
+        this.errorShown = true;
+        this.enableSubmit = false;
+        this.enableReset = false;
+
+        uiUtil.showToast(
+          title,
+          msg + ' Try reloading the page.',
+          'top-center',
+          'danger',
+          5
+        );
+      }
     },
   },
   watch: {
