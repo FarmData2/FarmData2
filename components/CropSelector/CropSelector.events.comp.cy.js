@@ -1,4 +1,5 @@
 import CropSelector from '@comps/CropSelector/CropSelector.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the CropSelector events', () => {
   beforeEach(() => {
@@ -47,5 +48,25 @@ describe('Test the CropSelector events', () => {
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', 'ASPARAGUS');
       });
+  });
+
+  it('Test that error event is emitted', () => {
+    farmosUtil.clearCachedCrops();
+
+    const errorSpy = cy.spy().as('errorSpy');
+
+    cy.intercept('GET', '**/api/taxonomy_term/plant_type?*', {
+      forceNetworkError: true,
+    });
+
+    cy.mount(CropSelector, {
+      props: {
+        onError: errorSpy,
+      },
+    }).then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledOnce')
+        .should('have.been.calledWith', 'Unable to fetch crops.');
+    });
   });
 });

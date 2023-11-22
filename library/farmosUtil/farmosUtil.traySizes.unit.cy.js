@@ -1,17 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the tray sizes utility functions', () => {
-  var farm = null;
-  before(() => {
-    cy.wrap(
-      farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-        .then((newFarm) => {
-          farm = newFarm;
-        })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -23,7 +12,7 @@ describe('Test the tray sizes utility functions', () => {
   });
 
   it('Get the tray sizes', () => {
-    cy.wrap(farmosUtil.getTraySizes(farm)).then((traySizes) => {
+    cy.wrap(farmosUtil.getTraySizes()).then((traySizes) => {
       expect(traySizes).to.not.be.null;
       expect(traySizes.length).to.equal(6);
 
@@ -49,7 +38,7 @@ describe('Test the tray sizes utility functions', () => {
     });
 
     farmosUtil
-      .getTraySizes(farm)
+      .getTraySizes()
       .then(() => {
         throw new Error('Fetching tray sizes should have failed.');
       })
@@ -63,14 +52,14 @@ describe('Test the tray sizes utility functions', () => {
     expect(farmosUtil.getGlobalTraySizes()).to.be.null;
     expect(sessionStorage.getItem('tray_sizes')).to.be.null;
 
-    farmosUtil.getTraySizes(farm).then(() => {
+    farmosUtil.getTraySizes().then(() => {
       expect(farmosUtil.getGlobalTraySizes()).to.not.be.null;
       expect(sessionStorage.getItem('tray_sizes')).to.not.be.null;
     });
   });
 
   it('Get the TraySizeToTerm map', () => {
-    cy.wrap(farmosUtil.getTraySizeToTermMap(farm)).then((traySizeMap) => {
+    cy.wrap(farmosUtil.getTraySizeToTermMap()).then((traySizeMap) => {
       expect(traySizeMap).to.not.be.null;
       expect(traySizeMap.size).to.equal(6);
 
@@ -83,11 +72,11 @@ describe('Test the tray sizes utility functions', () => {
   });
 
   it('Get the TraySizeIdToAsset map', () => {
-    cy.wrap(farmosUtil.getTraySizeIdToTermMap(farm)).then((trayIdMap) => {
+    cy.wrap(farmosUtil.getTraySizeIdToTermMap()).then((trayIdMap) => {
       expect(trayIdMap).to.not.be.null;
       expect(trayIdMap.size).to.equal(6);
 
-      cy.wrap(farmosUtil.getTraySizeToTermMap(farm)).then((trayNameMap) => {
+      cy.wrap(farmosUtil.getTraySizeToTermMap()).then((trayNameMap) => {
         const tray50Id = trayNameMap.get('50').id;
         expect(trayIdMap.get(tray50Id).attributes.name).to.equal('50');
         expect(trayIdMap.get(tray50Id).type).to.equal(

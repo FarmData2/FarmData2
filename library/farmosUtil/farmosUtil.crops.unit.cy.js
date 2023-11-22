@@ -1,17 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the crop utility functions', () => {
-  var farm = null;
-  before(() => {
-    cy.wrap(
-      farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-        .then((newFarm) => {
-          farm = newFarm;
-        })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -23,7 +12,7 @@ describe('Test the crop utility functions', () => {
   });
 
   it('Get the crops', () => {
-    cy.wrap(farmosUtil.getCrops(farm)).then((crops) => {
+    cy.wrap(farmosUtil.getCrops()).then((crops) => {
       expect(crops).to.not.be.null;
       expect(crops.length).to.equal(111);
 
@@ -43,7 +32,7 @@ describe('Test the crop utility functions', () => {
     });
 
     farmosUtil
-      .getCrops(farm)
+      .getCrops()
       .then(() => {
         throw new Error('Fetching crops should have failed.');
       })
@@ -57,14 +46,14 @@ describe('Test the crop utility functions', () => {
     expect(farmosUtil.getGlobalCrops()).to.be.null;
     expect(sessionStorage.getItem('crops')).to.be.null;
 
-    farmosUtil.getCrops(farm).then(() => {
+    farmosUtil.getCrops().then(() => {
       expect(farmosUtil.getGlobalCrops()).to.not.be.null;
       expect(sessionStorage.getItem('crops')).to.not.be.null;
     });
   });
 
   it('Get the cropNameMap', () => {
-    cy.wrap(farmosUtil.getCropNameToTermMap(farm)).then((cropNameMap) => {
+    cy.wrap(farmosUtil.getCropNameToTermMap()).then((cropNameMap) => {
       expect(cropNameMap).to.not.be.null;
       expect(cropNameMap.size).to.equal(111);
 
@@ -87,11 +76,11 @@ describe('Test the crop utility functions', () => {
   });
 
   it('Get the cropIdMap', () => {
-    cy.wrap(farmosUtil.getCropIdToTermMap(farm)).then((cropIdMap) => {
+    cy.wrap(farmosUtil.getCropIdToTermMap()).then((cropIdMap) => {
       expect(cropIdMap).to.not.be.null;
       expect(cropIdMap.size).to.equal(111);
 
-      cy.wrap(farmosUtil.getCropNameToTermMap(farm)).then((cropNameMap) => {
+      cy.wrap(farmosUtil.getCropNameToTermMap()).then((cropNameMap) => {
         const arugulaId = cropNameMap.get('ARUGULA').id;
         expect(cropIdMap.get(arugulaId).attributes.name).to.equal('ARUGULA');
         expect(cropIdMap.get(arugulaId).type).to.equal(
