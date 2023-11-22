@@ -311,7 +311,7 @@ export async function getUserIdToUserMap(farm) {
 var global_fields_and_beds = null;
 
 /**
- * Clear the cached results from prior calls to the `getUsers` function.
+ * Clear the cached results from prior calls to the `getFieldsAndBeds` function.
  * This is useful when an action may change the users that exist in the
  * system
  */
@@ -427,6 +427,31 @@ export async function getFieldOrBedIdToAssetMap(farm) {
   return map;
 }
 
+// Used to cache result of the getGreenhouses function.
+var global_greenhouses = null;
+
+/**
+ * Clear the cached results from prior calls to the `getGreenhouses` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedGreenhouses() {
+  global_greenhouses = null;
+  libSessionStorage.removeItem('greenhouses');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_greenhouses` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_greenhouses` object
+ */
+export function getGlobalGreenhouses() {
+  return global_greenhouses;
+}
+
 /**
  * Get the asset objects for all of the active structures that represent greenhouses.
  * These are the assets of type `asset--structure` that have `structure_type` of
@@ -441,6 +466,15 @@ export async function getFieldOrBedIdToAssetMap(farm) {
  * @returns an array of all of land assets representing greenhouses.
  */
 export async function getGreenhouses(farm) {
+  if (global_greenhouses) {
+    return global_greenhouses;
+  }
+
+  if (libSessionStorage.getItem('greenhouses') != null) {
+    global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
+    return global_greenhouses;
+  }
+
   const greenhouses = await farm.asset.fetch({
     filter: {
       type: 'asset--structure',
@@ -458,7 +492,9 @@ export async function getGreenhouses(farm) {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  return greenhouses.data;
+  libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
+  global_greenhouses = greenhouses.data;
+  return global_greenhouses;
 }
 
 /**
