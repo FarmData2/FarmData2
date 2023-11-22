@@ -739,6 +739,31 @@ export async function getTraySizeIdToTermMap(farm) {
   return map;
 }
 
+// Used to cache result of the getUnits function.
+var global_units = null;
+
+/**
+ * Clear the cached results from prior calls to the `getUnits` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedUnits() {
+  global_units = null;
+  libSessionStorage.removeItem('units');
+}
+
+/**
+ * @private
+ *
+ * Get the `global_units` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_units` object
+ */
+export function getGlobalUnits() {
+  return global_units;
+}
+
 /**
  * Get taxonomy term objects for all of the units.
  * These are the taxonomy terms of type `taxonomy_term--unit`.
@@ -753,6 +778,15 @@ export async function getTraySizeIdToTermMap(farm) {
  * @returns an array of all of taxonomy terms representing units.
  */
 export async function getUnits(farm) {
+  if (global_units) {
+    return global_units;
+  }
+
+  if (libSessionStorage.getItem('units') != null) {
+    global_units = JSON.parse(libSessionStorage.getItem('units'));
+    return global_units;
+  }
+
   const units = await farm.term.fetch({
     filter: {
       type: 'taxonomy_term--unit',
@@ -768,7 +802,9 @@ export async function getUnits(farm) {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  return units.data;
+  libSessionStorage.setItem('units', JSON.stringify(units.data));
+  global_units = units.data;
+  return global_units;
 }
 
 /**
