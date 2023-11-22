@@ -138,6 +138,56 @@ export async function getFarmOSInstance(
 }
 
 /**
+ * Add the user specified by the `ownerID` to the `obj` as the owner
+ * of the asset or log.
+ *
+ * This pushes an `user--user` object to the `relationships.owner` property of `obj`.
+ *
+ * @param {object} obj a farmOS asset or log.
+ * @param {string} ownerId the id of the user to assign as the owner.
+ * @throws {ReferenceError} if the `obj` does not have a `relationships.owner` property.
+ * @return the `obj` with the owner added.
+ */
+export function addOwnerRelationship(obj, ownerId) {
+  if (!obj?.relationships.owner) {
+    throw new ReferenceError(
+      'The obj parameter does not have a relationships.owner property'
+    );
+  } else {
+    obj.relationships.owner.push({
+      type: 'user--user',
+      id: ownerId,
+    });
+  }
+
+  return obj;
+}
+
+/**
+ * Add the user specified by the `parentID` to the `obj` as the parent
+ * of the asset or log.
+ *
+ * @param {object} obj a farmOS asset or log.
+ * @param {string} parentId the id of the user to assign as the parent.
+ * @throws {ReferenceError} if the `obj` does not have a `relationships.parent` property.
+ * @returns the `obj` with the parent added.
+ */
+export function addParentRelationship(obj, parentId, parentType) {
+  if (!obj?.relationships.parent) {
+    throw new ReferenceError(
+      'The obj parameter does not have a relationships.parent property'
+    );
+  } else {
+    obj.relationships.parent.push({
+      type: parentType,
+      id: parentId,
+    });
+  }
+
+  return obj;
+}
+
+/**
  * Print out the JSON structure of the specified farmOS record type.
  * (e.g. asset--land, log--harvest, etc...  This is useful as a development
  * and debugging tool.
@@ -182,9 +232,9 @@ export function getGlobalUsers() {
  *
  * NOTE: The `Anonymous` user does not appear in the returned array.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedUsers`]{@link #module_farmosUtil.clearCachedUsers}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns an array of farmOS `user--user` objects.
@@ -257,54 +307,29 @@ export async function getUserIdToUserMap(farm) {
   return map;
 }
 
-/**
- * Add the user specified by the `ownerID` to the `obj` as the owner
- * of the asset or log.
- *
- * This pushes an `user--user` object to the `relationships.owner` property of `obj`.
- *
- * @param {object} obj a farmOS asset or log.
- * @param {string} ownerId the id of the user to assign as the owner.
- * @throws {ReferenceError} if the `obj` does not have a `relationships.owner` property.
- * @return the `obj` with the owner added.
- */
-export function addOwnerRelationship(obj, ownerId) {
-  if (!obj?.relationships.owner) {
-    throw new ReferenceError(
-      'The obj parameter does not have a relationships.owner property'
-    );
-  } else {
-    obj.relationships.owner.push({
-      type: 'user--user',
-      id: ownerId,
-    });
-  }
+// Used to cache result of the getFieldsAndBeds function.
+var global_fields_and_beds = null;
 
-  return obj;
+/**
+ * Clear the cached results from prior calls to the `getUsers` function.
+ * This is useful when an action may change the users that exist in the
+ * system
+ */
+export function clearCachedFieldsAndBeds() {
+  global_fields_and_beds = null;
+  libSessionStorage.removeItem('fields_and_beds');
 }
 
 /**
- * Add the user specified by the `parentID` to the `obj` as the parent
- * of the asset or log.
+ * @private
  *
- * @param {object} obj a farmOS asset or log.
- * @param {string} parentId the id of the user to assign as the parent.
- * @throws {ReferenceError} if the `obj` does not have a `relationships.parent` property.
- * @returns the `obj` with the parent added.
+ * Get the `global_fields_and_beds` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ *
+ * @returns the `global_fields_and_beds` object
  */
-export function addParentRelationship(obj, parentId, parentType) {
-  if (!obj?.relationships.parent) {
-    throw new ReferenceError(
-      'The obj parameter does not have a relationships.parent property'
-    );
-  } else {
-    obj.relationships.parent.push({
-      type: parentType,
-      id: parentId,
-    });
-  }
-
-  return obj;
+export function getGlobalFieldsAndBeds() {
+  return global_fields_and_beds;
 }
 
 /**
@@ -313,9 +338,9 @@ export function addParentRelationship(obj, parentId, parentType) {
  * `field` or `bed`.  The fields and beds will appear in alphabetical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedFieldsAndBeds`]{@link #module_farmosUtil.clearCachedFieldsAndBeds}
+ * function to clear the cache.
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @returns a array of all of land assets representing fields or beds.
@@ -323,6 +348,17 @@ export function addParentRelationship(obj, parentId, parentType) {
 export async function getFieldsAndBeds(farm) {
   // Done as two requests for now because of a bug in the farmOS.js library.
   // https://github.com/farmOS/farmOS.js/issues/86
+
+  if (global_fields_and_beds) {
+    return global_fields_and_beds;
+  }
+
+  if (libSessionStorage.getItem('fields_and_beds') != null) {
+    global_fields_and_beds = JSON.parse(
+      libSessionStorage.getItem('fields_and_beds')
+    );
+    return global_fields_and_beds;
+  }
 
   const beds = await farm.asset.fetch({
     filter: {
@@ -350,7 +386,9 @@ export async function getFieldsAndBeds(farm) {
   const land = fields.data.concat(beds.data);
   land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
 
-  return land;
+  libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
+  global_fields_and_beds = land;
+  return global_fields_and_beds;
 }
 
 /**
