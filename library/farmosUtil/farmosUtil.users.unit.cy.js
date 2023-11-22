@@ -42,22 +42,32 @@ describe('Test the user utility functions', () => {
     });
   });
 
-  // eslint-disable-next-line cypress/no-async-tests
   it('Test that getUsers throws error if fetch fails', () => {
+    farmosUtil.clearCachedUsers();
+
     cy.intercept('GET', '**/api/user/user?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getUsers(farm)
-        .then(() => {
-          throw new Error('Fetching users should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch users.');
-        })
-    );
+    farmosUtil
+      .getUsers(farm)
+      .then(() => {
+        throw new Error('Fetching users should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch users.');
+      });
+  });
+
+  it('Test that getUsers is cached', () => {
+    farmosUtil.clearCachedUsers();
+    expect(farmosUtil.getGlobalUsers()).to.be.null;
+    expect(sessionStorage.getItem('users')).to.be.null;
+
+    farmosUtil.getUsers(farm).then(() => {
+      expect(farmosUtil.getGlobalUsers()).to.not.be.null;
+      expect(sessionStorage.getItem('users')).to.not.be.null;
+    });
   });
 
   it('Get the usernameMap', () => {

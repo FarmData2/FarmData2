@@ -36,20 +36,31 @@ describe('Test the land utility functions', () => {
   });
 
   it('Test that get fields and beds throws error if fetch fails', () => {
+    farmosUtil.clearCachedFieldsAndBeds();
+
     cy.intercept('GET', '**/api/asset/land?*', {
       forceNetworkError: true,
     });
 
-    cy.wrap(
-      farmosUtil
-        .getFieldsAndBeds(farm)
-        .then(() => {
-          throw new Error('Fetching fields and beds should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch fields and beds.');
-        })
-    );
+    farmosUtil
+      .getFieldsAndBeds(farm)
+      .then(() => {
+        throw new Error('Fetching fields and beds should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Unable to fetch fields and beds.');
+      });
+  });
+
+  it('Test that getFieldsAndBeds are cached', () => {
+    farmosUtil.clearCachedFieldsAndBeds();
+    expect(farmosUtil.getGlobalFieldsAndBeds()).to.be.null;
+    expect(sessionStorage.getItem('fields_and_beds')).to.be.null;
+
+    farmosUtil.getFieldsAndBeds(farm).then(() => {
+      expect(farmosUtil.getGlobalFieldsAndBeds()).to.not.be.null;
+      expect(sessionStorage.getItem('fields_and_beds')).to.not.be.null;
+    });
   });
 
   it('Get the FieldOrBedNameToAsset map', () => {
@@ -88,70 +99,6 @@ describe('Test the land utility functions', () => {
             'CHUAU-1'
           );
           expect(landIdMap.get(landChuau1Id).type).to.equal('asset--land');
-        }
-      );
-    });
-  });
-
-  it('Get the greenhouse structure assets', () => {
-    cy.wrap(farmosUtil.getGreenhouses(farm)).then((gh) => {
-      expect(gh).to.not.be.null;
-      expect(gh.length).to.equal(5);
-
-      expect(gh[0].attributes.name).to.equal('CHUAU');
-      expect(gh[0].type).to.equal('asset--structure');
-
-      expect(gh[4].attributes.name).to.equal('SEEDING BENCH');
-      expect(gh[4].type).to.equal('asset--structure');
-    });
-  });
-
-  it('Test that getGreenhouses throws error if fetch fails', () => {
-    cy.intercept('GET', '**/api/asset/structure?*', {
-      forceNetworkError: true,
-    });
-
-    cy.wrap(
-      farmosUtil
-        .getGreenhouses(farm)
-        .then(() => {
-          throw new Error('Fetching greenhouses should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).to.equal('Unable to fetch greenhouses.');
-        })
-    );
-  });
-
-  it('Get the GreenhouseNameToAsset map', () => {
-    cy.wrap(farmosUtil.getGreenhouseNameToAssetMap(farm)).then((ghNameMap) => {
-      expect(ghNameMap).to.not.be.null;
-      expect(ghNameMap.size).to.equal(5);
-
-      expect(ghNameMap.get('CHUAU')).to.not.be.null;
-      expect(ghNameMap.get('CHUAU').type).to.equal('asset--structure');
-
-      expect(ghNameMap.get('SEEDING BENCH')).to.not.be.null;
-      expect(ghNameMap.get('SEEDING BENCH').type).to.equal('asset--structure');
-
-      expect(ghNameMap.get('A')).to.be.undefined;
-    });
-  });
-
-  it('Get the GreenhouseIdToAsset map', () => {
-    cy.wrap(farmosUtil.getGreenhouseIdToAssetMap(farm)).then((ghIdMap) => {
-      expect(ghIdMap).to.not.be.null;
-      expect(ghIdMap.size).to.equal(5);
-
-      cy.wrap(farmosUtil.getGreenhouseNameToAssetMap(farm)).then(
-        (ghNameMap) => {
-          const chuauId = ghNameMap.get('CHUAU').id;
-          expect(ghIdMap.get(chuauId).attributes.name).to.equal('CHUAU');
-          expect(ghIdMap.get(chuauId).type).to.equal('asset--structure');
-
-          const sbId = ghNameMap.get('SEEDING BENCH').id;
-          expect(ghIdMap.get(sbId).attributes.name).to.equal('SEEDING BENCH');
-          expect(ghIdMap.get(sbId).type).to.equal('asset--structure');
         }
       );
     });

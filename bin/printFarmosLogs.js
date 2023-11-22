@@ -1,7 +1,5 @@
 import * as farmosUtil from '../library/farmosUtil/farmosUtil.js';
 import { LocalStorage } from 'node-localstorage';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 
 /*
  * Setup the information for connecting to the farmOS instance
@@ -15,10 +13,9 @@ const pass = 'admin';
 
 /*
  * Get a local storage object that we'll use to simulate the
- *browser's localStorage and sessionStorage when running in node.
+ * browser's localStorage and sessionStorage when running in node.
  */
-const rootDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-let ls = new LocalStorage(rootDir + '/scratch');
+let ls = new LocalStorage('scratch');
 
 /*
  * Get a fully initialized and logged in instance of the farmOS.js
