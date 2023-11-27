@@ -8,8 +8,11 @@
  */
 
 import farmOS from 'farmos';
+import * as runExclusive from 'run-exclusive';
 
-/*
+/**
+ * @private
+ *
  * Ensure that we only create one instance of the farmOS object
  * per page reload.  This is done to avoid fetching the schema
  * every time a farmOS object is needed.
@@ -46,6 +49,12 @@ export function getFarmGlobal() {
   return global_farm;
 }
 
+/*
+ * These two variables will be used throughout to access either the
+ * browser's localStorage/sessionStorage or the simulated versions
+ * provided by node-localstorage from Node programs that used this
+ * library.
+ */
 var libLocalStorage = null;
 var libSessionStorage = null;
 
@@ -65,77 +74,88 @@ var libSessionStorage = null;
  * @param {string} client the farmOS api client to use.
  * @param {string} user the username of the farmOS user to use for authentication.
  * @param {string} pass the farmOS password for the user.
- * @param {object} ls the local storage object to use when running in node. Omit this parameter to use the browser's `localStorage`.
+ * @param {object} ls the local/session storage object to use when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
  * @returns the connected and configured `farmos.js` `farmOS` object.
  */
-export async function getFarmOSInstance(
-  hostURL = 'http://farmos',
-  client = 'farm',
-  user = 'admin',
-  pass = 'admin',
-  ls = null
-) {
-  /*
-   * Handle local and session storage here so that the functions
-   * in this library can be used in both Node and in the browser
-   * (live and w/ Cypress).
-   */
-  libLocalStorage = ls;
-  libSessionStorage = ls;
-  if (!ls) {
-    libLocalStorage = localStorage;
-    libSessionStorage = sessionStorage;
-  }
-
-  // Only create a new farm object if we don't already have one in global_farm.
-  let newfarm = false;
-  if (!global_farm) {
-    newfarm = true;
-
-    const config = {
-      host: hostURL,
-      clientId: client,
-      getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-      setToken: (token) =>
-        libLocalStorage.setItem('token', JSON.stringify(token)),
-    };
-    const options = { remote: config };
+export const getFarmOSInstance = runExclusive.build(
+  async (
+    hostURL = 'http://farmos',
+    client = 'farm',
+    user = 'admin',
+    pass = 'admin',
+    ls = null
+  ) => {
+    /*
+     * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
+     * is used to prevent concurrent execution of this function.  This eliminates
+     * a race condition that allows the construction of multiple farmOS
+     * objects by different components.
+     */
 
     /*
-     * Enable this to be used both in Node, where farmOS is
-     * not recognized but farmOS.default is and in Cypress for
-     * testing where farmOS is recognized, but farmOS.default
-     * is not.
+     * Handle local and session storage here so that the functions
+     * in this library can be used in both Node and in the browser
+     * (live and w/ Cypress).
      */
-    if (typeof farmOS != 'function') {
-      global_farm = farmOS.default(options);
-    } else {
-      global_farm = farmOS(options);
+    if (!libLocalStorage) {
+      libLocalStorage = ls;
+      libSessionStorage = ls;
+      if (!ls) {
+        libLocalStorage = localStorage;
+        libSessionStorage = sessionStorage;
+      }
     }
-  }
 
-  // If we don't have an authentication token cached in localStorage,
-  // then authenticate with the farmOS host to get the token.
-  if (global_farm.remote.getToken() === null) {
-    await global_farm.remote.authorize(user, pass);
-  }
+    // Only create a new farm object if we don't already have one in global_farm.
+    let newfarm = false;
+    if (!global_farm) {
+      newfarm = true;
 
-  // Only set the schema if this is a new farm object.
-  if (newfarm) {
-    //Try the session storage first...
-    let schema = JSON.parse(libSessionStorage.getItem('schema'));
-    if (schema == null) {
-      // Not in session storage, so fetch schema from the farmOS host.
-      await global_farm.schema.fetch();
-      schema = global_farm.schema.get();
-      // Cache in the session storage for next time.
-      libSessionStorage.setItem('schema', JSON.stringify(schema));
+      const config = {
+        host: hostURL,
+        clientId: client,
+        getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+        setToken: (token) =>
+          libLocalStorage.setItem('token', JSON.stringify(token)),
+      };
+      const options = { remote: config };
+
+      /*
+       * Enable this to be used both in Node, where farmOS is
+       * not recognized but farmOS.default is and in Cypress for
+       * testing where farmOS is recognized, but farmOS.default
+       * is not.
+       */
+      if (typeof farmOS != 'function') {
+        global_farm = farmOS.default(options);
+      } else {
+        global_farm = farmOS(options);
+      }
     }
-    await global_farm.schema.set(schema);
-  }
 
-  return global_farm;
-}
+    // If we don't have an authentication token cached in localStorage,
+    // then authenticate with the farmOS host to get the token.
+    if (global_farm.remote.getToken() === null) {
+      await global_farm.remote.authorize(user, pass);
+    }
+
+    // Only set the schema if this is a new farm object.
+    if (newfarm) {
+      //Try the session storage first...
+      let schema = JSON.parse(libSessionStorage.getItem('schema'));
+      if (schema == null) {
+        // Not in session storage, so fetch schema from the farmOS host.
+        await global_farm.schema.fetch();
+        schema = global_farm.schema.get();
+        // Cache in the session storage for next time.
+        libSessionStorage.setItem('schema', JSON.stringify(schema));
+      }
+      await global_farm.schema.set(schema);
+    }
+
+    return global_farm;
+  }
+);
 
 /**
  * Add the user specified by the `ownerID` to the `obj` as the owner
@@ -210,7 +230,9 @@ var global_users = null;
  */
 export function clearCachedUsers() {
   global_users = null;
-  libSessionStorage.removeItem('users');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('users');
+  }
 }
 
 /**
@@ -225,6 +247,15 @@ export function getGlobalUsers() {
   return global_users;
 }
 
+/**
+ * @private
+ *
+ * Clear the `global_users` object.  This is useful for testing to ensure
+ * that the global is not set by prior tests.
+ */
+export function clearGlobalUsers() {
+  global_users = null;
+}
 /**
  * Get an array containing all of the active users from the farmOS host.  The users
  * will appear in the array in order by the value of the `attributes.display_name`
@@ -245,8 +276,9 @@ export async function getUsers() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('users') != null) {
-    global_users = JSON.parse(libSessionStorage.getItem('users'));
+  const usersSS = libSessionStorage.getItem('users');
+  if (usersSS) {
+    global_users = JSON.parse(usersSS);
     return global_users;
   }
 
@@ -316,7 +348,9 @@ var global_fields_and_beds = null;
  */
 export function clearCachedFieldsAndBeds() {
   global_fields_and_beds = null;
-  libSessionStorage.removeItem('fields_and_beds');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('fields_and_beds');
+  }
 }
 
 /**
@@ -329,6 +363,16 @@ export function clearCachedFieldsAndBeds() {
  */
 export function getGlobalFieldsAndBeds() {
   return global_fields_and_beds;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_fields_and_beds` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalFieldsAndBeds() {
+  global_fields_and_beds = null;
 }
 
 /**
@@ -353,10 +397,9 @@ export async function getFieldsAndBeds() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('fields_and_beds') != null) {
-    global_fields_and_beds = JSON.parse(
-      libSessionStorage.getItem('fields_and_beds')
-    );
+  const fieldsAndBedsSS = libSessionStorage.getItem('fields_and_beds');
+  if (fieldsAndBedsSS) {
+    global_fields_and_beds = JSON.parse(fieldsAndBedsSS);
     return global_fields_and_beds;
   }
 
@@ -435,7 +478,9 @@ var global_greenhouses = null;
  */
 export function clearCachedGreenhouses() {
   global_greenhouses = null;
-  libSessionStorage.removeItem('greenhouses');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('greenhouses');
+  }
 }
 
 /**
@@ -451,14 +496,24 @@ export function getGlobalGreenhouses() {
 }
 
 /**
+ * @private
+ *
+ * Clear the `global_greenhouses` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalGreenhouses() {
+  global_greenhouses = null;
+}
+
+/**
  * Get the asset objects for all of the active structures that represent greenhouses.
  * These are the assets of type `asset--structure` that have `structure_type` of
  * `greenhouse`.  The greenhouses will appear in alphabetical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedGreenhouses`]{@link #module_farmosUtil.clearCachedGreenhouses}
+ * function to clear the cache.
  *
  * @returns an array of all of land assets representing greenhouses.
  */
@@ -469,8 +524,9 @@ export async function getGreenhouses() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('greenhouses') != null) {
-    global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
+  const greenHousesSS = libSessionStorage.getItem('greenhouses');
+  if (greenHousesSS) {
+    global_greenhouses = JSON.parse(greenHousesSS);
     return global_greenhouses;
   }
 
@@ -538,7 +594,9 @@ var global_crops = null;
  */
 export function clearCachedCrops() {
   global_crops = null;
-  libSessionStorage.removeItem('crops');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('crops');
+  }
 }
 
 /**
@@ -554,14 +612,24 @@ export function getGlobalCrops() {
 }
 
 /**
+ * @private
+ *
+ * Clear the `global_crops` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalCrops() {
+  global_crops = null;
+}
+
+/**
  * Get taxonomy term objects for all of the crops.
  * These are the taxonomy terms of type `taxonomy_term--plant_type`.
  * The crops will appear in alphabetical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedCrops`]{@link #module_farmosUtil.clearCachedCrops}
+ * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the crops.
  * @returns an array of all of taxonomy terms representing crops.
@@ -573,8 +641,9 @@ export async function getCrops() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('crops') != null) {
-    global_crops = JSON.parse(libSessionStorage.getItem('crops'));
+  const cropsSS = libSessionStorage.getItem('crops');
+  if (cropsSS) {
+    global_crops = JSON.parse(cropsSS);
     return global_crops;
   }
 
@@ -640,7 +709,9 @@ var global_tray_sizes = null;
  */
 export function clearCachedTraySizes() {
   global_tray_sizes = null;
-  libSessionStorage.removeItem('tray_sizes');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('tray_sizes');
+  }
 }
 
 /**
@@ -656,18 +727,29 @@ export function getGlobalTraySizes() {
 }
 
 /**
+ * @private
+ *
+ * Clear the `global_tray_sizes` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalTraySizes() {
+  global_tray_sizes = null;
+}
+
+/**
  * Get taxonomy term objects for all of the tray sizes.
  * These are the taxonomy terms of type `taxonomy_term--tray_size`.
  * The tray sizes will appear in numerical order
  * by the value of the `attributes.name` property.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedTraySizes`]{@link #module_farmosUtil.clearCachedTraySizes}
+ * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the tray sizes.
  * @returns an array of all of taxonomy terms representing tray sizes.
  */
+
 export async function getTraySizes() {
   if (global_tray_sizes) {
     return global_tray_sizes;
@@ -675,8 +757,9 @@ export async function getTraySizes() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('tray_sizes') != null) {
-    global_tray_sizes = JSON.parse(libSessionStorage.getItem('tray_sizes'));
+  let traySizesSS = libSessionStorage.getItem('tray_sizes');
+  if (traySizesSS) {
+    global_tray_sizes = JSON.parse(traySizesSS);
     return global_tray_sizes;
   }
 
@@ -744,7 +827,9 @@ var global_units = null;
  */
 export function clearCachedUnits() {
   global_units = null;
-  libSessionStorage.removeItem('units');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('units');
+  }
 }
 
 /**
@@ -760,13 +845,23 @@ export function getGlobalUnits() {
 }
 
 /**
+ * @private
+ *
+ * Clear the `global_units` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalUnits() {
+  global_units = null;
+}
+
+/**
  * Get taxonomy term objects for all of the units.
  * These are the taxonomy terms of type `taxonomy_term--unit`.
  * The units will appear in alphabetical order.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedUnits`]{@link #module_farmosUtil.clearCachedUnits}
+ * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the units.
  * @returns an array of all of taxonomy terms representing units.
@@ -778,8 +873,9 @@ export async function getUnits() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('units') != null) {
-    global_units = JSON.parse(libSessionStorage.getItem('units'));
+  const unitsSS = libSessionStorage.getItem('units');
+  if (unitsSS) {
+    global_units = JSON.parse(unitsSS);
     return global_units;
   }
 
@@ -845,7 +941,9 @@ var global_log_categories = null;
  */
 export function clearCachedLogCategories() {
   global_log_categories = null;
-  libSessionStorage.removeItem('log_categories');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('log_categories');
+  }
 }
 
 /**
@@ -861,13 +959,23 @@ export function getGlobalLogCategories() {
 }
 
 /**
+ * @private
+ *
+ * Clear the `global_units` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalLogCategories() {
+  global_log_categories = null;
+}
+
+/**
  * Get taxonomy term objects for all of the log categories.
  * These are the taxonomy terms of type `taxonomy_term--log_category`.
  * The log categories will appear in alphabetical order.
  *
- * NOTE: This function makes an API call to the farmOS host.  Thus,
- * if the array is to be used multiple times it should be cached
- * by the calling code.
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedLogCategories`]{@link #module_farmosUtil.clearCachedLogCategories}
+ * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the log categories.
  * @returns an array of all of taxonomy terms representing log categories.
@@ -879,10 +987,9 @@ export async function getLogCategories() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('log_categories') != null) {
-    global_log_categories = JSON.parse(
-      libSessionStorage.getItem('log_categories')
-    );
+  const logCategoriesSS = libSessionStorage.getItem('log_categories');
+  if (logCategoriesSS) {
+    global_log_categories = JSON.parse(logCategoriesSS);
     return global_log_categories;
   }
 
@@ -938,4 +1045,33 @@ export async function getLogCategoryIdToTermMap() {
   const map = new Map(categories.map((category) => [category.id, category]));
 
   return map;
+}
+
+export async function createPlantAsset(
+  farm,
+  { assetName, status, cropName },
+  opts = {}
+) {
+  const plant = {
+    ...{
+      type: 'asset--plant',
+      name: assetName,
+      status: status,
+      plant_type: {
+        type: 'taxonomy_term--plant_type',
+        id: getCropNameToTermMap(farm).get(cropName).id,
+      },
+    },
+    ...opts,
+  };
+
+  const planting_asset = farm.asset.create(plant);
+
+  try {
+    const result = await farm.asset.send(planting_asset);
+    return result;
+  } catch (e) {
+    console.log(e);
+    throw new Error('Unable to create plant asset.');
+  }
 }

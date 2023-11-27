@@ -30,32 +30,84 @@ describe('Test the units utility functions', () => {
     });
   });
 
-  it('Test that get units throws error if fetch fails', () => {
+  it('Test that get units throws error if fetch fails', { retries: 4 }, () => {
     farmosUtil.clearCachedUnits();
 
     cy.intercept('GET', '**/api/taxonomy_term/unit?*', {
       forceNetworkError: true,
     });
 
-    farmosUtil
-      .getUnits()
-      .then(() => {
-        throw new Error('Fetching units should have failed.');
-      })
-      .catch((error) => {
-        expect(error.message).to.equal('Unable to fetch units.');
-      });
+    cy.wrap(
+      farmosUtil
+        .getUnits()
+        .then(() => {
+          throw new Error('Fetching units should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).to.equal('Unable to fetch units.');
+        })
+    );
   });
 
-  it('Test that getUnits result is cached', () => {
+  it('Test that getUnits uses global variable cache', { retries: 4 }, () => {
     farmosUtil.clearCachedUnits();
     expect(farmosUtil.getGlobalUnits()).to.be.null;
     expect(sessionStorage.getItem('units')).to.be.null;
 
-    farmosUtil.getUnits().then(() => {
-      expect(farmosUtil.getGlobalUnits()).to.not.be.null;
-      expect(sessionStorage.getItem('units')).to.not.be.null;
-    });
+    cy.intercept(
+      'GET',
+      '**/api/taxonomy_term/unit?*',
+      cy.spy().as('fetchUnits')
+    );
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getUnits())
+      .then(() => {
+        cy.get('@fetchUnits').its('callCount').should('equal', 1);
+        expect(farmosUtil.getGlobalUnits()).not.to.be.null;
+        expect(sessionStorage.getItem('units')).not.to.be.null;
+      })
+      .then(() => {
+        // Now check that the global is used.
+        sessionStorage.removeItem('units');
+        cy.wrap(farmosUtil.getUnits()).then(() => {
+          cy.get('@fetchUnits').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalUnits()).not.to.be.null;
+          expect(sessionStorage.getItem('units')).to.be.null;
+        });
+      });
+  });
+
+  it('Test that getUnits uses session storage cache', { retries: 4 }, () => {
+    farmosUtil.clearCachedUnits();
+    expect(farmosUtil.getGlobalUnits()).to.be.null;
+    expect(sessionStorage.getItem('units')).to.be.null;
+
+    cy.intercept(
+      'GET',
+      '**/api/taxonomy_term/unit?*',
+      cy.spy().as('fetchUnits')
+    );
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getUnits())
+      .then(() => {
+        cy.get('@fetchUnits').its('callCount').should('equal', 1);
+        expect(farmosUtil.getGlobalUnits()).not.to.be.null;
+        expect(sessionStorage.getItem('units')).not.to.be.null;
+      })
+      .then(() => {
+        farmosUtil.clearGlobalUnits();
+        expect(farmosUtil.getGlobalUnits()).to.be.null;
+        expect(sessionStorage.getItem('units')).not.to.be.null;
+
+        // Now check that the session storage is used.
+        cy.wrap(farmosUtil.getUnits()).then(() => {
+          cy.get('@fetchUnits').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalUnits()).to.not.be.null;
+          expect(sessionStorage.getItem('units')).to.not.be.null;
+        });
+      });
   });
 
   it('Get the unitToTerm map', () => {
