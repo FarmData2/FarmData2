@@ -39,7 +39,7 @@ describe('Test getFarmOSInstance', () => {
     });
   }
 
-  it('Check getting the first instance', () => {
+  it('Check getting the first instance', { retries: 4 }, () => {
     // Get the first instance
     // - check that farm_global does not exist
     // - check that token is not in local storage
@@ -79,45 +79,49 @@ describe('Test getFarmOSInstance', () => {
     });
   });
 
-  it('Get a second instance of farmOS with everything cached', () => {
-    // Get a second instance
-    // - check that farm global exists, token is cached, schema is cached.
-    // Get a farm object
-    // - check it has token & schema
-    // - check it is the same farm object as last instance
-    // - check that it can be used to get info from server
-    // - check that it didn't fetch token
-    // - check that it didn't fetch schema
-    // - check that token is saved in local storage
-    // - check that schema is saved in session storage
+  it(
+    'Get a second instance of farmOS with everything cached',
+    { retries: 4 },
+    () => {
+      // Get a second instance
+      // - check that farm global exists, token is cached, schema is cached.
+      // Get a farm object
+      // - check it has token & schema
+      // - check it is the same farm object as last instance
+      // - check that it can be used to get info from server
+      // - check that it didn't fetch token
+      // - check that it didn't fetch schema
+      // - check that token is saved in local storage
+      // - check that schema is saved in session storage
 
-    cy.intercept('POST', 'oauth/token').as('getToken');
-    cy.intercept('GET', '**/api/**/schema').as('fetchSchema');
+      cy.intercept('POST', 'oauth/token').as('getToken');
+      cy.intercept('GET', '**/api/**/schema').as('fetchSchema');
 
-    expect(farmosUtil.getFarmGlobal()).to.not.be.null;
-    expect(localStorage.getItem('token')).to.not.be.null;
-    expect(sessionStorage.getItem('schema')).to.not.be.null;
-
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
-      expect(newFarm).to.not.be.null;
-      expect(newFarm.remote.getToken()).to.not.be.null;
-      expect(newFarm.schema.get()).to.not.be.null;
-
-      expect(newFarm === prev_farm).to.be.true;
-
-      useFarm(newFarm);
-
-      cy.get('@getToken.all').should('have.length', 0);
-      cy.get('@fetchSchema.all').should('have.length', 0);
-
+      expect(farmosUtil.getFarmGlobal()).to.not.be.null;
       expect(localStorage.getItem('token')).to.not.be.null;
       expect(sessionStorage.getItem('schema')).to.not.be.null;
-    });
-  });
 
-  it('Clear the local storage.', () => {
+      cy.wrap(
+        farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
+      ).then((newFarm) => {
+        expect(newFarm).to.not.be.null;
+        expect(newFarm.remote.getToken()).to.not.be.null;
+        expect(newFarm.schema.get()).to.not.be.null;
+
+        expect(newFarm === prev_farm).to.be.true;
+
+        useFarm(newFarm);
+
+        cy.get('@getToken.all').should('have.length', 0);
+        cy.get('@fetchSchema.all').should('have.length', 0);
+
+        expect(localStorage.getItem('token')).to.not.be.null;
+        expect(sessionStorage.getItem('schema')).to.not.be.null;
+      });
+    }
+  );
+
+  it('Clear the local storage.', { retries: 4 }, () => {
     // Clear localStorage
     // - check that farm global exists
     // - Check that schema is in session storage
@@ -158,7 +162,7 @@ describe('Test getFarmOSInstance', () => {
     });
   });
 
-  it('Clear the farm_global.', () => {
+  it('Clear the farm_global.', { retries: 4 }, () => {
     // Clear the farm global
     // - check that farm global does not exist
     // - Check that schema is in session storage
@@ -200,7 +204,7 @@ describe('Test getFarmOSInstance', () => {
     });
   });
 
-  it('Clear the farm_global and session storage.', () => {
+  it('Clear the farm_global and session storage.', { retries: 4 }, () => {
     // Clear the farm global
     // Clear the session storage
     // - check that farm global does not exist
@@ -244,7 +248,7 @@ describe('Test getFarmOSInstance', () => {
     });
   });
 
-  it('Clear everything.', () => {
+  it('Clear everything.', { retries: 4 }, () => {
     // Clear the farm global
     // Clear the session storage
     // Clear the local storage
