@@ -8,8 +8,11 @@
  */
 
 import farmOS from 'farmos';
+import * as runExclusive from 'run-exclusive';
 
-/*
+/**
+ * @private
+ *
  * Ensure that we only create one instance of the farmOS object
  * per page reload.  This is done to avoid fetching the schema
  * every time a farmOS object is needed.
@@ -46,6 +49,12 @@ export function getFarmGlobal() {
   return global_farm;
 }
 
+/*
+ * These two variables will be used throughout to access either the
+ * browser's localStorage/sessionStorage or the simulated versions
+ * provided by node-localstorage from Node programs that used this
+ * library.
+ */
 var libLocalStorage = null;
 var libSessionStorage = null;
 
@@ -65,84 +74,95 @@ var libSessionStorage = null;
  * @param {string} client the farmOS api client to use.
  * @param {string} user the username of the farmOS user to use for authentication.
  * @param {string} pass the farmOS password for the user.
- * @param {object} ls the local storage object to use when running in node. Omit this parameter to use the browser's `localStorage`.
+ * @param {object} ls the local/session storage object to use when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
  * @returns the connected and configured `farmos.js` `farmOS` object.
  */
-export async function getFarmOSInstance(
-  hostURL = 'http://farmos',
-  client = 'farm',
-  user = 'admin',
-  pass = 'admin',
-  ls = null
-) {
-  /*
-   * Handle local and session storage here so that the functions
-   * in this library can be used in both Node and in the browser
-   * (live and w/ Cypress).
-   */
-  libLocalStorage = ls;
-  libSessionStorage = ls;
-  if (!ls) {
-    libLocalStorage = localStorage;
-    libSessionStorage = sessionStorage;
-  }
-
-  // Only create a new farm object if we don't already have one in global_farm.
-  let newfarm = false;
-  if (!global_farm) {
-    newfarm = true;
-
-    const config = {
-      host: hostURL,
-      clientId: client,
-      getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-      setToken: (token) =>
-        libLocalStorage.setItem('token', JSON.stringify(token)),
-    };
-    const options = { remote: config };
+export const getFarmOSInstance = runExclusive.build(
+  async (
+    hostURL = 'http://farmos',
+    client = 'farm',
+    user = 'admin',
+    pass = 'admin',
+    ls = null
+  ) => {
+    /*
+     * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
+     * is used to prevent concurrent execution of this function.  This eliminates
+     * a race condition that allows the construction of multiple farmOS 
+     * objects by different components.
+     */
 
     /*
-     * Enable this to be used both in Node, where farmOS is
-     * not recognized but farmOS.default is and in Cypress for
-     * testing where farmOS is recognized, but farmOS.default
-     * is not.
+     * Handle local and session storage here so that the functions
+     * in this library can be used in both Node and in the browser
+     * (live and w/ Cypress).
      */
-    if (typeof farmOS != 'function') {
-      global_farm = farmOS.default(options);
-    } else {
-      global_farm = farmOS(options);
+    if (!libLocalStorage) {
+      libLocalStorage = ls;
+      libSessionStorage = ls;
+      if (!ls) {
+        libLocalStorage = localStorage;
+        libSessionStorage = sessionStorage;
+      }
     }
-  }
 
-  // If we don't have an authentication token cached in localStorage,
-  // then authenticate with the farmOS host to get the token.
-  if (global_farm.remote.getToken() === null) {
-    await global_farm.remote.authorize(user, pass);
-  }
+    // Only create a new farm object if we don't already have one in global_farm.
+    let newfarm = false;
+    if (!global_farm) {
+      newfarm = true;
 
-  // Only set the schema if this is a new farm object.
-  if (newfarm) {
-    //Try the session storage first...
-    let schema = JSON.parse(libSessionStorage.getItem('schema'));
-    if (schema == null) {
-      // Not in session storage, so fetch schema from the farmOS host.
-      await global_farm.schema.fetch();
-      schema = global_farm.schema.get();
-      // Cache in the session storage for next time.
-      libSessionStorage.setItem('schema', JSON.stringify(schema));
+      const config = {
+        host: hostURL,
+        clientId: client,
+        getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+        setToken: (token) =>
+          libLocalStorage.setItem('token', JSON.stringify(token)),
+      };
+      const options = { remote: config };
+
+      /*
+       * Enable this to be used both in Node, where farmOS is
+       * not recognized but farmOS.default is and in Cypress for
+       * testing where farmOS is recognized, but farmOS.default
+       * is not.
+       */
+      if (typeof farmOS != 'function') {
+        global_farm = farmOS.default(options);
+      } else {
+        global_farm = farmOS(options);
+      }
     }
-    await global_farm.schema.set(schema);
-  }
 
-  return global_farm;
-}
+    // If we don't have an authentication token cached in localStorage,
+    // then authenticate with the farmOS host to get the token.
+    if (global_farm.remote.getToken() === null) {
+      await global_farm.remote.authorize(user, pass);
+    }
+
+    // Only set the schema if this is a new farm object.
+    if (newfarm) {
+      //Try the session storage first...
+      let schema = JSON.parse(libSessionStorage.getItem('schema'));
+      if (schema == null) {
+        // Not in session storage, so fetch schema from the farmOS host.
+        await global_farm.schema.fetch();
+        schema = global_farm.schema.get();
+        // Cache in the session storage for next time.
+        libSessionStorage.setItem('schema', JSON.stringify(schema));
+      }
+      await global_farm.schema.set(schema);
+    }
+
+    return global_farm;
+  }
+);
 
 /**
  * Add the user specified by the `ownerID` to the `obj` as the owner
  * of the asset or log.
  *
  * This pushes an `user--user` object to the `relationships.owner` property of `obj`.
- *
+ * 
  * @param {object} obj a farmOS asset or log.
  * @param {string} ownerId the id of the user to assign as the owner.
  * @throws {ReferenceError} if the `obj` does not have a `relationships.owner` property.
@@ -245,10 +265,10 @@ export async function getUsers() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('users') != null) {
-    global_users = JSON.parse(libSessionStorage.getItem('users'));
-    return global_users;
-  }
+  // if (libSessionStorage.getItem('users') != null) {
+  //   global_users = JSON.parse(libSessionStorage.getItem('users'));
+  //   return global_users;
+  // }
 
   const users = await farm.user.fetch({
     filter: {
@@ -266,7 +286,7 @@ export async function getUsers() {
     o1.attributes.display_name.localeCompare(o2.attributes.display_name)
   );
 
-  libSessionStorage.setItem('users', JSON.stringify(users.data));
+  //libSessionStorage.setItem('users', JSON.stringify(users.data));
   global_users = users.data;
   return global_users;
 }
@@ -353,12 +373,12 @@ export async function getFieldsAndBeds() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('fields_and_beds') != null) {
-    global_fields_and_beds = JSON.parse(
-      libSessionStorage.getItem('fields_and_beds')
-    );
-    return global_fields_and_beds;
-  }
+  // if (libSessionStorage.getItem('fields_and_beds') != null) {
+  //   global_fields_and_beds = JSON.parse(
+  //     libSessionStorage.getItem('fields_and_beds')
+  //   );
+  //   return global_fields_and_beds;
+  // }
 
   const beds = await farm.asset.fetch({
     filter: {
@@ -386,7 +406,7 @@ export async function getFieldsAndBeds() {
   const land = fields.data.concat(beds.data);
   land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
 
-  libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
+  //libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
   global_fields_and_beds = land;
   return global_fields_and_beds;
 }
@@ -469,10 +489,10 @@ export async function getGreenhouses() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('greenhouses') != null) {
-    global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
-    return global_greenhouses;
-  }
+  // if (libSessionStorage.getItem('greenhouses') != null) {
+  //   global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
+  //   return global_greenhouses;
+  // }
 
   const greenhouses = await farm.asset.fetch({
     filter: {
@@ -491,7 +511,7 @@ export async function getGreenhouses() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
+  //libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
   global_greenhouses = greenhouses.data;
   return global_greenhouses;
 }
@@ -573,10 +593,11 @@ export async function getCrops() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('crops') != null) {
-    global_crops = JSON.parse(libSessionStorage.getItem('crops'));
-    return global_crops;
-  }
+  // const cropsSS = libSessionStorage.getItem('crop');
+  // if (cropsSS) {
+  //   global_crops = JSON.parse(cropsSS);
+  //   return global_crops;
+  // }
 
   const crops = await farm.term.fetch({
     filter: {
@@ -593,7 +614,7 @@ export async function getCrops() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  libSessionStorage.setItem('crops', JSON.stringify(crops.data));
+  // libSessionStorage.setItem('crops', JSON.stringify(crops.data));
   global_crops = crops.data;
   return global_crops;
 }
@@ -668,14 +689,19 @@ export function getGlobalTraySizes() {
  * @throws {Error} if unable to fetch the tray sizes.
  * @returns an array of all of taxonomy terms representing tray sizes.
  */
+
 export async function getTraySizes() {
+  console.log('global_tray_sizes: ' + global_tray_sizes);
+
   if (global_tray_sizes) {
     return global_tray_sizes;
   }
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('tray_sizes') != null) {
+  let traySizesSS = libSessionStorage.getItem('tray_sizes');
+  console.log('traySizesSS: ' + traySizesSS);
+  if (traySizesSS) {
     global_tray_sizes = JSON.parse(libSessionStorage.getItem('tray_sizes'));
     return global_tray_sizes;
   }
@@ -686,6 +712,9 @@ export async function getTraySizes() {
     },
     limit: Infinity,
   });
+  console.dir('traySizes: ' + traySizes);
+  console.log('traySizes.rejected: ' + traySizes.rejected);
+  console.log('traySizes.data: ' + traySizes.data);
 
   if (traySizes.rejected.length != 0) {
     throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
@@ -778,10 +807,10 @@ export async function getUnits() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('units') != null) {
-    global_units = JSON.parse(libSessionStorage.getItem('units'));
-    return global_units;
-  }
+  // if (libSessionStorage.getItem('units') != null) {
+  //   global_units = JSON.parse(libSessionStorage.getItem('units'));
+  //   return global_units;
+  // }
 
   const units = await farm.term.fetch({
     filter: {
@@ -798,7 +827,7 @@ export async function getUnits() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  libSessionStorage.setItem('units', JSON.stringify(units.data));
+  //libSessionStorage.setItem('units', JSON.stringify(units.data));
   global_units = units.data;
   return global_units;
 }
@@ -879,12 +908,12 @@ export async function getLogCategories() {
 
   const farm = await getFarmOSInstance();
 
-  if (libSessionStorage.getItem('log_categories') != null) {
-    global_log_categories = JSON.parse(
-      libSessionStorage.getItem('log_categories')
-    );
-    return global_log_categories;
-  }
+  // if (libSessionStorage.getItem('log_categories') != null) {
+  //   global_log_categories = JSON.parse(
+  //     libSessionStorage.getItem('log_categories')
+  //   );
+  //   return global_log_categories;
+  // }
 
   const categories = await farm.term.fetch({
     filter: {
@@ -901,7 +930,7 @@ export async function getLogCategories() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
+  // libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
   global_log_categories = categories.data;
   return global_log_categories;
 }

@@ -128,8 +128,8 @@ export default {
       fieldsAndBeds = farmosUtil
         .getFieldOrBedNameToAssetMap()
         .then((fieldMap) => {
-          let fields = Array.from(fieldMap.keys());
-          return fields;
+          let fieldNames = Array.from(fieldMap.keys());
+          return fieldNames;
         });
     }
 
@@ -138,8 +138,8 @@ export default {
       greenhouses = farmosUtil
         .getGreenhouseNameToAssetMap()
         .then((greenhouseMap) => {
-          let greenhouses = Array.from(greenhouseMap.keys());
-          return greenhouses;
+          let greenhouseNames = Array.from(greenhouseMap.keys());
+          return greenhouseNames;
         });
     }
 

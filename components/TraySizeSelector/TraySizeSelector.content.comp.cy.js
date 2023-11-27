@@ -83,4 +83,22 @@ describe('Test the TraySizeSelector content', () => {
           .should('eq', '/admin/structure/taxonomy/manage/tray_size/add');
       });
   });
+
+  it('Test that tray sizes are loaded', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(TraySizeSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"] option').should('have.length', 7);
+        cy.get('[data-cy="selector-option-1"]').should('have.text', '50');
+        cy.get('[data-cy="selector-option-6"]').should('have.text', '288');
+      });
+  });
 });

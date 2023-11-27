@@ -44,6 +44,7 @@
         v-on:ready="createdCount++"
         v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
+
       <hr />
 
       <!-- Number of Trays -->
@@ -141,6 +142,7 @@ import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 export default {
   components: {
@@ -189,7 +191,7 @@ export default {
       ).toLocaleString(undefined);
     },
     pageDoneLoading() {
-      return this.createdCount == 9;
+      return this.createdCount == 10;
     },
   },
   methods: {
@@ -198,6 +200,9 @@ export default {
 
       if (Object.values(this.validity).every((item) => item === true)) {
         console.log(this.form);
+
+        farmosUtil.getTraySizeToTermMap();
+
       } else {
         this.enableSubmit = false;
       }

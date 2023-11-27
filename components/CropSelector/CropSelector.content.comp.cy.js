@@ -84,4 +84,25 @@ describe('Test the CropSelector content', () => {
           .should('eq', '/admin/structure/taxonomy/manage/plant_type/add');
       });
   });
+
+  it('Test that crops are loaded', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"] option').should('have.length', 112);
+        cy.get('[data-cy="selector-option-1"]').should('have.text', 'ARUGULA');
+        cy.get('[data-cy="selector-option-111"]').should(
+          'have.text',
+          'ZUCCHINI'
+        );
+      });
+  });
 });
