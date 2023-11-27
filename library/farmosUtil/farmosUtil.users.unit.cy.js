@@ -31,32 +31,76 @@ describe('Test the user utility functions', () => {
     });
   });
 
-  it('Test that getUsers throws error if fetch fails', () => {
+  it('Test that getUsers throws error if fetch fails', { retries: 4 }, () => {
     farmosUtil.clearCachedUsers();
 
     cy.intercept('GET', '**/api/user/user?*', {
       forceNetworkError: true,
     });
 
-    farmosUtil
-      .getUsers()
-      .then(() => {
-        throw new Error('Fetching users should have failed.');
-      })
-      .catch((error) => {
-        expect(error.message).to.equal('Unable to fetch users.');
-      });
+    cy.wrap(
+      farmosUtil
+        .getUsers()
+        .then(() => {
+          throw new Error('Fetching users should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).to.equal('Unable to fetch users.');
+        })
+    );
   });
 
-  it('Test that getUsers is cached', () => {
+  it('Test that getUsers uses global variable cache', { retries: 4 }, () => {
     farmosUtil.clearCachedUsers();
     expect(farmosUtil.getGlobalUsers()).to.be.null;
     expect(sessionStorage.getItem('users')).to.be.null;
 
-    farmosUtil.getUsers().then(() => {
-      expect(farmosUtil.getGlobalUsers()).to.not.be.null;
-      expect(sessionStorage.getItem('users')).to.not.be.null;
-    });
+    cy.intercept('GET', '**/api/user/user?*', cy.spy().as('fetchUsers'));
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getUsers())
+      .then(() => {
+        cy.get('@fetchUsers').its('callCount').should('equal', 1);
+        expect(farmosUtil.getGlobalUsers()).not.to.be.null;
+        expect(sessionStorage.getItem('users')).not.to.be.null;
+      })
+      .then(() => {
+        // Now check that the global is used.
+        sessionStorage.removeItem('users');
+        cy.wrap(farmosUtil.getUsers()).then(() => {
+          cy.get('@fetchUsers').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalUsers()).not.to.be.null;
+          expect(sessionStorage.getItem('users')).to.be.null;
+        });
+      });
+  });
+
+  it('Test that getUsers uses session storage cache', { retries: 4 }, () => {
+    farmosUtil.clearCachedUsers();
+    expect(farmosUtil.getGlobalUsers()).to.be.null;
+    expect(sessionStorage.getItem('users')).to.be.null;
+
+    cy.intercept('GET', '**/api/user/user?*', cy.spy().as('fetchUsers'));
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getUsers())
+      .then(() => {
+        cy.get('@fetchUsers').its('callCount').should('equal', 1);
+        expect(farmosUtil.getGlobalUsers()).not.to.be.null;
+        expect(sessionStorage.getItem('users')).not.to.be.null;
+      })
+      .then(() => {
+        farmosUtil.clearGlobalUsers();
+        expect(farmosUtil.getGlobalUsers()).to.be.null;
+        expect(sessionStorage.getItem('users')).not.to.be.null;
+
+        // Now check that the session storage is used.
+        cy.wrap(farmosUtil.getUsers()).then(() => {
+          cy.get('@fetchUsers').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalUsers()).to.not.be.null;
+          expect(sessionStorage.getItem('users')).to.not.be.null;
+        });
+      });
   });
 
   it('Get the usernameMap', () => {
