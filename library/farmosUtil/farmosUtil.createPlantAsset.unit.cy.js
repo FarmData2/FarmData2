@@ -32,5 +32,5 @@ describe('Test the creation of a plant asset', () => {
 
   it('test additional opts on createPlantAsset', () => {
     expect(true).to.be.false;
-  })
+  });
 });

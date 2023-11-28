@@ -24,32 +24,85 @@ describe('Test the crop utility functions', () => {
     });
   });
 
-  it('Test that getCrop throws error if fetch fails', () => {
+  it('Test that getCrop throws error if fetch fails', { retries: 4 }, () => {
     farmosUtil.clearCachedCrops();
 
     cy.intercept('GET', '**/api/taxonomy_term/plant_type?*', {
       forceNetworkError: true,
     });
 
-    farmosUtil
-      .getCrops()
-      .then(() => {
-        throw new Error('Fetching crops should have failed.');
-      })
-      .catch((error) => {
-        expect(error.message).to.equal('Unable to fetch crops.');
-      });
+    cy.wrap(
+      farmosUtil
+        .getCrops()
+        .then(() => {
+          throw new Error('Fetching crops should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).to.equal('Unable to fetch crops.');
+        })
+    );
   });
 
-  it('Test that getCrops result is cached', () => {
+  it('Test that getCrops uses global variable cache', { retries: 4 }, () => {
     farmosUtil.clearCachedCrops();
     expect(farmosUtil.getGlobalCrops()).to.be.null;
     expect(sessionStorage.getItem('crops')).to.be.null;
 
-    farmosUtil.getCrops().then(() => {
-      expect(farmosUtil.getGlobalCrops()).to.not.be.null;
-      expect(sessionStorage.getItem('crops')).to.not.be.null;
-    });
+    cy.intercept(
+      'GET',
+      '**/api/taxonomy_term/plant_type?*',
+      cy.spy().as('fetchCrops')
+    );
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getCrops())
+      .then(() => {
+        // There are three pages of crops.
+        cy.get('@fetchCrops').its('callCount').should('equal', 3);
+        expect(farmosUtil.getGlobalCrops()).not.to.be.null;
+        expect(sessionStorage.getItem('crops')).not.to.be.null;
+      })
+      .then(() => {
+        // Now check that the global is used.
+        sessionStorage.removeItem('crops');
+        cy.wrap(farmosUtil.getCrops()).then(() => {
+          cy.get('@fetchCrops').its('callCount').should('equal', 3);
+          expect(farmosUtil.getGlobalCrops()).not.to.be.null;
+          expect(sessionStorage.getItem('crops')).to.be.null;
+        });
+      });
+  });
+
+  it('Test that getCrops uses session storage cache', { retries: 4 }, () => {
+    farmosUtil.clearCachedCrops();
+    expect(farmosUtil.getGlobalCrops()).to.be.null;
+    expect(sessionStorage.getItem('crops')).to.be.null;
+
+    cy.intercept(
+      'GET',
+      '**/api/taxonomy_term/plant_type?*',
+      cy.spy().as('fetchCrops')
+    );
+
+    // Get the first one to ensure the cache is populated.
+    cy.wrap(farmosUtil.getCrops())
+      .then(() => {
+        cy.get('@fetchCrops').its('callCount').should('equal', 3);
+        expect(farmosUtil.getGlobalCrops()).not.to.be.null;
+        expect(sessionStorage.getItem('crops')).not.to.be.null;
+      })
+      .then(() => {
+        farmosUtil.clearGlobalCrops();
+        expect(farmosUtil.getGlobalCrops()).to.be.null;
+        expect(sessionStorage.getItem('crops')).not.to.be.null;
+
+        // Now check that the session storage is used.
+        cy.wrap(farmosUtil.getCrops()).then(() => {
+          cy.get('@fetchCrops').its('callCount').should('equal', 3);
+          expect(farmosUtil.getGlobalCrops()).to.not.be.null;
+          expect(sessionStorage.getItem('crops')).to.not.be.null;
+        });
+      });
   });
 
   it('Get the cropNameMap', () => {

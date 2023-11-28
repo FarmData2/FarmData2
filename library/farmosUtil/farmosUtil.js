@@ -88,7 +88,7 @@ export const getFarmOSInstance = runExclusive.build(
     /*
      * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
      * is used to prevent concurrent execution of this function.  This eliminates
-     * a race condition that allows the construction of multiple farmOS 
+     * a race condition that allows the construction of multiple farmOS
      * objects by different components.
      */
 
@@ -162,7 +162,7 @@ export const getFarmOSInstance = runExclusive.build(
  * of the asset or log.
  *
  * This pushes an `user--user` object to the `relationships.owner` property of `obj`.
- * 
+ *
  * @param {object} obj a farmOS asset or log.
  * @param {string} ownerId the id of the user to assign as the owner.
  * @throws {ReferenceError} if the `obj` does not have a `relationships.owner` property.
@@ -230,7 +230,9 @@ var global_users = null;
  */
 export function clearCachedUsers() {
   global_users = null;
-  libSessionStorage.removeItem('users');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('users');
+  }
 }
 
 /**
@@ -245,6 +247,15 @@ export function getGlobalUsers() {
   return global_users;
 }
 
+/**
+ * @private
+ *
+ * Clear the `global_users` object.  This is useful for testing to ensure
+ * that the global is not set by prior tests.
+ */
+export function clearGlobalUsers() {
+  global_users = null;
+}
 /**
  * Get an array containing all of the active users from the farmOS host.  The users
  * will appear in the array in order by the value of the `attributes.display_name`
@@ -265,10 +276,11 @@ export async function getUsers() {
 
   const farm = await getFarmOSInstance();
 
-  // if (libSessionStorage.getItem('users') != null) {
-  //   global_users = JSON.parse(libSessionStorage.getItem('users'));
-  //   return global_users;
-  // }
+  const usersSS = libSessionStorage.getItem('users');
+  if (usersSS) {
+    global_users = JSON.parse(usersSS);
+    return global_users;
+  }
 
   const users = await farm.user.fetch({
     filter: {
@@ -286,7 +298,7 @@ export async function getUsers() {
     o1.attributes.display_name.localeCompare(o2.attributes.display_name)
   );
 
-  //libSessionStorage.setItem('users', JSON.stringify(users.data));
+  libSessionStorage.setItem('users', JSON.stringify(users.data));
   global_users = users.data;
   return global_users;
 }
@@ -336,7 +348,9 @@ var global_fields_and_beds = null;
  */
 export function clearCachedFieldsAndBeds() {
   global_fields_and_beds = null;
-  libSessionStorage.removeItem('fields_and_beds');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('fields_and_beds');
+  }
 }
 
 /**
@@ -349,6 +363,16 @@ export function clearCachedFieldsAndBeds() {
  */
 export function getGlobalFieldsAndBeds() {
   return global_fields_and_beds;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_fields_and_beds` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalFieldsAndBeds() {
+  global_fields_and_beds = null;
 }
 
 /**
@@ -373,12 +397,11 @@ export async function getFieldsAndBeds() {
 
   const farm = await getFarmOSInstance();
 
-  // if (libSessionStorage.getItem('fields_and_beds') != null) {
-  //   global_fields_and_beds = JSON.parse(
-  //     libSessionStorage.getItem('fields_and_beds')
-  //   );
-  //   return global_fields_and_beds;
-  // }
+  const fieldsAndBedsSS = libSessionStorage.getItem('fields_and_beds');
+  if (fieldsAndBedsSS) {
+    global_fields_and_beds = JSON.parse(fieldsAndBedsSS);
+    return global_fields_and_beds;
+  }
 
   const beds = await farm.asset.fetch({
     filter: {
@@ -406,7 +429,7 @@ export async function getFieldsAndBeds() {
   const land = fields.data.concat(beds.data);
   land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
 
-  //libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
+  libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
   global_fields_and_beds = land;
   return global_fields_and_beds;
 }
@@ -455,7 +478,9 @@ var global_greenhouses = null;
  */
 export function clearCachedGreenhouses() {
   global_greenhouses = null;
-  libSessionStorage.removeItem('greenhouses');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('greenhouses');
+  }
 }
 
 /**
@@ -468,6 +493,16 @@ export function clearCachedGreenhouses() {
  */
 export function getGlobalGreenhouses() {
   return global_greenhouses;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_greenhouses` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalGreenhouses() {
+  global_greenhouses = null;
 }
 
 /**
@@ -489,10 +524,11 @@ export async function getGreenhouses() {
 
   const farm = await getFarmOSInstance();
 
-  // if (libSessionStorage.getItem('greenhouses') != null) {
-  //   global_greenhouses = JSON.parse(libSessionStorage.getItem('greenhouses'));
-  //   return global_greenhouses;
-  // }
+  const greenHousesSS = libSessionStorage.getItem('greenhouses');
+  if (greenHousesSS) {
+    global_greenhouses = JSON.parse(greenHousesSS);
+    return global_greenhouses;
+  }
 
   const greenhouses = await farm.asset.fetch({
     filter: {
@@ -511,7 +547,7 @@ export async function getGreenhouses() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  //libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
+  libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
   global_greenhouses = greenhouses.data;
   return global_greenhouses;
 }
@@ -558,7 +594,9 @@ var global_crops = null;
  */
 export function clearCachedCrops() {
   global_crops = null;
-  libSessionStorage.removeItem('crops');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('crops');
+  }
 }
 
 /**
@@ -571,6 +609,16 @@ export function clearCachedCrops() {
  */
 export function getGlobalCrops() {
   return global_crops;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_crops` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalCrops() {
+  global_crops = null;
 }
 
 /**
@@ -593,11 +641,11 @@ export async function getCrops() {
 
   const farm = await getFarmOSInstance();
 
-  // const cropsSS = libSessionStorage.getItem('crop');
-  // if (cropsSS) {
-  //   global_crops = JSON.parse(cropsSS);
-  //   return global_crops;
-  // }
+  const cropsSS = libSessionStorage.getItem('crops');
+  if (cropsSS) {
+    global_crops = JSON.parse(cropsSS);
+    return global_crops;
+  }
 
   const crops = await farm.term.fetch({
     filter: {
@@ -614,7 +662,7 @@ export async function getCrops() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  // libSessionStorage.setItem('crops', JSON.stringify(crops.data));
+  libSessionStorage.setItem('crops', JSON.stringify(crops.data));
   global_crops = crops.data;
   return global_crops;
 }
@@ -661,7 +709,9 @@ var global_tray_sizes = null;
  */
 export function clearCachedTraySizes() {
   global_tray_sizes = null;
-  libSessionStorage.removeItem('tray_sizes');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('tray_sizes');
+  }
 }
 
 /**
@@ -674,6 +724,16 @@ export function clearCachedTraySizes() {
  */
 export function getGlobalTraySizes() {
   return global_tray_sizes;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_tray_sizes` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalTraySizes() {
+  global_tray_sizes = null;
 }
 
 /**
@@ -691,8 +751,6 @@ export function getGlobalTraySizes() {
  */
 
 export async function getTraySizes() {
-  console.log('global_tray_sizes: ' + global_tray_sizes);
-
   if (global_tray_sizes) {
     return global_tray_sizes;
   }
@@ -700,9 +758,8 @@ export async function getTraySizes() {
   const farm = await getFarmOSInstance();
 
   let traySizesSS = libSessionStorage.getItem('tray_sizes');
-  console.log('traySizesSS: ' + traySizesSS);
   if (traySizesSS) {
-    global_tray_sizes = JSON.parse(libSessionStorage.getItem('tray_sizes'));
+    global_tray_sizes = JSON.parse(traySizesSS);
     return global_tray_sizes;
   }
 
@@ -712,9 +769,6 @@ export async function getTraySizes() {
     },
     limit: Infinity,
   });
-  console.dir('traySizes: ' + traySizes);
-  console.log('traySizes.rejected: ' + traySizes.rejected);
-  console.log('traySizes.data: ' + traySizes.data);
 
   if (traySizes.rejected.length != 0) {
     throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
@@ -773,7 +827,9 @@ var global_units = null;
  */
 export function clearCachedUnits() {
   global_units = null;
-  libSessionStorage.removeItem('units');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('units');
+  }
 }
 
 /**
@@ -786,6 +842,16 @@ export function clearCachedUnits() {
  */
 export function getGlobalUnits() {
   return global_units;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_units` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalUnits() {
+  global_units = null;
 }
 
 /**
@@ -807,10 +873,11 @@ export async function getUnits() {
 
   const farm = await getFarmOSInstance();
 
-  // if (libSessionStorage.getItem('units') != null) {
-  //   global_units = JSON.parse(libSessionStorage.getItem('units'));
-  //   return global_units;
-  // }
+  const unitsSS = libSessionStorage.getItem('units');
+  if (unitsSS) {
+    global_units = JSON.parse(unitsSS);
+    return global_units;
+  }
 
   const units = await farm.term.fetch({
     filter: {
@@ -827,7 +894,7 @@ export async function getUnits() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  //libSessionStorage.setItem('units', JSON.stringify(units.data));
+  libSessionStorage.setItem('units', JSON.stringify(units.data));
   global_units = units.data;
   return global_units;
 }
@@ -874,7 +941,9 @@ var global_log_categories = null;
  */
 export function clearCachedLogCategories() {
   global_log_categories = null;
-  libSessionStorage.removeItem('log_categories');
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('log_categories');
+  }
 }
 
 /**
@@ -887,6 +956,16 @@ export function clearCachedLogCategories() {
  */
 export function getGlobalLogCategories() {
   return global_log_categories;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_units` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalLogCategories() {
+  global_log_categories = null;
 }
 
 /**
@@ -908,12 +987,11 @@ export async function getLogCategories() {
 
   const farm = await getFarmOSInstance();
 
-  // if (libSessionStorage.getItem('log_categories') != null) {
-  //   global_log_categories = JSON.parse(
-  //     libSessionStorage.getItem('log_categories')
-  //   );
-  //   return global_log_categories;
-  // }
+  const logCategoriesSS = libSessionStorage.getItem('log_categories');
+  if (logCategoriesSS) {
+    global_log_categories = JSON.parse(logCategoriesSS);
+    return global_log_categories;
+  }
 
   const categories = await farm.term.fetch({
     filter: {
@@ -930,7 +1008,7 @@ export async function getLogCategories() {
     o1.attributes.name.localeCompare(o2.attributes.name)
   );
 
-  // libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
+  libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
   global_log_categories = categories.data;
   return global_log_categories;
 }
@@ -994,6 +1072,6 @@ export async function createPlantAsset(
     return result;
   } catch (e) {
     console.log(e);
-    throw new Error('Unable to create plant asset.');
+    throw new Error('Unable to create plant asset.', e);
   }
 }
