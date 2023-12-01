@@ -10,6 +10,16 @@ SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
+# Check for the --dev flag and later create the feature branch
+# from current branch instead of from the development branch.
+# This allows testing of changes to the templates without first
+# committing them to development.
+DEV_FLAG=0
+if [ "$1" == "--dev" ]; then
+  DEV_FLAG=1
+  shift
+fi
+
 # Check that working tree is clean
 GIT_STATUS=$(git status --porcelain)
 if [ -n "$GIT_STATUS" ]; then
@@ -143,16 +153,26 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
-# Create a new feature branch for the entrypoint from the development branch
-echo "  Updating development branch..."
-git switch --quiet development
-git pull --quiet origin development
-error_check "Failed to update development branch."
-echo "  Updated."
-echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
-git branch --quiet "$FEATURE_BRANCH_NAME"
-error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
-echo "  Created."
+if [ "$DEV_FLAG" -eq 0 ]; then
+  # Create a new feature branch for the entrypoint from the development branch
+  echo "  Updating development branch..."
+  git switch --quiet development
+  git pull --quiet origin development
+  error_check "Failed to update development branch."
+  echo "  Updated."
+  echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
+  git branch --quiet "$FEATURE_BRANCH_NAME"
+  error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+  echo "  Created."
+else
+  # Create a new feature branch for the entrypoint from the current branch
+  # Used for testing changes to the templates.
+  echo "  Creating new feature branch $FEATURE_BRANCH_NAME from current branch..."
+  git branch --quiet "$FEATURE_BRANCH_NAME"
+  error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+  echo "  Created."
+fi
+
 echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
 git switch --quiet "$FEATURE_BRANCH_NAME"
 error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
