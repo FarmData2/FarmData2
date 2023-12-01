@@ -8,9 +8,9 @@ Javascript library of FarmData2 custom reusable functions.
 
 ## Testing
 
-- `test.bash --unit`
-- `test.bash --unit --glob="**/farmosUtil/*.unit.cy.js"`
-- `test.bash --unit --glob="**/farmosUtil/farmosUtil.getFarmInstance.unit.cy.js"`
+- `test.bash --unit --lib`
+- `test.bash --unit --lib --glob="**/farmosUtil/*.unit.cy.js"`
+- `test.bash --unit --lib --glob="**/farmosUtil/farmosUtil.getFarmInstance.unit.cy.js"`
 
 Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 

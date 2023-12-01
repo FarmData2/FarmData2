@@ -51,7 +51,7 @@ Inside each of the above module directories there are the following directories 
 
 ## Testing
 
-- use bin/test.bash
+- use bin/test.bash (see its docs).
 
 - use watch:fd2 by default and just run in live farmOS.
 

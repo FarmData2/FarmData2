@@ -21,16 +21,20 @@ function usage {
   echo "    -f|--fd2               : Run all of the e2e tests in the fd2 module."
   echo "    -x|--examples          : RUn all of the e2e tests in the examples module."
   echo "    -s|--school            : Run all of the e2e tests in the fd2 school module."
-  echo "    -g<glob>|--glob=<glob> : Run only the e2e tests matching the glob."
-  echo "                             Note: <glob> is specified relative to the root of the repo."
   echo ""
   echo "  If --e2e is specified then exactly one of the following must be included:"
   echo "    -d|--dev  : Run the e2e tests in the dev environment."
   echo "    -p|--prev : Do a build and run the e2e tests in the preview environment."
   echo "    -l|--live : Do a build and run e2e tests using the farmOS server"
   echo ""
-  echo "  If --comp or --unit are specified then the following may be included:"
-  echo "    -g<glob>|--glob=<glob>: Run only the component or unit tests matching the glob."
+  echo "  If --unit is specified then exactly one of the following must be included:"
+  echo "    -f|--fd2               : Run all of the unit tests in the fd2 module."
+  echo "    -x|--examples          : RUn all of the unit tests in the examples module."
+  echo "    -s|--school            : Run all of the unit tests in the fd2 school module."
+  echo "    -b|--lib               : Run all of the unit tests in the library directory."
+  echo ""
+  echo "  In addition,the following may be included:"
+  echo "    -g<glob>|--glob=<glob>: Run only the e2e, component or unit tests matching the glob."
   echo "                            Note: <glob> is specified relative to the root of the repo."
   echo ""
 
@@ -44,8 +48,8 @@ REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 safe_cd "$REPO_ROOT_DIR"
 
 # Process the command line flags
-FLAGS=$(getopt -o e::c::u::i::g::h::f::x::s::d::p::l:: \
-  --long e2e::,comp::,unit::,gui::,fd2::,examples::,school::,glob::,dev::,prev::,live::,help:: \
+FLAGS=$(getopt -o e::c::u::i::g::h::f::x::s::b::d::p::l:: \
+  --long e2e::,comp::,unit::,gui::,fd2::,examples::,school::,lib::,glob::,dev::,prev::,live::,help:: \
   -- "$@")
 eval set -- "$FLAGS"
 
@@ -77,6 +81,10 @@ while true; do
     ;;
   -s | --school)
     TEST_SCHOOL=1
+    shift 2
+    ;;
+  -b | --lib)
+    TEST_LIB=1
     shift 2
     ;;
   -g | --glob)
@@ -138,32 +146,65 @@ if [ -n "$E2E_TESTS" ]; then
   fi
 fi
 
-# Setup to run e2e or component/unit tests.
+# -u|--unit was specified so make sure that:
+#   Only one of -f|--fd2 or -x|--examples or -s|--school or -b|---lib is specified
+if [ -n "$UNIT_TESTS" ]; then
+  if ! xor "$TEST_FD2" "$TEST_EXAMPLES" "$TEST_SCHOOL" "$TEST_LIB"; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} When -u|--unit is specified, exactly one of -f|--fd2, -x|--examples, -s|--school, -b|--lib must be included."
+    echo "Use test.bash --help for usage information"
+    exit 255
+  fi
+fi
+
+# Setup to run e2e or component or unit tests.
 if [ -n "$E2E_TESTS" ]; then
   echo "End-to-end testing requested."
   CYPRESS_TEST_TYPE="e2e"
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
-    CYPRESS_PROJECT="modules/farm_fd2"
+    PROJECT_DIR="modules/farm_fd2"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
-    CYPRESS_PROJECT="modules/farm_fd2_examples"
+    PROJECT_DIR="modules/farm_fd2_examples"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2_examples"
   else
     echo "  Testing the farm_fd2_school module."
-    CYPRESS_PROJECT="modules/farm_fd2_school"
+    PROJECT_DIR="modules/farm_fd2_school"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2_school"
   fi
+elif [ -n "$COMPONENT_TESTS" ]; then
+  echo "Component testing requested."
+  PROJECT_DIR="modules/farm_fd2"
+  CYPRESS_CONFIG_FILE="../cypress.config.js"
+  CYPRESS_TEST_TYPE="component"
 else
-  if [ -n "$COMPONENT_TESTS" ]; then
-    echo "Component testing requested."
-    CYPRESS_PROJECT="modules/farm_fd2"
-    CYPRESS_TEST_TYPE="component"
+  echo "Unit testing requested."
+  CYPRESS_TEST_TYPE="e2e"
+
+  if [ -n "$TEST_FD2" ]; then
+    echo "  Testing the farm_fd2 module."
+    PROJECT_DIR="modules/farm_fd2"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
+    URL_PREFIX="fd2"
+  elif [ -n "$TEST_EXAMPLES" ]; then
+    echo "  Testing the farm_fd2_examples module."
+    PROJECT_DIR="modules/farm_fd2_examples"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
+    URL_PREFIX="fd2_examples"
+  elif [ -n "$TEST_SCHOOL" ]; then
+    echo "  Testing the farm_fd2_school module."
+    PROJECT_DIR="modules/farm_fd2_school"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
+    URL_PREFIX="fd2_school"
   else
-    echo "Unit testing requested."
-    CYPRESS_PROJECT="library"
-    CYPRESS_TEST_TYPE="e2e"
+    echo "  Testing the library."
+    PROJECT_DIR="library"
+    CYPRESS_CONFIG_FILE="./cypress.config.js"
+    URL_PREFIX=""
   fi
 fi
 
@@ -174,7 +215,7 @@ if [ -n "$DEV_SERVER" ]; then
   if [ "$(check_url localhost:5173/"$URL_PREFIX"/main/)" == "" ]; then
     echo "    Dev server not found."
     echo "    Starting dev server..."
-    setsid npx vite --config ./$CYPRESS_PROJECT/vite.config.js > /dev/null &
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js > /dev/null &
 
     DEV_PID=$!
     DEV_GID=$(ps --pid "$DEV_PID" -h -o pgid | xargs)
@@ -195,7 +236,7 @@ elif [ -n "$PREVIEW_SERVER" ]; then
   echo "Preview tests requested..."
 
   echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$CYPRESS_PROJECT/vite.config.js build --watch > /dev/null &
+  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
   BUILDER_PID=$!
   BUILDER_GID=$(ps --pid "$BUILDER_PID" -h -o pgid | xargs)
   echo "    Builder running in process group $BUILDER_GID."
@@ -204,7 +245,7 @@ elif [ -n "$PREVIEW_SERVER" ]; then
   if [ "$(check_url localhost:4173/"$URL_PREFIX"/main/)" == "" ]; then
     echo "    Preview server not found."
     echo "    Starting preview server..."
-    setsid npx vite --config ./$CYPRESS_PROJECT/vite.config.js preview > /dev/null &
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js preview > /dev/null &
 
     PREVIEW_PID=$!
     PREVIEW_GID=$(ps --pid "$PREVIEW_PID" -h -o pgid | xargs)
@@ -225,7 +266,7 @@ elif [ -n "$LIVE_FARMOS_SERVER" ]; then
   echo "Live tests within farmOS requested..."
 
   echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$CYPRESS_PROJECT/vite.config.js build --watch > /dev/null &
+  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
   LIVE_PID=$!
   LIVE_GID=$(ps --pid "$LIVE_PID" -h -o pgid | xargs)
   echo "    Builder running in process group $LIVE_GID."
@@ -246,15 +287,15 @@ if [ -n "$BASE_URL" ]; then
 fi
 
 # Run the tests...
-safe_cd $CYPRESS_PROJECT
+safe_cd $PROJECT_DIR
 
 if [ -n "$CYPRESS_GUI" ]; then
   echo "Running test in the Cypress GUI."
-  npx cypress open --"$CYPRESS_TEST_TYPE" > /dev/null
+  npx cypress open --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
   EXIT_CODE=$?
 else
   echo "Running tests headless."
-  npx cypress run --"$CYPRESS_TEST_TYPE"
+  npx cypress run --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
   EXIT_CODE=$?
 fi
 
