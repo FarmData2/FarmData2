@@ -1,11 +1,10 @@
-<script setup>
-import dayjs from 'dayjs';
-</script>
-
 <template>
   <h1 data-cy="title">Template for %ENTRY_POINT% Entry Point</h1>
   <p>
     This uses the dayjs import: <span>{{ formatDate }}</span>
+  </p>
+  <p>
+    This uses the lib import: <span>{{ callLib }}</span>
   </p>
 
   <div
@@ -17,6 +16,9 @@ import dayjs from 'dayjs';
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import * as lib from './lib';
+
 export default {
   data() {
     return {
@@ -27,6 +29,9 @@ export default {
   computed: {
     formatDate() {
       return this.date.format('YYYY-MM-DD');
+    },
+    callLib() {
+      return lib.placeholder();
     },
     pageDoneLoading() {
       return this.createdCount == 1;
