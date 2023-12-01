@@ -236,7 +236,7 @@ echo ""
 # Run the basic e2e tests to be sure everything is working...
 # Note: The test script does the builds for the preview and live farmOS servers.
 TEST_MODULE=${MODULE_NAME##*_}
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.cy.js"
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.e2e.cy.js"
 
 echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
 
