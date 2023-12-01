@@ -1047,46 +1047,11 @@ export async function getLogCategoryIdToTermMap() {
   return map;
 }
 
-/**
- * Creates a plant asset via the farmOS API.
- * An `asset--plant` record will be created in the farmOS database.
- *
- * @param {string} assetName - The name of the plant asset.
- * @param {string} status - The status of the plant asset. One of [ 'active' | 'archived' ]
- * @param {string} cropName - The name of the crop that was planted.
- * @param {Object} opts - Additional optional properties to be used when creating the plant asset.
- *   Use `npm run printlog asset--plant` to see all properties available
- *   for creating plant assets. Note: Properties nested in `attributes` and
- *   `relationships` should not be nested when passed in `opts`
- * @returns {Promise<Object>} The resulting `asset--plant` object.
- * @throws {Error} if unable to create the plant asset.  If a network or farmOS
- * server error occurs the original error object is provided by the
- * `options.cause` property of the error object.
- *
- * @example
- * ```JavaScript
- * farmosUtil.createPlantAsset('testPlant', 'active', 'BROCCOLI',)
- * .then((result) => {...})
- * .catch((err) => {...})
- * ```
- */
-export async function createPlantAsset(assetName, status, cropName, opts = {}) {
-  if (!assetName) {
-    throw new Error('assetName is required.');
-  }
-
-  if (status != 'active' && status != 'archived') {
-    throw new Error(
-      `status is ${status} but must be one of [ "active" | "archived" ].`
-    );
-  }
-
-  const crop = (await getCropNameToTermMap()).get(cropName);
-  if (!crop) {
-    throw new Error(`Unable to find crop with name ${cropName}.`);
-  }
-  const cropId = crop.id;
-
+export async function createPlantAsset(
+  farm,
+  { assetName, status, cropName },
+  opts = {}
+) {
   const plant = {
     ...{
       type: 'asset--plant',
@@ -1094,19 +1059,19 @@ export async function createPlantAsset(assetName, status, cropName, opts = {}) {
       status: status,
       plant_type: {
         type: 'taxonomy_term--plant_type',
-        id: cropId,
+        id: getCropNameToTermMap(farm).get(cropName).id,
       },
     },
     ...opts,
   };
 
-  const farm = await getFarmOSInstance();
   const planting_asset = farm.asset.create(plant);
 
   try {
     const result = await farm.asset.send(planting_asset);
     return result;
   } catch (e) {
-    throw new Error(`Unable to create plant asset.`, { cause: e });
+    console.log(e);
+    throw new Error('Unable to create plant asset.');
   }
 }
