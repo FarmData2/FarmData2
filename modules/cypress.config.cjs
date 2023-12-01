@@ -14,14 +14,17 @@ module.exports = defineConfig({
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
   e2e: {
-    specPattern: 'src/entrypoints/**/*.cy.js',
+    specPattern: [
+      'src/entrypoints/*/*.e2e.cy.js',
+      'src/entrypoints/*/*.unit.cy.js',
+    ],
     devServer: {
       framework: 'vue',
       bundler: 'vite',
     },
   },
   component: {
-    specPattern: '../../components/**/*.comp.cy.js',
+    specPattern: '../../components/*/*.comp.cy.js',
     devServer: {
       framework: 'vue',
       bundler: 'vite',

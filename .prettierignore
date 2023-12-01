@@ -2,7 +2,7 @@ dist
 package-lock.json
 node_modules
 docker/db
-bin/templates/entrypoints/*.yml
+bin/templates/entrypoint/*.yml
 bin/templates/component
 licenses
 CHANGELOG.md

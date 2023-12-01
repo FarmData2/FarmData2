@@ -10,18 +10,9 @@ SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
-# Check that the development branch is checked out
-CUR_GIT_BRANCH=$(git branch)
-if [[ ! "$CUR_GIT_BRANCH" == *"* development"* ]]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} You must have the development branch checked out to add an entry point."
-  echo "Switch to the development branch."
-  echo "Then run this script again."
-  exit 255
-fi
-
 # Check that working tree is clean
-GIT_STATUS=$(git status | tail -1)
-if [[ ! "$GIT_STATUS" =~ ^"nothing to commit, working tree clean"$ ]]; then
+GIT_STATUS=$(git status --porcelain)
+if [ -n "$GIT_STATUS" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} The working tree must be clean to add an entry point."
   echo "Commit changes to a feature branch or use git stash."
   echo "Then run this script again."
@@ -51,7 +42,7 @@ echo ""
 
 DRUPAL_ROUTE="$DRUPAL_ROUTE_PREFIX""\/$ENTRY_POINT"
 ENTRY_POINT_SRC_DIR="$MODULE_DIR/src/entrypoints/$ENTRY_POINT"
-ENTRY_POINT_TEMPLATE_DIR="$SCRIPT_DIR/templates/entrypoints"
+ENTRY_POINT_TEMPLATE_DIR="$SCRIPT_DIR/templates/entrypoint"
 DRUPAL_ROUTE_NAME="$DRUPAL_ROUTE_PREFIX""_$ENTRY_POINT"
 FEATURE_BRANCH_NAME="add_$ENTRY_POINT""_entry_point"
 
@@ -65,10 +56,10 @@ if [[ ! "$FEATURE_BRANCH_EXISTS" == "" ]]; then
   exit 255
 fi
 
-# Check if the directory for the entry point exits...
+# Check if the directory for the entry point exists...
 if [ -d "src/entrypoints/$ENTRY_POINT" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the entry point $ENTRY_POINT already exists"
-  echo "in the directory $$ENTRY_POINT_SRC_DIR."
+  echo "in the directory $ENTRY_POINT_SRC_DIR."
   echo "Pick a different name for your entry point."
   echo "OR:"
   echo "  Remove the src/entrypoints/$ENTRY_POINT directory"
@@ -125,10 +116,6 @@ select ENTRY_POINT_PARENT in "${MENUS[@]}"; do
 done
 echo ""
 
-# ****
-# *** NEED TO DEAL WITH Permissions - ????
-# ***
-
 # shellcheck disable=SC1003
 DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
 
@@ -156,11 +143,20 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
-# Create a new feature branch for the entry point.
-git branch "$FEATURE_BRANCH_NAME"
-echo "Created feature branch '$FEATURE_BRANCH_NAME"
-git switch "$FEATURE_BRANCH_NAME"
-echo ""
+# Create a new feature branch for the entrypoint from the development branch
+echo "  Updating development branch..."
+git switch --quiet development
+git pull --quiet origin development
+error_check "Failed to update development branch."
+echo "  Updated."
+echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
+git branch --quiet "$FEATURE_BRANCH_NAME"
+error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+echo "  Created."
+echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
+git switch --quiet "$FEATURE_BRANCH_NAME"
+error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
+echo "  Switched."
 
 # Make the directory for the entrypoint and populate it with the template files.
 mkdir "$ENTRY_POINT_SRC_DIR"
@@ -171,11 +167,11 @@ cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
 echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.cy.js"
-sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.cy.js from templates."
+cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
@@ -187,6 +183,13 @@ echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_PO
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
+
+cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
+echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
+
+cp "$ENTRY_POINT_TEMPLATE_DIR/lib.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.unit.cy.js"
+echo "  Added $ENTRY_POINT_SRC_DIR/lib.unit.cy.js from templates."
+
 echo ""
 
 # Make the new entry point into a drupal Module by adding to the
@@ -210,12 +213,12 @@ sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
 echo "Updated $ROUTING_YML_FILE from templates."
 echo ""
 
-# Run the basic tests to be sure everything is working...
+# Run the basic e2e tests to be sure everything is working...
 # Note: The test script does the builds for the preview and live farmOS servers.
 TEST_MODULE=${MODULE_NAME##*_}
 TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.cy.js"
 
-echo "Running tests on $ENTRY_POINT in the $MODULE_NAME module..."
+echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
 
 echo "  Testing on dev server..."
 DEV_TEST_OUT=$(test.bash --e2e --dev --"$TEST_MODULE" --glob="$TEST_FILE")
@@ -244,28 +247,48 @@ else
   echo "  Success."
 fi
 
-echo "Tests complete."
+echo "E2E Tests complete."
 echo ""
 
-((TESTS_PASSED = DEV_EXIT_CODE || PREV_EXIT_CODE || LIVE_EXIT_CODE))
+echo "Running unit tests on $ENTRY_POINT/lib.js in the $MODULE_NAME module..."
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.unit.cy.js"
+UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILE")
+UNIT_EXIT_CODE=$?
+if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
+  echo "  Errors occurred when running unit tests. Output will be shown below"
+else
+  echo "  Success."
+fi
+
+((TESTS_PASSED = DEV_EXIT_CODE || PREV_EXIT_CODE || LIVE_EXIT_CODE || UNIT_EXIT_CODE))
 
 if [ ! "$TESTS_PASSED" == "0" ]; then
+
   if [ ! "$DEV_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed tests from dev server."
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from dev server."
     echo ""
     echo -e "$DEV_TEST_OUT"
     echo ""
   fi
+
   if [ ! "$PREV_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed tests from preview server."
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from preview server."
     echo ""
     echo -e "$PREV_TEST_OUT"
     echo ""
   fi
+
   if [ ! "$LIVE_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed tests from farmOS server."
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from farmOS server."
     echo ""
     echo -e "$LIVE_TEST_OUT"
+    echo ""
+  fi
+
+  if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed unit tests on lib.js."
+    echo ""
+    echo -e "$UNIT_TEST_OUT"
     echo ""
   fi
 
