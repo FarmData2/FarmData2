@@ -13,7 +13,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['**/*.cy.comp.js', '**/*.cy.unit.js', '**/*.cy.js'],
+      files: ['**/*.comp.cy.js', '**/*.unit.cy.js', '**/*.e2e.cy.js'],
       extends: ['plugin:cypress/recommended'],
     },
   ],
