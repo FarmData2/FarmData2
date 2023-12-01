@@ -271,7 +271,7 @@ echo "E2E Tests complete."
 echo ""
 
 echo "Running unit tests on $ENTRY_POINT/lib.js in the $MODULE_NAME module..."
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.unit.cy.js"
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.sample.unit.cy.js"
 UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILE")
 UNIT_EXIT_CODE=$?
 if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
