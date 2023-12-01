@@ -156,30 +156,30 @@ if [ -n "$UNIT_TESTS" ]; then
   fi
 fi
 
-# Setup to run e2e or component/unit tests.
+# Setup to run e2e or component or unit tests.
 if [ -n "$E2E_TESTS" ]; then
   echo "End-to-end testing requested."
   CYPRESS_TEST_TYPE="e2e"
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
-    VITE_CONFIG_DIR="modules/farm_fd2"
-    CYPRESS_PROJECT="modules/farm_fd2"
+    PROJECT_DIR="modules/farm_fd2"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
-    VITE_CONFIG_DIR="modules/farm_fd2_examples"
-    CYPRESS_PROJECT="modules/farm_fd2_examples"
+    PROJECT_DIR="modules/farm_fd2_examples"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2_examples"
   else
     echo "  Testing the farm_fd2_school module."
-    VITE_CONFIG_DIR="modules/farm_fd2_school"
-    CYPRESS_PROJECT="modules/farm_fd2_school"
+    PROJECT_DIR="modules/farm_fd2_school"
+    CYPRESS_CONFIG_FILE="../cypress.config.js"
     URL_PREFIX="fd2_school"
   fi
 elif [ -n "$COMPONENT_TESTS" ]; then
   echo "Component testing requested."
-  VITE_CONFIG_DIR="modules/farm_fd2"
-  CYPRESS_PROJECT="modules/farm_fd2"
+  PROJECT_DIR="modules/farm_fd2"
+  CYPRESS_CONFIG_FILE="../cypress.config.js"
   CYPRESS_TEST_TYPE="component"
 else
   echo "Unit testing requested."
@@ -187,23 +187,23 @@ else
 
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
-    VITE_CONFIG_DIR="modules/farm_fd2"
-    CYPRESS_PROJECT="modules/farm_fd2"
+    PROJECT_DIR="modules/farm_fd2"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
-    VITE_CONFIG_DIR="modules/farm_fd2_examples"
-    CYPRESS_PROJECT="modules/farm_fd2_examples"
+    PROJECT_DIR="modules/farm_fd2_examples"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
     URL_PREFIX="fd2_examples"
   elif [ -n "$TEST_SCHOOL" ]; then
     echo "  Testing the farm_fd2_school module."
-    VITE_CONFIG_DIR="modules/farm_fd2_school"
-    CYPRESS_PROJECT="modules/farm_fd2_school"
+    PROJECT_DIR="modules/farm_fd2_school"
+    CYPRESS_CONFIG_FILE="../cypress.unit.config.js"
     URL_PREFIX="fd2_school"
   else
     echo "  Testing the library."
-    VITE_CONFIG_DIR="modules/farm_fd2"
-    CYPRESS_PROJECT="library"
+    PROJECT_DIR="library"
+    CYPRESS_CONFIG_FILE="./cypress.config.js"
     URL_PREFIX=""
   fi
 fi
@@ -215,7 +215,7 @@ if [ -n "$DEV_SERVER" ]; then
   if [ "$(check_url localhost:5173/"$URL_PREFIX"/main/)" == "" ]; then
     echo "    Dev server not found."
     echo "    Starting dev server..."
-    setsid npx vite --config ./$VITE_CONFIG_DIR/vite.config.js > /dev/null &
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js > /dev/null &
 
     DEV_PID=$!
     DEV_GID=$(ps --pid "$DEV_PID" -h -o pgid | xargs)
@@ -236,7 +236,7 @@ elif [ -n "$PREVIEW_SERVER" ]; then
   echo "Preview tests requested..."
 
   echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$VITE_CONFIG_DIR/vite.config.js build --watch > /dev/null &
+  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
   BUILDER_PID=$!
   BUILDER_GID=$(ps --pid "$BUILDER_PID" -h -o pgid | xargs)
   echo "    Builder running in process group $BUILDER_GID."
@@ -245,7 +245,7 @@ elif [ -n "$PREVIEW_SERVER" ]; then
   if [ "$(check_url localhost:4173/"$URL_PREFIX"/main/)" == "" ]; then
     echo "    Preview server not found."
     echo "    Starting preview server..."
-    setsid npx vite --config ./$VITE_CONFIG_DIR/vite.config.js preview > /dev/null &
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js preview > /dev/null &
 
     PREVIEW_PID=$!
     PREVIEW_GID=$(ps --pid "$PREVIEW_PID" -h -o pgid | xargs)
@@ -266,7 +266,7 @@ elif [ -n "$LIVE_FARMOS_SERVER" ]; then
   echo "Live tests within farmOS requested..."
 
   echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$VITE_CONFIG_DIR/vite.config.js build --watch > /dev/null &
+  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
   LIVE_PID=$!
   LIVE_GID=$(ps --pid "$LIVE_PID" -h -o pgid | xargs)
   echo "    Builder running in process group $LIVE_GID."
@@ -287,15 +287,15 @@ if [ -n "$BASE_URL" ]; then
 fi
 
 # Run the tests...
-safe_cd $CYPRESS_PROJECT
+safe_cd $PROJECT_DIR
 
 if [ -n "$CYPRESS_GUI" ]; then
   echo "Running test in the Cypress GUI."
-  npx cypress open --"$CYPRESS_TEST_TYPE" > /dev/null
+  npx cypress open --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
   EXIT_CODE=$?
 else
   echo "Running tests headless."
-  npx cypress run --"$CYPRESS_TEST_TYPE"
+  npx cypress run --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
   EXIT_CODE=$?
 fi
 
