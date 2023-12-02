@@ -142,7 +142,7 @@ import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import * as lib from './lib.js';
 
 export default {
   components: {
@@ -199,10 +199,23 @@ export default {
       this.validity.show = true;
 
       if (Object.values(this.validity).every((item) => item === true)) {
-        console.log(this.form);
+        this.disableSubmit = true;
+        this.disableReset = true;
 
-        farmosUtil.getTraySizeToTermMap();
-
+        lib
+          .submitForm(this.form)
+          .then(() => {
+            // Change to keep sticky bits...
+            //this.reset();
+          })
+          .catch((err) => {
+            this.showErrorToast(
+              'Error submitting tray seeding.' +
+                ' Check your network connection and try again.',
+              err
+            );
+            this.enableSubmit = true;
+          });
       } else {
         this.enableSubmit = false;
       }
@@ -219,8 +232,6 @@ export default {
       if (!this.errorShown) {
         this.enableSubmit = true;
       }
-
-      this.showErrorToast('Reset', 'Seeding Form Reset.');
     },
 
     showErrorToast(title, msg) {

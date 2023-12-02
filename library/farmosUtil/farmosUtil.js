@@ -11,6 +11,18 @@ import farmOS from 'farmos';
 import * as runExclusive from 'run-exclusive';
 
 /**
+ * Check if this page from which this function is called is currently
+ * running within farmOS or not.  If it is not then it can be assumed
+ * that we are running within the development environment.
+ *
+ * @returns true if the page is within farmOS, false if not.
+ */
+function inFarmOS() {
+  const pageWrapper = document.getElementsByClassName('page-wrapper');
+  return pageWrapper.length > 0;
+}
+
+/**
  * @private
  *
  * Ensure that we only create one instance of the farmOS object
