@@ -13,6 +13,18 @@
   display: none;
 }
 
+header.region {
+  display: none;
+}
+
+div.help {
+  display: none;
+}
+
+div.region {
+  margin-top: 0px !important;
+}
+
 hr {
   margin-top: 8px !important;
   margin-bottom: 8px !important;
