@@ -1,4 +1,5 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+
 /**
  * Create the farmOS records (assets, quantities and logs) for a tray seeding.
  *
@@ -6,29 +7,39 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
 export async function submitForm(formData) {
-  //console.log(formData);
 
-  // gets the csrf token
-  // but probably don't need this because seems like farmos.js must do it.
-  //const response = await fetch('http://farmos/session/token');
-  //const csrfToken = await response.text();
-  //console.log(csrfToken);
+  const farm = await farmosUtil.getFarmOSInstance();
 
-  // const response = await fetch('http://farmos/api/taxonomy_term/unit', 
-  //  {
-  //  method: 'GET',
-  //   mode: 'same-origin',
-  //   credentials: 'include',
-  //   headers: {
-  //     'Content-Type': 'application/vnd.api+json',
-  //   },
-  // },
-  // );
-  // const info = await response.json();
-  // console.dir(info);
+  const p1 = {
+    type: 'log--activity',
+    name: 'did some stuff',
+    notes: 'initial note',
+  };
+  console.log('create first log');
+  const a1 = farm.log.create(p1);
+  await farm.log.send(a1);
+  console.log('done');
 
-  //const farm = await farmosUtil.getFarmOSInstance();
+  console.log('delete first log');
+  await farm.log.delete('activity', a1.id);
+  console.log('done');
 
-  const users = await farmosUtil.getUsers();
-  console.dir(users);
+  const p2 = {
+    type: 'log--activity',
+    name: 'did some more stuff',
+    notes: 'another note',
+  };
+  console.log('create a second log');
+  const a2 = farm.log.create(p2);
+  await farm.log.send(a2);
+  console.log('done');
+
+  console.log('Try to update log');
+  const updateProps = {
+    notes: 'An updated note',
+    status: 'done',
+  };
+  const updateLog = farm.log.update(a2, updateProps);
+  await farm.log.send(updateLog);
+  console.log('done');
 }

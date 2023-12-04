@@ -11,6 +11,8 @@ import farmOS from 'farmos';
 import * as runExclusive from 'run-exclusive';
 
 /**
+ * @private
+ *
  * Check if this page from which this function is called is currently
  * running within farmOS or not.  If it is not then it can be assumed
  * that we are running within the development environment.
@@ -18,13 +20,15 @@ import * as runExclusive from 'run-exclusive';
  * @returns true if the page is within farmOS, false if not.
  */
 function inFarmOS() {
-  const pageWrapper = document.getElementsByClassName('page-wrapper');
-  return pageWrapper.length > 0;
+  try {
+    const pageWrapper = document.getElementsByClassName('page-wrapper');
+    return pageWrapper.length > 0;
+  } catch (e) {
+    return false;
+  }
 }
 
-/**
- * @private
- *
+/*
  * Ensure that we only create one instance of the farmOS object
  * per page reload.  This is done to avoid fetching the schema
  * every time a farmOS object is needed.
@@ -123,13 +127,49 @@ export const getFarmOSInstance = runExclusive.build(
     if (!global_farm) {
       newfarm = true;
 
-      const config = {
-        host: hostURL,
-        clientId: client,
-        getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-        setToken: (token) =>
-          libLocalStorage.setItem('token', JSON.stringify(token)),
-      };
+      let config = {};
+      if (inFarmOS()) {
+        // Get the CSRF token needed for requests that modify data
+        // when we are running inside farmOS.
+        const response = await fetch('http://farmos/session/token');
+        const csrfToken = await response.text();
+
+        // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
+        config = {
+          host: '',
+          clientId: client,
+          auth: (request) => {
+            request.interceptors.request.use((config) => {
+              if (config.method === 'get') {
+                // Don't add CSRF  header to GET requests as it can leak the token.
+                // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+                return {
+                  ...config,
+                  headers: {
+                    ...config.headers,
+                  },
+                };
+              } else {
+                return {
+                  ...config,
+                  headers: {
+                    ...config.headers,
+                    'X-CSRF-TOKEN': csrfToken,
+                  },
+                };
+              }
+            }, Promise.reject);
+          },
+        };
+      } else {
+        config = {
+          host: hostURL,
+          clientId: client,
+          getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+          setToken: (token) =>
+            libLocalStorage.setItem('token', JSON.stringify(token)),
+        };
+      }
       const options = { remote: config };
 
       /*
@@ -145,9 +185,10 @@ export const getFarmOSInstance = runExclusive.build(
       }
     }
 
-    // If we don't have an authentication token cached in localStorage,
+    // If we are running outside of farmOS and we
+    // don't have an authentication token cached in localStorage,
     // then authenticate with the farmOS host to get the token.
-    if (global_farm.remote.getToken() === null) {
+    if (!inFarmOS() && global_farm.remote.getToken() === null) {
       await global_farm.remote.authorize(user, pass);
     }
 
