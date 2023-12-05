@@ -76,8 +76,18 @@ var libSessionStorage = null;
 
 /**
  * Create and return an instance of the `farmos.js` `farmOS` object that will be used
- * to interact with the farmOS host.  The `farmOS` instance will have the
- * same permissions as the `user`/`pass` that are used for authentication.
+ * to interact with the farmOS host.
+ *
+ * If running within a page served by farmOS itself (e.g. in an entry point in
+ * one of the modules) then the credentials (user/pass) are not used.  The farmOS
+ * object will have the same permissions as the user that is logged into farmOS.
+ *
+ * If running outside of farmOS (e.g. from the Vue dev server or a Node program)
+ * then the credentials (user/pass) are used to authenticate to the farmOS server
+ * so that the API can be accessed.  The farmOS object will have the same
+ * permissions as the user/pass that is used to log into farmOS.  By default,
+ * this is the `admin` user.
+ *
  * The default 'farm' client is sufficient for most uses, but any client
  * that exists on the farmOS host can be used (assuming it is properly
  * configured).  The `farmOS` object will also have its schema set.
@@ -1098,33 +1108,4 @@ export async function getLogCategoryIdToTermMap() {
   const map = new Map(categories.map((category) => [category.id, category]));
 
   return map;
-}
-
-export async function createPlantAsset(
-  farm,
-  { assetName, status, cropName },
-  opts = {}
-) {
-  const plant = {
-    ...{
-      type: 'asset--plant',
-      name: assetName,
-      status: status,
-      plant_type: {
-        type: 'taxonomy_term--plant_type',
-        id: getCropNameToTermMap(farm).get(cropName).id,
-      },
-    },
-    ...opts,
-  };
-
-  const planting_asset = farm.asset.create(plant);
-
-  try {
-    const result = await farm.asset.send(planting_asset);
-    return result;
-  } catch (e) {
-    console.log(e);
-    throw new Error('Unable to create plant asset.');
-  }
 }
