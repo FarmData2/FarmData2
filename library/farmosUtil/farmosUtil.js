@@ -13,6 +13,22 @@ import * as runExclusive from 'run-exclusive';
 /**
  * @private
  *
+ * Check if this page from which this function is called is currently
+ * running within farmOS or not.  If it is not then it can be assumed
+ * that we are running within the development environment.
+ *
+ * @returns true if the page is within farmOS, false if not.
+ */
+function inFarmOS() {
+  try {
+    const pageWrapper = document.getElementsByClassName('page-wrapper');
+    return pageWrapper.length > 0;
+  } catch (e) {
+    return false;
+  }
+}
+
+/*
  * Ensure that we only create one instance of the farmOS object
  * per page reload.  This is done to avoid fetching the schema
  * every time a farmOS object is needed.
@@ -60,8 +76,18 @@ var libSessionStorage = null;
 
 /**
  * Create and return an instance of the `farmos.js` `farmOS` object that will be used
- * to interact with the farmOS host.  The `farmOS` instance will have the
- * same permissions as the `user`/`pass` that are used for authentication.
+ * to interact with the farmOS host.
+ *
+ * If running within a page served by farmOS itself (e.g. in an entry point in
+ * one of the modules) then the credentials (user/pass) are not used.  The farmOS
+ * object will have the same permissions as the user that is logged into farmOS.
+ *
+ * If running outside of farmOS (e.g. from the Vue dev server or a Node program)
+ * then the credentials (user/pass) are used to authenticate to the farmOS server
+ * so that the API can be accessed.  The farmOS object will have the same
+ * permissions as the user/pass that is used to log into farmOS.  By default,
+ * this is the `admin` user.
+ *
  * The default 'farm' client is sufficient for most uses, but any client
  * that exists on the farmOS host can be used (assuming it is properly
  * configured).  The `farmOS` object will also have its schema set.
@@ -111,13 +137,49 @@ export const getFarmOSInstance = runExclusive.build(
     if (!global_farm) {
       newfarm = true;
 
-      const config = {
-        host: hostURL,
-        clientId: client,
-        getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-        setToken: (token) =>
-          libLocalStorage.setItem('token', JSON.stringify(token)),
-      };
+      let config = {};
+      if (inFarmOS()) {
+        // Get the CSRF token needed for requests that modify data
+        // when we are running inside farmOS.
+        const response = await fetch('http://farmos/session/token');
+        const csrfToken = await response.text();
+
+        // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
+        config = {
+          host: '',
+          clientId: client,
+          auth: (request) => {
+            request.interceptors.request.use((config) => {
+              if (config.method === 'get') {
+                // Don't add CSRF  header to GET requests as it can leak the token.
+                // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+                return {
+                  ...config,
+                  headers: {
+                    ...config.headers,
+                  },
+                };
+              } else {
+                return {
+                  ...config,
+                  headers: {
+                    ...config.headers,
+                    'X-CSRF-TOKEN': csrfToken,
+                  },
+                };
+              }
+            }, Promise.reject);
+          },
+        };
+      } else {
+        config = {
+          host: hostURL,
+          clientId: client,
+          getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+          setToken: (token) =>
+            libLocalStorage.setItem('token', JSON.stringify(token)),
+        };
+      }
       const options = { remote: config };
 
       /*
@@ -133,9 +195,10 @@ export const getFarmOSInstance = runExclusive.build(
       }
     }
 
-    // If we don't have an authentication token cached in localStorage,
+    // If we are running outside of farmOS and we
+    // don't have an authentication token cached in localStorage,
     // then authenticate with the farmOS host to get the token.
-    if (global_farm.remote.getToken() === null) {
+    if (!inFarmOS() && global_farm.remote.getToken() === null) {
       await global_farm.remote.authorize(user, pass);
     }
 
@@ -1045,33 +1108,4 @@ export async function getLogCategoryIdToTermMap() {
   const map = new Map(categories.map((category) => [category.id, category]));
 
   return map;
-}
-
-export async function createPlantAsset(
-  farm,
-  { assetName, status, cropName },
-  opts = {}
-) {
-  const plant = {
-    ...{
-      type: 'asset--plant',
-      name: assetName,
-      status: status,
-      plant_type: {
-        type: 'taxonomy_term--plant_type',
-        id: getCropNameToTermMap(farm).get(cropName).id,
-      },
-    },
-    ...opts,
-  };
-
-  const planting_asset = farm.asset.create(plant);
-
-  try {
-    const result = await farm.asset.send(planting_asset);
-    return result;
-  } catch (e) {
-    console.log(e);
-    throw new Error('Unable to create plant asset.');
-  }
 }

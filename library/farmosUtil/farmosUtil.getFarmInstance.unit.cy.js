@@ -292,4 +292,47 @@ describe('Test getFarmOSInstance', () => {
       expect(sessionStorage.getItem('schema')).to.not.be.null;
     });
   });
+
+  it('Test writing to farmOS.', () => {
+    cy.wrap(
+      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
+    ).then((newFarm) => {
+      // Create a log in farmOS.
+      const p1 = {
+        type: 'log--activity',
+        name: 'test log',
+        notes: 'testing writes to farmOS',
+      };
+      const a1 = newFarm.log.create(p1);
+      cy.wrap(newFarm.log.send(a1)).as('sendLog');
+
+      cy.get('@sendLog').then(() => {
+        // fetch the created log.
+        cy.wrap(
+          newFarm.log
+            .fetch({
+              filter: { type: 'log--activity', id: a1.id },
+            })
+            .then((res) => {
+              return res.data[0];
+            })
+        ).as('fetchLog');
+      });
+
+      cy.get('@fetchLog')
+        .then((log) => {
+          expect(log.type).to.equal('log--activity');
+          expect(log.id).to.equal(a1.id);
+          expect(log.attributes.name).to.equal('test log');
+          expect(log.attributes.notes.value).to.equal(
+            'testing writes to farmOS'
+          );
+          return log.id;
+        })
+        .then((id) => {
+          // delete the log.
+          cy.wrap(newFarm.log.delete('activity', id));
+        });
+    });
+  });
 });
