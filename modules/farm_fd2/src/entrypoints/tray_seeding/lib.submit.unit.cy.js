@@ -9,7 +9,7 @@ describe('Test the tray seeding submission', () => {
 
     form = {
       seedingDate: '1950-01-01',
-      cropName: 'BROCOLI',
+      cropName: 'BROCCOLI',
       locationName: 'CHUAU',
       trays: 25,
       traySize: '200',

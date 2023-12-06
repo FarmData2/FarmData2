@@ -129,6 +129,6 @@ export async function submitForm(formData) {
 
     // Handle errors here by trying to delete everything?
 
-    throw Error('Error creating tray seeding');
+    throw Error('Error creating tray seeding', error);
   }
 }
