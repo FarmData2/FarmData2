@@ -187,16 +187,20 @@ Every entry point has a `<BToaster />` element as its first element.
 
 - The `BToaster` allows alert/info/success/error messages to be displayed.
 
+  - A message is displayed for 5 seconds on any error.
+  - A submitting message is displayed when the form is submitted. This is dismissed when the submit was successful or an error occurred.
+  - A success message is displayed for 1 second if the submit is successful.
+
   - Every FarmData2 component emits an `error` event with a message when an error occurs.
   - The entrypoint then must have an `on-error` handler that displays the Toast.
 
 ```JavaScript
-v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger')"
+v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger', 5)"
 ```
 
 - Values for placement and variant should be documented by pointing to the Bootstrap-Vue-Next documentation
 
-- Every entry point will import the `showToast` function from the `uiUtil` module
+- Every entry point will import the `uiUtil` module
 
 - All components are contained in a Bootstrap-Vue-Next [_Form_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form) element.
 

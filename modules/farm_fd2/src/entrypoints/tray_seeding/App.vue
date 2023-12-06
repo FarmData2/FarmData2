@@ -25,22 +25,22 @@
         id="seeded-crop"
         data-cy="seeded-crop"
         required
-        v-model:selected="form.crop"
+        v-model:selected="form.cropName"
         v-bind:showValidityStyling="validity.show"
-        v-on:valid="validity.crop = $event"
+        v-on:valid="validity.cropName = $event"
         v-on:ready="createdCount++"
         v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
 
       <!-- Location Selection -->
       <LocationSelector
-        id="seeding-location"
-        data-cy="seeding-location"
+        id="seeding-locationName"
+        data-cy="seeding-locationName"
         required
         includeGreenhouses
-        v-model:selected="form.location"
+        v-model:selected="form.locationName"
         v-bind:showValidityStyling="validity.show"
-        v-on:valid="validity.location = $event"
+        v-on:valid="validity.locationName = $event"
         v-on:ready="createdCount++"
         v-on:error="(msg) => showErrorToast('Network Error', msg)"
       />
@@ -159,8 +159,8 @@ export default {
     return {
       form: {
         seedingDate: dayjs().format('YYYY-MM-DD'),
-        crop: null,
-        location: null,
+        cropName: null,
+        locationName: null,
         trays: 1,
         traySize: null,
         seedsPerCell: 1,
@@ -169,8 +169,8 @@ export default {
       validity: {
         show: false,
         seedingDate: false,
-        crop: false,
-        location: false,
+        cropName: false,
+        locationName: false,
         trays: false,
         traySize: false,
         seedsPerCell: false,
@@ -186,7 +186,7 @@ export default {
     totalSeeds() {
       return (
         this.form.trays *
-        parseFloat(this.form.traySize) *
+        parseInt(this.form.traySize) *
         this.form.seedsPerCell
       ).toLocaleString(undefined);
     },
@@ -202,17 +202,31 @@ export default {
         this.disableSubmit = true;
         this.disableReset = true;
 
+        uiUtil.showToast(
+          'Submitting tray seeding...',
+          '',
+          'top-center',
+          'success'
+        );
+
         lib
           .submitForm(this.form)
           .then(() => {
-            // Change to keep sticky bits...
-            //this.reset();
+            uiUtil.hideToast();
+            this.reset(true);
+            uiUtil.showToast(
+              'Tray seeding created.',
+              '',
+              'top-center',
+              'success',
+              1
+            );
           })
-          .catch((err) => {
+          .catch(() => {
+            this.hideToast();
             this.showErrorToast(
-              'Error submitting tray seeding.' +
-                ' Check your network connection and try again.',
-              err
+              'Error creating tray seeding.',
+              'Check your network connection and try again.'
             );
             this.enableSubmit = true;
           });
@@ -220,11 +234,15 @@ export default {
         this.enableSubmit = false;
       }
     },
-    reset() {
+    reset(sticky = false) {
       this.validity.show = false;
-      this.form.seedingDate = dayjs().format('YYYY-MM-DD');
-      this.form.crop = null;
-      this.form.location = null;
+
+      if (!sticky) {
+        this.form.seedingDate = dayjs().format('YYYY-MM-DD');
+        this.form.locationName = null;
+      }
+
+      this.form.cropName = null;
       this.form.trays = 1;
       this.form.traySize = null;
       this.form.seedsPerCell = 1;
@@ -234,19 +252,13 @@ export default {
       }
     },
 
-    showErrorToast(title, msg) {
+    showErrorToast(title, message) {
       if (!this.errorShown) {
         this.errorShown = true;
         this.enableSubmit = false;
         this.enableReset = false;
 
-        uiUtil.showToast(
-          title,
-          msg + ' Try reloading the page.',
-          'top-center',
-          'danger',
-          5
-        );
+        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
       }
     },
   },
@@ -275,7 +287,7 @@ export default {
 }
 
 #seeded-crop,
-#seeding-location,
+#seeding-locationName,
 #seeding-tray-size,
 #seeding-seeds {
   margin-bottom: 8px;

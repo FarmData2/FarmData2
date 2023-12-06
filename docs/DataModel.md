@@ -3,15 +3,25 @@
 ## Log Categories
 
 - Seeding Logs
-  - `tray_seeding`
-  - `direct_seeding`
-  - `cover_crop_seeding`
+  - `seeding_tray`
+  - `seeding_direct`
+  - `seeding_cover_crop`
 
 ## Units
 
-## Naming Conventions
+## Log/Asset Naming Conventions
 
-- check the PASA schema to see if there is a convention.
+The general convention for naming logs and assets is:
+
+- `yyyy-mm-dd_<type>_<description>`
+  - `<type>` is an abbreviation for the type of operation
+    - `ts` - tray seeding
+    - `ds` - direct seeding
+    - `cs` - cover crop seeding
+    - `xp` - transplanting
+    - `ha` - harvesting
+    - `sd` - soil disturbance
+    - `sa` - soil amendment
 
 ### Assets
 
@@ -22,6 +32,29 @@
 ## Seeding Operations
 
 ### Tray Seeding
+
+A tray seeding represents the activity and product of planting seeds in trays in a greenhouse.
+
+A tray seeding consists of:
+
+- A `asset--plant` representing the seeded plant in the greenhouse.
+  - The `Inventory` of this asset represents the number of trays currently available for transplanting and is managed by quantities attached to logs via the farmOS Inventory module.
+  - Comments associated with the tray seeding are stored in the `asset--plant` asset.
+- A `log--seeding` representing the seeding activity.
+- Three `quantity--standard` records representing:
+
+  - The number of trays that were seeded. This quantity sets the plant asset's inventory.
+  - The number of cells in each tray.
+  - The number of seeds planted in each cell.
+
+- Logs and assets associated with a tray seeding will be named: `yyyy-mm-dd_ts_cropName`
+
+See `modules/farm_fd2/src/entrypoints/tray_seeding/lib.js` for the details of how the asset, quantities and log are created.
+
+A tray seeding is represented by a `asset--plant` asset.
+
+- The asset's inventory represents the number of trays that are available for transplanting. Initially this will equal the number of trays that have been seeded. As trays are transplanted (or composted or discarded) the inventory will be decremented.
+- The asset will be referenced by a `log--seeding` with a `log-type` of `tray_seeding`.
 
 - Creates
 
