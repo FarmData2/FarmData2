@@ -45,7 +45,7 @@ A tray seeding consists of:
 
   - The number of trays that were seeded. This quantity sets the plant asset's inventory.
   - The number of cells in each tray.
-  - The number of seeds planted in each cell.
+  - The total number of seeds planted. Note: This is computed from the other data entered in the form (trays x cells per tray x seeds per cell).
 
 - Logs and assets associated with a tray seeding will be named: `yyyy-mm-dd_ts_cropName`
 

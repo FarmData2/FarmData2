@@ -1,4 +1,5 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+import dayjs from 'dayjs';
 
 /**
  * Create the farmOS records (asset, quantities and log) to represent
@@ -11,7 +12,7 @@ export async function submitForm(formData) {
   let plantAsset = null;
   let traysQuantity = null;
   let traySizeQuantity = null;
-  let seedsPerCellQuantity = null;
+  let seedsQuantity = null;
   let seedingLog = null;
 
   try {
@@ -73,23 +74,28 @@ export async function submitForm(formData) {
     });
     traySizeQuantity = await farm.quantity.send(traySizeQuantityProps);
 
-    const seedPerCellProps = farm.quantity.create({
+    const seedsQuantityProps = farm.quantity.create({
       type: 'quantity--standard',
-      label: 'Seeds Per Cell',
-      measure: 'ratio',
+      label: 'Seeds',
+      measure: 'count',
       value: {
-        decimal: formData.seedsPerCell,
+        decimal:
+          formData.trays *
+          parseInt(formData.traySize) *
+          formData.seedsPerCell,
       },
       units: {
         type: 'taxonomy_term--unit',
-        id: unitMap.get('SEEDS/CELL').id,
+        id: unitMap.get('SEEDS').id,
       },
     });
-    seedsPerCellQuantity = await farm.quantity.send(seedPerCellProps);
+    seedsQuantity = await farm.quantity.send(seedsQuantityProps);
 
     // create the seeding log
     const seedingLogProps = farm.log.create({
       type: 'log--seeding',
+      timestamp: dayjs(formData.seedingDate).format(),
+      purchase_date: '0000-00-00',
       category: [
         {
           type: 'taxonomy_term--log_category',
@@ -117,7 +123,7 @@ export async function submitForm(formData) {
         },
         {
           type: 'quantity--standard',
-          id: seedsPerCellQuantity.id,
+          id: seedsQuantity.id,
         },
       ],
     });
