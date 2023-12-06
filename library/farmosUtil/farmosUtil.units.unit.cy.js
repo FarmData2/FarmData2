@@ -16,15 +16,15 @@ describe('Test the units utility functions', () => {
       expect(units).to.not.be.null;
       expect(units.length).to.equal(7);
 
-      expect(units[0].attributes.name).to.equal('CELLS/TRAY');
+      expect(units[0].attributes.name).to.equal('CELLS');
       expect(units[0].attributes.description.value).to.equal(
-        'The number of cells in a tray.'
+        'A number of seeding tray cells.'
       );
       expect(units[0].type).to.equal('taxonomy_term--unit');
 
-      expect(units[4].attributes.name).to.equal('TRAYS');
+      expect(units[4].attributes.name).to.equal('SEEDS');
       expect(units[4].attributes.description.value).to.equal(
-        'A number of seeding trays.'
+        'A number of seeds.'
       );
       expect(units[4].type).to.equal('taxonomy_term--unit');
     });

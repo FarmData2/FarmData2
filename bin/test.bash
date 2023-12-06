@@ -183,7 +183,7 @@ elif [ -n "$COMPONENT_TESTS" ]; then
   CYPRESS_TEST_TYPE="component"
 else
   echo "Unit testing requested."
-  CYPRESS_TEST_TYPE="e2e"
+  CYPRESS_TEST_TYPE="component"
 
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
