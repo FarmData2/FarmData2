@@ -86,10 +86,10 @@ echo "  Stopped."
 
 # # Make sure that the FarmData2/docker/db directory has appropriate permissions.
 echo "Setting permissions on $REPO_DIR/docker/db..."
+sudo chgrp fd2grp "$REPO_DIR/docker/db"
+error_check "Unable to change group."
 sudo chmod g+rwx "$REPO_DIR/docker/db"
 error_check "Unable to set permissions."
-sudo chgrp fd2dev "$REPO_DIR/docker/db"
-error_check "Unable to change group."
 echo "  Set."
 
 safe_cd "$DB_DIR"
