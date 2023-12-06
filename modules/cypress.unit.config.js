@@ -4,9 +4,9 @@ export default defineConfig({
   screenshotOnRunFailure: false,
   video: false,
   trashAssetsBeforeRuns: true,
-  e2e: {
-    baseUrl: 'http://farmos',
-    supportFile: '../cypress/support/e2e.js',
+  component: {
+    supportFile: '../cypress/support/component.js',
+    indexHtmlFile: '../cypress/support/component-index.html',
     specPattern: '**/*.unit.cy.js',
     devServer: {
       bundler: 'vite',
