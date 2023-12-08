@@ -226,7 +226,7 @@ export default {
             this.hideToast();
             this.showErrorToast(
               'Error creating tray seeding.',
-              'Check your network connection and try again.'
+              'Reload the page and try again.'
             );
             this.enableSubmit = true;
           });
