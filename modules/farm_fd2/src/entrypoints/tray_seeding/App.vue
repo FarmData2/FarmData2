@@ -5,7 +5,12 @@
     header-tag="header"
   >
     <template #header>
-      <h2 class="text-center">Tray Seeding</h2>
+      <h2
+        data-cy="seeding-header"
+        class="text-center"
+      >
+        Tray Seeding
+      </h2>
     </template>
 
     <BForm>
@@ -22,8 +27,8 @@
 
       <!-- Crop Selection -->
       <CropSelector
-        id="seeded-crop"
-        data-cy="seeded-crop"
+        id="seeded-cropName"
+        data-cy="seeded-cropName"
         required
         v-model:selected="form.cropName"
         v-bind:showValidityStyling="validity.show"
@@ -286,7 +291,7 @@ export default {
   margin-bottom: 8px;
 }
 
-#seeded-crop,
+#seeded-cropName,
 #seeding-locationName,
 #seeding-tray-size,
 #seeding-seeds {

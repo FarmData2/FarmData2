@@ -109,36 +109,30 @@ describe('Test the tray seeding submission', () => {
         seedsQuant = quant;
       });
 
-    cy.get('@plantAsset')
-      .then((plantAsset) => {
-        cy.get('@traysQuant').then((traysQuant) => {
-          cy.get('@traySizeQuant').then((traySizeQuant) => {
-            cy.get('@seedsQuant').then((seedsQuant) => {
-              return {
-                plantAsset,
-                traysQuant,
-                traySizeQuant,
-                seedsQuant,
-              };
-            });
-          });
-        });
-      })
-      .then(({ plantAsset, traysQuant, traySizeQuant, seedsQuant }) => {
-        cy.wrap(
-          lib.createSeedingLog(
-            form,
-            plantAsset,
-            traysQuant,
-            traySizeQuant,
-            seedsQuant
-          )
+    /*
+     * Use a custom Cypress command to get all of the aliases that
+     * are needed using a a single command.
+     */
+    cy.getAll([
+      '@plantAsset',
+      '@traysQuant',
+      '@traySizeQuant',
+      '@seedsQuant',
+    ]).then(([plantAsset, traysQuant, traySizeQuant, seedsQuant]) => {
+      cy.wrap(
+        lib.createSeedingLog(
+          form,
+          plantAsset,
+          traysQuant,
+          traySizeQuant,
+          seedsQuant
         )
-          .as(`seedingLog`)
-          .then((log) => {
-            seedingLog = log;
-          });
-      });
+      )
+        .as(`seedingLog`)
+        .then((log) => {
+          seedingLog = log;
+        });
+    });
 
     /*
      * Setup to cleanup the farmOS records created by this test.  Note

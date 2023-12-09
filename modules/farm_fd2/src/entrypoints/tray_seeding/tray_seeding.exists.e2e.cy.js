@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 describe('Check that the tray_seeding entry point in farm_fd2 exists.', () => {
   it('Check that the page loaded.', () => {
     // Login if running in live farmOS.

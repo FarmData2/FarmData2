@@ -49,15 +49,71 @@ Inside each of the above module directories there are the following directories 
 - Edit `App.vue` to implement the entry point.
 - Add `\*.cy.js` files to test the new entry point.
 
+## Entry Point Conventions
+
+Document where these things are in the code somehow.
+
+- an example in the Examples module?
+
+- all use the `fd2-mobile.css` stylesheet.
+
+  - add `<style>` to the `App.vue` for entry point specific styles.
+
+- Submit button is initially enabled.
+  - On click
+    - validity styling is shown
+    - disabled if
+      - any data is invalid
+      - any required data is missing
+    - Submitting ... banner appears while submitting.
+    - Success banner appears when submitted is complete, stays for 2 seconds.
+    - Error banner appears if there is an error, stays for 5 seconds.
+
 ## Testing
 
-- use bin/test.bash (see its docs).
+- use `bin/test.bash` (see its docs).
 
-- use watch:fd2 by default and just run in live farmOS.
+- use `watch:fd2` by default and just run in live farmOS?
 
+  - or should we use the dev server?
   - point to another document that discusses the use of the dev and preview servers.
 
 - Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
+
+### Unit Testing
+
+Write code for submission of the form to farmOS in the lib.js file and unit test it.
+
+- all tests should clean up after themselves.
+
+### E2E Testing
+
+Test:
+
+- `*.content.e2e.cy.js` - ensure that the content of the form is correct.
+  - All labels and fields are correct.
+  - Default values are correct.
+  - Required items are marked required.
+  - etc...
+- `*.behavior.e2e.cy.js` - ensure that the form behaves correctly
+  - validity styling is shown at appropriate times
+  - submit is in initially enabled
+  - Submit is disabled when the form is invalid
+  - Submit is reenabled when the form becomes valid
+  - reset clears the form to default values.
+  - form controls work:
+    - increment / decrements
+    - `+` to add new items go to correct url
+    - computed values are computed correctly.
+  - etc...
+- `*.submit.e2e.cy.js` - ensure that the form submits correctly
+  - records are created in the database
+  - Submitting banner appears and disappears
+  - Success banner appears and disappears
+  - Error banner appear and disappears
+    - Only one error banner appears
+  - Sticky parts of form remain when submit is complete.
+  - etc...
 
 ## Entry point structure
 

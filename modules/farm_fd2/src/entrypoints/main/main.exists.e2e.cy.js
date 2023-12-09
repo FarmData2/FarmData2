@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 describe('Check that the main entrypoint in the fd2 module exists.', () => {
   it('Check that the page loaded.', () => {
     // Login if running in live farmOS.
