@@ -145,7 +145,9 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"] option').should('have.length', 6);
+        cy.get('[data-cy="selector-input"]')
+          .find('option')
+          .should('have.length', 6);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
         cy.get('[data-cy="selector-option-5"]').should(
           'have.text',
@@ -167,7 +169,9 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"] option').should('have.length', 66);
+        cy.get('[data-cy="selector-input"]')
+          .find('option')
+          .should('have.length', 66);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
         cy.get('[data-cy="selector-option-65"]').should('have.text', 'Z');
       });
@@ -187,7 +191,9 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"] option').should('have.length', 71);
+        cy.get('[data-cy="selector-input"]')
+          .find('option')
+          .should('have.length', 71);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
         cy.get('[data-cy="selector-option-70"]').should('have.text', 'Z');
       });

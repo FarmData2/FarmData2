@@ -96,7 +96,9 @@ describe('Test the TraySizeSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"] option').should('have.length', 7);
+        cy.get('[data-cy="selector-input"]')
+          .find('option')
+          .should('have.length', 7);
         cy.get('[data-cy="selector-option-1"]').should('have.text', '50');
         cy.get('[data-cy="selector-option-6"]').should('have.text', '288');
       });

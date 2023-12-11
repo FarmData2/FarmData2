@@ -9,7 +9,7 @@
     <template v-slot:label>
       <span data-cy="date-label">Date:</span>
       <sup
-        data-cy="required-star"
+        data-cy="date-required"
         v-if="required"
         class="text-danger"
         >*</sup

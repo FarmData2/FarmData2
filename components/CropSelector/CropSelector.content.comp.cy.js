@@ -97,7 +97,9 @@ describe('Test the CropSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"] option').should('have.length', 112);
+        cy.get('[data-cy="selector-input"]')
+          .find('option')
+          .should('have.length', 112);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'ARUGULA');
         cy.get('[data-cy="selector-option-111"]').should(
           'have.text',

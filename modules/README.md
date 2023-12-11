@@ -88,23 +88,27 @@ Write code for submission of the form to farmOS in the lib.js file and unit test
 
 ### E2E Testing
 
-Test:
+Test: There will typically be 4 broad categories of tests. The lists below are not intended to be prescriptive or exhaustive.
 
 - `*.content.e2e.cy.js` - ensure that the content of the form is correct.
   - All labels and fields are correct.
   - Default values are correct.
   - Required items are marked required.
+  - Submit/Reset/etc are initially in the correct state.
   - etc...
 - `*.behavior.e2e.cy.js` - ensure that the form behaves correctly
   - validity styling is shown at appropriate times
-  - submit is in initially enabled
-  - Submit is disabled when the form is invalid
-  - Submit is reenabled when the form becomes valid
+  - Submit/Reset/etc are in the correct state as form changes.
+    - E.g. Submit is disabled when the form is invalid
+    - E.g. Submit is reenabled when the form becomes valid
   - reset clears the form to default values.
   - form controls work:
-    - increment / decrements
-    - `+` to add new items go to correct url
-    - computed values are computed correctly.
+    - E.g. increment / decrements
+    - E.g. any `+` to add new items go to correct url
+    - E.g. computed values are computed correctly.
+  - etc...
+- `*.permissions.e2e.cy.js` - ensure that correct content is shown based on permissions.
+  - `+` buttons are not shown unless user has permission to edit vocabulary.
   - etc...
 - `*.submit.e2e.cy.js` - ensure that the form submits correctly
   - records are created in the database
@@ -114,6 +118,11 @@ Test:
     - Only one error banner appears
   - Sticky parts of form remain when submit is complete.
   - etc...
+
+### Testing Gotchas
+
+- Clear fields before typing in them.
+- Blur the final field that was modified before taking an action (E.g. Submit / Reset)
 
 ## Entry point structure
 
@@ -253,6 +262,11 @@ Every entry point has a `<BToaster />` element as its first element.
 ```JavaScript
 v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger', 5)"
 ```
+
+- Component / element naming:
+
+  - Every component / element referenced in css or a test gets and `id` and a `data-cy`.
+  - Values for the `id` and `data-cy` use `kabob-case`.
 
 - Values for placement and variant should be documented by pointing to the Bootstrap-Vue-Next documentation
 

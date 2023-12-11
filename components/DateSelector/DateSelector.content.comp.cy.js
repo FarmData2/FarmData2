@@ -26,7 +26,7 @@ describe('Test the default DateSelector content', () => {
       .then(() => {
         cy.get('[data-cy="date-group"]').should('exist');
         cy.get('[data-cy="date-label"]').should('have.text', 'Date:');
-        cy.get('[data-cy="required-star"]').should('not.exist');
+        cy.get('[data-cy="date-required"]').should('not.exist');
         cy.get('[data-cy="date-input"]').should(
           'have.value',
           dayjs().format('YYYY-MM-DD')
@@ -54,8 +54,8 @@ describe('Test the default DateSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="required-star"]').should('exist');
-        cy.get('[data-cy="required-star"]').should('have.text', '*');
+        cy.get('[data-cy="date-required"]').should('exist');
+        cy.get('[data-cy="date-required"]').should('have.text', '*');
         cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
         cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
         cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
