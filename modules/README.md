@@ -121,6 +121,8 @@ Test: There will typically be 4 broad categories of tests. The lists below are n
 
 ### Testing Gotchas
 
+- Successful tests should leave the database as they found it.
+  - Can use `installDB.bash` to restore after failed tests as necessary.
 - Clear fields before typing in them.
 - Blur the final field that was modified before taking an action (E.g. Submit / Reset)
 
