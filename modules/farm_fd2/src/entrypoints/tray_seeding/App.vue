@@ -205,6 +205,7 @@ export default {
     submit() {
       this.validity.show = true;
 
+      // If all of the form values are valid...
       if (Object.values(this.validity).every((item) => item === true)) {
         this.disableSubmit = true;
         this.disableReset = true;
@@ -226,18 +227,19 @@ export default {
               '',
               'top-center',
               'success',
-              1
+              2
             );
           })
           .catch(() => {
-            this.hideToast();
+            uiUtil.hideToast();
             this.showErrorToast(
               'Error creating tray seeding.',
-              'Reload the page and try again.'
+              'Check your network connection and try again.'
             );
             this.enableSubmit = true;
           });
       } else {
+        // Some value is not valid...
         this.enableSubmit = false;
       }
     },
@@ -254,9 +256,7 @@ export default {
       this.form.traySize = null;
       this.form.seedsPerCell = 1;
       this.form.comment = null;
-      if (!this.errorShown) {
-        this.enableSubmit = true;
-      }
+      this.enableSubmit = true;
     },
 
     showErrorToast(title, message) {

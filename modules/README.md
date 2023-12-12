@@ -115,7 +115,6 @@ Test: There will typically be 4 broad categories of tests. The lists below are n
   - Submitting banner appears and disappears
   - Success banner appears and disappears
   - Error banner appear and disappears
-    - Only one error banner appears
   - Sticky parts of form remain when submit is complete.
   - etc...
 
