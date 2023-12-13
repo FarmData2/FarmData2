@@ -60,9 +60,7 @@ describe('Test getFarmOSInstance', () => {
     expect(localStorage.getItem('token')).to.be.null;
     expect(sessionStorage.getItem('schema')).to.be.null;
 
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       expect(newFarm).to.not.be.null;
       expect(newFarm.remote.getToken()).to.not.be.null;
       expect(newFarm.schema.get()).to.not.be.null;
@@ -101,9 +99,7 @@ describe('Test getFarmOSInstance', () => {
       expect(localStorage.getItem('token')).to.not.be.null;
       expect(sessionStorage.getItem('schema')).to.not.be.null;
 
-      cy.wrap(
-        farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-      ).then((newFarm) => {
+      cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
         expect(newFarm).to.not.be.null;
         expect(newFarm.remote.getToken()).to.not.be.null;
         expect(newFarm.schema.get()).to.not.be.null;
@@ -143,9 +139,7 @@ describe('Test getFarmOSInstance', () => {
     expect(localStorage.getItem('token')).to.be.null;
     expect(sessionStorage.getItem('schema')).to.not.be.null;
 
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       expect(newFarm).to.not.be.null;
       expect(newFarm.remote.getToken()).to.not.be.null;
       expect(newFarm.schema.get()).to.not.be.null;
@@ -184,9 +178,7 @@ describe('Test getFarmOSInstance', () => {
     expect(localStorage.getItem('token')).to.not.be.null;
     expect(sessionStorage.getItem('schema')).to.not.be.null;
 
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       expect(newFarm).to.not.be.null;
       expect(newFarm.remote.getToken()).to.not.be.null;
       expect(newFarm.schema.get()).to.not.be.null;
@@ -228,9 +220,7 @@ describe('Test getFarmOSInstance', () => {
     expect(localStorage.getItem('token')).to.not.be.null;
     expect(sessionStorage.getItem('schema')).to.be.null;
 
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       expect(newFarm).to.not.be.null;
       expect(newFarm.remote.getToken()).to.not.be.null;
       expect(newFarm.schema.get()).to.not.be.null;
@@ -274,9 +264,7 @@ describe('Test getFarmOSInstance', () => {
     expect(localStorage.getItem('token')).to.be.null;
     expect(sessionStorage.getItem('schema')).to.be.null;
 
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       expect(newFarm).to.not.be.null;
       expect(newFarm.remote.getToken()).to.not.be.null;
       expect(newFarm.schema.get()).to.not.be.null;
@@ -294,9 +282,7 @@ describe('Test getFarmOSInstance', () => {
   });
 
   it('Test writing to farmOS.', () => {
-    cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
-    ).then((newFarm) => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((newFarm) => {
       // Create a log in farmOS.
       const p1 = {
         type: 'log--activity',
@@ -335,4 +321,38 @@ describe('Test getFarmOSInstance', () => {
         });
     });
   });
+
+  it.only('Creates new farmOSInstance when user changes.', () => {
+    cy.wrap(farmosUtil.getFarmOSInstance()).then((adminFarm) => {
+      cy.wrap(
+        farmosUtil.getFarmOSInstance(
+          'http://farmos',
+          'farm',
+          'guest',
+          'farmdata2'
+        )
+      ).then((guestFarm) => {
+        expect(guestFarm).to.not.equal(adminFarm);
+
+        cy.wrap(guestFarm.user.fetch({ filter: { type: 'user--user' } })).as(
+          'fetchUsers'
+        );
+      });
+    });
+
+    cy.get('@fetchUsers').then((users) => {
+      expect(users.data.length).to.equal(10);
+      // The guest user does not get role data when fetching but admin does.
+      expect(users.data[2].relationships.roles).to.not.exist;
+    });
+  });
+
+  /*
+   * Note: We only have one farmOS server and one client in that server so
+   * we can't really test for the cases where the hostURL or the client
+   * changes.  However, they are handled in the same place as the user change
+   * so if that works, we can have high confidence that the others work.
+   *
+   * They are also unlikely use cases.
+   */
 });
