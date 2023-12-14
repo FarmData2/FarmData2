@@ -132,30 +132,6 @@ export const getFarmOSInstance = runExclusive.build(
       }
     }
 
-    /*
-     * If there have been any changes in the hostURL, client or user
-     * then invalidate the old instance, so that a new instance
-     * is created for the new server, client and/or user.
-     */
-    const prevHostURL = libSessionStorage.getItem('hostURL');
-    const prevClient = libSessionStorage.getItem('client');
-    const prevUser = libSessionStorage.getItem('user');
-    if (prevHostURL !== hostURL || prevClient !== client || prevUser !== user) {
-      clearFarmGlobal();
-      libSessionStorage.setItem('hostURL', hostURL);
-      libSessionStorage.setItem('client', client);
-      libSessionStorage.setItem('user', user);
-      libLocalStorage.removeItem('token');
-      libSessionStorage.removeItem('schema');
-      clearCachedUsers();
-      clearCachedFieldsAndBeds();
-      clearCachedGreenhouses();
-      clearCachedCrops();
-      clearCachedTraySizes();
-      clearCachedUnits();
-      clearCachedLogCategories();
-    }
-
     // Only create a new farm object if we don't already have one in global_farm.
     let newfarm = false;
     if (!global_farm) {
