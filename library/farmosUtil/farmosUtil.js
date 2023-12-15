@@ -15,14 +15,20 @@ import * as runExclusive from 'run-exclusive';
  *
  * Check if this page from which this function is called is currently
  * running within farmOS or not.  If it is not then it can be assumed
- * that we are running within the development environment.
+ * that we are running within the development environment (e.g. from
+ * Node or from the dev server).
  *
  * @returns true if the page is within farmOS, false if not.
  */
 function inFarmOS() {
   try {
-    const pageWrapper = document.getElementsByClassName('page-wrapper');
-    return pageWrapper.length > 0;
+    /*
+     * The `<body>` element of FarmData2 pages served from farmOS will have
+     * the class `path-fd2`.  That class does not appear on the `<body>` in
+     * pages served from the dev server.
+     */
+    const fd2Path = document.getElementsByClassName('body.path-fd2');
+    return fd2Path.length > 0;
   } catch (e) {
     return false;
   }
@@ -76,52 +82,70 @@ var libSessionStorage = null;
 
 /**
  * Create and return an instance of the `farmos.js` `farmOS` object that will be used
- * to interact with the farmOS host.
+ * to interact with the farmOS host. There will only ever be one instance of the
+ * `farmOS` object.
  *
- * If running within a page served by farmOS itself (e.g. in an entry point in
- * one of the modules) then the credentials (user/pass) are not used.  The farmOS
- * object will have the same permissions as the user that is logged into farmOS.
+ * If a `hostURL`, `client`, `user` and `pass` are provided then a new
+ * `farmOS` object will be created.
  *
- * If running outside of farmOS (e.g. from the Vue dev server or a Node program)
- * then the credentials (user/pass) are used to authenticate to the farmOS server
- * so that the API can be accessed.  The farmOS object will have the same
- * permissions as the user/pass that is used to log into farmOS.  By default,
- * this is the `admin` user.
+ * If no `hostURL`, `client`, `user` and `pass` are provided then:
+ * - If there is an exiting farmOS object it will be returned.
+ * - Otherwise a new default instance is created with:
+ *   - `hostURL = 'https://farmos.org'`
+ *   - `client = 'farm'`
+ *   - `user = 'admin'`
+ *   - `pass = 'admin'`
  *
- * The default 'farm' client is sufficient for most uses, but any client
- * that exists on the farmOS host can be used (assuming it is properly
- * configured).  The `farmOS` object will also have its schema set.
+ * Note: When running within a page served by farmOS (e.g. in an entry point in
+ * one of the modules served from the "live" server) the farmOS object will
+ * have the same permissions as the user that has logged into farmOS. To ensure
+ * that this is the case, front end code (e.g. in an entry point, .vue file) should
+ * never provide credentials to this method. It should always be called as
+ * `getFarmOSInstance()`.
  *
- * NOTE: There will only be a single instance of `farmOS` object created on the
- * first call to this function from a given page. Subsequent calls will
- * authenticate if necessary and then return the same`farmOS` object.
+ * Note: In test cases that will run outside of farmOS (component, unit, e2e tests on
+ * the dev server) the test can call `getFarmOSInstance(...)` with the credentials
+ * it wants.  Then when the front end code calls `getFarmOSInstance()` with no
+ * parameters, it will get the farmOS instance with the desired credentials. E2e tests
+ * that are running on the "live" server will have the same credentials as the
+ * user that is logged in by the test.
+ *
+ * Note: All cached API response and permissions are cleared when a
+ * new `farmOS` object is created.
+ *
+ * Note: If one of the `hostURL`, `client`, `user` and `pass` parameters
+ * is provided then all of them must be provided. This ensures that the
+ * created farmOS object (i.e. identical code) will work in the browser,
+ * in Node and in tests running both in the dev server and the live server.
  *
  * @param {string} hostURL url of the farmOS instance to which to connect.
  * @param {string} client the farmOS api client to use.
  * @param {string} user the username of the farmOS user to use for authentication.
  * @param {string} pass the farmOS password for the user.
- * @param {object} ls the local/session storage object to use when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
- * @returns the connected and configured `farmos.js` `farmOS` object.
+ * @param {object} ls the the object provided for local/session storage when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
+ * @throws {Error} if unable to create the `farmOS` object.
+ * @returns {object} the connected and configured `farmos.js` `farmOS` object.
  */
+
 export const getFarmOSInstance = runExclusive.build(
   async (
-    hostURL = 'http://farmos',
-    client = 'farm',
-    user = 'admin',
-    pass = 'admin',
+    hostURL = null,
+    client = null,
+    user = null,
+    pass = null,
     ls = null
   ) => {
     /*
      * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
      * is used to prevent concurrent execution of this function.  This eliminates
      * a race condition that allows the construction of multiple farmOS
-     * objects by different components.
+     * objects by different components in the same page.
      */
 
     /*
      * Handle local and session storage here so that the functions
      * in this library can be used in both Node and in the browser
-     * (live and w/ Cypress).
+     * (live and on dev server and with Cypress).
      */
     if (!libLocalStorage) {
       libLocalStorage = ls;
@@ -132,93 +156,363 @@ export const getFarmOSInstance = runExclusive.build(
       }
     }
 
-    // Only create a new farm object if we don't already have one in global_farm.
-    let newfarm = false;
-    if (!global_farm) {
-      newfarm = true;
-
-      let config = {};
-      if (inFarmOS()) {
-        // Get the CSRF token needed for requests that modify data
-        // when we are running inside farmOS.
-        const response = await fetch('http://farmos/session/token');
-        const csrfToken = await response.text();
-
-        // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
-        config = {
-          host: '',
-          clientId: client,
-          auth: (request) => {
-            request.interceptors.request.use((config) => {
-              if (config.method === 'get') {
-                // Don't add CSRF  header to GET requests as it can leak the token.
-                // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
-                return {
-                  ...config,
-                  headers: {
-                    ...config.headers,
-                  },
-                };
-              } else {
-                return {
-                  ...config,
-                  headers: {
-                    ...config.headers,
-                    'X-CSRF-TOKEN': csrfToken,
-                  },
-                };
-              }
-            }, Promise.reject);
-          },
-        };
+    /*
+     * Structure the code this way as a defensive coding strategy to ensure
+     * that code providing credentials cannot sneak into the front end code
+     * that may run in the live farmOS server.
+     */
+    if (inFarmOS()) {
+      // All calls that run in farmOS must call getFarmOSInstance without parameters.
+      if (hostURL || client || user || pass) {
+        throw new Error(
+          'Front end code should never provide credentials to getFarmOSInstance.'
+        );
       } else {
-        config = {
-          host: hostURL,
-          clientId: client,
-          getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-          setToken: (token) =>
-            libLocalStorage.setItem('token', JSON.stringify(token)),
-        };
+        return await getFarmOSInstanceForInFarmOS();
       }
-      const options = { remote: config };
-
-      /*
-       * Enable this to be used both in Node, where farmOS is
-       * not recognized but farmOS.default is and in Cypress for
-       * testing where farmOS is recognized, but farmOS.default
-       * is not.
-       */
-      if (typeof farmOS != 'function') {
-        global_farm = farmOS.default(options);
+    } else {
+      // Here we are not running within farmOS...
+      if (hostURL && client && user && pass) {
+        /*
+         * We have been called from a test that provides specific credentials.
+         * So we will create a new farmOS object with those credentials.
+         */
+        clearFarmGlobal();
+        libLocalStorage.removeItem('farmOStoken');
+        return await getFarmOSInstanceForNotInFarmOS(
+          hostURL,
+          client,
+          user,
+          pass
+        );
+      } else if (!hostURL && !client && !user && !pass) {
+        /*
+         * We have been called from the front end or
+         * from a test that did not provide credentials.
+         */
+        return await getFarmOSInstanceForNotInFarmOS();
       } else {
-        global_farm = farmOS(options);
+        throw new Error(
+          'Invalid arguments passed to getFarmOSInstance from outside farmOS.' +
+            ' If one of hostURL, client, user, or pass is provided, all must be provided.'
+        );
       }
     }
+  }
+);
 
-    // If we are running outside of farmOS and we
-    // don't have an authentication token cached in localStorage,
-    // then authenticate with the farmOS host to get the token.
-    if (!inFarmOS() && global_farm.remote.getToken() === null) {
-      await global_farm.remote.authorize(user, pass);
-    }
+/**
+ * @private
+ *
+ */
+async function getFarmOSInstanceForInFarmOS() {
+  if (global_farm) {
+    return global_farm;
+  } else {
+    /*
+     * Get the CSRF token needed for requests that modify data
+     * when we are running inside farmOS.
+     */
+    const response = await fetch('/session/token');
+    const csrfToken = await response.text();
 
-    // Only set the schema if this is a new farm object.
-    if (newfarm) {
-      //Try the session storage first...
-      let schema = JSON.parse(libSessionStorage.getItem('schema'));
-      if (schema == null) {
-        // Not in session storage, so fetch schema from the farmOS host.
-        await global_farm.schema.fetch();
-        schema = global_farm.schema.get();
-        // Cache in the session storage for next time.
-        libSessionStorage.setItem('schema', JSON.stringify(schema));
-      }
-      await global_farm.schema.set(schema);
-    }
+    // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
+    const config = {
+      host: '',
+      clientId: 'farm',
+      auth: (request) => {
+        request.interceptors.request.use((config) => {
+          if (config.method === 'get') {
+            /*
+             * Don't add CSRF  header to GET requests as it can leak the token.
+             * https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+             */
+            return {
+              ...config,
+              headers: {
+                ...config.headers,
+              },
+            };
+          } else {
+            return {
+              ...config,
+              headers: {
+                ...config.headers,
+                'X-CSRF-TOKEN': csrfToken,
+              },
+            };
+          }
+        }, Promise.reject);
+      },
+    };
+    const options = { remote: config };
+
+    global_farm = farmOS(options);
+    await setFarmSchema(global_farm);
 
     return global_farm;
   }
-);
+}
+
+/**
+ * @private
+ */
+async function getFarmOSInstanceForNotInFarmOS(
+  hostURL = null,
+  client = null,
+  user = null,
+  pass = null
+) {
+  /*
+   * In the unlikely event that we have a global farm object but the local
+   * storage does not contain a token, clear the global farm object so that we
+   * create a new farm object from scratch.
+   */
+  if (global_farm && global_farm.remote.getToken() === null) {
+    clearFarmGlobal();
+  }
+
+  // Only create a new farm object if we don't already have one in global_farm.
+  let newFarm = false;
+  if (!global_farm) {
+    console.log('new instance');
+    newFarm = true;
+
+    /*
+     * We don't yet have a farmOS instance, and no credentials were provided
+     * so we will create a new farmOS instance using the default credentials
+     * Note: We know we are running only in the dev environment here!
+     */
+    if (!hostURL && !client && !user && !pass) {
+      hostURL = 'http://farmos';
+      client = 'farm';
+      user = 'admin';
+      pass = 'admin';
+    }
+
+    const config = {
+      host: hostURL,
+      clientId: client,
+      getToken: () => JSON.parse(libLocalStorage.getItem('farmOStoken')),
+      setToken: (token) =>
+        libLocalStorage.setItem('farmOStoken', JSON.stringify(token)),
+    };
+    const options = { remote: config };
+
+    /*
+     * Enable this to be used both in Node, where farmOS is
+     * not recognized but farmOS.default is and in Cypress for
+     * testing where farmOS is recognized, but farmOS.default
+     * is not.
+     */
+    if (typeof farmOS != 'function') {
+      global_farm = farmOS.default(options);
+    } else {
+      global_farm = farmOS(options);
+    }
+  }
+
+  /*
+   * If we don't have an authentication token cached in localStorage,
+   * then authenticate with the farmOS host to get the token.
+   */
+  if (global_farm.remote.getToken() === null) {
+    await global_farm.remote.authorize(user, pass);
+  }
+
+  // If we created a new farm object then we need to get the schema.
+  if (newFarm) {
+    await setFarmSchema(global_farm);
+  }
+
+  return global_farm;
+}
+
+/**
+ * @private
+ *
+ * Get the farmOS schema from the session storage (if it exists there)
+ * or from the farmOS host.  If we get it from the farmOS host then place
+ * it in the session storage for next time.
+ */
+async function setFarmSchema(farm) {
+  // Try the session storage first...
+  let schema = JSON.parse(libSessionStorage.getItem('schema'));
+  if (schema == null) {
+    // Not in session storage, so fetch schema from the farmOS host.
+    await farm.schema.fetch();
+    schema = farm.schema.get();
+    // Cache in the session storage for next time.
+    libSessionStorage.setItem('schema', JSON.stringify(schema));
+  } else {
+    await farm.schema.set(schema);
+  }
+}
+
+// export const getFarmOSInstance = runExclusive.build(
+//   async (
+//     hostURL = null,
+//     client = null,
+//     user = null,
+//     pass = null,
+//     ls = null
+//   ) => {
+//     /*
+//      * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
+//      * is used to prevent concurrent execution of this function.  This eliminates
+//      * a race condition that allows the construction of multiple farmOS
+//      * objects by different components.
+//      */
+
+//     /*
+//      * If the url, client, user and pass are null, then return the existing
+//      * farmOS object if one exists.  Otherwise create a new one with the
+//      * default url, client, user and pass.  If the url, client, user and pass
+//      * are not null, then create a new farmOS object using the specified
+//      * values.
+//      */
+//     if (hostURL != null && client != null && user != null && pass != null) {
+//       // Cause the creation of a new farmOS object from scratch.
+//       clearFarmGlobal();
+//       localStorage.removeItem('token');
+//       prevUser = user;
+//       prevPass = pass;
+//     } else if (
+//       hostURL == null &&
+//       client == null &&
+//       user == null &&
+//       pass == null
+//     ) {
+//       if (global_farm) {
+//         // If we still have a token... just return the existing farmOS object.
+//         if (localStorage.getItem('token')) {
+//           return global_farm;
+//         } else {
+//           /*
+//            * If local storage was cleared but we have a global farm object
+//            * however, because we don't have a token we will need to
+//            * re-authenticate as who we were.
+//            */
+//           user = prevUser;
+//           pass = prevPass;
+//         }
+//       } else {
+//         // Get create a new farmOS object with the default credentials.
+//         hostURL = 'http://farmos';
+//         client = 'farm';
+//         user = 'admin';
+//         pass = 'admin';
+//         prevUser = user;
+//         prevPass = pass;
+//       }
+//     } else {
+//       throw new Error(
+//         'Invalid arguments passed to getFarmOSInstance.' +
+//           ' If one of hostURL, client, user, or pass is provided, all must be provided.'
+//       );
+//     }
+
+//     /*
+//      * Handle local and session storage here so that the functions
+//      * in this library can be used in both Node and in the browser
+//      * (live and w/ Cypress).
+//      */
+//     if (!libLocalStorage) {
+//       libLocalStorage = ls;
+//       libSessionStorage = ls;
+//       if (!ls) {
+//         libLocalStorage = localStorage;
+//         libSessionStorage = sessionStorage;
+//       }
+//     }
+
+//     // Only create a new farm object if we don't already have one in global_farm.
+//     let newFarm = false;
+//     if (!global_farm) {
+//       newFarm = true;
+
+//       let config = {};
+//       if (inFarmOS()) {
+//         // Get the CSRF token needed for requests that modify data
+//         // when we are running inside farmOS.
+//         const response = await fetch('http://farmos/session/token');
+//         const csrfToken = await response.text();
+
+//         // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
+//         config = {
+//           host: '',
+//           clientId: client,
+//           auth: (request) => {
+//             request.interceptors.request.use((config) => {
+//               if (config.method === 'get') {
+//                 // Don't add CSRF  header to GET requests as it can leak the token.
+//                 // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+//                 return {
+//                   ...config,
+//                   headers: {
+//                     ...config.headers,
+//                   },
+//                 };
+//               } else {
+//                 return {
+//                   ...config,
+//                   headers: {
+//                     ...config.headers,
+//                     'X-CSRF-TOKEN': csrfToken,
+//                   },
+//                 };
+//               }
+//             }, Promise.reject);
+//           },
+//         };
+//       } else {
+//         config = {
+//           host: hostURL,
+//           clientId: client,
+//           getToken: () => JSON.parse(libLocalStorage.getItem('token')),
+//           setToken: (token) =>
+//             libLocalStorage.setItem('token', JSON.stringify(token)),
+//         };
+//       }
+//       const options = { remote: config };
+
+//       /*
+//        * Enable this to be used both in Node, where farmOS is
+//        * not recognized but farmOS.default is and in Cypress for
+//        * testing where farmOS is recognized, but farmOS.default
+//        * is not.
+//        */
+//       if (typeof farmOS != 'function') {
+//         global_farm = farmOS.default(options);
+//       } else {
+//         global_farm = farmOS(options);
+//       }
+//     }
+
+//     // If we are running outside of farmOS and we
+//     // don't have an authentication token cached in localStorage,
+//     // then authenticate with the farmOS host to get the token.
+//     if (!inFarmOS() && global_farm.remote.getToken() === null) {
+//       await global_farm.remote.authorize(user, pass);
+//     }
+
+//     // Only set the schema if this is a new farm object.
+//     if (newFarm) {
+//       //Try the session storage first...
+//       let schema = JSON.parse(libSessionStorage.getItem('schema'));
+//       if (schema == null) {
+//         // Not in session storage, so fetch schema from the farmOS host.
+//         await global_farm.schema.fetch();
+//         schema = global_farm.schema.get();
+//         // Cache in the session storage for next time.
+//         libSessionStorage.setItem('schema', JSON.stringify(schema));
+//       }
+//       await global_farm.schema.set(schema);
+//     }
+
+//     return global_farm;
+//   }
+// );
 
 /**
  * Add the user specified by the `ownerID` to the `obj` as the owner
