@@ -3,8 +3,48 @@
  *
  * @description Utility functions for working with a farmOS host.
  *
+ * All of the functions in this module make use of global variables and
+ * the `sessionStorage` object to cache the results of the API calls that
+ * they use to get their data.
+ *
+ * For example, when `getCrops()` is called
+ * it makes an API call to get all of the `taxonomy_term--plant_type` terms.
+ * The result of that API call is cached both in a global variable and in the
+ * `sessionStorage` object.  The next time `getCrops()` or any of the
+ * functions that use it (e.g. `getCropIdToNameMap()`) are called, the cached
+ * values are used rather than making another API call. If a program takes an
+ * action that will make the cached API results stale (e.g. creating a new crop)
+ * then it should call the appropriate `clearCached...()` function
+ * (e.g. [`clearCachedCrops`]{@link #module_farmosUtil.clearCachedCrops})
+ * function to cause the next call to `getCrops()` to make a new API call that
+ * fetches the fresh data.
+ *
+ * The `npm run printlog` command can be used to print out information
+ * about farmOS objects that are used by this library
+ * (e.g. `user--user`, `taxonomy_term--plant_type`, etc.).
+ * - Use `npm run printlog` to print out a list of all of the farmOS objects.
+ * - Use `npm run printlog <type>` to print out the structure of the <type> object.
+ *   - E.g. `npm run printlog log--seeding`
+ *   - E.g. `npm run printlog taxonomy_term--plant_type`
+ *   - etc...
+ *
  * Many of the functions in this module use the
- * [`farmOS.js` library]{@link https://github.com/farmOS/farmOS.js}.
+ * [`farmOS.js` library]{@link https://github.com/farmOS/farmOS.js}, thus
+ * its documentation can be very helpful in working with the farmOS object
+ * provided by this library.
+ *
+ * @example
+ * // Import the farmosUtil module - need to adjust path!
+ * import * as farmosUtil from '<path>/farmosUtil/farmosUtil.js';
+ *
+ * // Get a FarmOS object that provides access to all of the farmOS.js functionality.
+ * const farm = await farmosUtil.getFarmOSInstance();
+ *
+ * // Get a map from a crop name to the farmOS term object for the crop.
+ * const cropNameToTermMap = await farmosUtil.getCropNameToTermMap();
+ *
+ * // Translate a crop name to its farmOS id.
+ * const cropId = cropNameToTermMap.get('ARUGULA').id;
  */
 
 import farmOS from 'farmos';
@@ -18,7 +58,11 @@ import * as runExclusive from 'run-exclusive';
  * that we are running within the development environment (e.g. from
  * Node or from the dev server).
  *
- * @returns true if the page is within farmOS, false if not.
+ * This is used by the `getFarmOSInstance` function so that it can determine
+ * the type type of farmOS object that is needed at runtime. This enables
+ * the same front end code to run in farmOS, in Node and in the dev server.
+ *
+ * @returns {boolean} true if the page is within farmOS, false if not.
  */
 function inFarmOS() {
   try {
@@ -27,8 +71,8 @@ function inFarmOS() {
      * the class `path-fd2`.  That class does not appear on the `<body>` in
      * pages served from the dev server.
      */
-    const fd2Path = document.getElementsByClassName('body.path-fd2');
-    return fd2Path.length > 0;
+    const elements = document.querySelectorAll('body.path-fd2');
+    return elements.length === 1;
   } catch (e) {
     return false;
   }
@@ -50,10 +94,13 @@ var global_farm = null;
  * fetching the schema every time a `farmOS` object is needed within
  * a page.
  *
- * The primary use case for this function is to allow us to test that a
- * new `farmOS` object is not created every time we call
- * `getFarmOSInstance`.  It could also be useful to force a reload of
+ * The primary use case for this function is in testing.  For example,
+ * it allow us to test that the  `farmOS` object is cached both in a
+ * global variable and in the `sessionStorage`.
+ * It could also be useful to force a reload of
  * the schema if that were ever necessary.
+ *
+ * @category farmOS
  */
 export function clearFarmGlobal() {
   global_farm = null;
@@ -64,8 +111,6 @@ export function clearFarmGlobal() {
  *
  * Get the `global_farm` object.  This is useful for testing to ensure
  * that the global is set at appropriate times.
- *
- * @returns the `global_farm` object
  */
 export function getFarmGlobal() {
   return global_farm;
@@ -118,15 +163,31 @@ var libSessionStorage = null;
  * created farmOS object (i.e. identical code) will work in the browser,
  * in Node and in tests running both in the dev server and the live server.
  *
- * @param {string} hostURL url of the farmOS instance to which to connect.
- * @param {string} client the farmOS api client to use.
- * @param {string} user the username of the farmOS user to use for authentication.
- * @param {string} pass the farmOS password for the user.
- * @param {object} ls the the object provided for local/session storage when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
+ * @param {String} hostURL url of the farmOS instance to which to connect.
+ * @param {String} client the farmOS api client to use.
+ * @param {String} user the username of the farmOS user to use for authentication.
+ * @param {String} pass the pass the farmOS password for the user.
+ * @param {Object} ls details the the object provided for local/session storage when running in Node. Omit this parameter to use the browser's `localStorage` and `sessionStorage`.
  * @throws {Error} if unable to create the `farmOS` object.
- * @returns {object} the connected and configured `farmos.js` `farmOS` object.
+ * @returns {Object} the connected and configured `farmos.js` `farmOS` object.
+ *
+ * @category farmOS
+ *
+ * @example
+ * // Import the farmosUtil module - need to adjust path!
+ * import * as farmosUtil from '<path>/farmosUtil/farmosUtil.js';
+ *
+ * // Get a FarmOS object that provides access to all of the farmOS.js functionality.
+ * // In farmOS this object will have the same permissions as the logged in user.
+ * // When running in node or the dev server, this object will have `admin` permissions.
+ * const farm = await farmosUtil.getFarmOSInstance();
+ *
+ * // Get a FarmOS object that using a particular username and password.
+ * // This version may only be used when running in node or on the dev server
+ * // (i.e. in a cypress test). It should never appear in front end code
+ * // (i.e. never in a `.vue` file).
+ * const farm2 = await farmosUtil.getFarmOSInstance(`http://farmos.org`, `farm`, `guest`, `farmadata2`);
  */
-
 export const getFarmOSInstance = runExclusive.build(
   async (
     hostURL = null,
@@ -204,6 +265,10 @@ export const getFarmOSInstance = runExclusive.build(
 /**
  * @private
  *
+ * Create a farmOS instance that works when it is running in a page that
+ * is served from farmOS.  This instance will have the same permissions as
+ * the currently logged in user.  It will use a CSRF token for operations
+ * that modify the database.
  */
 async function getFarmOSInstanceForInFarmOS() {
   if (global_farm) {
@@ -256,6 +321,11 @@ async function getFarmOSInstanceForInFarmOS() {
 
 /**
  * @private
+ *
+ * Create a farmOS instance that will work when used outside of farmOS.
+ * Practically this includes when running in small utility script in Node
+ * (e.g. printlog) or when running in the dev server, including for Cypress
+ * tests.
  */
 async function getFarmOSInstanceForNotInFarmOS(
   hostURL = null,
@@ -275,7 +345,6 @@ async function getFarmOSInstanceForNotInFarmOS(
   // Only create a new farm object if we don't already have one in global_farm.
   let newFarm = false;
   if (!global_farm) {
-    console.log('new instance');
     newFarm = true;
 
     /*
@@ -349,221 +418,6 @@ async function setFarmSchema(farm) {
   }
 }
 
-// export const getFarmOSInstance = runExclusive.build(
-//   async (
-//     hostURL = null,
-//     client = null,
-//     user = null,
-//     pass = null,
-//     ls = null
-//   ) => {
-//     /*
-//      * Note: runExclusive (https://www.npmjs.com/package/run-exclusive)
-//      * is used to prevent concurrent execution of this function.  This eliminates
-//      * a race condition that allows the construction of multiple farmOS
-//      * objects by different components.
-//      */
-
-//     /*
-//      * If the url, client, user and pass are null, then return the existing
-//      * farmOS object if one exists.  Otherwise create a new one with the
-//      * default url, client, user and pass.  If the url, client, user and pass
-//      * are not null, then create a new farmOS object using the specified
-//      * values.
-//      */
-//     if (hostURL != null && client != null && user != null && pass != null) {
-//       // Cause the creation of a new farmOS object from scratch.
-//       clearFarmGlobal();
-//       localStorage.removeItem('token');
-//       prevUser = user;
-//       prevPass = pass;
-//     } else if (
-//       hostURL == null &&
-//       client == null &&
-//       user == null &&
-//       pass == null
-//     ) {
-//       if (global_farm) {
-//         // If we still have a token... just return the existing farmOS object.
-//         if (localStorage.getItem('token')) {
-//           return global_farm;
-//         } else {
-//           /*
-//            * If local storage was cleared but we have a global farm object
-//            * however, because we don't have a token we will need to
-//            * re-authenticate as who we were.
-//            */
-//           user = prevUser;
-//           pass = prevPass;
-//         }
-//       } else {
-//         // Get create a new farmOS object with the default credentials.
-//         hostURL = 'http://farmos';
-//         client = 'farm';
-//         user = 'admin';
-//         pass = 'admin';
-//         prevUser = user;
-//         prevPass = pass;
-//       }
-//     } else {
-//       throw new Error(
-//         'Invalid arguments passed to getFarmOSInstance.' +
-//           ' If one of hostURL, client, user, or pass is provided, all must be provided.'
-//       );
-//     }
-
-//     /*
-//      * Handle local and session storage here so that the functions
-//      * in this library can be used in both Node and in the browser
-//      * (live and w/ Cypress).
-//      */
-//     if (!libLocalStorage) {
-//       libLocalStorage = ls;
-//       libSessionStorage = ls;
-//       if (!ls) {
-//         libLocalStorage = localStorage;
-//         libSessionStorage = sessionStorage;
-//       }
-//     }
-
-//     // Only create a new farm object if we don't already have one in global_farm.
-//     let newFarm = false;
-//     if (!global_farm) {
-//       newFarm = true;
-
-//       let config = {};
-//       if (inFarmOS()) {
-//         // Get the CSRF token needed for requests that modify data
-//         // when we are running inside farmOS.
-//         const response = await fetch('http://farmos/session/token');
-//         const csrfToken = await response.text();
-
-//         // Similar to: https://gist.github.com/paul121/26bed0987b73c6886fa3a0743c0f47eb
-//         config = {
-//           host: '',
-//           clientId: client,
-//           auth: (request) => {
-//             request.interceptors.request.use((config) => {
-//               if (config.method === 'get') {
-//                 // Don't add CSRF  header to GET requests as it can leak the token.
-//                 // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
-//                 return {
-//                   ...config,
-//                   headers: {
-//                     ...config.headers,
-//                   },
-//                 };
-//               } else {
-//                 return {
-//                   ...config,
-//                   headers: {
-//                     ...config.headers,
-//                     'X-CSRF-TOKEN': csrfToken,
-//                   },
-//                 };
-//               }
-//             }, Promise.reject);
-//           },
-//         };
-//       } else {
-//         config = {
-//           host: hostURL,
-//           clientId: client,
-//           getToken: () => JSON.parse(libLocalStorage.getItem('token')),
-//           setToken: (token) =>
-//             libLocalStorage.setItem('token', JSON.stringify(token)),
-//         };
-//       }
-//       const options = { remote: config };
-
-//       /*
-//        * Enable this to be used both in Node, where farmOS is
-//        * not recognized but farmOS.default is and in Cypress for
-//        * testing where farmOS is recognized, but farmOS.default
-//        * is not.
-//        */
-//       if (typeof farmOS != 'function') {
-//         global_farm = farmOS.default(options);
-//       } else {
-//         global_farm = farmOS(options);
-//       }
-//     }
-
-//     // If we are running outside of farmOS and we
-//     // don't have an authentication token cached in localStorage,
-//     // then authenticate with the farmOS host to get the token.
-//     if (!inFarmOS() && global_farm.remote.getToken() === null) {
-//       await global_farm.remote.authorize(user, pass);
-//     }
-
-//     // Only set the schema if this is a new farm object.
-//     if (newFarm) {
-//       //Try the session storage first...
-//       let schema = JSON.parse(libSessionStorage.getItem('schema'));
-//       if (schema == null) {
-//         // Not in session storage, so fetch schema from the farmOS host.
-//         await global_farm.schema.fetch();
-//         schema = global_farm.schema.get();
-//         // Cache in the session storage for next time.
-//         libSessionStorage.setItem('schema', JSON.stringify(schema));
-//       }
-//       await global_farm.schema.set(schema);
-//     }
-
-//     return global_farm;
-//   }
-// );
-
-/**
- * Add the user specified by the `ownerID` to the `obj` as the owner
- * of the asset or log.
- *
- * This pushes an `user--user` object to the `relationships.owner` property of `obj`.
- *
- * @param {object} obj a farmOS asset or log.
- * @param {string} ownerId the id of the user to assign as the owner.
- * @throws {ReferenceError} if the `obj` does not have a `relationships.owner` property.
- * @return the `obj` with the owner added.
- */
-export function addOwnerRelationship(obj, ownerId) {
-  if (!obj?.relationships.owner) {
-    throw new ReferenceError(
-      'The obj parameter does not have a relationships.owner property'
-    );
-  } else {
-    obj.relationships.owner.push({
-      type: 'user--user',
-      id: ownerId,
-    });
-  }
-
-  return obj;
-}
-
-/**
- * Add the user specified by the `parentID` to the `obj` as the parent
- * of the asset or log.
- *
- * @param {object} obj a farmOS asset or log.
- * @param {string} parentId the id of the user to assign as the parent.
- * @throws {ReferenceError} if the `obj` does not have a `relationships.parent` property.
- * @returns the `obj` with the parent added.
- */
-export function addParentRelationship(obj, parentId, parentType) {
-  if (!obj?.relationships.parent) {
-    throw new ReferenceError(
-      'The obj parameter does not have a relationships.parent property'
-    );
-  } else {
-    obj.relationships.parent.push({
-      type: parentType,
-      id: parentId,
-    });
-  }
-
-  return obj;
-}
-
 /**
  * Print out the JSON structure of the specified farmOS record type.
  * (e.g. asset--land, log--harvest, etc...  This is useful as a development
@@ -571,6 +425,8 @@ export function addParentRelationship(obj, parentId, parentType) {
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @param {string} recordType the type of farmOS record to display.
+ *
+ * @category Utilities
  */
 export function printObject(farm, recordType) {
   const obj = farm.log.create({ type: recordType });
@@ -584,6 +440,8 @@ var global_users = null;
  * Clear the cached results from prior calls to the `getUsers` function.
  * This is useful when an action may change the users that exist in the
  * system
+ *
+ * @category Users
  */
 export function clearCachedUsers() {
   global_users = null;
@@ -597,8 +455,6 @@ export function clearCachedUsers() {
  *
  * Get the `global_users` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_users` object
  */
 export function getGlobalUsers() {
   return global_users;
@@ -613,6 +469,7 @@ export function getGlobalUsers() {
 export function clearGlobalUsers() {
   global_users = null;
 }
+
 /**
  * Get an array containing all of the active users from the farmOS host.  The users
  * will appear in the array in order by the value of the `attributes.display_name`
@@ -624,7 +481,10 @@ export function clearGlobalUsers() {
  * Use the [`clearCachedUsers`]{@link #module_farmosUtil.clearCachedUsers}
  * function to clear the cache.
  *
- * @returns an array of farmOS `user--user` objects.
+ * @throws {Error} if unable to fetch the users.
+ * @returns {Array<Object>} an array of farmOS `user--user` objects.
+ *
+ * @category Users
  */
 export async function getUsers() {
   if (global_users) {
@@ -664,10 +524,14 @@ export async function getUsers() {
  * Get a map from the user 'display_name` to the corresponding
  * farmOS user object.
  *
- * NOTE: The returned `Map` is built on the value returned by
- * [getUsers]{@link #module_farmosUtil.getUsers}.
+ * NOTE: This function make a call to
+ * [`getUsers`]{@link #module_farmosUtil.getUsers}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns an `Map` from the user `display_name` to the `user--user` object.
+ * @throws {Error} if unable to fetch the users.
+ * @returns {Map<String,Object>}an `Map` from the user `display_name` to the `user--user` object.
+ *
+ * @category Users
  */
 export async function getUsernameToUserMap() {
   const users = await getUsers();
@@ -682,10 +546,14 @@ export async function getUsernameToUserMap() {
 /**
  * Get a map from the user `id` to the farmOS user object.
  *
- * NOTE: The returned `Map` is built on the value returned by
- * [getUsers]{@link #module_farmosUtil.getUsers}.
+ * NOTE: This function make a call to
+ * [`getUsers`]{@link #module_farmosUtil.getUsers}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns an `Map` from the user `display_name` to the `user--user` object.
+ * @throws {Error} if unable to fetch the users.
+ * @returns {Map<String,Object>} an `Map` from the user `id` to the `user--user` object.
+ *
+ * @category Users
  */
 export async function getUserIdToUserMap() {
   const users = await getUsers();
@@ -700,8 +568,10 @@ var global_fields_and_beds = null;
 
 /**
  * Clear the cached results from prior calls to the `getFieldsAndBeds` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the fields and beds that exist in the
  * system
+ *
+ * @category FieldsAndBeds
  */
 export function clearCachedFieldsAndBeds() {
   global_fields_and_beds = null;
@@ -715,8 +585,6 @@ export function clearCachedFieldsAndBeds() {
  *
  * Get the `global_fields_and_beds` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_fields_and_beds` object
  */
 export function getGlobalFieldsAndBeds() {
   return global_fields_and_beds;
@@ -742,7 +610,10 @@ export function clearGlobalFieldsAndBeds() {
  * Use the [`clearCachedFieldsAndBeds`]{@link #module_farmosUtil.clearCachedFieldsAndBeds}
  * function to clear the cache.
  *
- * @returns a array of all of land assets representing fields or beds.
+ * @throws {Error} if unable to fetch the fields and beds.
+ * @returns {Array<Object>} a array of all of land assets representing fields or beds.
+ *
+ * @category FieldsAndBeds
  */
 export async function getFieldsAndBeds() {
   // Done as two requests for now because of a bug in the farmOS.js library.
@@ -795,9 +666,14 @@ export async function getFieldsAndBeds() {
  * Get a map from the name of a field or bed land asset to the
  * farmOS land asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
+ * NOTE: This function makes a call to
+ * [`getFieldsAndBeds`]{@link #module_farmosUtil.getFieldsAndBeds}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the field or bed `name` to the `asset--land` object.
+ * @throws {Error} if unable to fetch the fields and beds.
+ * @returns {Map<String,Object>} a `Map` from the field or bed `name` to the `asset--land` object.
+ *
+ * @category FieldsAndBeds
  */
 export async function getFieldOrBedNameToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
@@ -813,9 +689,14 @@ export async function getFieldOrBedNameToAssetMap() {
  * Get a map from the id of a field or bed land asset to the
  * farmOS land asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getFieldsAndBeds}.
+ * NOTE: This function makes a call to
+ * [`getFieldsAndBeds`]{@link #module_farmosUtil.getFieldsAndBeds}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the field or bed `id` to the `asset--land` object.
+ * @throws {Error} if unable to fetch the fields and beds.
+ * @returns {Map<String,Object>} a `Map` from the field or bed `id` to the `asset--land` object.
+ *
+ * @category FieldsAndBeds
  */
 export async function getFieldOrBedIdToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
@@ -830,8 +711,10 @@ var global_greenhouses = null;
 
 /**
  * Clear the cached results from prior calls to the `getGreenhouses` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the greenhouses that exist in the
  * system
+ *
+ * @category Greenhouses
  */
 export function clearCachedGreenhouses() {
   global_greenhouses = null;
@@ -845,8 +728,6 @@ export function clearCachedGreenhouses() {
  *
  * Get the `global_greenhouses` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_greenhouses` object
  */
 export function getGlobalGreenhouses() {
   return global_greenhouses;
@@ -872,7 +753,10 @@ export function clearGlobalGreenhouses() {
  * Use the [`clearCachedGreenhouses`]{@link #module_farmosUtil.clearCachedGreenhouses}
  * function to clear the cache.
  *
- * @returns an array of all of land assets representing greenhouses.
+ * @throws {Error} if unable to fetch the greenhouses.
+ * @returns {Array<Object>}an array of all of land assets representing greenhouses.
+ *
+ * @category Greenhouses
  */
 export async function getGreenhouses() {
   if (global_greenhouses) {
@@ -913,9 +797,14 @@ export async function getGreenhouses() {
  * Get a map from the name of a greenhouse asset to the
  * farmOS structure asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
+ * NOTE: This function makes a call to
+ * [`getGreenhouses`]{@link #module_farmosUtil.getGreenhouses}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the greenhouse `name` to the `asset--structure` object.
+ * @throws {Error} if unable to fetch the greenhouses.
+ * @returns {Map<String,Object>} a `Map` from the greenhouse `name` to the `asset--structure` object.
+ *
+ * @category Greenhouses
  */
 export async function getGreenhouseNameToAssetMap() {
   const greenhouses = await getGreenhouses();
@@ -929,9 +818,14 @@ export async function getGreenhouseNameToAssetMap() {
  * Get a map from the id of a greenhouse asset to the
  * farmOS structure asset object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getGreenhouses}.
+ * NOTE: This function makes a call to
+ * [`getGreenhouses`]{@link #module_farmosUtil.getGreenhouses}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the greenhouse `id` to the `asset--structure` object.
+ * @throws {Error} if unable to fetch the greenhouses.
+ * @returns {Map<String,Object>} a `Map` from the greenhouse `id` to the `asset--structure` object.
+ *
+ * @category Greenhouses
  */
 export async function getGreenhouseIdToAssetMap() {
   const greenhouses = await getGreenhouses();
@@ -946,8 +840,10 @@ var global_crops = null;
 
 /**
  * Clear the cached results from prior calls to the `getCrops` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the crops that exist in the
  * system
+ *
+ * @category Crops
  */
 export function clearCachedCrops() {
   global_crops = null;
@@ -961,8 +857,6 @@ export function clearCachedCrops() {
  *
  * Get the `global_crops` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_crops` object
  */
 export function getGlobalCrops() {
   return global_crops;
@@ -989,7 +883,9 @@ export function clearGlobalCrops() {
  * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the crops.
- * @returns an array of all of taxonomy terms representing crops.
+ * @returns {Array<Object>} an array of all of taxonomy terms representing crops.
+ *
+ * @category Crops
  */
 export async function getCrops() {
   if (global_crops) {
@@ -1028,9 +924,14 @@ export async function getCrops() {
  * Get a map from the name of a crop taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
+ * NOTE: This function makes a call to
+ * [`getCrops`]{@link #module_farmosUtil.getCrops}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the crop `name` to the `taxonomy_term--plant_type` object.
+ * @throws {Error} if unable to fetch the crops.
+ * @returns {Map<String,Object>} a `Map` from the crop `name` to the `taxonomy_term--plant_type` object.
+ *
+ * @category Crops
  */
 export async function getCropNameToTermMap() {
   const crops = await getCrops();
@@ -1044,9 +945,14 @@ export async function getCropNameToTermMap() {
  * Get a map from the id of a crop taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getCrops}.
+ * NOTE: This function makes a call to
+ * [`getCrops`]{@link #module_farmosUtil.getCrops}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the crop `id` to the `taxonomy_term--plant_type` object.
+ * @throws {Error} if unable to fetch the crops.
+ * @returns {Map<String,Object>} a `Map` from the crop `id` to the `taxonomy_term--plant_type` object.
+ *
+ * @category Crops
  */
 export async function getCropIdToTermMap() {
   const crops = await getCrops();
@@ -1061,8 +967,10 @@ var global_tray_sizes = null;
 
 /**
  * Clear the cached results from prior calls to the `getTraySizes` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the tray sizes that exist in the
  * system
+ *
+ * @category TraySizes
  */
 export function clearCachedTraySizes() {
   global_tray_sizes = null;
@@ -1076,8 +984,6 @@ export function clearCachedTraySizes() {
  *
  * Get the `global_tray_sizes` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_tray_sizes` object
  */
 export function getGlobalTraySizes() {
   return global_tray_sizes;
@@ -1104,7 +1010,9 @@ export function clearGlobalTraySizes() {
  * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the tray sizes.
- * @returns an array of all of taxonomy terms representing tray sizes.
+ * @returns {Array<Object>} an array of all of taxonomy terms representing tray sizes.
+ *
+ * @category TraySizes
  */
 
 export async function getTraySizes() {
@@ -1146,9 +1054,14 @@ export async function getTraySizes() {
  * Get a map from the name of a tray size taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
+ * NOTE: This function makes a call to
+ * [`getTraySizes`]{@link #module_farmosUtil.getTraySizes}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the tray size `name` to the `taxonomy_term--tray-size` object.
+ * @throws {Error} if unable to fetch the tray sizes.
+ * @returns {Map<String,Object>} a `Map` from the tray size `name` to the `taxonomy_term--tray-size` object.
+ *
+ * @category TraySizes
  */
 export async function getTraySizeToTermMap() {
   const sizes = await getTraySizes();
@@ -1162,9 +1075,14 @@ export async function getTraySizeToTermMap() {
  * Get a map from the id of a tray size taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getTraySizes}.
+ * NOTE: This function makes a call to
+ * [`getTraySizes`]{@link #module_farmosUtil.getTraySizes}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the tray size `id` to the `taxonomy_term--tray_size` object.
+ * @throws {Error} if unable to fetch the tray sizes.
+ * @returns {Map<String,Object>} a `Map` from the tray size `id` to the `taxonomy_term--tray_size` object.
+ *
+ * @category TraySizes
  */
 export async function getTraySizeIdToTermMap() {
   const sizes = await getTraySizes();
@@ -1179,8 +1097,10 @@ var global_units = null;
 
 /**
  * Clear the cached results from prior calls to the `getUnits` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the units that exist in the
  * system
+ *
+ * @category Units
  */
 export function clearCachedUnits() {
   global_units = null;
@@ -1194,8 +1114,6 @@ export function clearCachedUnits() {
  *
  * Get the `global_units` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_units` object
  */
 export function getGlobalUnits() {
   return global_units;
@@ -1221,7 +1139,9 @@ export function clearGlobalUnits() {
  * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the units.
- * @returns an array of all of taxonomy terms representing units.
+ * @returns {Array<Object>} an array of all of taxonomy terms representing units.
+ *
+ * @category Units
  */
 export async function getUnits() {
   if (global_units) {
@@ -1260,9 +1180,14 @@ export async function getUnits() {
  * Get a map from the name of a unit taxonomy term to the
  * farmOS unit term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
+ * NOTE: This function makes a call to
+ * [`getUnits`]{@link #module_farmosUtil.getUnits}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the unit `name` to the `taxonomy_term--unit` object.
+ * @throws {Error} if unable to fetch the units.
+ * @returns {Map<String,Object>} a `Map` from the unit `name` to the `taxonomy_term--unit` object.
+ *
+ * @category Units
  */
 export async function getUnitToTermMap() {
   const sizes = await getUnits();
@@ -1276,9 +1201,14 @@ export async function getUnitToTermMap() {
  * Get a map from the id of a unit taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getUnits}.
+ * NOTE: This function makes a call to
+ * [`getUnits`]{@link #module_farmosUtil.getUnits}
+ * and builds the `Map` using the returned `Array<Object>`
  *
- * @returns a `Map` from the unit `id` to the `taxonomy_term--unit` object.
+ * @throws {Error} if unable to fetch the units.
+ * @returns {Map<String,Object>} a `Map` from the unit `id` to the `taxonomy_term--unit` object.
+ *
+ * @category Units
  */
 export async function getUnitIdToTermMap() {
   const units = await getUnits();
@@ -1293,8 +1223,10 @@ var global_log_categories = null;
 
 /**
  * Clear the cached results from prior calls to the `getLogCategories` function.
- * This is useful when an action may change the users that exist in the
+ * This is useful when an action may change the log categories that exist in the
  * system
+ *
+ * @category LogCategories
  */
 export function clearCachedLogCategories() {
   global_log_categories = null;
@@ -1308,8 +1240,6 @@ export function clearCachedLogCategories() {
  *
  * Get the `global_units` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
- *
- * @returns the `global_units` object
  */
 export function getGlobalLogCategories() {
   return global_log_categories;
@@ -1335,7 +1265,9 @@ export function clearGlobalLogCategories() {
  * function to clear the cache.
  *
  * @throws {Error} if unable to fetch the log categories.
- * @returns an array of all of taxonomy terms representing log categories.
+ * @returns {Array<Object>} an array of all of taxonomy terms representing log categories.
+ *
+ * @category LogCategories
  */
 export async function getLogCategories() {
   if (global_log_categories) {
@@ -1374,9 +1306,14 @@ export async function getLogCategories() {
  * Get a map from the name of a log category taxonomy term to the
  * farmOS unit term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
+ * NOTE: This function makes a call to
+ * [`getLogCategories`]{@link #module_farmosUtil.getLogCategories}
+ * and builds the `Map` using the returned `Array<Object>`
  *
- * @returns a `Map` from the log category `name` to the `taxonomy_term--log_category` object.
+ * @throws {Error} if unable to fetch the log categories.
+ * @returns {Map<String,Object>} a `Map` from the log category `name` to the `taxonomy_term--log_category` object.
+ *
+ * @category LogCategories
  */
 export async function getLogCategoryToTermMap() {
   const categories = await getLogCategories();
@@ -1392,9 +1329,14 @@ export async function getLogCategoryToTermMap() {
  * Get a map from the id of a log category taxonomy term to the
  * farmOS taxonomy term object.
  *
- * NOTE: The returned `Map` is built on the value returned by {@link #module_farmosUtil.getLogCategories}.
+ * NOTE: This function makes a call to
+ * [`getLogCategories`]{@link #module_farmosUtil.getLogCategories}
+ * and builds the `Map` using the returned `Array<Object>`.
  *
- * @returns a `Map` from the log category `id` to the `taxonomy_term--log_category` object.
+ * @throws {Error} if unable to fetch the log categories.
+ * @returns {Map<String,Object>} a `Map` from the log category `id` to the `taxonomy_term--log_category` object.
+ *
+ * @category LogCategories
  */
 export async function getLogCategoryIdToTermMap() {
   const categories = await getLogCategories();

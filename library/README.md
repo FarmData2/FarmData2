@@ -48,6 +48,7 @@ Minimum expectations:
 
 Other tags that are often useful:
 
+- `@category` - organizing the functions in a module into categories.
 - [`@example`](https://jsdoc.app/tags-example.html) - as appropriate.
   - example starts on next line and continues until next tag or end of comment.
 - [`@link`](https://jsdoc.app/tags-inline-link.html) - links inline with text.
