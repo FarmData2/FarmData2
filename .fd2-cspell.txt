@@ -14,6 +14,7 @@ dockerlint
 drupalcode
 drush
 entrypoints
+farmadata
 farmdata
 farmos
 getopt
