@@ -51,6 +51,7 @@ safe_cd "$REPO_ROOT_DIR"
 FLAGS=$(getopt -o e::c::u::i::g::h::f::x::s::b::d::p::l:: \
   --long e2e::,comp::,unit::,gui::,fd2::,examples::,school::,lib::,glob::,dev::,prev::,live::,help:: \
   -- "$@")
+error_check "Unrecognized option provided."
 eval set -- "$FLAGS"
 
 while true; do
