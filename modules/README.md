@@ -53,11 +53,13 @@ Inside each of the above module directories there are the following directories 
 
 - use bin/test.bash (see its docs).
 
-- use watch:fd2 by default and just run in live farmOS.
+- use watch:fd2 by default and just run in live farmOS???
 
   - point to another document that discusses the use of the dev and preview servers.
 
 - Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
+
+- Any test that uses the database should reset it in the `before` hook.
 
 ## Entry point structure
 

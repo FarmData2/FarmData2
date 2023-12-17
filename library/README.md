@@ -14,6 +14,8 @@ Javascript library of FarmData2 custom reusable functions.
 
 Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 
+Any test that uses the database should reset it in the `before` hook.
+
 ## Documentation
 
 - Docs are in `docs/library`

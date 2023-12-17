@@ -161,6 +161,8 @@ describe('Test the default LocationSelector content', () => {
 });
 ```
 
+Any test that uses the database should reset it in the `before` hook.
+
 Note: Every test `it` should wait for the `ready` event to be emitted before performing any tests. In some components this will be immediately, in others it will wait for an API call to complete. This is included in all tests for consistency and to reduce test flake.
 
 ### Component Tests Organization
