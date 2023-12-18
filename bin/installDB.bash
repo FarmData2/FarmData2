@@ -38,8 +38,6 @@ function usage {
 REPO_DIR=$(git rev-parse --show-toplevel)
 DB_DIR="$REPO_DIR/docker/db"
 
-echo "$#"
-
 if [ "$#" == "0" ]; then
   LATEST=1
 else
@@ -123,12 +121,6 @@ if [ -n "$DB_ASSET" ]; then
     exit 255
   fi
 fi
-
-# echo "Latest: $LATEST"
-# echo "Current: $CURRENT"
-# echo "Prompt: $PROMPT"
-# echo "Release: $DB_RELEASE"
-# echo "Asset: $DB_ASSET"
 
 if [ -n "$CURRENT" ]; then
   DB_ASSET="db.sample.tar.gz"
