@@ -28,6 +28,7 @@ TODO:NEEDS TO BE REVISED, EXPANDED AND CLEANED UP
   - have sudo privileges
 - cd FarmData2
 - npm install
+  - may need to install cypress???
 - symlink .githooks into .git as hooks
 - Configure git:
   - git config --global user.email "you@example.com"
@@ -51,10 +52,7 @@ TODO:NEEDS TO BE REVISED, EXPANDED AND CLEANED UP
 
 - Install sample Database
 
-  - installDB.bash
-    - choose top release (1)
-    - choose sample.db database (2)
-    - enter fd2dev password
+  - installDB.bash - installs the most recent release of the sample database.
 
 - Test farmOS
 
