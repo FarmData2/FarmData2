@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker exec -it fd2_farmos drush cr
+docker exec fd2_farmos drush cr
