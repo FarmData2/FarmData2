@@ -4,6 +4,7 @@ export default defineConfig({
   screenshotOnRunFailure: false,
   video: false,
   trashAssetsBeforeRuns: true,
+  chromeWebSecurity: false,
   component: {
     supportFile: '../cypress/support/component.js',
     indexHtmlFile: '../cypress/support/component-index.html',

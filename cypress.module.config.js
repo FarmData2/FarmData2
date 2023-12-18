@@ -12,7 +12,7 @@ export default defineConfig({
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
   e2e: {
-    supportFile: '../cypress/support/e2e.js',
+    supportFile: '../../cypress/support/e2e.js',
     specPattern: 'src/entrypoints/*/*.e2e.cy.js',
     devServer: {
       framework: 'vue',
@@ -20,11 +20,10 @@ export default defineConfig({
     },
   },
   component: {
-    supportFile: '../cypress/support/component.js',
-    indexHtmlFile: '../cypress/support/component-index.html',
-    specPattern: '../../components/*/*.comp.cy.js',
+    supportFile: '../../cypress/support/component.js',
+    indexHtmlFile: '../../cypress/support/component-index.html',
+    specPattern: 'src/entrypoints/*/*.unit.cy.js',
     devServer: {
-      framework: 'vue',
       bundler: 'vite',
     },
   },
