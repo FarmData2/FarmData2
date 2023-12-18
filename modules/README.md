@@ -53,13 +53,25 @@ Inside each of the above module directories there are the following directories 
 
 - use bin/test.bash (see its docs).
 
+- Unit test vs e2e tests.
+
 - use watch:fd2 by default and just run in live farmOS???
 
   - point to another document that discusses the use of the dev and preview servers.
 
 - Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 
-- Any test that uses the database should reset it in the `before` hook.
+The database is reset to the most recently installed db before running the tests.
+Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+
+```Javascript
+  before(() => {
+    cy.task('initDB');
+  });
+```
+
+Use: `cy.task('log', 'message')` to log messages to the console.
+Use: `cy.task('logObject', obj)` to log an object to the console.
 
 ## Entry point structure
 

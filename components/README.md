@@ -161,9 +161,22 @@ describe('Test the default LocationSelector content', () => {
 });
 ```
 
-Any test that uses the database should reset it in the `before` hook.
+The database is reset to the most recently installed db before running the tests.
+Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+
+```Javascript
+  before(() => {
+    cy.task('initDB');
+  });
+```
 
 Note: Every test `it` should wait for the `ready` event to be emitted before performing any tests. In some components this will be immediately, in others it will wait for an API call to complete. This is included in all tests for consistency and to reduce test flake.
+
+Use: `cy.task('log', 'message')` to log messages to the console.
+Use: `cy.task('logObject', obj)` to log an object to the console.
+
+- Visible in the console when running headless.
+- Click on the task in the test events output to print to console in Cypress gui.
 
 ### Component Tests Organization
 

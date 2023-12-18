@@ -14,7 +14,20 @@ Javascript library of FarmData2 custom reusable functions.
 
 Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 
-Any test that uses the database should reset it in the `before` hook.
+The database is reset to the most recently installed db before running the tests.
+Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+
+```Javascript
+  before(() => {
+    cy.task('initDB');
+  });
+```
+
+Use: `cy.task('log', 'message')` to log messages to the console.
+Use: `cy.task('logObject', obj)` to log an object to the console.
+
+- Visible in the console when running headless.
+- Click on the task in the test events output to print to console in Cypress gui.
 
 ## Documentation
 
