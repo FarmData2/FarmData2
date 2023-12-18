@@ -122,3 +122,19 @@ Cypress.Commands.add('restoreSessionStorage', () => {
     sessionStorage.setItem(key, SESSION_STORAGE_MEMORY[key]);
   });
 });
+
+/*
+ * Cypress command that allows us to get multiple aliases
+ * using a single command such as:
+ * cy.getAll(['@alias1', '@alias2', '@alias3']), rather than a chain of
+ * cy.get('@alias1').then((name) => ...) commands.
+ *
+ * This simplifies the code in a number of test functions.
+ *
+ * Function adapted from: https://stackoverflow.com/a/76985546
+ */
+Cypress.Commands.add('getAll', function (aliasNames) {
+  return aliasNames.map((a) => {
+    return this[a.substring(1)];
+  });
+});
