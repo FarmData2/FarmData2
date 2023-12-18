@@ -164,23 +164,23 @@ if [ -n "$E2E_TESTS" ]; then
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
     PROJECT_DIR="modules/farm_fd2"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
     PROJECT_DIR="modules/farm_fd2_examples"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_examples"
   else
     echo "  Testing the farm_fd2_school module."
     PROJECT_DIR="modules/farm_fd2_school"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_school"
   fi
 elif [ -n "$COMPONENT_TESTS" ]; then
   echo "Component testing requested."
   PROJECT_DIR="components"
-  CYPRESS_CONFIG_FILE="../cypress.comp.config.js"
+  CYPRESS_CONFIG_FILE="../.cypress.comp.config.js"
   CYPRESS_TEST_TYPE="component"
 else
   echo "Unit testing requested."
@@ -189,22 +189,22 @@ else
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
     PROJECT_DIR="modules/farm_fd2"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
     PROJECT_DIR="modules/farm_fd2_examples"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_examples"
   elif [ -n "$TEST_SCHOOL" ]; then
     echo "  Testing the farm_fd2_school module."
     PROJECT_DIR="modules/farm_fd2_school"
-    CYPRESS_CONFIG_FILE="../../cypress.module.config.js"
+    CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_school"
   else
     echo "  Testing the library."
     PROJECT_DIR="library"
-    CYPRESS_CONFIG_FILE="../cypress.lib.config.js"
+    CYPRESS_CONFIG_FILE="../.cypress.lib.config.js"
     URL_PREFIX=""
   fi
 fi
