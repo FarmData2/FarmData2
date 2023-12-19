@@ -106,14 +106,13 @@ export default {
   },
   watch: {},
   created() {
-    farmosUtil.canCreateCrop().then((canCreate) => {
-      this.canCreateCrop = canCreate;
-    });
+    let canCreate = farmosUtil.canCreatePlantType();
+    let cropMap = farmosUtil.getCropNameToTermMap();
 
-    farmosUtil
-      .getCropNameToTermMap()
-      .then((cropMap) => {
+    Promise.all([canCreate, cropMap])
+      .then(([canCreate, cropMap]) => {
         this.cropList = Array.from(cropMap.keys());
+        this.canCreateCrop = canCreate;
 
         /**
          * The select has been populated with the list of crops and the component is ready to be used.
