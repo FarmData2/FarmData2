@@ -76,11 +76,16 @@ export default {
   data() {
     return {
       cropList: [],
+      canCreateCrop: false,
     };
   },
   computed: {
     addCropUrl() {
-      return '/admin/structure/taxonomy/manage/plant_type/add';
+      if (this.canCreateCrop) {
+        return '/admin/structure/taxonomy/manage/plant_type/add';
+      } else {
+        return null;
+      }
     },
   },
   methods: {
@@ -101,6 +106,10 @@ export default {
   },
   watch: {},
   created() {
+    farmosUtil.canCreateCrop().then((canCreate) => {
+      this.canCreateCrop = canCreate;
+    });
+
     farmosUtil
       .getCropNameToTermMap()
       .then((cropMap) => {

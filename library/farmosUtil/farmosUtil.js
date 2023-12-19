@@ -1345,3 +1345,28 @@ export async function getLogCategoryIdToTermMap() {
 
   return map;
 }
+
+/**
+ * Check if the current user has permission to create a new crop.
+ *
+ * @return {boolean} true if the current user has permission to create a new crop.
+ *
+ * @category Permissions
+ */
+export async function canCreateCrop() {
+  const farm = await getFarmOSInstance();
+  const testCrop = farm.term.create({
+    type: 'taxonomy_term--plant_type',
+    attributes: {
+      name: 'Permission Check',
+    },
+  });
+
+  try {
+    await farm.term.send(testCrop);
+    await farm.term.delete('plant_type', testCrop.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
