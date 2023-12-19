@@ -76,11 +76,16 @@ export default {
   data() {
     return {
       cropList: [],
+      canCreateCrop: false,
     };
   },
   computed: {
     addCropUrl() {
-      return '/admin/structure/taxonomy/manage/plant_type/add';
+      if (this.canCreateCrop) {
+        return '/admin/structure/taxonomy/manage/plant_type/add';
+      } else {
+        return null;
+      }
     },
   },
   methods: {
@@ -101,10 +106,13 @@ export default {
   },
   watch: {},
   created() {
-    farmosUtil
-      .getCropNameToTermMap()
-      .then((cropMap) => {
+    let canCreate = farmosUtil.canCreatePlantType();
+    let cropMap = farmosUtil.getCropNameToTermMap();
+
+    Promise.all([canCreate, cropMap])
+      .then(([canCreate, cropMap]) => {
         this.cropList = Array.from(cropMap.keys());
+        this.canCreateCrop = canCreate;
 
         /**
          * The select has been populated with the list of crops and the component is ready to be used.

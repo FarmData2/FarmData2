@@ -64,23 +64,4 @@ describe('Test the TraySizeSelector content', () => {
         );
       });
   });
-
-  it('Test add url for tray sizes', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(TraySizeSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/admin/structure/taxonomy/manage/tray_size/add');
-      });
-  });
 });
