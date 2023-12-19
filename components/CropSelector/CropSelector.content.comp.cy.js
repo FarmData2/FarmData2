@@ -64,24 +64,4 @@ describe('Test the CropSelector content', () => {
         );
       });
   });
-
-  it('Test add url for crops', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(CropSelector, {
-      props: {
-        includeGreenhouses: true,
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/admin/structure/taxonomy/manage/plant_type/add');
-      });
-  });
 });

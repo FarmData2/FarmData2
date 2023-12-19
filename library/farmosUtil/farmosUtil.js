@@ -107,6 +107,22 @@ export function clearFarmGlobal() {
 }
 
 /**
+ * Clear the cached farmOS object, token and schema.
+ * This is useful when a new farmOS object is needed from scratch.
+ *
+ * @category farmOS
+ */
+export function clearCachedFarm() {
+  global_farm = null;
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('schema');
+  }
+  if (libLocalStorage) {
+    libLocalStorage.removeItem('farmOStoken');
+  }
+}
+
+/**
  * @private
  *
  * Get the `global_farm` object.  This is useful for testing to ensure
@@ -1344,4 +1360,109 @@ export async function getLogCategoryIdToTermMap() {
   const map = new Map(categories.map((category) => [category.id, category]));
 
   return map;
+}
+
+/**
+ * Check if the current user has permission to create a new crop (i.e. `taxonomy_term--plant_type`).
+ *
+ * @return {boolean} true if the current user has permission to create a new crop.
+ *
+ * @category Permissions
+ */
+export async function canCreatePlantType() {
+  const farm = await getFarmOSInstance();
+  const testCrop = farm.term.create({
+    type: 'taxonomy_term--plant_type',
+    attributes: {
+      name: 'Permission Check',
+    },
+  });
+
+  try {
+    await farm.term.send(testCrop);
+    await farm.term.delete('plant_type', testCrop.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Check if the current user has permission to create a new field or bed (i.e. `asset--land`).
+ *
+ * @return {boolean} true if the current user has permission to create a new field or bed.
+ *
+ * @category Permissions
+ */
+export async function canCreateLand() {
+  const farm = await getFarmOSInstance();
+
+  const testLand = farm.asset.create({
+    type: 'asset--land',
+    attributes: {
+      name: 'Permission Check',
+      land_type: 'field',
+    },
+  });
+
+  try {
+    await farm.asset.send(testLand);
+    await farm.asset.delete('land', testLand.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Check if the current user has permission to create a new `asset--structure`.
+ *
+ * @return {boolean} true if the current user has permission to create a new `asset--structure`.
+ *
+ * @category Permissions
+ */
+export async function canCreateStructure() {
+  const farm = await getFarmOSInstance();
+
+  const testStructure = farm.asset.create({
+    type: 'asset--structure',
+    attributes: {
+      name: 'Permission Check',
+      structure_type: 'greenhouse',
+    },
+  });
+
+  try {
+    await farm.asset.send(testStructure);
+    await farm.asset.delete('structure', testStructure.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Check if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ *
+ * @return {boolean} true if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ *
+ * @category Permissions
+ */
+export async function canCreateTraySize() {
+  const farm = await getFarmOSInstance();
+
+  const testTraySize = farm.term.create({
+    type: 'taxonomy_term--tray_size',
+    attributes: {
+      name: 'Permission Check',
+    },
+  });
+
+  try {
+    await farm.term.send(testTraySize);
+    await farm.term.delete('tray_size', testTraySize.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
