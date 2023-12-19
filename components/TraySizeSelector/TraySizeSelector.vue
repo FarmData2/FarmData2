@@ -78,11 +78,16 @@ export default {
   data() {
     return {
       traySizeList: [],
+      canCreateTraySize: false,
     };
   },
   computed: {
     addTraySizeUrl() {
-      return '/admin/structure/taxonomy/manage/tray_size/add';
+      if (this.canCreateTraySize) {
+        return '/admin/structure/taxonomy/manage/tray_size/add';
+      } else {
+        return null;
+      }
     },
   },
   methods: {
@@ -103,10 +108,13 @@ export default {
   },
   watch: {},
   created() {
-    farmosUtil
-      .getTraySizeToTermMap()
-      .then((traySizeMap) => {
-        this.traySizeList = Array.from(traySizeMap.keys());
+    let canCreate = farmosUtil.canCreateTraySize();
+    let trayMap = farmosUtil.getTraySizeToTermMap();
+
+    Promise.all([canCreate, trayMap])
+      .then(([canCreate, trayMap]) => {
+        this.traySizeList = Array.from(trayMap.keys());
+        this.canCreateTraySize = canCreate;
 
         /**
          * The select has been populated with the list of tray sizes and the component is ready to be used.

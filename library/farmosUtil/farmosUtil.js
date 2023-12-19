@@ -1440,3 +1440,29 @@ export async function canCreateStructure() {
     return false;
   }
 }
+
+/**
+ * Check if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ *
+ * @return {boolean} true if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ *
+ * @category Permissions
+ */
+export async function canCreateTraySize() {
+  const farm = await getFarmOSInstance();
+
+  const testTraySize = farm.term.create({
+    type: 'taxonomy_term--tray_size',
+    attributes: {
+      name: 'Permission Check',
+    },
+  });
+
+  try {
+    await farm.term.send(testTraySize);
+    await farm.term.delete('tray_size', testTraySize.id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
