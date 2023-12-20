@@ -34,4 +34,31 @@ describe('Test the CommentBox behavior', () => {
         );
       });
   });
+
+  it('Component reacts to changed comment prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CommentBox, {
+      props: {
+        comment: 'Test comment',
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="comment-input"]').should(
+            'have.value',
+            'Test comment'
+          );
+
+          wrapper.setProps({ comment: 'A different comment' });
+
+          cy.get('[data-cy="comment-input"]').should(
+            'have.value',
+            'A different comment'
+          );
+        });
+    });
+  });
 });

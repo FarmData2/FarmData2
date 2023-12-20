@@ -1,12 +1,20 @@
 <template>
-  <BFormTextarea
-    id="comment-input"
-    data-cy="comment-input"
-    placeholder="Enter a comment..."
-    lazy
-    v-model="comment"
-    v-bind:formatter="(value) => value.trim()"
-  />
+  <div>
+    <!-- Extra div here prevents vue optimization that hides the enclosing
+       element in the page. E.g. The `seeding-comment` element in the
+       tray_seeding page. Including this in components with only one element
+       ensures that cy.get() works consistently across all components in the
+       tests.
+    -->
+    <BFormTextarea
+      id="comment-input"
+      data-cy="comment-input"
+      placeholder="Enter a comment..."
+      lazy
+      v-model="commentText"
+      v-bind:formatter="(value) => value.trim()"
+    />
+  </div>
 </template>
 
 <script>
@@ -19,7 +27,7 @@
  * <CommentBox
  *   id="seeding-comment"
  *   data-cy="seeding-comment"
- *   v-model="form.comment"
+ *   v-model:comment="form.comment"
  *   v-on:valid="validity.comment = $event"
  *   v-on:ready="createdCount++"
  * />
@@ -35,11 +43,19 @@ export default {
   name: 'CommentBox',
   components: {},
   emits: ['ready', 'update:comment', 'valid'],
-  props: {},
+  props: {
+    /**
+     * The text of the comment.  The provided text is trimmed of leading and trailing whitespace.
+     * This prop is watched and changes are relayed to the component's internal state..
+     */
+    comment: {
+      type: String,
+      default: null,
+    },
+  },
   data() {
     return {
-      comment: '',
-      trimmedComment: '',
+      commentText: this.comment ? this.comment.trim() : null,
     };
   },
   computed: {
@@ -50,11 +66,18 @@ export default {
   methods: {},
   watch: {
     comment() {
+      if (this.comment) {
+        this.commentText = this.comment.trim();
+      } else {
+        this.commentText = null;
+      }
+    },
+    commentText() {
       /**
        * The comment has been edited.
        * @property {String} comment the new comment trimmed of leading and trailing whitespace.
        */
-      this.$emit('update:comment', this.comment);
+      this.$emit('update:comment', this.commentText);
     },
     isValid() {
       /**
