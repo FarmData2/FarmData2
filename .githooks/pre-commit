@@ -2,28 +2,53 @@
 
 echo "Running FarmData2 pre-commit checks..."
 
-# Prevent commits to the production branch
+# Prevent commits to the production and development branches
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$BRANCH" = "production" ]; then
+if [ "$BRANCH" = "production" ] || [ "$BRANCH" = "development" ]; then
   echo
-  echo "You cannot commit directly to the production branch."
-  echo "The production branch should only be updated by merging development into it."
-  echo "This operation should only be performed by maintainers."
-  echo
-  exit 255
-fi
-
-if [ "$BRANCH" = "development" ]; then
-  echo
-  echo "You cannot commit directly to the development branch."
-  echo "Instead create a feature branch and commit your changes to it."
+  echo "You cannot commit directly to the $BRANCH branch."
+  echo "Instead, create a feature branch and commit your changes to it."
   echo "Then push your feature branch to GitHub and create a pull request."
   echo
   exit 255
 fi
 
-# For all other branches, run the pre-commit checks using lint-staged.
-if npm run check:staged; then
+# Initialize an array to keep track of tests that do not need to be run again.
+declare -a skipTests=()
+
+# Check for .only in .cy.js files and mark .vue file tests
+for file in $(git diff --cached --name-only); do
+  if [[ "$file" =~ \.cy\.js$ ]]; then
+    if grep -q "\.only" "$file"; then
+      echo
+      echo "Error: .only found in test file $file"
+      echo "Remove .only from the test to ensure all tests run."
+      echo
+      exit 255
+    fi
+    # If a .vue file has changed, mark its tests to skip them later
+    vueFile="${file/.cy.js/.vue}"
+    if git diff --cached --name-only | grep -q "$vueFile"; then
+      skipTests+=("$file")
+    fi
+  fi
+done
+
+# Check for any modifications in already staged files
+for file in $(git diff --cached --name-only); do
+  if git diff --name-only | grep -q "$file"; then
+    echo "File $file is staged but has uncommitted changes."
+    read -p "Would you like to restage it? [Y/n]: " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      git add "$file"
+      echo "$file restaged."
+    fi
+  fi
+done
+
+# Run other pre-commit checks using lint-staged, excluding tests marked for skipping.
+if npm run check:staged --skip-tests="${skipTests[*]}"; then
   echo "Done."
   echo "Making the commit."
   echo
