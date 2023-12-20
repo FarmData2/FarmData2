@@ -1,5 +1,3 @@
-/** @module farmosUtil */
-
 import * as farmosUtil from '../library/farmosUtil/farmosUtil.js';
 import { LocalStorage } from 'node-localstorage';
 
