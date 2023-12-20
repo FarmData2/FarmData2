@@ -20,3 +20,4 @@ tray_seeding:
       tray_seeding/tray_seeding.css: {}
     component:
       shared/index.css: {}
+    
