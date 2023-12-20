@@ -1,17 +1,19 @@
 <template>
-  <SelectorBase
-    id="tray-size-selector"
-    data-cy="tray-size-selector"
-    label="Tray Size"
-    invalidFeedbackText="A tray size is required"
-    v-bind:addOptionUrl="addTraySizeUrl"
-    v-bind:options="traySizeList"
-    v-bind:required="required"
-    v-bind:selected="selected"
-    v-bind:showValidityStyling="showValidityStyling"
-    v-on:update:selected="handleUpdateSelected($event)"
-    v-on:valid="handleValid($event)"
-  />
+  <div>
+    <SelectorBase
+      id="tray-size-selector"
+      data-cy="tray-size-selector"
+      label="Tray Size"
+      invalidFeedbackText="A tray size is required"
+      v-bind:addOptionUrl="addTraySizeUrl"
+      v-bind:options="traySizeList"
+      v-bind:required="required"
+      v-bind:selected="selected"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:update:selected="handleUpdateSelected($event)"
+      v-on:valid="handleValid($event)"
+    />
+  </div>
 </template>
 
 <script>

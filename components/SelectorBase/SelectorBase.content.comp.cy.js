@@ -93,6 +93,7 @@ describe('Test the default SelectorBase content', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'Three',
         onReady: readySpy,
       },
     });
@@ -100,9 +101,7 @@ describe('Test the default SelectorBase content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"]').should('have.value', null);
-        cy.get('[data-cy="selector-input"]').select('One');
-        cy.get('[data-cy="selector-input"]').should('have.value', 'One');
+        cy.get('[data-cy="selector-input"]').should('have.value', 'Three');
       });
   });
 
@@ -128,6 +127,27 @@ describe('Test the default SelectorBase content', () => {
           .should('have.attr', 'href')
           .then((href) => href)
           .should('eq', 'add/option/url');
+      });
+  });
+
+  it('Test showValidityStyling prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        showValidityStyling: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('have.class', 'is-invalid');
       });
   });
 });

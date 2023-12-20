@@ -1,34 +1,36 @@
 <template>
-  <BRow
-    id="submit-reset"
-    data-cy="submit-reset"
-  >
-    <BCol cols="auto">
-      <BButton
-        id="submit-button"
-        data-cy="submit-button"
-        variant="primary"
-        size="lg"
-        class="fd2-submit"
-        v-on:click="submit()"
-        v-bind:disabled="!submitEnabled"
-        >Submit</BButton
-      >
-    </BCol>
-    <BCol
-      cols="auto"
-      alignSelf="center"
+  <div>
+    <BRow
+      id="submit-reset"
+      data-cy="submit-reset"
     >
-      <BButton
-        id="reset-button"
-        data-cy="reset-button"
-        variant="warning"
-        v-on:click="reset()"
-        v-bind:disabled="!resetEnabled"
-        >Reset</BButton
+      <BCol cols="auto">
+        <BButton
+          id="submit-button"
+          data-cy="submit-button"
+          variant="primary"
+          size="lg"
+          class="fd2-submit"
+          v-on:click="submit()"
+          v-bind:disabled="!submitEnabled"
+          >Submit</BButton
+        >
+      </BCol>
+      <BCol
+        cols="auto"
+        alignSelf="center"
       >
-    </BCol>
-  </BRow>
+        <BButton
+          id="reset-button"
+          data-cy="reset-button"
+          variant="warning"
+          v-on:click="reset()"
+          v-bind:disabled="!resetEnabled"
+          >Reset</BButton
+        >
+      </BCol>
+    </BRow>
+  </div>
 </template>
 
 <script>

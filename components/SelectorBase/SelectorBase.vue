@@ -1,63 +1,65 @@
 <template>
-  <BFormGroup
-    id="selector-group"
-    data-cy="selector-group"
-    label-for="crop-select"
-    label-cols="auto"
-    label-align="end"
-  >
-    <template v-slot:label>
-      <span data-cy="selector-label">{{ label }}:</span>
-      <sup
-        data-cy="selector-required"
-        class="text-danger"
-        v-if="required"
-        >*</sup
-      >
-    </template>
+  <div>
+    <BFormGroup
+      id="selector-group"
+      data-cy="selector-group"
+      label-for="crop-select"
+      label-cols="auto"
+      label-align="end"
+    >
+      <template v-slot:label>
+        <span data-cy="selector-label">{{ label }}:</span>
+        <sup
+          data-cy="selector-required"
+          class="text-danger"
+          v-if="required"
+          >*</sup
+        >
+      </template>
 
-    <BInputGroup>
-      <BFormSelect
-        id="selector-input"
-        data-cy="selector-input"
-        v-model="selectedOption"
-        v-bind:state="validationStyling"
-        v-bind:required="required"
-      >
-        <template v-slot:first>
+      <BInputGroup>
+        <BFormSelect
+          id="selector-input"
+          data-cy="selector-input"
+          v-model="selectedOption"
+          v-bind:state="validationStyling"
+          v-bind:required="required"
+        >
+          <template v-slot:first>
+            <BFormSelectOption
+              disabled
+              data-cy="selector-option-0"
+              key="null"
+              value=""
+            />
+          </template>
           <BFormSelectOption
-            disabled
-            data-cy="selector-option-0"
-            key="null"
-            value=""
-          />
-        </template>
-        <BFormSelectOption
-          v-for="(option, i) in options"
-          v-bind:key="option"
-          v-bind:value="option"
-          v-bind:data-cy="'selector-option-' + (i + 1)"
+            v-for="(option, i) in options"
+            v-bind:key="option"
+            v-bind:value="option"
+            v-bind:data-cy="'selector-option-' + (i + 1)"
+          >
+            {{ option }}
+          </BFormSelectOption>
+        </BFormSelect>
+        <BInputGroupAppend v-if="addOptionUrl != null">
+          <BButton
+            data-cy="selector-add-button"
+            variant="outline-success"
+            v-bind:href="addOptionUrl"
+            >+</BButton
+          >
+        </BInputGroupAppend>
+        <BFormInvalidFeedback
+          id="selector-invalid-feedback"
+          data-cy="selector-invalid-feedback"
+          v-bind:state="validationStyling"
         >
-          {{ option }}
-        </BFormSelectOption>
-      </BFormSelect>
-      <BInputGroupAppend v-if="addOptionUrl != null">
-        <BButton
-          data-cy="selector-add-button"
-          variant="outline-success"
-          v-bind:href="addOptionUrl"
-          >+</BButton
-        >
-      </BInputGroupAppend>
-      <BFormInvalidFeedback
-        id="selector-invalid-feedback"
-        data-cy="selector-invalid-feedback"
-        v-bind:state="validationStyling"
-      >
-        {{ invalidFeedbackText }}
-      </BFormInvalidFeedback>
-    </BInputGroup>
-  </BFormGroup>
+          {{ invalidFeedbackText }}
+        </BFormInvalidFeedback>
+      </BInputGroup>
+    </BFormGroup>
+  </div>
 </template>
 
 <script>

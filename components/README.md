@@ -94,6 +94,7 @@ Custom FarmData2 Vue Components.
   - The `showValidityStyling` prop should be is set by the entry point to
     - `true` when "Submit" is clicked
     - `false` when "Reset" is clicked
+    - `false` when a submission is successful.
 
 - Components manage props, state and events to allow page to change state via the prop.
 
@@ -109,7 +110,7 @@ Custom FarmData2 Vue Components.
 
   - e.g. any API calls that were made in `created` have completed.
 
-- If an error occurs, the component must emit an `error` event with a `String` message as the payload.
+- If an error occurs, the component must emit an `error` event with a `String` message as the payload. The component should also print more detailed information to the console for debugging. See `CropSelector` for an example.
 
   - The entrypoint will handle the error.
 
@@ -117,6 +118,8 @@ Custom FarmData2 Vue Components.
 
   - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - The component `watch`es the `isValid` computed property for changes and emits this event.
+
+- If a component only contains one element, then it should be wrapped in a `<div>` element. See the `CommentComponent` component for an example and explanation.
 
 ## Component Testing
 
@@ -161,8 +164,7 @@ describe('Test the default LocationSelector content', () => {
 });
 ```
 
-The database is reset to the most recently installed db before running the tests.
-Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+Best practice is to [reset the database state before tests are run](https://docs.cypress.io/guides/references/best-practices#State-reset-should-go-before-each-test). Doing this before every test or even at the start of every file adds significantly to the runtime of the test suite. FarmData2 compromises by resetting the database to the DB that was most recently installed (i.e. using `installDB.bash`) before each test run. A test run is one cypress command (e.g. as is done by `test.bash --comp`). Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in its `before` hook using the following code:
 
 ```Javascript
   before(() => {
@@ -184,46 +186,63 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
   - These should be in approximately the order they can be written as a new component is created.
 
-  - check static content (`*.content.comp.cy.js`)
+  - check initial content (`*.content.comp.cy.js`)
 
-    - check everything that does not depend upon a prop change or an action.
-      - e.g. check that all of the `data-cy` elements exist / `have.text` / `have .value` (as appropriate)
-    - check that content set by static props (i.e. not watched)
-      - e.g. check that the required element indicators are not present by default but can be added using the `required` prop.
-    - check that content is loaded via API calls.
-      - e.g. fields vs greenhouses in LocationSelector.
+    - check all `data-cy` elements exist and have right values for default props.
+      - look at `<template>` to see what needs to be tested.
+      - check that all of the `data-cy` elements `exist` / `have.text` / `have.value` (as appropriate)
+      - if using a sub-component it is sufficient to check that the the sub-component if present.
+      - This test should check all of the required props and the default values of the optional props.
+      - e.g. `label`, `required`
+      - `showValidityStyling` should be checked if a sub-component is used that handles it.
+    - check all optional `props` are handled correctly
+      - Set each prop to a non-default value and check for its effect.
+        - can often be combined into a single test.
+      - If using a sub-component (e.g. `SelectorBase`, `NumericInput`) then
+        - Check sub-component elements to ensure that props are passed through.
+    - check that all content loaded via API calls is actually loaded.
+      - e.g. crops or fields vs greenhouses in LocationSelector.
 
   - check styling (`*.styling.comp.cy.js`)
 
-    - check that the valid/invalid styling is applied as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
-    - if component uses a sub-component (e.g. `SelectorBase`) then just check that the `showValidityStyling` prop is passed, because the sub-component will have tested the actual styling that is applied.
+    - check that the type of valid/invalid styling to be shows as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
+      - This is often an enumeration test that checks all 8 combinations of these values.
+      - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required.
+        - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
+    - If a component is never styled (e.g. `CommentBox` or `TextDisplay`) then this test is not required.
 
   - check events (`*.events.comp.cy.js`)
 
-    - check that all events are emitted properly
-
+    - check that all events listed in the component's `emits` property are emitted properly
       - Note that the `ready` event is used in all tests so does not need to be tested separately.
       - check that `update:prop_name` and `valid` are emitted as appropriate.
-      - include all error events (including network errors) are emitted properly
-
-      - do something to cause the event and check that it is emitted properly and has the correct payload.
-
+        - if using a sub-component it is sufficient to check that these events are propagated by the parent component, it is not necessary to check their payloads or all circumstances for their emission - the tests of the sub-component will have done that.
+      - test all error events (including network errors from API requests) are emitted properly
+      - To do the test, do something to cause the event and check that it is emitted properly and has the correct payload.
+        - i.e. change the selection, type some text, etc...
         - i.e. Use `cy.intercept` to generate network errors on the appropriate route.
-
-    - Give or point to examples that illustrate structure for:
-
-      - changing props.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 
-    - check that changing a reactive or watched prop has the proper effect.
-
+    - check that changing each reactive or watched prop has the proper effect.
+      - need to give example or point to one where props are changed.
       - e.g. changes to prop changes the component as desired.
       - e.g. watches and deep watches work.
-
+      - Note: if using a sub-component that reacts to a prop, the `content` tests should be sufficient. They show the prop is "wired" correctly, the sub-component tests show that it is reactive to the prop.
     - check that actions in the component have the proper effect.
+      - e.g. clicking buttons, validating value (required, length, values, format, etc.)
+    - etc.
 
-      - e.g. clicking buttons, validating value (required, length, values, format, etc.) etc.
+  - check permission based content (`*.permission.comp.cy.js`)
+
+    - Check that correct content is displayed based on the user's permissions.
+      - Do not save and restore `localStorage` or `sessionStorage` between tests as changing users requires a new farmOS instance be created for each test.
+      - create `farmOS` instance as `admin` (which should have all permissions).
+        - The component code will use the same `farmOS` instance because it requests it with no parameters.
+        - Check for the UI elements / behaviors that should be present.
+      - Create a `farmOS` instance as `guest` (which should not have many permissions.)
+        - Check that the UI elements / behaviors that should not be present are not present.
+      - Note: `worker#` and `manager#` have appropriate permissions when logging into farmOS, but when running via API they need to request a scope, which is not currently implemented in `farmosUtil.js`.
 
 ## Documenting components
 
