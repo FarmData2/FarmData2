@@ -63,9 +63,10 @@ describe('Test the crop utility functions', () => {
         expect(sessionStorage.getItem('crops')).not.to.be.null;
       })
       .then(() => {
-        // Now check that the global is used.
+        // Now check that the global is used and sessionStorage cache is repopulated.
         sessionStorage.removeItem('crops');
         cy.wrap(farmosUtil.getCrops()).then(() => {
+          // No more api calls were made.
           cy.get('@fetchCrops').its('callCount').should('equal', 3);
           expect(farmosUtil.getGlobalCrops()).not.to.be.null;
           expect(sessionStorage.getItem('crops')).to.be.null;
