@@ -49,20 +49,49 @@ Inside each of the above module directories there are the following directories 
 - Edit `App.vue` to implement the entry point.
 - Add `\*.cy.js` files to test the new entry point.
 
+## Entry Point Conventions
+
+Document where these things are in the code somehow.
+
+- an example in the Examples module?
+
+- all use the `fd2-mobile.css` stylesheet.
+
+  - add `<style>` to the `App.vue` for entry point specific styles.
+
+- Submit button is initially enabled.
+
+  - On click
+    - validity styling is shown
+    - disabled if
+      - any data is invalid
+      - any required data is missing
+    - Submitting ... banner appears while submitting.
+    - Success banner appears when submitted is complete, stays for 2 seconds.
+    - Error banner appears if there is an error, stays for 5 seconds.
+
+- Errors are thrown by the `lib.js` file when doing submission (see `tray_seeding/lib.js`).
+
+  - The main `App.vue` then catches the error and displays an error banner with a simplified message for the page.
+  - The `lib.js` should print more detailed information to the console for debugging.
+
+- Components indicate errors by emitting an `error` event with the error message.
+  - A `v-on:error="(msg) => showErrorToast('Title', msg)"` listener should be attached to any component that emits an error event. The title should be generalized to the entrypoint. The component will have printed more detailed information to the console for debugging. See `tray_seeding/App.vue` for an example.
+
 ## Testing
 
-- use bin/test.bash (see its docs).
+- use `bin/test.bash` (see its docs).
 
 - Unit test vs e2e tests.
 
 - use watch:fd2 by default and just run in live farmOS???
 
+  - or should we use the dev server?
   - point to another document that discusses the use of the dev and preview servers.
 
 - Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 
-The database is reset to the most recently installed db before running the tests.
-Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+Best practice is to [reset the database state before tests are run](https://docs.cypress.io/guides/references/best-practices#State-reset-should-go-before-each-test). Doing this before every test or even at the start of every file adds significantly to the runtime of the test suite. FarmData2 compromises by resetting the database to the DB that was most recently installed (i.e. using `installDB.bash`) before each test run. A test run is one cypress command (e.g. as is done by `test.bash --comp`). Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in its `before` hook using the following code:
 
 ```Javascript
   before(() => {
@@ -72,6 +101,53 @@ Any test that absolutely requires a clean database (i.e. cannot tolerate changes
 
 Use: `cy.task('log', 'message')` to log messages to the console.
 Use: `cy.task('logObject', obj)` to log an object to the console.
+
+### Unit Testing
+
+Write code for submission of the form to farmOS in the lib.js file and unit test it.
+
+- all tests should clean up after themselves.
+
+### E2E Testing
+
+Test: There will typically be 4 broad categories of tests. The lists below are not intended to be prescriptive or exhaustive.
+
+- `*.content.e2e.cy.js` - ensure that the content of the form is correct.
+  - All the components exist.
+  - All labels and fields (not tested by components) are correct.
+  - Default values are correct.
+  - Required items are marked required.
+  - Submit/Reset/etc are initially in the correct state.
+  - Correct increment / decrement buttons exist.
+  - etc...
+- `*.behavior.e2e.cy.js` - ensure that the form behaves correctly
+  - validity styling is shown at appropriate times
+  - Submit/Reset/etc are in the correct state as form changes.
+    - E.g. Submit is disabled when the form is invalid
+    - E.g. Submit is reenabled when the form becomes valid
+  - reset clears the form to default values.
+  - form controls work:
+    - E.g. any `+` to add new items go to correct url (if not already tested by the component)
+    - E.g. computed values are computed correctly.
+    - Check props that affect component behavior are correct.
+      - E.g. increment / decrement values are correct
+  - etc...
+- `*.permissions.*.e2e.cy.js` - ensure that correct content is shown based on permissions.
+  - Create a separate test for each permission that is checked.
+  - `+` buttons are not shown unless user has permission to edit vocabulary.
+  - etc...
+- `*.submit.e2e.cy.js` - ensure that the form submits correctly
+  - records are created in the database
+  - Submitting banner appears and disappears
+  - Success banner appears and disappears
+  - Error banner appear and disappears
+  - Sticky parts of form remain when submit is complete.
+  - etc...
+
+### Testing Gotchas
+
+- Clear fields before typing in them.
+- Blur the final field that was modified before taking an action (E.g. Submit / Reset)
 
 ## Entry point structure
 
@@ -201,16 +277,25 @@ Every entry point has a `<BToaster />` element as its first element.
 
 - The `BToaster` allows alert/info/success/error messages to be displayed.
 
+  - A message is displayed for 5 seconds on any error.
+  - A submitting message is displayed when the form is submitted. This is dismissed when the submit was successful or an error occurred.
+  - A success message is displayed for 1 second if the submit is successful.
+
   - Every FarmData2 component emits an `error` event with a message when an error occurs.
   - The entrypoint then must have an `on-error` handler that displays the Toast.
 
 ```JavaScript
-v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger')"
+v-on:error="(msg) => showToast('Network Error', msg, 'top-center', 'danger', 5)"
 ```
+
+- Component / element naming:
+
+  - Every component / element referenced in css or a test gets and `id` and a `data-cy`.
+  - Values for the `id` and `data-cy` use `kabob-case`.
 
 - Values for placement and variant should be documented by pointing to the Bootstrap-Vue-Next documentation
 
-- Every entry point will import the `showToast` function from the `uiUtil` module
+- Every entry point will import the `uiUtil` module
 
 - All components are contained in a Bootstrap-Vue-Next [_Form_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form) element.
 
