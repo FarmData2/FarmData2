@@ -1,0 +1,69 @@
+/* 
+ * This css adjusts and removes some of the default
+ * farmOS and Bootstrap Vue next styling so that we 
+ * get more screen real estate on small devices.
+ *
+ * It is designed to be the last piece imported and
+ * should override every other setting to ensure that
+ * the mobile pages are styled as intended.  Thus, all
+ * of the `!important`s.
+ */
+
+#block-gin-page-title {
+  display: none;
+}
+
+header.region {
+  display: none;
+}
+
+div.help {
+  display: none;
+}
+
+div.region {
+  margin-top: 0px !important;
+}
+
+hr {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+h2.text-center {
+  margin-top: 0px !important;
+  margin-bottom: 3px !important;
+}
+
+.card-header {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.card {
+  border-radius: 0px !important;
+}
+
+.card-body {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.gin-secondary-toolbar {
+  height: 36px !important;
+}
+
+.layout-container {
+  margin-top: 0px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#block-farm-powered {
+  margin-top: 0px !important;
+  padding-top: 0px !important;
+  margin-left: 0px !important;
+  padding-bottom: 0px !important;
+  border-top: 0px !important;
+}

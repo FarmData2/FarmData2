@@ -9,9 +9,6 @@
       "name": "Grant Braught",
       "email": "braughtg@gmail.com",
       "role": "Maintainer"
-    },
-    {
-      "name": "Joe Smith"
     }
   ],
   "homepage": "https://github.com/DickinsonCollege/FarmData2",
@@ -21,8 +18,5 @@
     "source": "https://github.com/DickinsonCollege/FarmData2",
     "forum": "https://farmdata2.zulipchat.com/",
     "chat": "https://farmdata2.zulipchat.com/"
-  },
-  "require": {
-    "drupal/core": "^9"
   }
 }
