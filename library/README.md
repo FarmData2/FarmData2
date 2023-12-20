@@ -14,8 +14,7 @@ Javascript library of FarmData2 custom reusable functions.
 
 Any `it` with an `intercept` should include `{ retries: 4 }` to tolerate some of the flake that appears to go with `cy.intercept`.
 
-The database is reset to the most recently installed db before running the tests.
-Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in the `before` hook.
+Best practice is to [reset the database state before tests are run](https://docs.cypress.io/guides/references/best-practices#State-reset-should-go-before-each-test). Doing this before every test or even at the start of every file adds significantly to the runtime of the test suite. FarmData2 compromises by resetting the database to the DB that was most recently installed (i.e. using `installDB.bash`) before each test run. A test run is one cypress command (e.g. as is done by `test.bash --comp`). Any test that absolutely requires a clean database (i.e. cannot tolerate changes made by prior tests) can reset it in its `before` hook using the following code:
 
 ```Javascript
   before(() => {

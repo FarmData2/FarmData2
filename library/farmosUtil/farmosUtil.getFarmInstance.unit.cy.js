@@ -1,13 +1,5 @@
 import * as farmosUtil from './farmosUtil.js';
 
-/*
- * NOTE: The tests in this file assume that they are run
- * in order. This is a necessary assumption because they are
- * testing the caching behavior of the farmOS object, the
- * authentication token and the schema.  To do so, later tests
- * must rely on earlier tests having cached these items.
- */
-
 describe('Test getFarmOSInstance', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -354,7 +346,6 @@ describe('Test getFarmOSInstance', () => {
         cy.wrap(newFarm.log.send(a1)).as('sendLog');
       });
 
-    //cy.get('@sendLog').then(() => {
     cy.getAll(['@newFarm', '@sendLog']).then(([newFarm, sendLog]) => {
       // fetch the created log.
       cy.wrap(
@@ -368,22 +359,14 @@ describe('Test getFarmOSInstance', () => {
       ).as('fetchLog');
     });
 
-    //    cy.get('@fetchLog')
-    cy.getAll(['@newFarm', '@fetchLog'])
-      .then(([newFarm, fetchLog]) => {
-        expect(fetchLog.type).to.equal('log--activity');
-        expect(fetchLog.id).to.equal(fetchLog.id);
-        expect(fetchLog.attributes.name).to.equal('test log');
-        expect(fetchLog.attributes.notes.value).to.equal(
-          'testing writes to farmOS'
-        );
-        let id = fetchLog.id;
-        return { newFarm, id };
-      })
-      .then(({ newFarm, id }) => {
-        // delete the log.
-        cy.wrap(newFarm.log.delete('activity', id));
-      });
+    cy.get('@fetchLog').then((fetchLog) => {
+      expect(fetchLog.type).to.equal('log--activity');
+      expect(fetchLog.id).to.equal(fetchLog.id);
+      expect(fetchLog.attributes.name).to.equal('test log');
+      expect(fetchLog.attributes.notes.value).to.equal(
+        'testing writes to farmOS'
+      );
+    });
   });
 
   it('Test switching users.', () => {

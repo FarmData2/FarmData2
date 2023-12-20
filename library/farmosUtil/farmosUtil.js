@@ -65,17 +65,9 @@ import * as runExclusive from 'run-exclusive';
  * @returns {boolean} true if the page is within farmOS, false if not.
  */
 function inFarmOS() {
-  try {
-    /*
-     * The `<body>` element of FarmData2 pages served from farmOS will have
-     * the class `path-fd2`.  That class does not appear on the `<body>` in
-     * pages served from the dev server.
-     */
-    const elements = document.querySelectorAll('body.path-fd2');
-    return elements.length === 1;
-  } catch (e) {
-    return false;
-  }
+  const onLocalhost = document.URL.startsWith('http://localhost');
+  const inFarmOS = !onLocalhost;
+  return inFarmOS;
 }
 
 /*
@@ -250,12 +242,14 @@ export const getFarmOSInstance = runExclusive.build(
     } else {
       // Here we are not running within farmOS...
       if (hostURL && client && user && pass) {
+        console.log('new farm outside farmOS with credentials.');
         /*
          * We have been called from a test that provides specific credentials.
          * So we will create a new farmOS object with those credentials.
          */
         clearFarmGlobal();
         libLocalStorage.removeItem('farmOStoken');
+        libSessionStorage.removeItem('schema');
         return await getFarmOSInstanceForNotInFarmOS(
           hostURL,
           client,
@@ -361,6 +355,7 @@ async function getFarmOSInstanceForNotInFarmOS(
   // Only create a new farm object if we don't already have one in global_farm.
   let newFarm = false;
   if (!global_farm) {
+    console.log('new farm global.');
     newFarm = true;
 
     /*
@@ -402,11 +397,13 @@ async function getFarmOSInstanceForNotInFarmOS(
    * then authenticate with the farmOS host to get the token.
    */
   if (global_farm.remote.getToken() === null) {
+    console.log('authenticating.');
     await global_farm.remote.authorize(user, pass);
   }
 
   // If we created a new farm object then we need to get the schema.
   if (newFarm) {
+    console.log('getting schema.');
     await setFarmSchema(global_farm);
   }
 
