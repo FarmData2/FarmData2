@@ -1,37 +1,39 @@
 <template>
-  <BFormGroup
-    id="date-group"
-    data-cy="date-group"
-    label-for="date"
-    label-cols="auto"
-    label-align="end"
-  >
-    <template v-slot:label>
-      <span data-cy="date-label">Date:</span>
-      <sup
-        data-cy="required-star"
-        v-if="required"
-        class="text-danger"
-        >*</sup
-      >
-    </template>
-
-    <BFormInput
-      id="date-input"
-      data-cy="date-input"
-      type="date"
-      v-model="chosenDate"
-      v-bind:state="validityStyling"
-      v-bind:required="required"
-    />
-    <BFormInvalidFeedback
-      id="date-invalid-feedback"
-      data-cy="date-invalid-feedback"
-      v-bind:state="validityStyling"
+  <div>
+    <BFormGroup
+      id="date-group"
+      data-cy="date-group"
+      label-for="date"
+      label-cols="auto"
+      label-align="end"
     >
-      A valid date is required.
-    </BFormInvalidFeedback>
-  </BFormGroup>
+      <template v-slot:label>
+        <span data-cy="date-label">Date:</span>
+        <sup
+          data-cy="date-required"
+          v-if="required"
+          class="text-danger"
+          >*</sup
+        >
+      </template>
+
+      <BFormInput
+        id="date-input"
+        data-cy="date-input"
+        type="date"
+        v-model="chosenDate"
+        v-bind:state="validityStyling"
+        v-bind:required="required"
+      />
+      <BFormInvalidFeedback
+        id="date-invalid-feedback"
+        data-cy="date-invalid-feedback"
+        v-bind:state="validityStyling"
+      >
+        A valid date is required.
+      </BFormInvalidFeedback>
+    </BFormGroup>
+  </div>
 </template>
 
 <script>

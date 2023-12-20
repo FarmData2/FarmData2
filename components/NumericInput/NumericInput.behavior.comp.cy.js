@@ -60,4 +60,27 @@ describe('Test the NumericInput component behavior', () => {
         cy.get('[data-cy="numeric-input"]').should('have.value', '24');
       });
   });
+
+  it('Component reacts to changed value prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 50,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="numeric-input"]').should('have.value', '50');
+
+          wrapper.setProps({ value: 100 });
+
+          cy.get('[data-cy="numeric-input"]').should('have.value', '100');
+        });
+    });
+  });
 });

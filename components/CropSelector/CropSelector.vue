@@ -1,17 +1,19 @@
 <template>
-  <SelectorBase
-    id="crop-selector"
-    data-cy="crop-selector"
-    label="Crop"
-    invalidFeedbackText="A crop is required"
-    v-bind:addOptionUrl="addCropUrl"
-    v-bind:options="cropList"
-    v-bind:required="required"
-    v-bind:selected="selected"
-    v-bind:showValidityStyling="showValidityStyling"
-    v-on:update:selected="handleUpdateSelected($event)"
-    v-on:valid="handleValid($event)"
-  />
+  <div>
+    <SelectorBase
+      id="crop-selector"
+      data-cy="crop-selector"
+      label="Crop"
+      invalidFeedbackText="A crop is required"
+      v-bind:addOptionUrl="addCropUrl"
+      v-bind:options="cropList"
+      v-bind:required="required"
+      v-bind:selected="selected"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:update:selected="handleUpdateSelected($event)"
+      v-on:valid="handleValid($event)"
+    />
+  </div>
 </template>
 
 <script>
