@@ -1,22 +1,24 @@
 <template>
-  <BFormGroup
-    id="text-group"
-    data-cy="text-group"
-    v-bind:label="label"
-    label-for="text-text"
-    label-cols="auto"
-  >
-    <template v-slot:label>
-      <span data-cy="text-label">{{ label }}:</span>
-    </template>
-    <BFormInput
-      id="text-text"
-      data-cy="text-text"
-      disabled
-      plaintext
-      v-model="processedText"
-    />
-  </BFormGroup>
+  <div>
+    <BFormGroup
+      id="text-group"
+      data-cy="text-group"
+      v-bind:label="label"
+      label-for="text-text"
+      label-cols="auto"
+    >
+      <template v-slot:label>
+        <span data-cy="text-label">{{ label }}:</span>
+      </template>
+      <BFormInput
+        id="text-text"
+        data-cy="text-text"
+        disabled
+        plaintext
+        v-model="processedText"
+      />
+    </BFormGroup>
+  </div>
 </template>
 
 <script>
@@ -56,6 +58,8 @@ export default {
     },
     /**
      * The text that is to be displayed.
+     *
+     * This prop is reactive and the displayed contents will update when it is changed.
      */
     text: {
       type: String,
