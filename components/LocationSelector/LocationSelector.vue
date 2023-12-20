@@ -1,17 +1,19 @@
 <template>
-  <SelectorBase
-    id="location-selector"
-    data-cy="location-selector"
-    label="Location"
-    invalidFeedbackText="A location is required"
-    v-bind:addOptionUrl="addLocationUrl"
-    v-bind:options="locationList"
-    v-bind:required="required"
-    v-bind:selected="selected"
-    v-bind:showValidityStyling="showValidityStyling"
-    v-on:update:selected="handleUpdateSelected($event)"
-    v-on:valid="handleValid($event)"
-  />
+  <div>
+    <SelectorBase
+      id="location-selector"
+      data-cy="location-selector"
+      label="Location"
+      invalidFeedbackText="A location is required"
+      v-bind:addOptionUrl="addLocationUrl"
+      v-bind:options="locationList"
+      v-bind:required="required"
+      v-bind:selected="selected"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:update:selected="handleUpdateSelected($event)"
+      v-on:valid="handleValid($event)"
+    />
+  </div>
 </template>
 
 <script>
