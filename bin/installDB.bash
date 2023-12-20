@@ -129,7 +129,7 @@ elif [ -n "$DB_RELEASE" ] && [ -n "$DB_ASSET" ]; then
   RELEASES=(
     $(gh release list \
       --repo FarmData2/FD2-SampleDBs |
-      cut -f1)
+      head -n5 | cut -f1)
   )
   # shellcheck disable=SC2207
   REL_INFO=$(gh release view --repo FarmData2/FD2-SampleDBs "$DB_RELEASE")
@@ -158,9 +158,11 @@ else
         --exclude-drafts \
         --exclude-pre-releases \
         --repo FarmData2/FD2-SampleDBs |
-        cut -f1)
+        head -n5 | cut -f1)
     )
 
+    echo "The 5 most recent releases are shown."
+    echo "If an older or pre-release see --release and --asset in the help."
     echo "Choose the release to use..."
     select DB_RELEASE in "${RELEASES[@]}"; do
       if (("$REPLY" <= 0 || "$REPLY" > "${#RELEASES[@]}")); then
@@ -190,9 +192,9 @@ if [ -n "$CURRENT" ]; then
 else
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from release $DB_RELEASE...${NO_COLOR}"
 
-  if [ -f "$DB_ASSET" ]; then
+  if [ -f "/var/tmp/$DB_ASSET" ]; then
     echo "Deleting existing database archives..."
-    rm /var/tmp/"$DB" 2 &> /dev/null
+    rm "/var/tmp/$DB_ASSET"
     error_check "Unable to delete existing database archives."
     echo "  Deleted."
   fi
