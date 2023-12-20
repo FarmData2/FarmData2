@@ -45,6 +45,9 @@ TODO: NEED TO EXPAND, REVISE AND CLEAN THIS UP!
 - e2e tests (in modules)
   - all cy.js tests in entrypoint directory for a staged .vue
   - all .cy.js files that are staged.
+- unit tests (in modules)
+  - all lib.\*.unit.cy.js tests in entrypoint directory if lib.js is staged.
+  - all lib.\*.unit.cy.js tests in entrypoint directory that are staged
 - component tests (in components)
   - all comp.cy.js tests in component directory for a staged .vue
   - all comp.cy.js files that are staged.
@@ -78,7 +81,7 @@ A maintainer will:
 2. If/when appropriate squash merge your pull request into the `development` branch
    - The maintainer will use a squash merge commit message with a conventional commit message.
      - valid types are: build, chore, ci, docs, feat, fix, perf, refactor, style, test
-     - valid scopes are: (fd2), (examples), (school)
+     - valid scopes are: (dev), (comp), (lib), (fd2), (examples), (school)
      - If a change to farm_fd2 modifies the module it must have type fix or feat.
        - If the commit message has a scope of (fd2) and a type of fix or feat then:
          - The merge will create a pre-release `vX.Y.Z-development.n`
@@ -87,6 +90,8 @@ A maintainer will:
          - fix -> patch bump
          - feat -> minor bump
          - BREAKING CHANGE -> major bump
+     - Add examples of conventional commits here for reference.
+       - link to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 
 ## Creating a GitHub Release of the farm_fd2 Module
 
