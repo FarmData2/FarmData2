@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 describe('Check that the main entrypoint in farm_fd2_school exists.', () => {
   it('Check that the page loaded.', () => {
     // Login if running in live farmOS.
