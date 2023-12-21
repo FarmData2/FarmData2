@@ -242,7 +242,6 @@ export const getFarmOSInstance = runExclusive.build(
     } else {
       // Here we are not running within farmOS...
       if (hostURL && client && user && pass) {
-        console.log('new farm outside farmOS with credentials.');
         /*
          * We have been called from a test that provides specific credentials.
          * So we will create a new farmOS object with those credentials.
@@ -355,7 +354,6 @@ async function getFarmOSInstanceForNotInFarmOS(
   // Only create a new farm object if we don't already have one in global_farm.
   let newFarm = false;
   if (!global_farm) {
-    console.log('new farm global.');
     newFarm = true;
 
     /*
@@ -397,13 +395,11 @@ async function getFarmOSInstanceForNotInFarmOS(
    * then authenticate with the farmOS host to get the token.
    */
   if (global_farm.remote.getToken() === null) {
-    console.log('authenticating.');
     await global_farm.remote.authorize(user, pass);
   }
 
   // If we created a new farm object then we need to get the schema.
   if (newFarm) {
-    console.log('getting schema.');
     await setFarmSchema(global_farm);
   }
 
