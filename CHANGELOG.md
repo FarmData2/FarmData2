@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/FarmData2/FarmData2/compare/v1.1.0...v1.1.1) (2023-12-21)
+
+
+### Fixes
+
+* **fd2:** adds drupal permission checking for entry point routes ([#115](https://github.com/FarmData2/FarmData2/issues/115)) ([19cf156](https://github.com/FarmData2/FarmData2/commit/19cf156e1a8fbba51f038e4b582a622ed6c756e7)), closes [#105](https://github.com/FarmData2/FarmData2/issues/105)
+
 ## [1.1.0](https://github.com/FarmData2/FarmData2/compare/v1.0.0...v1.1.0) (2023-12-20)
 
 
