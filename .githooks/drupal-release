@@ -55,7 +55,7 @@ echo "    Done."
 echo "    Copying files from farm_fd2/dist/farmdata to clone..."
 git switch --quiet production
 error_check "Failed to switch to production branch."
-cp -Ru modules/farm_fd2/dist/farmdata2/* /var/tmp/farmdata2/
+cp -R modules/farm_fd2/dist/farmdata2/* /var/tmp/farmdata2/
 error_check "Failed to copy files from farm_fd2/dist/farmdata2."
 echo "    Done."
 
