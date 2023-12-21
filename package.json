@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@cspell/dict-vue": "^3.0.0",
+    "@cypress/skip-test": "^2.6.1",
     "@mryhryki/markdown-preview": "^0.5.0",
     "@prettier/plugin-php": "^0.19.6",
     "@rushstack/eslint-patch": "^1.2.0",
