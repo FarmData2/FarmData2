@@ -11,4 +11,4 @@ farm.fd2_tray_seeding.content:
     _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
     _title: 'Tray Seeding'
   requirements:
-    _permission: 'access content'
+    _permission: 'access content,create plant asset,create seeding log,create standard quantity'

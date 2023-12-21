@@ -126,6 +126,14 @@ select ENTRY_POINT_PARENT in "${MENUS[@]}"; do
 done
 echo ""
 
+# Get the permissions required for access to this entry point.
+echo "Enter a permission string for this entry point."
+echo "For example: access content,create plant asset,create seeding log,create standard quantity"
+echo "  Permissions can be found by using dev-tools to inspect the checkboxes at:"
+echo "    http://farmos/admin/people/permissions"
+read -r ENTRY_POINT_PERMISSIONS
+echo ""
+
 # shellcheck disable=SC1003
 DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
 
@@ -137,8 +145,10 @@ echo "   entry point directory: $ENTRY_POINT_SRC_DIR"
 echo "      template directory: $ENTRY_POINT_TEMPLATE_DIR"
 echo "                   title: $ENTRY_POINT_TITLE"
 echo "             description: $ENTRY_POINT_DESCRIPTION"
+echo "             parent menu: $ENTRY_POINT_PARENT"
 echo "            drupal route: $DISPLAY_DRUPAL_ROUTE"
 echo "       drupal route name: $DRUPAL_ROUTE_NAME"
+echo "    permissions required: $ENTRY_POINT_PERMISSIONS"
 echo ""
 
 # Confirm that the entry point should be created.
@@ -212,7 +222,7 @@ echo "  Added $ENTRY_POINT_SRC_DIR/lib.sample.unit.cy.js from templates."
 
 echo ""
 
-# Make the new entry point into a drupal Module by adding to the
+# Add the new entry point to the drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
 cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
@@ -230,6 +240,7 @@ sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
 sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ROUTING_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
+sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FILE"
 echo "Updated $ROUTING_YML_FILE from templates."
 echo ""
 

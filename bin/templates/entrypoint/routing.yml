@@ -4,4 +4,4 @@ farm.%DRUPAL_ROUTE_NAME%.content:
     _controller: '\Drupal\%MODULE_NAME%\Controller\FD2_Controller::content'
     _title: '%ENTRY_POINT_TITLE%'
   requirements:
-    _permission: 'access content'
+    _permission: '%ENTRY_POINT_PERMISSIONS%'
