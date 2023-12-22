@@ -6,13 +6,23 @@ describe('Test the permissions checking utility functions', () => {
    * here because we need a new farmOS instance for each test.
    */
 
-  it('Admin can create new crop', () => {
-    cy.wrap(farmosUtil.getFarmOSInstance()).then(() => {
-      cy.wrap(farmosUtil.canCreatePlantType()).should('be.true');
+  it('Get the permissions as admin', () => {
+    cy.wrap(farmosUtil.getPermissions()).then((perms) => {
+      expect(perms).to.not.be.null;
+
+      // This will need to be updated for each change to the permissions list.
+      // That is on purpose so that the rest of the test gets updated too!
+      expect(Object.keys(perms).length).to.equal(4);
+
+      // Add checks for each additional permission here.
+      expect(perms['create-plant-asset']).to.be.true;
+      expect(perms['create-land-asset']).to.be.true;
+      expect(perms['create-structure-asset']).to.be.true;
+      expect(perms['create-terms-in-tray_size']).to.be.true;
     });
   });
 
-  it('Guest cannot create new crop', () => {
+  it('Get the permissions as guest', () => {
     cy.wrap(
       farmosUtil.getFarmOSInstance(
         'http://farmos',
@@ -21,17 +31,53 @@ describe('Test the permissions checking utility functions', () => {
         'farmdata2'
       )
     ).then(() => {
-      cy.wrap(farmosUtil.canCreatePlantType()).should('be.false');
+      cy.wrap(farmosUtil.getPermissions()).then((perms) => {
+        /*
+         * Don't check every permission here.
+         */
+        expect(perms).to.not.be.null;
+        expect(perms['create-plant-asset']).to.be.false;
+        expect(perms['create-land-asset']).to.be.false;
+        expect(perms['create-structure-asset']).to.be.false;
+        expect(perms['create-terms-in-tray_size']).to.be.false;
+      });
     });
   });
 
-  it('Admin can create new land (e.g. field or bed)', () => {
-    cy.wrap(farmosUtil.getFarmOSInstance()).then(() => {
-      cy.wrap(farmosUtil.canCreateLand()).should('be.true');
-    });
+  it(
+    'Test that getPermissions throws error if fetch fails',
+    { retries: 4 },
+    () => {
+      farmosUtil.clearCachedPermissions();
+
+      cy.intercept('GET', '**/api/permissions', {
+        statusCode: 403,
+        body: 'Can not fetch permissions.',
+      });
+
+      cy.wrap(
+        farmosUtil
+          .getPermissions()
+          .then(() => {
+            throw new Error('Fetching permissions should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.equal('Unable to fetch permissions.');
+          })
+      );
+    }
+  );
+
+  it('Test getPermission function as admin', () => {
+    farmosUtil.clearCachedFarm();
+
+    cy.wrap(farmosUtil.checkPermission('create-plant-asset')).should('be.true');
+    cy.wrap(farmosUtil.checkPermission('create-structure-asset')).should(
+      'be.true'
+    );
   });
 
-  it('Guest cannot create new land (e.g. field or bed)', () => {
+  it('Test getPermission function as guest', () => {
     cy.wrap(
       farmosUtil.getFarmOSInstance(
         'http://farmos',
@@ -40,45 +86,29 @@ describe('Test the permissions checking utility functions', () => {
         'farmdata2'
       )
     ).then(() => {
-      cy.wrap(farmosUtil.canCreateLand()).should('be.false');
+      cy.wrap(farmosUtil.getPermissions()).then(() => {
+        cy.wrap(farmosUtil.checkPermission('create-plant-asset')).should(
+          'be.false'
+        );
+        cy.wrap(farmosUtil.checkPermission('create-structure-asset')).should(
+          'be.false'
+        );
+      });
     });
   });
 
-  it('Admin can create new structure (e.g. greenhouse)', () => {
-    cy.wrap(farmosUtil.getFarmOSInstance()).then(() => {
-      cy.wrap(farmosUtil.canCreateStructure()).should('be.true');
-    });
-  });
-
-  it('Guest cannot create new structure (e.g. greenhouse)', () => {
+  it('Test getPermission with a non-existent permission', () => {
     cy.wrap(
-      farmosUtil.getFarmOSInstance(
-        'http://farmos',
-        'farm',
-        'guest',
-        'farmdata2'
-      )
-    ).then(() => {
-      cy.wrap(farmosUtil.canCreateStructure()).should('be.false');
-    });
-  });
-
-  it('Admin can create new tray size', () => {
-    cy.wrap(farmosUtil.getFarmOSInstance()).then(() => {
-      cy.wrap(farmosUtil.canCreateTraySize()).should('be.true');
-    });
-  });
-
-  it('Guest cannot create new tray size', () => {
-    cy.wrap(
-      farmosUtil.getFarmOSInstance(
-        'http://farmos',
-        'farm',
-        'guest',
-        'farmdata2'
-      )
-    ).then(() => {
-      cy.wrap(farmosUtil.canCreateTraySize()).should('be.false');
-    });
+      farmosUtil
+        .checkPermission('blah blah')
+        .then(() => {
+          throw new Error('Fetching undefined permission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).to.equal(
+            'Permission blah blah does not exist.'
+          );
+        })
+    );
   });
 });

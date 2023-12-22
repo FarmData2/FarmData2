@@ -78,6 +78,12 @@ Document where these things are in the code somehow.
 - Components indicate errors by emitting an `error` event with the error message.
   - A `v-on:error="(msg) => showErrorToast('Title', msg)"` listener should be attached to any component that emits an error event. The title should be generalized to the entrypoint. The component will have printed more detailed information to the console for debugging. See `tray_seeding/App.vue` for an example.
 
+## farmOS Permissions Checking
+
+A component can check the permissions of the logged in farmOS user using appropriate function in `farmosUtil.js`.
+
+If a permission needs to be checked that is not yet supported it can be added to the `$perms` array in the `permissions` function in `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
+
 ## Testing
 
 - use `bin/test.bash` (see its docs).

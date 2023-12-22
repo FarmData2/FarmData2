@@ -121,6 +121,12 @@ Custom FarmData2 Vue Components.
 
 - If a component only contains one element, then it should be wrapped in a `<div>` element. See the `CommentComponent` component for an example and explanation.
 
+### farmOS Permissions Checking
+
+A component can check the permissions of the logged in farmOS user using appropriate function in `farmosUtil.js`.
+
+If a permission needs to be checked that is not yet supported it can be added to the `$perms` array in the `permissions` function in `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
+
 ## Component Testing
 
 - use `bin/test.bash`
