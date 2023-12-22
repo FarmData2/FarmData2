@@ -1,3 +1,11 @@
+farm.fd2_permissions_api:
+  path: '/api/permissions'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::permissions'
+    _title: 'permissions'
+  methods: [GET]
+  requirements:
+    _user_is_logged_in: 'TRUE'
 farm.fd2_main.content:
   path: '/fd2/main'
   defaults:
