@@ -137,7 +137,7 @@ export default {
     let land = [];
     let canCreateLand = false;
     if (this.includeFields) {
-      canCreateLand = farmosUtil.canCreateLand();
+      canCreateLand = farmosUtil.checkPermission('create-land-asset');
 
       land = farmosUtil.getFieldOrBedNameToAssetMap().then((fieldMap) => {
         let fields = Array.from(fieldMap.keys());
@@ -148,7 +148,7 @@ export default {
     let structures = [];
     let canCreateStructure = false;
     if (this.includeGreenhouses) {
-      canCreateStructure = farmosUtil.canCreateStructure();
+      canCreateStructure = farmosUtil.checkPermission('create-structure-asset');
 
       structures = farmosUtil
         .getGreenhouseNameToAssetMap()

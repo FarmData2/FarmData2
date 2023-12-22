@@ -108,7 +108,7 @@ export default {
   },
   watch: {},
   created() {
-    let canCreate = farmosUtil.canCreatePlantType();
+    let canCreate = farmosUtil.checkPermission('create-plant-asset');
     let cropMap = farmosUtil.getCropNameToTermMap();
 
     Promise.all([canCreate, cropMap])

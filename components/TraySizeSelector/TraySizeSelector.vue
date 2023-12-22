@@ -110,7 +110,7 @@ export default {
   },
   watch: {},
   created() {
-    let canCreate = farmosUtil.canCreateTraySize();
+    let canCreate = farmosUtil.checkPermission('create-terms-in-tray_size');
     let trayMap = farmosUtil.getTraySizeToTermMap();
 
     Promise.all([canCreate, trayMap])
