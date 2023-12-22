@@ -65,9 +65,13 @@ import * as runExclusive from 'run-exclusive';
  * @returns {boolean} true if the page is within farmOS, false if not.
  */
 function inFarmOS() {
-  const onLocalhost = document.URL.startsWith('http://localhost');
-  const inFarmOS = !onLocalhost;
-  return inFarmOS;
+  try {
+    const onLocalhost = document.URL.startsWith('http://localhost');
+    const inFarmOS = !onLocalhost;
+    return inFarmOS;
+  } catch (e) {
+    return false;
+  }
 }
 
 /*
@@ -392,9 +396,12 @@ async function getFarmOSInstanceForNotInFarmOS(
 
   /*
    * If we don't have an authentication token cached in localStorage,
-   * then authenticate with the farmOS host to get the token.
+   * then authenticate with the farmOS host to get the token.  We may
+   * be changing users as well so clear the permissions if they were
+   * cached.
    */
   if (global_farm.remote.getToken() === null) {
+    clearCachedPermissions();
     await global_farm.remote.authorize(user, pass);
   }
 
@@ -1247,7 +1254,7 @@ export function clearCachedLogCategories() {
 /**
  * @private
  *
- * Get the `global_units` object.  This is useful for testing to ensure
+ * Get the `global_log_categories` object.  This is useful for testing to ensure
  * that the global is set by the appropriate functions.
  */
 export function getGlobalLogCategories() {
@@ -1257,7 +1264,7 @@ export function getGlobalLogCategories() {
 /**
  * @private
  *
- * Clear the `global_units` object.  This is useful for testing to ensure
+ * Clear the `global_log_categories` object.  This is useful for testing to ensure
  * that the global is not set prior to the test.
  */
 export function clearGlobalLogCategories() {
@@ -1355,107 +1362,120 @@ export async function getLogCategoryIdToTermMap() {
   return map;
 }
 
-/**
- * Check if the current user has permission to create a new crop (i.e. `taxonomy_term--plant_type`).
- *
- * @return {boolean} true if the current user has permission to create a new crop.
- *
- * @category Permissions
- */
-export async function canCreatePlantType() {
-  const farm = await getFarmOSInstance();
-  const testCrop = farm.term.create({
-    type: 'taxonomy_term--plant_type',
-    attributes: {
-      name: 'Permission Check',
-    },
-  });
+// Used to cache result of the getPermissions function.
+var global_permissions = null;
 
-  try {
-    await farm.term.send(testCrop);
-    await farm.term.delete('plant_type', testCrop.id);
-    return true;
-  } catch (err) {
-    return false;
+/**
+ * Clear the cached results from prior calls to the `getPermissions` function.
+ * This is useful when it is necessary to force the permissions to be refreshed.
+ * (e.g. changing users during a test.)
+ *
+ * @category LogCategories
+ */
+export function clearCachedPermissions() {
+  global_permissions = null;
+  if (libSessionStorage) {
+    libSessionStorage.removeItem('permissions');
   }
 }
 
 /**
- * Check if the current user has permission to create a new field or bed (i.e. `asset--land`).
+ * @private
  *
- * @return {boolean} true if the current user has permission to create a new field or bed.
+ * Get the `global_permissions` object.  This is useful for testing to ensure
+ * that the global is set by the appropriate functions.
+ */
+export function getGlobalPermissions() {
+  return global_permissions;
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_permissions` object.  This is useful for testing to ensure
+ * that the global is not set prior to the test.
+ */
+export function clearGlobalPermissions() {
+  global_permissions = null;
+}
+
+/**
+ * Get the permissions for the currently logged in farmOS user.
+ * The list of permissions can be seen by logging into farmOS and visiting:
+ *     http://farmos/api/permissions
+ *
+ * If a permission needs to be checked that is not yet supported it can be added
+ * to the `$perms` array in the `permissions` function in
+ * `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
+ *
+ * The list of possible permissions can be found by logging into farmOS as `admin`
+ * and visiting: http://farmos/admin/people/permissions. Right click on a checkbox
+ * associated with a permission and "inspect" the element.  The name of the permission
+ * (e.g. `create plant asset`) is given in the `name` attribute of the checkbox element.
+ *
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedPermissions`]{@link #module_farmosUtil.clearCachedPermissions}
+ * function to clear the cache.
+ *
+ * @throws {Error} if unable to fetch the permissions.
+ * @returns {Object} an object with one property for each permission.
+ * Each permission will have a `true` or `false` value.
  *
  * @category Permissions
  */
-export async function canCreateLand() {
+export async function getPermissions() {
+  if (global_permissions) {
+    return global_permissions;
+  }
+
   const farm = await getFarmOSInstance();
 
-  const testLand = farm.asset.create({
-    type: 'asset--land',
-    attributes: {
-      name: 'Permission Check',
-      land_type: 'field',
-    },
-  });
+  const permissionsSS = libSessionStorage.getItem('permissions');
+  if (permissionsSS) {
+    global_permissions = JSON.parse(permissionsSS);
+    return global_permissions;
+  }
 
   try {
-    await farm.asset.send(testLand);
-    await farm.asset.delete('land', testLand.id);
-    return true;
+    const resp = await farm.remote.request.get('http://farmos/api/permissions');
+    const permissions = resp.data.permissions;
+
+    libSessionStorage.setItem('permissions', JSON.stringify(permissions));
+    global_permissions = permissions;
+
+    return global_permissions;
   } catch (err) {
-    return false;
+    throw new Error('Unable to fetch permissions.', err);
   }
 }
 
 /**
- * Check if the current user has permission to create a new `asset--structure`.
+ * Check if the current user has a specific permission.
  *
- * @return {boolean} true if the current user has permission to create a new `asset--structure`.
+ * The list of permissions can be seen by logging into farmOS and visiting:
+ *   http://farmos/api/permissions
  *
- * @category Permissions
- */
-export async function canCreateStructure() {
-  const farm = await getFarmOSInstance();
-
-  const testStructure = farm.asset.create({
-    type: 'asset--structure',
-    attributes: {
-      name: 'Permission Check',
-      structure_type: 'greenhouse',
-    },
-  });
-
-  try {
-    await farm.asset.send(testStructure);
-    await farm.asset.delete('structure', testStructure.id);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-/**
- * Check if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ * NOTE: This function makes a call to
+ * [`getPermissions`]{@link #module_farmosUtil.getPermissions}
+ * and uses the returned `Object` to check the permission.
  *
- * @return {boolean} true if the current user has permission to create a new tray size (i.e. `taxonomy_term--tray_size`).
+ * @throws {Error} if unable to fetch the permissions.
+ * @throws {Error} if the requested permission does not exist.
+ * @return {boolean} true if the current user has the specified permission.
  *
  * @category Permissions
  */
-export async function canCreateTraySize() {
-  const farm = await getFarmOSInstance();
-
-  const testTraySize = farm.term.create({
-    type: 'taxonomy_term--tray_size',
-    attributes: {
-      name: 'Permission Check',
-    },
-  });
-
-  try {
-    await farm.term.send(testTraySize);
-    await farm.term.delete('tray_size', testTraySize.id);
-    return true;
-  } catch (err) {
-    return false;
+export async function checkPermission(permissionName) {
+  const permissions = await getPermissions();
+  const perm = permissions[permissionName];
+  if (perm === undefined) {
+    /*
+     * Throw an error here because the permission name is a string and
+     * this will cause code to fail fast if the developer makes a typo
+     * in the permission name, instead of returning false.
+     */
+    throw new Error(`Permission ${permissionName} does not exist.`);
+  } else {
+    return perm;
   }
 }
