@@ -50,6 +50,15 @@
 import farmOS from 'farmos';
 import * as runExclusive from 'run-exclusive';
 
+/*
+ * These two variables will be used throughout to access either the
+ * browser's localStorage/sessionStorage or the simulated versions
+ * provided by node-localstorage from Node programs that used this
+ * library.
+ */
+var libLocalStorage = null;
+var libSessionStorage = null;
+
 /**
  * @private
  *
@@ -75,31 +84,41 @@ function inFarmOS() {
 }
 
 /*
- * Ensure that we only create one instance of the farmOS object
- * per page reload.  This is done to avoid fetching the schema
- * every time a farmOS object is needed.
+ * This global object holds all of the values that are cached in the
+ * session storage by this library.  These are object that require
+ * communication with the farmOS server.  They are cached to prevent
+ * the overhead of repeated API calls for the same information.
+ *
+ * Things cached in this global are cached in the sessionStorage
+ * also.
  */
-var global_farm = null;
+var fd2Cache = {
+  /*
+   * The global farm variable ensures
+   * that we only create one instance of the `farmOS` object
+   * per page reload.  This is done so that we avoid the cost of
+   * fetching the schema every time a `farmOS` object is needed within
+   * a page.
+   */
+  farm: null,
+
+  // Users in the farmOS server/
+  users: null,
+};
 
 /**
- * Clears the global farm variable.
- *
- * The global farm variable ensures
- * that we only create one instance of the `farmOS` object
- * per page reload.  This is done so that we avoid the cost of
- * fetching the schema every time a `farmOS` object is needed within
- * a page.
+ * Clears the cached farm variable but not the values stored in
+ * the session storage.
  *
  * The primary use case for this function is in testing.  For example,
  * it allow us to test that the  `farmOS` object is cached both in a
- * global variable and in the `sessionStorage`.
- * It could also be useful to force a reload of
- * the schema if that were ever necessary.
+ * global variable and in the `sessionStorage`.  It could also be useful
+ * to force a reload of the schema if that were ever necessary.
  *
  * @category farmOS
  */
 export function clearFarmGlobal() {
-  global_farm = null;
+  fd2Cache.farm = null;
 }
 
 /**
@@ -109,7 +128,7 @@ export function clearFarmGlobal() {
  * @category farmOS
  */
 export function clearCachedFarm() {
-  global_farm = null;
+  fd2Cache.farm = null;
   if (libSessionStorage) {
     libSessionStorage.removeItem('schema');
   }
@@ -121,21 +140,12 @@ export function clearCachedFarm() {
 /**
  * @private
  *
- * Get the `global_farm` object.  This is useful for testing to ensure
- * that the global is set at appropriate times.
+ * Get the global variable used to cache the farmOS object.
+ * This is useful for testing to ensure that the global is set at appropriate times.
  */
 export function getFarmGlobal() {
-  return global_farm;
+  return fd2Cache.farm;
 }
-
-/*
- * These two variables will be used throughout to access either the
- * browser's localStorage/sessionStorage or the simulated versions
- * provided by node-localstorage from Node programs that used this
- * library.
- */
-var libLocalStorage = null;
-var libSessionStorage = null;
 
 /**
  * Create and return an instance of the `farmos.js` `farmOS` object that will be used
@@ -250,9 +260,7 @@ export const getFarmOSInstance = runExclusive.build(
          * We have been called from a test that provides specific credentials.
          * So we will create a new farmOS object with those credentials.
          */
-        clearFarmGlobal();
-        libLocalStorage.removeItem('farmOStoken');
-        libSessionStorage.removeItem('schema');
+        clearCachedFarm();
         return await getFarmOSInstanceForNotInFarmOS(
           hostURL,
           client,
@@ -284,8 +292,8 @@ export const getFarmOSInstance = runExclusive.build(
  * that modify the database.
  */
 async function getFarmOSInstanceForInFarmOS() {
-  if (global_farm) {
-    return global_farm;
+  if (fd2Cache.farm) {
+    return fd2Cache.farm;
   } else {
     /*
      * Get the CSRF token needed for requests that modify data
@@ -325,10 +333,10 @@ async function getFarmOSInstanceForInFarmOS() {
     };
     const options = { remote: config };
 
-    global_farm = farmOS(options);
-    await setFarmSchema(global_farm);
+    fd2Cache.farm = farmOS(options);
+    await setFarmSchema(fd2Cache.farm);
 
-    return global_farm;
+    return fd2Cache.farm;
   }
 }
 
@@ -351,13 +359,13 @@ async function getFarmOSInstanceForNotInFarmOS(
    * storage does not contain a token, clear the global farm object so that we
    * create a new farm object from scratch.
    */
-  if (global_farm && global_farm.remote.getToken() === null) {
+  if (fd2Cache.farm && fd2Cache.farm.remote.getToken() === null) {
     clearFarmGlobal();
   }
 
   // Only create a new farm object if we don't already have one in global_farm.
   let newFarm = false;
-  if (!global_farm) {
+  if (!fd2Cache.farm) {
     newFarm = true;
 
     /*
@@ -388,9 +396,9 @@ async function getFarmOSInstanceForNotInFarmOS(
      * is not.
      */
     if (typeof farmOS != 'function') {
-      global_farm = farmOS.default(options);
+      fd2Cache.farm = farmOS.default(options);
     } else {
-      global_farm = farmOS(options);
+      fd2Cache.farm = farmOS(options);
     }
   }
 
@@ -400,17 +408,17 @@ async function getFarmOSInstanceForNotInFarmOS(
    * be changing users as well so clear the permissions if they were
    * cached.
    */
-  if (global_farm.remote.getToken() === null) {
+  if (fd2Cache.farm.remote.getToken() === null) {
     clearCachedPermissions();
-    await global_farm.remote.authorize(user, pass);
+    await fd2Cache.farm.remote.authorize(user, pass);
   }
 
   // If we created a new farm object then we need to get the schema.
   if (newFarm) {
-    await setFarmSchema(global_farm);
+    await setFarmSchema(fd2Cache.farm);
   }
 
-  return global_farm;
+  return fd2Cache.farm;
 }
 
 /**
@@ -449,41 +457,138 @@ export function printObject(farm, recordType) {
   console.dir(obj);
 }
 
-// Used to cache result of the getUsers function.
-var global_users = null;
+/**
+ * @private
+ *
+ * Checks the cache (global variable fd2Cache and sessionStorage) for a value with the
+ * given key.  If the value is found in either cache, it is returned.  Otherwise
+ * the fetchFunction is called.  The value returned by the fetchFunction is then
+ * cached in both the fd2Cache variable and the sessionStorage and is then returned.
+ *
+ * @param {String} key the key associated with the value being fetched.
+ * @param {Function} fetchFunction a function that fetches the value from the
+ * farmOS API if necessary.  This function should return the result of the
+ * API call or throw an Error if the API call fails.
+ * @throws {Error} propagates any error thrown by the `fetchFunction`.
+ * @returns the value returned by the fetch function, either from the cache
+ * or by calling the fetchFunction if the value is not cached..
+ */
+async function fetchWithCaching(key, fetchFunction) {
+  /*
+   * If the value to be fetched exits in the global variable cache
+   * return it from there.
+   */
+  if (fd2Cache[key]) {
+    return fd2Cache[key];
+  }
+
+  /*
+   * Note we don't necessarily need a farmOS object here but we need
+   * to be sure one has been created before we use the libSessionStorage
+   * so that we know it ha been initialized.
+   */
+  await getFarmOSInstance();
+
+  /*
+   * If the value to be fetch exists in the sessionStorage then
+   * return it from there.
+   */
+  const fromSS = libSessionStorage.getItem(key);
+  if (fromSS) {
+    fd2Cache[key] = JSON.parse(fromSS);
+    return fd2Cache[key];
+  }
+
+  /*
+   * Value to be fetched is neither in a global nor in the session storage
+   * so fetch it using the API.
+   */
+  const fromAPI = await fetchFunction();
+
+  /*
+   * Now cache the fetched value both in the session storage and in
+   * the global variable.
+   */
+  libSessionStorage.setItem(key, JSON.stringify(fromAPI.data));
+  fd2Cache[key] = fromAPI.data;
+  return fd2Cache[key];
+}
 
 /**
- * Clear the cached results from prior calls to the `getUsers` function.
- * This is useful when an action may change the users that exist in the
- * system
+ * @private
  *
- * @category Users
+ * Get the value associated with the key in the fd2Cache global
+ * variable.
+ *
+ * @param {String} key the key for the desired value.
+ * @returns the value associated with the key in fd2Cache.
  */
-export function clearCachedUsers() {
-  global_users = null;
+export function getFromGlobalVariableCache(key) {
+  return fd2Cache[key];
+}
+
+/**
+ * @private
+ *
+ * Clear the value in the fd2Cache global variable that is
+ * associated with the key.
+ *
+ * @param {String} key the key for the value to be cleared.
+ */
+export function clearFromGlobalVariableCache(key) {
+  fd2Cache[key] = null;
+}
+
+/**
+ * @private
+ *
+ * Clear the value associated with the key from the fd2Cache global
+ * variable and from the session storage.
+ *
+ * @param {String} key the key associated with the value to be cleared.
+ */
+export function clearCachedValue(key) {
+  fd2Cache[key] = null;
   if (libSessionStorage) {
     libSessionStorage.removeItem('users');
   }
 }
 
 /**
- * @private
+ * Clear the cached results from prior calls to the `getUsers` function.
+ * This is useful when an action may change the users that exist in the
+ * system.
  *
- * Get the `global_users` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
+ * @category Users
  */
-export function getGlobalUsers() {
-  return global_users;
+export function clearCachedUsers() {
+  clearCachedValue('users');
 }
 
 /**
  * @private
  *
- * Clear the `global_users` object.  This is useful for testing to ensure
- * that the global is not set by prior tests.
+ * Get the `global_users` object.  This is used for testing to ensure
+ * that the global is set by the appropriate functions.  This function
+ * should not be used in front end code. Use the
+ * [`getUsers`]{@link #module_farmosUtil.getUsers}
+ * function instead.
+ */
+export function getGlobalUsers() {
+  return getFromGlobalVariableCache('users');
+}
+
+/**
+ * @private
+ *
+ * Clear the `global_users` object.  This is used for testing to ensure
+ * that the global is not set by prior tests. This function
+ * should not be used in front end code. Use the
+ * [`clearCachedUsers`]{@link #module_farmosUtil.clearCachedUsers}
+ * function instead.
  */
 export function clearGlobalUsers() {
-  global_users = null;
+  clearFromGlobalVariableCache('users');
 }
 
 /**
@@ -503,37 +608,27 @@ export function clearGlobalUsers() {
  * @category Users
  */
 export async function getUsers() {
-  if (global_users) {
-    return global_users;
-  }
+  return fetchWithCaching('users', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const users = await farm.user.fetch({
+      filter: {
+        type: 'user--user',
+        status: true,
+      },
+      limit: Infinity,
+    });
 
-  const usersSS = libSessionStorage.getItem('users');
-  if (usersSS) {
-    global_users = JSON.parse(usersSS);
-    return global_users;
-  }
+    if (users.rejected.length != 0) {
+      throw new Error('Unable to fetch users.', users.rejected);
+    }
 
-  const users = await farm.user.fetch({
-    filter: {
-      type: 'user--user',
-      status: true,
-    },
-    limit: Infinity,
+    users.data.sort((o1, o2) =>
+      o1.attributes.display_name.localeCompare(o2.attributes.display_name)
+    );
+
+    return users;
   });
-
-  if (users.rejected.length != 0) {
-    throw new Error('Unable to fetch users.', users.rejected);
-  }
-
-  users.data.sort((o1, o2) =>
-    o1.attributes.display_name.localeCompare(o2.attributes.display_name)
-  );
-
-  libSessionStorage.setItem('users', JSON.stringify(users.data));
-  global_users = users.data;
-  return global_users;
 }
 
 /**
