@@ -470,10 +470,9 @@ export function printObject(farm, recordType) {
  * farmOS API if necessary.  This function should return the result of the
  * API call or throw an Error if the API call fails.
  * @throws {Error} propagates any error thrown by the `fetchFunction`.
- * @returns the value returned by the fetch function, either from the cache
- * or by calling the fetchFunction if the value is not cached..
+ * @returns {Object} the value of the data property in the object returned by the fetch function.
  */
-async function fetchWithCaching(key, fetchFunction) {
+export async function fetchWithCaching(key, fetchFunction) {
   /*
    * If the value to be fetched exits in the global variable cache
    * return it from there.
