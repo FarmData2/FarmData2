@@ -75,6 +75,7 @@ var fd2Cache = {
   crops: null,
   tray_sizes: null,
   units: null,
+  log_categories: null,
 };
 
 /*
@@ -1106,9 +1107,6 @@ export async function getUnitIdToTermMap() {
   return map;
 }
 
-// Used to cache result of the getLogCategories function.
-var global_log_categories = null;
-
 /**
  * Clear the cached results from prior calls to the `getLogCategories` function.
  * This is useful when an action may change the log categories that exist in the
@@ -1117,30 +1115,7 @@ var global_log_categories = null;
  * @category LogCategories
  */
 export function clearCachedLogCategories() {
-  global_log_categories = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('log_categories');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_log_categories` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalLogCategories() {
-  return global_log_categories;
-}
-
-/**
- * @private
- *
- * Clear the `global_log_categories` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalLogCategories() {
-  global_log_categories = null;
+  clearCachedValue('log_categories');
 }
 
 /**
@@ -1158,36 +1133,26 @@ export function clearGlobalLogCategories() {
  * @category LogCategories
  */
 export async function getLogCategories() {
-  if (global_log_categories) {
-    return global_log_categories;
-  }
+  return fetchWithCaching('log_categories', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const categories = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--log_category',
+      },
+      limit: Infinity,
+    });
 
-  const logCategoriesSS = libSessionStorage.getItem('log_categories');
-  if (logCategoriesSS) {
-    global_log_categories = JSON.parse(logCategoriesSS);
-    return global_log_categories;
-  }
+    if (categories.rejected.length != 0) {
+      throw new Error('Unable to fetch log categories.', categories.rejected);
+    }
 
-  const categories = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--log_category',
-    },
-    limit: Infinity,
+    categories.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return categories.data;
   });
-
-  if (categories.rejected.length != 0) {
-    throw new Error('Unable to fetch log categories.', categories.rejected);
-  }
-
-  categories.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
-  global_log_categories = categories.data;
-  return global_log_categories;
 }
 
 /**
@@ -1205,11 +1170,9 @@ export async function getLogCategories() {
  */
 export async function getLogCategoryToTermMap() {
   const categories = await getLogCategories();
-
   const map = new Map(
     categories.map((category) => [category.attributes.name, category])
   );
-
   return map;
 }
 
@@ -1228,9 +1191,7 @@ export async function getLogCategoryToTermMap() {
  */
 export async function getLogCategoryIdToTermMap() {
   const categories = await getLogCategories();
-
   const map = new Map(categories.map((category) => [category.id, category]));
-
   return map;
 }
 
