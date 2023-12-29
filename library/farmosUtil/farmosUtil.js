@@ -72,6 +72,7 @@ var fd2Cache = {
   users: null,
   fields_and_beds: null,
   greenhouses: null,
+  crops: null,
 };
 
 /*
@@ -817,9 +818,7 @@ export async function getGreenhouses() {
  */
 export async function getGreenhouseNameToAssetMap() {
   const greenhouses = await getGreenhouses();
-
   const map = new Map(greenhouses.map((gh) => [gh.attributes.name, gh]));
-
   return map;
 }
 
@@ -838,14 +837,9 @@ export async function getGreenhouseNameToAssetMap() {
  */
 export async function getGreenhouseIdToAssetMap() {
   const greenhouses = await getGreenhouses();
-
   const map = new Map(greenhouses.map((gh) => [gh.id, gh]));
-
   return map;
 }
-
-// Used to cache result of the getCrops function.
-var global_crops = null;
 
 /**
  * Clear the cached results from prior calls to the `getCrops` function.
@@ -855,30 +849,7 @@ var global_crops = null;
  * @category Crops
  */
 export function clearCachedCrops() {
-  global_crops = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('crops');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_crops` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalCrops() {
-  return global_crops;
-}
-
-/**
- * @private
- *
- * Clear the `global_crops` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalCrops() {
-  global_crops = null;
+  clearCachedValue('crops');
 }
 
 /**
@@ -897,36 +868,26 @@ export function clearGlobalCrops() {
  * @category Crops
  */
 export async function getCrops() {
-  if (global_crops) {
-    return global_crops;
-  }
+  return fetchWithCaching('crops', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const crops = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--plant_type',
+      },
+      limit: Infinity,
+    });
 
-  const cropsSS = libSessionStorage.getItem('crops');
-  if (cropsSS) {
-    global_crops = JSON.parse(cropsSS);
-    return global_crops;
-  }
+    if (crops.rejected.length != 0) {
+      throw new Error('Unable to fetch crops.', crops.rejected);
+    }
 
-  const crops = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--plant_type',
-    },
-    limit: Infinity,
+    crops.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return crops.data;
   });
-
-  if (crops.rejected.length != 0) {
-    throw new Error('Unable to fetch crops.', crops.rejected);
-  }
-
-  crops.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('crops', JSON.stringify(crops.data));
-  global_crops = crops.data;
-  return global_crops;
 }
 
 /**
@@ -944,9 +905,7 @@ export async function getCrops() {
  */
 export async function getCropNameToTermMap() {
   const crops = await getCrops();
-
   const map = new Map(crops.map((cr) => [cr.attributes.name, cr]));
-
   return map;
 }
 
@@ -965,9 +924,7 @@ export async function getCropNameToTermMap() {
  */
 export async function getCropIdToTermMap() {
   const crops = await getCrops();
-
   const map = new Map(crops.map((cr) => [cr.id, cr]));
-
   return map;
 }
 
