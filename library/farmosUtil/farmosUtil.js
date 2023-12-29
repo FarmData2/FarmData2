@@ -74,6 +74,7 @@ var fd2Cache = {
   greenhouses: null,
   crops: null,
   tray_sizes: null,
+  units: null,
 };
 
 /*
@@ -996,9 +997,7 @@ export async function getTraySizes() {
  */
 export async function getTraySizeToTermMap() {
   const sizes = await getTraySizes();
-
   const map = new Map(sizes.map((sz) => [sz.attributes.name, sz]));
-
   return map;
 }
 
@@ -1017,14 +1016,9 @@ export async function getTraySizeToTermMap() {
  */
 export async function getTraySizeIdToTermMap() {
   const sizes = await getTraySizes();
-
   const map = new Map(sizes.map((sz) => [sz.id, sz]));
-
   return map;
 }
-
-// Used to cache result of the getUnits function.
-var global_units = null;
 
 /**
  * Clear the cached results from prior calls to the `getUnits` function.
@@ -1034,30 +1028,7 @@ var global_units = null;
  * @category Units
  */
 export function clearCachedUnits() {
-  global_units = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('units');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_units` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalUnits() {
-  return global_units;
-}
-
-/**
- * @private
- *
- * Clear the `global_units` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalUnits() {
-  global_units = null;
+  clearCachedValue('units');
 }
 
 /**
@@ -1075,36 +1046,26 @@ export function clearGlobalUnits() {
  * @category Units
  */
 export async function getUnits() {
-  if (global_units) {
-    return global_units;
-  }
+  return fetchWithCaching('units', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const units = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--unit',
+      },
+      limit: Infinity,
+    });
 
-  const unitsSS = libSessionStorage.getItem('units');
-  if (unitsSS) {
-    global_units = JSON.parse(unitsSS);
-    return global_units;
-  }
+    if (units.rejected.length != 0) {
+      throw new Error('Unable to fetch units.', units.rejected);
+    }
 
-  const units = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--unit',
-    },
-    limit: Infinity,
+    units.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return units.data;
   });
-
-  if (units.rejected.length != 0) {
-    throw new Error('Unable to fetch units.', units.rejected);
-  }
-
-  units.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('units', JSON.stringify(units.data));
-  global_units = units.data;
-  return global_units;
 }
 
 /**
@@ -1122,9 +1083,7 @@ export async function getUnits() {
  */
 export async function getUnitToTermMap() {
   const sizes = await getUnits();
-
   const map = new Map(sizes.map((unit) => [unit.attributes.name, unit]));
-
   return map;
 }
 
@@ -1143,9 +1102,7 @@ export async function getUnitToTermMap() {
  */
 export async function getUnitIdToTermMap() {
   const units = await getUnits();
-
   const map = new Map(units.map((unit) => [unit.id, unit]));
-
   return map;
 }
 
