@@ -44,6 +44,17 @@ describe('Test the permissions checking utility functions', () => {
     });
   });
 
+  it('Check that permissions are cached', () => {
+    farmosUtil.clearCachedFarm();
+    farmosUtil.clearCachedPermissions();
+    // calling getPermissions here will use admin credentials
+    cy.wrap(farmosUtil.getPermissions()).then(() => {
+      expect(farmosUtil.getFromGlobalVariableCache('permissions')).to.not.be
+        .null;
+      expect(sessionStorage.getItem('permissions')).to.not.be.null;
+    });
+  });
+
   it(
     'Test that getPermissions throws error if fetch fails',
     { retries: 4 },
@@ -70,7 +81,7 @@ describe('Test the permissions checking utility functions', () => {
 
   it('Test getPermission function as admin', () => {
     farmosUtil.clearCachedFarm();
-
+    // calling checkPermission here will use admin credentials
     cy.wrap(farmosUtil.checkPermission('create-plant-asset')).should('be.true');
     cy.wrap(farmosUtil.checkPermission('create-structure-asset')).should(
       'be.true'

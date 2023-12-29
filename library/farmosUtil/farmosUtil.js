@@ -76,6 +76,7 @@ var fd2Cache = {
   tray_sizes: null,
   units: null,
   log_categories: null,
+  permissions: null,
 };
 
 /*
@@ -477,8 +478,8 @@ export function printObject(farm, recordType) {
  * from the API call is wrapped in the `data` array property then this function should
  * just return the `data` array and not the entire response object.
  * @throws {Error} propagates any error thrown by the `fetchFunction`.
- * @returns {Array<Object>} an array of objects representing the requested data.
- * If an APi
+ * @returns {*} an Array<Object> or an Object (depending upon what is being fetched)
+ * containing the requested data.
  */
 export async function fetchWithCaching(key, fetchFunction) {
   /*
@@ -1195,9 +1196,6 @@ export async function getLogCategoryIdToTermMap() {
   return map;
 }
 
-// Used to cache result of the getPermissions function.
-var global_permissions = null;
-
 /**
  * Clear the cached results from prior calls to the `getPermissions` function.
  * This is useful when it is necessary to force the permissions to be refreshed.
@@ -1206,30 +1204,7 @@ var global_permissions = null;
  * @category LogCategories
  */
 export function clearCachedPermissions() {
-  global_permissions = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('permissions');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_permissions` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalPermissions() {
-  return global_permissions;
-}
-
-/**
- * @private
- *
- * Clear the `global_permissions` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalPermissions() {
-  global_permissions = null;
+  clearCachedValue('permissions');
 }
 
 /**
@@ -1257,29 +1232,17 @@ export function clearGlobalPermissions() {
  * @category Permissions
  */
 export async function getPermissions() {
-  if (global_permissions) {
-    return global_permissions;
-  }
-
-  const farm = await getFarmOSInstance();
-
-  const permissionsSS = libSessionStorage.getItem('permissions');
-  if (permissionsSS) {
-    global_permissions = JSON.parse(permissionsSS);
-    return global_permissions;
-  }
-
-  try {
-    const resp = await farm.remote.request.get('http://farmos/api/permissions');
-    const permissions = resp.data.permissions;
-
-    libSessionStorage.setItem('permissions', JSON.stringify(permissions));
-    global_permissions = permissions;
-
-    return global_permissions;
-  } catch (err) {
-    throw new Error('Unable to fetch permissions.', err);
-  }
+  return fetchWithCaching('permissions', async () => {
+    try {
+      const farm = await getFarmOSInstance();
+      const resp = await farm.remote.request.get(
+        'http://farmos/api/permissions'
+      );
+      return resp.data.permissions;
+    } catch (err) {
+      throw new Error('Unable to fetch permissions.', err);
+    }
+  });
 }
 
 /**
