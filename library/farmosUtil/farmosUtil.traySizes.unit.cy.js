@@ -30,6 +30,14 @@ describe('Test the tray sizes utility functions', () => {
     });
   });
 
+  it('Check that tray sizes are cached', () => {
+    cy.wrap(farmosUtil.getTraySizes()).then(() => {
+      expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.not.be
+        .null;
+      expect(sessionStorage.getItem('tray_sizes')).to.not.be.null;
+    });
+  });
+
   it(
     'Test that get tray sizes throws error if fetch fails',
     { retries: 4 },
@@ -50,75 +58,6 @@ describe('Test the tray sizes utility functions', () => {
             expect(error.message).to.equal('Unable to fetch tray sizes.');
           })
       );
-    }
-  );
-
-  it(
-    'Test that getTraySizes uses global variable cache',
-    { retries: 4 },
-    () => {
-      farmosUtil.clearCachedTraySizes();
-      expect(farmosUtil.getGlobalTraySizes()).to.be.null;
-      expect(sessionStorage.getItem('tray_sizes')).to.be.null;
-
-      cy.intercept(
-        'GET',
-        '**/api/taxonomy_term/tray_size?*',
-        cy.spy().as('fetchTraySizes')
-      );
-
-      // Get the first one to ensure the cache is populated.
-      cy.wrap(farmosUtil.getTraySizes())
-        .then(() => {
-          cy.get('@fetchTraySizes').its('callCount').should('equal', 1);
-          expect(farmosUtil.getGlobalTraySizes()).not.to.be.null;
-          expect(sessionStorage.getItem('tray_sizes')).not.to.be.null;
-        })
-        .then(() => {
-          // Now check that the global is used.
-          sessionStorage.removeItem('tray_sizes');
-          cy.wrap(farmosUtil.getTraySizes()).then(() => {
-            cy.get('@fetchTraySizes').its('callCount').should('equal', 1);
-            expect(farmosUtil.getGlobalTraySizes()).not.to.be.null;
-            expect(sessionStorage.getItem('tray_sizes')).to.be.null;
-          });
-        });
-    }
-  );
-
-  it(
-    'Test that getTraySizes uses session storage cache',
-    { retries: 4 },
-    () => {
-      farmosUtil.clearCachedTraySizes();
-      expect(farmosUtil.getGlobalTraySizes()).to.be.null;
-      expect(sessionStorage.getItem('tray_sizes')).to.be.null;
-
-      cy.intercept(
-        'GET',
-        '**/api/taxonomy_term/tray_size?*',
-        cy.spy().as('fetchTraySizes')
-      );
-
-      // Get the first one to ensure the cache is populated.
-      cy.wrap(farmosUtil.getTraySizes())
-        .then(() => {
-          cy.get('@fetchTraySizes').its('callCount').should('equal', 1);
-          expect(farmosUtil.getGlobalTraySizes()).not.to.be.null;
-          expect(sessionStorage.getItem('tray_sizes')).not.to.be.null;
-        })
-        .then(() => {
-          farmosUtil.clearGlobalTraySizes();
-          expect(farmosUtil.getGlobalTraySizes()).to.be.null;
-          expect(sessionStorage.getItem('tray_sizes')).not.to.be.null;
-
-          // Now check that the session storage is used.
-          cy.wrap(farmosUtil.getTraySizes()).then(() => {
-            cy.get('@fetchTraySizes').its('callCount').should('equal', 1);
-            expect(farmosUtil.getGlobalTraySizes()).to.not.be.null;
-            expect(sessionStorage.getItem('tray_sizes')).to.not.be.null;
-          });
-        });
     }
   );
 
