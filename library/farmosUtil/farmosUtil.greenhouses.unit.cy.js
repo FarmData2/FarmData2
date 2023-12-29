@@ -47,13 +47,74 @@ describe('Test the greenhouse utility functions', () => {
     }
   );
 
-  it('Check that greenhouses are cached', () => {
-    cy.wrap(farmosUtil.getGreenhouses()).then(() => {
-      expect(farmosUtil.getFromGlobalVariableCache('greenhouses')).to.not.be
-        .null;
-      expect(sessionStorage.getItem('greenhouses')).to.not.be.null;
-    });
-  });
+  it(
+    'Test that getGreenhouses uses global variable cache',
+    { retries: 4 },
+    () => {
+      farmosUtil.clearCachedGreenhouses();
+      expect(farmosUtil.getGlobalGreenhouses()).to.be.null;
+      expect(sessionStorage.getItem('greenhouses')).to.be.null;
+
+      cy.intercept(
+        'GET',
+        '**/api/asset/structure?*',
+        cy.spy().as('fetchGreenhouses')
+      );
+
+      // Get the first one to ensure the cache is populated.
+      cy.wrap(farmosUtil.getGreenhouses())
+        .then(() => {
+          cy.get('@fetchGreenhouses').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalGreenhouses()).not.to.be.null;
+          expect(sessionStorage.getItem('greenhouses')).not.to.be.null;
+        })
+        .then(() => {
+          // Now check that the global is used.
+          sessionStorage.removeItem('greenhouses');
+          cy.wrap(farmosUtil.getGreenhouses()).then(() => {
+            cy.get('@fetchGreenhouses').its('callCount').should('equal', 1);
+            expect(farmosUtil.getGlobalGreenhouses()).not.to.be.null;
+            expect(sessionStorage.getItem('greenhouses')).to.be.null;
+          });
+        });
+    }
+  );
+
+  it(
+    'Test that getGreenhouses uses session storage cache',
+    { retries: 4 },
+    () => {
+      farmosUtil.clearCachedGreenhouses();
+      expect(farmosUtil.getGlobalGreenhouses()).to.be.null;
+      expect(sessionStorage.getItem('greenhouses')).to.be.null;
+
+      cy.intercept(
+        'GET',
+        '**/api/asset/structure?*',
+        cy.spy().as('fetchGreenhouses')
+      );
+
+      // Get the first one to ensure the cache is populated.
+      cy.wrap(farmosUtil.getGreenhouses())
+        .then(() => {
+          cy.get('@fetchGreenhouses').its('callCount').should('equal', 1);
+          expect(farmosUtil.getGlobalGreenhouses()).not.to.be.null;
+          expect(sessionStorage.getItem('greenhouses')).not.to.be.null;
+        })
+        .then(() => {
+          farmosUtil.clearGlobalGreenhouses();
+          expect(farmosUtil.getGlobalGreenhouses()).to.be.null;
+          expect(sessionStorage.getItem('greenhouses')).not.to.be.null;
+
+          // Now check that the session storage is used.
+          cy.wrap(farmosUtil.getGreenhouses()).then(() => {
+            cy.get('@fetchGreenhouses').its('callCount').should('equal', 1);
+            expect(farmosUtil.getGlobalGreenhouses()).to.not.be.null;
+            expect(sessionStorage.getItem('greenhouses')).to.not.be.null;
+          });
+        });
+    }
+  );
 
   it('Get the GreenhouseNameToAsset map', () => {
     cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((ghNameMap) => {
