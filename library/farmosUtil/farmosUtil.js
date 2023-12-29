@@ -102,8 +102,8 @@ var fd2Cache = {
    */
   farm: null,
 
-  // Users in the farmOS server/
   users: null,
+  fields_and_beds: null,
 };
 
 /**
@@ -468,9 +468,12 @@ export function printObject(farm, recordType) {
  * @param {String} key the key associated with the value being fetched.
  * @param {Function} fetchFunction a function that fetches the value from the
  * farmOS API if necessary.  This function should return the result of the
- * API call or throw an Error if the API call fails.
+ * API call or throw an Error if the API call fails.  If the relevant information
+ * from the API call is wrapped in the `data` array property then this function should
+ * just return the `data` array and not the entire response object.
  * @throws {Error} propagates any error thrown by the `fetchFunction`.
- * @returns {Object} the value of the data property in the object returned by the fetch function.
+ * @returns {Array<Object>} an array of objects representing the requested data.
+ * If an APi
  */
 export async function fetchWithCaching(key, fetchFunction) {
   /*
@@ -508,8 +511,9 @@ export async function fetchWithCaching(key, fetchFunction) {
    * Now cache the fetched value both in the session storage and in
    * the global variable.
    */
-  libSessionStorage.setItem(key, JSON.stringify(fromAPI.data));
-  fd2Cache[key] = fromAPI.data;
+  libSessionStorage.setItem(key, JSON.stringify(fromAPI));
+  fd2Cache[key] = fromAPI;
+
   return fd2Cache[key];
 }
 
@@ -549,7 +553,7 @@ export function clearFromGlobalVariableCache(key) {
 export function clearCachedValue(key) {
   fd2Cache[key] = null;
   if (libSessionStorage) {
-    libSessionStorage.removeItem('users');
+    libSessionStorage.removeItem(key);
   }
 }
 
@@ -600,7 +604,7 @@ export async function getUsers() {
       o1.attributes.display_name.localeCompare(o2.attributes.display_name)
     );
 
-    return users;
+    return users.data;
   });
 }
 
@@ -619,11 +623,9 @@ export async function getUsers() {
  */
 export async function getUsernameToUserMap() {
   const users = await getUsers();
-
   const map = new Map(
     users.map((user) => [user.attributes.display_name, user])
   );
-
   return map;
 }
 
@@ -641,14 +643,9 @@ export async function getUsernameToUserMap() {
  */
 export async function getUserIdToUserMap() {
   const users = await getUsers();
-
   const map = new Map(users.map((user) => [user.id, user]));
-
   return map;
 }
-
-// Used to cache result of the getFieldsAndBeds function.
-var global_fields_and_beds = null;
 
 /**
  * Clear the cached results from prior calls to the `getFieldsAndBeds` function.
@@ -658,30 +655,7 @@ var global_fields_and_beds = null;
  * @category FieldsAndBeds
  */
 export function clearCachedFieldsAndBeds() {
-  global_fields_and_beds = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('fields_and_beds');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_fields_and_beds` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalFieldsAndBeds() {
-  return global_fields_and_beds;
-}
-
-/**
- * @private
- *
- * Clear the `global_fields_and_beds` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalFieldsAndBeds() {
-  global_fields_and_beds = null;
+  clearCachedValue('fields_and_beds');
 }
 
 /**
@@ -700,50 +674,40 @@ export function clearGlobalFieldsAndBeds() {
  * @category FieldsAndBeds
  */
 export async function getFieldsAndBeds() {
-  // Done as two requests for now because of a bug in the farmOS.js library.
-  // https://github.com/farmOS/farmOS.js/issues/86
+  return fetchWithCaching('fields_and_beds', async () => {
+    const farm = await getFarmOSInstance();
 
-  if (global_fields_and_beds) {
-    return global_fields_and_beds;
-  }
+    // Done as two requests for now because of a bug in the farmOS.js library.
+    // https://github.com/farmOS/farmOS.js/issues/86
 
-  const farm = await getFarmOSInstance();
+    const beds = await farm.asset.fetch({
+      filter: {
+        type: 'asset--land',
+        land_type: 'bed',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const fieldsAndBedsSS = libSessionStorage.getItem('fields_and_beds');
-  if (fieldsAndBedsSS) {
-    global_fields_and_beds = JSON.parse(fieldsAndBedsSS);
-    return global_fields_and_beds;
-  }
+    const fields = await farm.asset.fetch({
+      filter: {
+        type: 'asset--land',
+        land_type: 'field',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const beds = await farm.asset.fetch({
-    filter: {
-      type: 'asset--land',
-      land_type: 'bed',
-      status: 'active',
-    },
-    limit: Infinity,
+    const rejects = fields.rejected.concat(beds.rejected);
+    if (rejects.length != 0) {
+      throw new Error('Unable to fetch fields and beds.', rejects);
+    }
+
+    const land = fields.data.concat(beds.data);
+    land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
+
+    return land;
   });
-
-  const fields = await farm.asset.fetch({
-    filter: {
-      type: 'asset--land',
-      land_type: 'field',
-      status: 'active',
-    },
-    limit: Infinity,
-  });
-
-  const rejects = fields.rejected.concat(beds.rejected);
-  if (rejects.length != 0) {
-    throw new Error('Unable to fetch fields and beds.', rejects);
-  }
-
-  const land = fields.data.concat(beds.data);
-  land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
-
-  libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
-  global_fields_and_beds = land;
-  return global_fields_and_beds;
 }
 
 /**
@@ -761,11 +725,9 @@ export async function getFieldsAndBeds() {
  */
 export async function getFieldOrBedNameToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
-
   const map = new Map(
     fieldsAndBeds.map((land) => [land.attributes.name, land])
   );
-
   return map;
 }
 
@@ -784,9 +746,7 @@ export async function getFieldOrBedNameToAssetMap() {
  */
 export async function getFieldOrBedIdToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
-
   const map = new Map(fieldsAndBeds.map((land) => [land.id, land]));
-
   return map;
 }
 

@@ -13,7 +13,7 @@ describe('Test the caching behavior', () => {
 
     const mockFetch = {
       fetchedValue: async () => {
-        return { data: { one: 'two' } };
+        return { one: 'two' };
       },
     };
     const fetchFunc = cy.spy(mockFetch, 'fetchedValue');
@@ -64,7 +64,7 @@ describe('Test the caching behavior', () => {
 
     const mockFetch = {
       fetchedValue: async () => {
-        return { data: { one: 'two' } };
+        return { one: 'two' };
       },
     };
     const fetchFunc = cy.spy(mockFetch, 'fetchedValue');
