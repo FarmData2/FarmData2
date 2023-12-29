@@ -73,6 +73,7 @@ var fd2Cache = {
   fields_and_beds: null,
   greenhouses: null,
   crops: null,
+  tray_sizes: null,
 };
 
 /*
@@ -928,9 +929,6 @@ export async function getCropIdToTermMap() {
   return map;
 }
 
-// Used to cache result of the getTraySizes function.
-var global_tray_sizes = null;
-
 /**
  * Clear the cached results from prior calls to the `getTraySizes` function.
  * This is useful when an action may change the tray sizes that exist in the
@@ -939,30 +937,7 @@ var global_tray_sizes = null;
  * @category TraySizes
  */
 export function clearCachedTraySizes() {
-  global_tray_sizes = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('tray_sizes');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_tray_sizes` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalTraySizes() {
-  return global_tray_sizes;
-}
-
-/**
- * @private
- *
- * Clear the `global_tray_sizes` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalTraySizes() {
-  global_tray_sizes = null;
+  clearCachedValue('tray_sizes');
 }
 
 /**
@@ -982,38 +957,28 @@ export function clearGlobalTraySizes() {
  */
 
 export async function getTraySizes() {
-  if (global_tray_sizes) {
-    return global_tray_sizes;
-  }
+  return fetchWithCaching('tray_sizes', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const traySizes = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--tray_size',
+      },
+      limit: Infinity,
+    });
 
-  let traySizesSS = libSessionStorage.getItem('tray_sizes');
-  if (traySizesSS) {
-    global_tray_sizes = JSON.parse(traySizesSS);
-    return global_tray_sizes;
-  }
+    if (traySizes.rejected.length != 0) {
+      throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
+    }
 
-  const traySizes = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--tray_size',
-    },
-    limit: Infinity,
+    traySizes.data.sort((o1, o2) => {
+      let size1 = parseFloat(o1.attributes.name);
+      let size2 = parseFloat(o2.attributes.name);
+      return size1 - size2;
+    });
+
+    return traySizes.data;
   });
-
-  if (traySizes.rejected.length != 0) {
-    throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
-  }
-
-  traySizes.data.sort((o1, o2) => {
-    let size1 = parseFloat(o1.attributes.name);
-    let size2 = parseFloat(o2.attributes.name);
-    return size1 - size2;
-  });
-
-  libSessionStorage.setItem('tray_sizes', JSON.stringify(traySizes.data));
-  global_tray_sizes = traySizes.data;
-  return global_tray_sizes;
 }
 
 /**
