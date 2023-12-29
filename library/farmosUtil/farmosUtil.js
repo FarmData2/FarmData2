@@ -51,6 +51,30 @@ import farmOS from 'farmos';
 import * as runExclusive from 'run-exclusive';
 
 /*
+ * This global object holds all of the values that are cached in the
+ * session storage by this library.  These are object that require
+ * communication with the farmOS server.  They are cached to prevent
+ * the overhead of repeated API calls for the same information.
+ *
+ * Things cached in this global are cached in the sessionStorage
+ * also.
+ */
+var fd2Cache = {
+  /*
+   * The global farm variable ensures
+   * that we only create one instance of the `farmOS` object
+   * per page reload.  This is done so that we avoid the cost of
+   * fetching the schema every time a `farmOS` object is needed within
+   * a page.
+   */
+  farm: null,
+
+  users: null,
+  fields_and_beds: null,
+  greenhouses: null,
+};
+
+/*
  * These two variables will be used throughout to access either the
  * browser's localStorage/sessionStorage or the simulated versions
  * provided by node-localstorage from Node programs that used this
@@ -82,29 +106,6 @@ function inFarmOS() {
     return false;
   }
 }
-
-/*
- * This global object holds all of the values that are cached in the
- * session storage by this library.  These are object that require
- * communication with the farmOS server.  They are cached to prevent
- * the overhead of repeated API calls for the same information.
- *
- * Things cached in this global are cached in the sessionStorage
- * also.
- */
-var fd2Cache = {
-  /*
-   * The global farm variable ensures
-   * that we only create one instance of the `farmOS` object
-   * per page reload.  This is done so that we avoid the cost of
-   * fetching the schema every time a `farmOS` object is needed within
-   * a page.
-   */
-  farm: null,
-
-  users: null,
-  fields_and_beds: null,
-};
 
 /**
  * Clears the cached farm variable but not the values stored in
@@ -750,9 +751,6 @@ export async function getFieldOrBedIdToAssetMap() {
   return map;
 }
 
-// Used to cache result of the getGreenhouses function.
-var global_greenhouses = null;
-
 /**
  * Clear the cached results from prior calls to the `getGreenhouses` function.
  * This is useful when an action may change the greenhouses that exist in the
@@ -761,30 +759,7 @@ var global_greenhouses = null;
  * @category Greenhouses
  */
 export function clearCachedGreenhouses() {
-  global_greenhouses = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('greenhouses');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_greenhouses` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalGreenhouses() {
-  return global_greenhouses;
-}
-
-/**
- * @private
- *
- * Clear the `global_greenhouses` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalGreenhouses() {
-  global_greenhouses = null;
+  clearCachedValue('greenhouses');
 }
 
 /**
@@ -803,38 +778,28 @@ export function clearGlobalGreenhouses() {
  * @category Greenhouses
  */
 export async function getGreenhouses() {
-  if (global_greenhouses) {
-    return global_greenhouses;
-  }
+  return fetchWithCaching('greenhouses', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const greenhouses = await farm.asset.fetch({
+      filter: {
+        type: 'asset--structure',
+        structure_type: 'greenhouse',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const greenHousesSS = libSessionStorage.getItem('greenhouses');
-  if (greenHousesSS) {
-    global_greenhouses = JSON.parse(greenHousesSS);
-    return global_greenhouses;
-  }
+    if (greenhouses.rejected.length != 0) {
+      throw new Error('Unable to fetch greenhouses.', greenhouses.rejected);
+    }
 
-  const greenhouses = await farm.asset.fetch({
-    filter: {
-      type: 'asset--structure',
-      structure_type: 'greenhouse',
-      status: 'active',
-    },
-    limit: Infinity,
+    greenhouses.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return greenhouses.data;
   });
-
-  if (greenhouses.rejected.length != 0) {
-    throw new Error('Unable to fetch greenhouses.', greenhouses.rejected);
-  }
-
-  greenhouses.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
-  global_greenhouses = greenhouses.data;
-  return global_greenhouses;
 }
 
 /**
