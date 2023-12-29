@@ -565,32 +565,6 @@ export function clearCachedUsers() {
 }
 
 /**
- * @private
- *
- * Get the `global_users` object.  This is used for testing to ensure
- * that the global is set by the appropriate functions.  This function
- * should not be used in front end code. Use the
- * [`getUsers`]{@link #module_farmosUtil.getUsers}
- * function instead.
- */
-export function getGlobalUsers() {
-  return getFromGlobalVariableCache('users');
-}
-
-/**
- * @private
- *
- * Clear the `global_users` object.  This is used for testing to ensure
- * that the global is not set by prior tests. This function
- * should not be used in front end code. Use the
- * [`clearCachedUsers`]{@link #module_farmosUtil.clearCachedUsers}
- * function instead.
- */
-export function clearGlobalUsers() {
-  clearFromGlobalVariableCache('users');
-}
-
-/**
  * Get an array containing all of the active users from the farmOS host.  The users
  * will appear in the array in order by the value of the `attributes.display_name`
  * property.
