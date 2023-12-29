@@ -50,6 +50,44 @@
 import farmOS from 'farmos';
 import * as runExclusive from 'run-exclusive';
 
+/*
+ * This global object holds all of the values that are cached in the
+ * session storage by this library.  These are object that require
+ * communication with the farmOS server.  They are cached to prevent
+ * the overhead of repeated API calls for the same information.
+ *
+ * Things cached in this global are cached in the sessionStorage
+ * also.
+ */
+var fd2Cache = {
+  /*
+   * The global farm variable ensures
+   * that we only create one instance of the `farmOS` object
+   * per page reload.  This is done so that we avoid the cost of
+   * fetching the schema every time a `farmOS` object is needed within
+   * a page.
+   */
+  farm: null,
+
+  users: null,
+  fields_and_beds: null,
+  greenhouses: null,
+  crops: null,
+  tray_sizes: null,
+  units: null,
+  log_categories: null,
+  permissions: null,
+};
+
+/*
+ * These two variables will be used throughout to access either the
+ * browser's localStorage/sessionStorage or the simulated versions
+ * provided by node-localstorage from Node programs that used this
+ * library.
+ */
+var libLocalStorage = null;
+var libSessionStorage = null;
+
 /**
  * @private
  *
@@ -74,32 +112,19 @@ function inFarmOS() {
   }
 }
 
-/*
- * Ensure that we only create one instance of the farmOS object
- * per page reload.  This is done to avoid fetching the schema
- * every time a farmOS object is needed.
- */
-var global_farm = null;
-
 /**
- * Clears the global farm variable.
- *
- * The global farm variable ensures
- * that we only create one instance of the `farmOS` object
- * per page reload.  This is done so that we avoid the cost of
- * fetching the schema every time a `farmOS` object is needed within
- * a page.
+ * Clears the cached farm variable but not the values stored in
+ * the session storage.
  *
  * The primary use case for this function is in testing.  For example,
  * it allow us to test that the  `farmOS` object is cached both in a
- * global variable and in the `sessionStorage`.
- * It could also be useful to force a reload of
- * the schema if that were ever necessary.
+ * global variable and in the `sessionStorage`.  It could also be useful
+ * to force a reload of the schema if that were ever necessary.
  *
  * @category farmOS
  */
 export function clearFarmGlobal() {
-  global_farm = null;
+  fd2Cache.farm = null;
 }
 
 /**
@@ -109,7 +134,7 @@ export function clearFarmGlobal() {
  * @category farmOS
  */
 export function clearCachedFarm() {
-  global_farm = null;
+  fd2Cache.farm = null;
   if (libSessionStorage) {
     libSessionStorage.removeItem('schema');
   }
@@ -121,21 +146,12 @@ export function clearCachedFarm() {
 /**
  * @private
  *
- * Get the `global_farm` object.  This is useful for testing to ensure
- * that the global is set at appropriate times.
+ * Get the global variable used to cache the farmOS object.
+ * This is useful for testing to ensure that the global is set at appropriate times.
  */
 export function getFarmGlobal() {
-  return global_farm;
+  return fd2Cache.farm;
 }
-
-/*
- * These two variables will be used throughout to access either the
- * browser's localStorage/sessionStorage or the simulated versions
- * provided by node-localstorage from Node programs that used this
- * library.
- */
-var libLocalStorage = null;
-var libSessionStorage = null;
 
 /**
  * Create and return an instance of the `farmos.js` `farmOS` object that will be used
@@ -250,9 +266,7 @@ export const getFarmOSInstance = runExclusive.build(
          * We have been called from a test that provides specific credentials.
          * So we will create a new farmOS object with those credentials.
          */
-        clearFarmGlobal();
-        libLocalStorage.removeItem('farmOStoken');
-        libSessionStorage.removeItem('schema');
+        clearCachedFarm();
         return await getFarmOSInstanceForNotInFarmOS(
           hostURL,
           client,
@@ -284,8 +298,8 @@ export const getFarmOSInstance = runExclusive.build(
  * that modify the database.
  */
 async function getFarmOSInstanceForInFarmOS() {
-  if (global_farm) {
-    return global_farm;
+  if (fd2Cache.farm) {
+    return fd2Cache.farm;
   } else {
     /*
      * Get the CSRF token needed for requests that modify data
@@ -325,10 +339,10 @@ async function getFarmOSInstanceForInFarmOS() {
     };
     const options = { remote: config };
 
-    global_farm = farmOS(options);
-    await setFarmSchema(global_farm);
+    fd2Cache.farm = farmOS(options);
+    await setFarmSchema(fd2Cache.farm);
 
-    return global_farm;
+    return fd2Cache.farm;
   }
 }
 
@@ -351,13 +365,13 @@ async function getFarmOSInstanceForNotInFarmOS(
    * storage does not contain a token, clear the global farm object so that we
    * create a new farm object from scratch.
    */
-  if (global_farm && global_farm.remote.getToken() === null) {
+  if (fd2Cache.farm && fd2Cache.farm.remote.getToken() === null) {
     clearFarmGlobal();
   }
 
   // Only create a new farm object if we don't already have one in global_farm.
   let newFarm = false;
-  if (!global_farm) {
+  if (!fd2Cache.farm) {
     newFarm = true;
 
     /*
@@ -388,9 +402,9 @@ async function getFarmOSInstanceForNotInFarmOS(
      * is not.
      */
     if (typeof farmOS != 'function') {
-      global_farm = farmOS.default(options);
+      fd2Cache.farm = farmOS.default(options);
     } else {
-      global_farm = farmOS(options);
+      fd2Cache.farm = farmOS(options);
     }
   }
 
@@ -400,17 +414,17 @@ async function getFarmOSInstanceForNotInFarmOS(
    * be changing users as well so clear the permissions if they were
    * cached.
    */
-  if (global_farm.remote.getToken() === null) {
+  if (fd2Cache.farm.remote.getToken() === null) {
     clearCachedPermissions();
-    await global_farm.remote.authorize(user, pass);
+    await fd2Cache.farm.remote.authorize(user, pass);
   }
 
   // If we created a new farm object then we need to get the schema.
   if (newFarm) {
-    await setFarmSchema(global_farm);
+    await setFarmSchema(fd2Cache.farm);
   }
 
-  return global_farm;
+  return fd2Cache.farm;
 }
 
 /**
@@ -449,41 +463,115 @@ export function printObject(farm, recordType) {
   console.dir(obj);
 }
 
-// Used to cache result of the getUsers function.
-var global_users = null;
+/**
+ * @private
+ *
+ * Checks the cache (global variable fd2Cache and sessionStorage) for a value with the
+ * given key.  If the value is found in either cache, it is returned.  Otherwise
+ * the fetchFunction is called.  The value returned by the fetchFunction is then
+ * cached in both the fd2Cache variable and the sessionStorage and is then returned.
+ *
+ * @param {String} key the key associated with the value being fetched.
+ * @param {Function} fetchFunction a function that fetches the value from the
+ * farmOS API if necessary.  This function should return the result of the
+ * API call or throw an Error if the API call fails.  If the relevant information
+ * from the API call is wrapped in the `data` array property then this function should
+ * just return the `data` array and not the entire response object.
+ * @throws {Error} propagates any error thrown by the `fetchFunction`.
+ * @returns {*} an Array<Object> or an Object (depending upon what is being fetched)
+ * containing the requested data.
+ */
+export async function fetchWithCaching(key, fetchFunction) {
+  /*
+   * If the value to be fetched exits in the global variable cache
+   * return it from there.
+   */
+  if (fd2Cache[key]) {
+    return fd2Cache[key];
+  }
+
+  /*
+   * Note we don't necessarily need a farmOS object here but we need
+   * to be sure one has been created before we use the libSessionStorage
+   * so that we know it ha been initialized.
+   */
+  await getFarmOSInstance();
+
+  /*
+   * If the value to be fetch exists in the sessionStorage then
+   * return it from there.
+   */
+  const fromSS = libSessionStorage.getItem(key);
+  if (fromSS) {
+    fd2Cache[key] = JSON.parse(fromSS);
+    return fd2Cache[key];
+  }
+
+  /*
+   * Value to be fetched is neither in a global nor in the session storage
+   * so fetch it using the API.
+   */
+  const fromAPI = await fetchFunction();
+
+  /*
+   * Now cache the fetched value both in the session storage and in
+   * the global variable.
+   */
+  libSessionStorage.setItem(key, JSON.stringify(fromAPI));
+  fd2Cache[key] = fromAPI;
+
+  return fd2Cache[key];
+}
 
 /**
- * Clear the cached results from prior calls to the `getUsers` function.
- * This is useful when an action may change the users that exist in the
- * system
+ * @private
  *
- * @category Users
+ * Get the value associated with the key in the fd2Cache global
+ * variable.
+ *
+ * @param {String} key the key for the desired value.
+ * @returns the value associated with the key in fd2Cache.
  */
-export function clearCachedUsers() {
-  global_users = null;
+export function getFromGlobalVariableCache(key) {
+  return fd2Cache[key];
+}
+
+/**
+ * @private
+ *
+ * Clear the value in the fd2Cache global variable that is
+ * associated with the key.
+ *
+ * @param {String} key the key for the value to be cleared.
+ */
+export function clearFromGlobalVariableCache(key) {
+  fd2Cache[key] = null;
+}
+
+/**
+ * @private
+ *
+ * Clear the value associated with the key from the fd2Cache global
+ * variable and from the session storage.
+ *
+ * @param {String} key the key associated with the value to be cleared.
+ */
+export function clearCachedValue(key) {
+  fd2Cache[key] = null;
   if (libSessionStorage) {
-    libSessionStorage.removeItem('users');
+    libSessionStorage.removeItem(key);
   }
 }
 
 /**
- * @private
+ * Clear the cached results from prior calls to the `getUsers` function.
+ * This is useful when an action may change the users that exist in the
+ * system.
  *
- * Get the `global_users` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
+ * @category Users
  */
-export function getGlobalUsers() {
-  return global_users;
-}
-
-/**
- * @private
- *
- * Clear the `global_users` object.  This is useful for testing to ensure
- * that the global is not set by prior tests.
- */
-export function clearGlobalUsers() {
-  global_users = null;
+export function clearCachedUsers() {
+  clearCachedValue('users');
 }
 
 /**
@@ -503,37 +591,27 @@ export function clearGlobalUsers() {
  * @category Users
  */
 export async function getUsers() {
-  if (global_users) {
-    return global_users;
-  }
+  return fetchWithCaching('users', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const users = await farm.user.fetch({
+      filter: {
+        type: 'user--user',
+        status: true,
+      },
+      limit: Infinity,
+    });
 
-  const usersSS = libSessionStorage.getItem('users');
-  if (usersSS) {
-    global_users = JSON.parse(usersSS);
-    return global_users;
-  }
+    if (users.rejected.length != 0) {
+      throw new Error('Unable to fetch users.', users.rejected);
+    }
 
-  const users = await farm.user.fetch({
-    filter: {
-      type: 'user--user',
-      status: true,
-    },
-    limit: Infinity,
+    users.data.sort((o1, o2) =>
+      o1.attributes.display_name.localeCompare(o2.attributes.display_name)
+    );
+
+    return users.data;
   });
-
-  if (users.rejected.length != 0) {
-    throw new Error('Unable to fetch users.', users.rejected);
-  }
-
-  users.data.sort((o1, o2) =>
-    o1.attributes.display_name.localeCompare(o2.attributes.display_name)
-  );
-
-  libSessionStorage.setItem('users', JSON.stringify(users.data));
-  global_users = users.data;
-  return global_users;
 }
 
 /**
@@ -551,11 +629,9 @@ export async function getUsers() {
  */
 export async function getUsernameToUserMap() {
   const users = await getUsers();
-
   const map = new Map(
     users.map((user) => [user.attributes.display_name, user])
   );
-
   return map;
 }
 
@@ -573,14 +649,9 @@ export async function getUsernameToUserMap() {
  */
 export async function getUserIdToUserMap() {
   const users = await getUsers();
-
   const map = new Map(users.map((user) => [user.id, user]));
-
   return map;
 }
-
-// Used to cache result of the getFieldsAndBeds function.
-var global_fields_and_beds = null;
 
 /**
  * Clear the cached results from prior calls to the `getFieldsAndBeds` function.
@@ -590,30 +661,7 @@ var global_fields_and_beds = null;
  * @category FieldsAndBeds
  */
 export function clearCachedFieldsAndBeds() {
-  global_fields_and_beds = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('fields_and_beds');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_fields_and_beds` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalFieldsAndBeds() {
-  return global_fields_and_beds;
-}
-
-/**
- * @private
- *
- * Clear the `global_fields_and_beds` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalFieldsAndBeds() {
-  global_fields_and_beds = null;
+  clearCachedValue('fields_and_beds');
 }
 
 /**
@@ -632,50 +680,40 @@ export function clearGlobalFieldsAndBeds() {
  * @category FieldsAndBeds
  */
 export async function getFieldsAndBeds() {
-  // Done as two requests for now because of a bug in the farmOS.js library.
-  // https://github.com/farmOS/farmOS.js/issues/86
+  return fetchWithCaching('fields_and_beds', async () => {
+    const farm = await getFarmOSInstance();
 
-  if (global_fields_and_beds) {
-    return global_fields_and_beds;
-  }
+    // Done as two requests for now because of a bug in the farmOS.js library.
+    // https://github.com/farmOS/farmOS.js/issues/86
 
-  const farm = await getFarmOSInstance();
+    const beds = await farm.asset.fetch({
+      filter: {
+        type: 'asset--land',
+        land_type: 'bed',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const fieldsAndBedsSS = libSessionStorage.getItem('fields_and_beds');
-  if (fieldsAndBedsSS) {
-    global_fields_and_beds = JSON.parse(fieldsAndBedsSS);
-    return global_fields_and_beds;
-  }
+    const fields = await farm.asset.fetch({
+      filter: {
+        type: 'asset--land',
+        land_type: 'field',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const beds = await farm.asset.fetch({
-    filter: {
-      type: 'asset--land',
-      land_type: 'bed',
-      status: 'active',
-    },
-    limit: Infinity,
+    const rejects = fields.rejected.concat(beds.rejected);
+    if (rejects.length != 0) {
+      throw new Error('Unable to fetch fields and beds.', rejects);
+    }
+
+    const land = fields.data.concat(beds.data);
+    land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
+
+    return land;
   });
-
-  const fields = await farm.asset.fetch({
-    filter: {
-      type: 'asset--land',
-      land_type: 'field',
-      status: 'active',
-    },
-    limit: Infinity,
-  });
-
-  const rejects = fields.rejected.concat(beds.rejected);
-  if (rejects.length != 0) {
-    throw new Error('Unable to fetch fields and beds.', rejects);
-  }
-
-  const land = fields.data.concat(beds.data);
-  land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
-
-  libSessionStorage.setItem('fields_and_beds', JSON.stringify(land));
-  global_fields_and_beds = land;
-  return global_fields_and_beds;
 }
 
 /**
@@ -693,11 +731,9 @@ export async function getFieldsAndBeds() {
  */
 export async function getFieldOrBedNameToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
-
   const map = new Map(
     fieldsAndBeds.map((land) => [land.attributes.name, land])
   );
-
   return map;
 }
 
@@ -716,14 +752,9 @@ export async function getFieldOrBedNameToAssetMap() {
  */
 export async function getFieldOrBedIdToAssetMap() {
   const fieldsAndBeds = await getFieldsAndBeds();
-
   const map = new Map(fieldsAndBeds.map((land) => [land.id, land]));
-
   return map;
 }
-
-// Used to cache result of the getGreenhouses function.
-var global_greenhouses = null;
 
 /**
  * Clear the cached results from prior calls to the `getGreenhouses` function.
@@ -733,30 +764,7 @@ var global_greenhouses = null;
  * @category Greenhouses
  */
 export function clearCachedGreenhouses() {
-  global_greenhouses = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('greenhouses');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_greenhouses` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalGreenhouses() {
-  return global_greenhouses;
-}
-
-/**
- * @private
- *
- * Clear the `global_greenhouses` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalGreenhouses() {
-  global_greenhouses = null;
+  clearCachedValue('greenhouses');
 }
 
 /**
@@ -775,38 +783,28 @@ export function clearGlobalGreenhouses() {
  * @category Greenhouses
  */
 export async function getGreenhouses() {
-  if (global_greenhouses) {
-    return global_greenhouses;
-  }
+  return fetchWithCaching('greenhouses', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const greenhouses = await farm.asset.fetch({
+      filter: {
+        type: 'asset--structure',
+        structure_type: 'greenhouse',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
 
-  const greenHousesSS = libSessionStorage.getItem('greenhouses');
-  if (greenHousesSS) {
-    global_greenhouses = JSON.parse(greenHousesSS);
-    return global_greenhouses;
-  }
+    if (greenhouses.rejected.length != 0) {
+      throw new Error('Unable to fetch greenhouses.', greenhouses.rejected);
+    }
 
-  const greenhouses = await farm.asset.fetch({
-    filter: {
-      type: 'asset--structure',
-      structure_type: 'greenhouse',
-      status: 'active',
-    },
-    limit: Infinity,
+    greenhouses.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return greenhouses.data;
   });
-
-  if (greenhouses.rejected.length != 0) {
-    throw new Error('Unable to fetch greenhouses.', greenhouses.rejected);
-  }
-
-  greenhouses.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('greenhouses', JSON.stringify(greenhouses.data));
-  global_greenhouses = greenhouses.data;
-  return global_greenhouses;
 }
 
 /**
@@ -824,9 +822,7 @@ export async function getGreenhouses() {
  */
 export async function getGreenhouseNameToAssetMap() {
   const greenhouses = await getGreenhouses();
-
   const map = new Map(greenhouses.map((gh) => [gh.attributes.name, gh]));
-
   return map;
 }
 
@@ -845,14 +841,9 @@ export async function getGreenhouseNameToAssetMap() {
  */
 export async function getGreenhouseIdToAssetMap() {
   const greenhouses = await getGreenhouses();
-
   const map = new Map(greenhouses.map((gh) => [gh.id, gh]));
-
   return map;
 }
-
-// Used to cache result of the getCrops function.
-var global_crops = null;
 
 /**
  * Clear the cached results from prior calls to the `getCrops` function.
@@ -862,30 +853,7 @@ var global_crops = null;
  * @category Crops
  */
 export function clearCachedCrops() {
-  global_crops = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('crops');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_crops` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalCrops() {
-  return global_crops;
-}
-
-/**
- * @private
- *
- * Clear the `global_crops` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalCrops() {
-  global_crops = null;
+  clearCachedValue('crops');
 }
 
 /**
@@ -904,36 +872,26 @@ export function clearGlobalCrops() {
  * @category Crops
  */
 export async function getCrops() {
-  if (global_crops) {
-    return global_crops;
-  }
+  return fetchWithCaching('crops', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const crops = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--plant_type',
+      },
+      limit: Infinity,
+    });
 
-  const cropsSS = libSessionStorage.getItem('crops');
-  if (cropsSS) {
-    global_crops = JSON.parse(cropsSS);
-    return global_crops;
-  }
+    if (crops.rejected.length != 0) {
+      throw new Error('Unable to fetch crops.', crops.rejected);
+    }
 
-  const crops = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--plant_type',
-    },
-    limit: Infinity,
+    crops.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return crops.data;
   });
-
-  if (crops.rejected.length != 0) {
-    throw new Error('Unable to fetch crops.', crops.rejected);
-  }
-
-  crops.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('crops', JSON.stringify(crops.data));
-  global_crops = crops.data;
-  return global_crops;
 }
 
 /**
@@ -951,9 +909,7 @@ export async function getCrops() {
  */
 export async function getCropNameToTermMap() {
   const crops = await getCrops();
-
   const map = new Map(crops.map((cr) => [cr.attributes.name, cr]));
-
   return map;
 }
 
@@ -972,14 +928,9 @@ export async function getCropNameToTermMap() {
  */
 export async function getCropIdToTermMap() {
   const crops = await getCrops();
-
   const map = new Map(crops.map((cr) => [cr.id, cr]));
-
   return map;
 }
-
-// Used to cache result of the getTraySizes function.
-var global_tray_sizes = null;
 
 /**
  * Clear the cached results from prior calls to the `getTraySizes` function.
@@ -989,30 +940,7 @@ var global_tray_sizes = null;
  * @category TraySizes
  */
 export function clearCachedTraySizes() {
-  global_tray_sizes = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('tray_sizes');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_tray_sizes` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalTraySizes() {
-  return global_tray_sizes;
-}
-
-/**
- * @private
- *
- * Clear the `global_tray_sizes` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalTraySizes() {
-  global_tray_sizes = null;
+  clearCachedValue('tray_sizes');
 }
 
 /**
@@ -1032,38 +960,28 @@ export function clearGlobalTraySizes() {
  */
 
 export async function getTraySizes() {
-  if (global_tray_sizes) {
-    return global_tray_sizes;
-  }
+  return fetchWithCaching('tray_sizes', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const traySizes = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--tray_size',
+      },
+      limit: Infinity,
+    });
 
-  let traySizesSS = libSessionStorage.getItem('tray_sizes');
-  if (traySizesSS) {
-    global_tray_sizes = JSON.parse(traySizesSS);
-    return global_tray_sizes;
-  }
+    if (traySizes.rejected.length != 0) {
+      throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
+    }
 
-  const traySizes = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--tray_size',
-    },
-    limit: Infinity,
+    traySizes.data.sort((o1, o2) => {
+      let size1 = parseFloat(o1.attributes.name);
+      let size2 = parseFloat(o2.attributes.name);
+      return size1 - size2;
+    });
+
+    return traySizes.data;
   });
-
-  if (traySizes.rejected.length != 0) {
-    throw new Error('Unable to fetch tray sizes.', traySizes.rejected);
-  }
-
-  traySizes.data.sort((o1, o2) => {
-    let size1 = parseFloat(o1.attributes.name);
-    let size2 = parseFloat(o2.attributes.name);
-    return size1 - size2;
-  });
-
-  libSessionStorage.setItem('tray_sizes', JSON.stringify(traySizes.data));
-  global_tray_sizes = traySizes.data;
-  return global_tray_sizes;
 }
 
 /**
@@ -1081,9 +999,7 @@ export async function getTraySizes() {
  */
 export async function getTraySizeToTermMap() {
   const sizes = await getTraySizes();
-
   const map = new Map(sizes.map((sz) => [sz.attributes.name, sz]));
-
   return map;
 }
 
@@ -1102,14 +1018,9 @@ export async function getTraySizeToTermMap() {
  */
 export async function getTraySizeIdToTermMap() {
   const sizes = await getTraySizes();
-
   const map = new Map(sizes.map((sz) => [sz.id, sz]));
-
   return map;
 }
-
-// Used to cache result of the getUnits function.
-var global_units = null;
 
 /**
  * Clear the cached results from prior calls to the `getUnits` function.
@@ -1119,30 +1030,7 @@ var global_units = null;
  * @category Units
  */
 export function clearCachedUnits() {
-  global_units = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('units');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_units` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalUnits() {
-  return global_units;
-}
-
-/**
- * @private
- *
- * Clear the `global_units` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalUnits() {
-  global_units = null;
+  clearCachedValue('units');
 }
 
 /**
@@ -1160,36 +1048,26 @@ export function clearGlobalUnits() {
  * @category Units
  */
 export async function getUnits() {
-  if (global_units) {
-    return global_units;
-  }
+  return fetchWithCaching('units', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const units = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--unit',
+      },
+      limit: Infinity,
+    });
 
-  const unitsSS = libSessionStorage.getItem('units');
-  if (unitsSS) {
-    global_units = JSON.parse(unitsSS);
-    return global_units;
-  }
+    if (units.rejected.length != 0) {
+      throw new Error('Unable to fetch units.', units.rejected);
+    }
 
-  const units = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--unit',
-    },
-    limit: Infinity,
+    units.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return units.data;
   });
-
-  if (units.rejected.length != 0) {
-    throw new Error('Unable to fetch units.', units.rejected);
-  }
-
-  units.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('units', JSON.stringify(units.data));
-  global_units = units.data;
-  return global_units;
 }
 
 /**
@@ -1207,9 +1085,7 @@ export async function getUnits() {
  */
 export async function getUnitToTermMap() {
   const sizes = await getUnits();
-
   const map = new Map(sizes.map((unit) => [unit.attributes.name, unit]));
-
   return map;
 }
 
@@ -1228,14 +1104,9 @@ export async function getUnitToTermMap() {
  */
 export async function getUnitIdToTermMap() {
   const units = await getUnits();
-
   const map = new Map(units.map((unit) => [unit.id, unit]));
-
   return map;
 }
-
-// Used to cache result of the getLogCategories function.
-var global_log_categories = null;
 
 /**
  * Clear the cached results from prior calls to the `getLogCategories` function.
@@ -1245,30 +1116,7 @@ var global_log_categories = null;
  * @category LogCategories
  */
 export function clearCachedLogCategories() {
-  global_log_categories = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('log_categories');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_log_categories` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalLogCategories() {
-  return global_log_categories;
-}
-
-/**
- * @private
- *
- * Clear the `global_log_categories` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalLogCategories() {
-  global_log_categories = null;
+  clearCachedValue('log_categories');
 }
 
 /**
@@ -1286,36 +1134,26 @@ export function clearGlobalLogCategories() {
  * @category LogCategories
  */
 export async function getLogCategories() {
-  if (global_log_categories) {
-    return global_log_categories;
-  }
+  return fetchWithCaching('log_categories', async () => {
+    const farm = await getFarmOSInstance();
 
-  const farm = await getFarmOSInstance();
+    const categories = await farm.term.fetch({
+      filter: {
+        type: 'taxonomy_term--log_category',
+      },
+      limit: Infinity,
+    });
 
-  const logCategoriesSS = libSessionStorage.getItem('log_categories');
-  if (logCategoriesSS) {
-    global_log_categories = JSON.parse(logCategoriesSS);
-    return global_log_categories;
-  }
+    if (categories.rejected.length != 0) {
+      throw new Error('Unable to fetch log categories.', categories.rejected);
+    }
 
-  const categories = await farm.term.fetch({
-    filter: {
-      type: 'taxonomy_term--log_category',
-    },
-    limit: Infinity,
+    categories.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return categories.data;
   });
-
-  if (categories.rejected.length != 0) {
-    throw new Error('Unable to fetch log categories.', categories.rejected);
-  }
-
-  categories.data.sort((o1, o2) =>
-    o1.attributes.name.localeCompare(o2.attributes.name)
-  );
-
-  libSessionStorage.setItem('log_categories', JSON.stringify(categories.data));
-  global_log_categories = categories.data;
-  return global_log_categories;
 }
 
 /**
@@ -1333,11 +1171,9 @@ export async function getLogCategories() {
  */
 export async function getLogCategoryToTermMap() {
   const categories = await getLogCategories();
-
   const map = new Map(
     categories.map((category) => [category.attributes.name, category])
   );
-
   return map;
 }
 
@@ -1356,14 +1192,9 @@ export async function getLogCategoryToTermMap() {
  */
 export async function getLogCategoryIdToTermMap() {
   const categories = await getLogCategories();
-
   const map = new Map(categories.map((category) => [category.id, category]));
-
   return map;
 }
-
-// Used to cache result of the getPermissions function.
-var global_permissions = null;
 
 /**
  * Clear the cached results from prior calls to the `getPermissions` function.
@@ -1373,30 +1204,7 @@ var global_permissions = null;
  * @category LogCategories
  */
 export function clearCachedPermissions() {
-  global_permissions = null;
-  if (libSessionStorage) {
-    libSessionStorage.removeItem('permissions');
-  }
-}
-
-/**
- * @private
- *
- * Get the `global_permissions` object.  This is useful for testing to ensure
- * that the global is set by the appropriate functions.
- */
-export function getGlobalPermissions() {
-  return global_permissions;
-}
-
-/**
- * @private
- *
- * Clear the `global_permissions` object.  This is useful for testing to ensure
- * that the global is not set prior to the test.
- */
-export function clearGlobalPermissions() {
-  global_permissions = null;
+  clearCachedValue('permissions');
 }
 
 /**
@@ -1424,29 +1232,17 @@ export function clearGlobalPermissions() {
  * @category Permissions
  */
 export async function getPermissions() {
-  if (global_permissions) {
-    return global_permissions;
-  }
-
-  const farm = await getFarmOSInstance();
-
-  const permissionsSS = libSessionStorage.getItem('permissions');
-  if (permissionsSS) {
-    global_permissions = JSON.parse(permissionsSS);
-    return global_permissions;
-  }
-
-  try {
-    const resp = await farm.remote.request.get('http://farmos/api/permissions');
-    const permissions = resp.data.permissions;
-
-    libSessionStorage.setItem('permissions', JSON.stringify(permissions));
-    global_permissions = permissions;
-
-    return global_permissions;
-  } catch (err) {
-    throw new Error('Unable to fetch permissions.', err);
-  }
+  return fetchWithCaching('permissions', async () => {
+    try {
+      const farm = await getFarmOSInstance();
+      const resp = await farm.remote.request.get(
+        'http://farmos/api/permissions'
+      );
+      return resp.data.permissions;
+    } catch (err) {
+      throw new Error('Unable to fetch permissions.', err);
+    }
+  });
 }
 
 /**
