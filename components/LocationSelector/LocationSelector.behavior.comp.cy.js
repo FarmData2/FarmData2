@@ -25,8 +25,8 @@ describe('Test the LocationSelector component behavior', () => {
         .should('have.been.calledOnce')
         .then(() => {
           cy.get('[data-cy="selector-input"]').should('have.value', 'CHUAU');
-          wrapper.setProps({ selected: 'JASMINE' });
-          cy.get('[data-cy="selector-input"]').should('have.value', 'JASMINE');
+          wrapper.setProps({ selected: 'GHANA' });
+          cy.get('[data-cy="selector-input"]').should('have.value', 'GHANA');
         });
     });
   });
