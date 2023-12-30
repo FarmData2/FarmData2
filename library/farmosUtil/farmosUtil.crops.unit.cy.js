@@ -14,13 +14,13 @@ describe('Test the crop utility functions', () => {
   it('Get the crops', () => {
     cy.wrap(farmosUtil.getCrops()).then((crops) => {
       expect(crops).to.not.be.null;
-      expect(crops.length).to.equal(111);
+      expect(crops.length).to.equal(28);
 
       expect(crops[0].attributes.name).to.equal('ARUGULA');
       expect(crops[0].type).to.equal('taxonomy_term--plant_type');
 
-      expect(crops[110].attributes.name).to.equal('ZUCCHINI');
-      expect(crops[110].type).to.equal('taxonomy_term--plant_type');
+      expect(crops[27].attributes.name).to.equal('ZUCCHINI');
+      expect(crops[27].type).to.equal('taxonomy_term--plant_type');
     });
   });
 
@@ -53,7 +53,7 @@ describe('Test the crop utility functions', () => {
   it('Get the cropNameMap', () => {
     cy.wrap(farmosUtil.getCropNameToTermMap()).then((cropNameMap) => {
       expect(cropNameMap).to.not.be.null;
-      expect(cropNameMap.size).to.equal(111);
+      expect(cropNameMap.size).to.equal(28);
 
       // Note: Not checking specific id's because they can change
       // if the sample database changes.  The next test will check
@@ -76,7 +76,7 @@ describe('Test the crop utility functions', () => {
   it('Get the cropIdMap', () => {
     cy.wrap(farmosUtil.getCropIdToTermMap()).then((cropIdMap) => {
       expect(cropIdMap).to.not.be.null;
-      expect(cropIdMap.size).to.equal(111);
+      expect(cropIdMap.size).to.equal(28);
 
       cy.wrap(farmosUtil.getCropNameToTermMap()).then((cropNameMap) => {
         const arugulaId = cropNameMap.get('ARUGULA').id;

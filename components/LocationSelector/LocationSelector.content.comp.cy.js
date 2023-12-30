@@ -59,12 +59,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 6);
+          .should('have.length', 3);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
-        cy.get('[data-cy="selector-option-5"]').should(
-          'have.text',
-          'SEEDING BENCH'
-        );
+        cy.get('[data-cy="selector-option-2"]').should('have.text', 'GHANA');
       });
   });
 
@@ -83,9 +80,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 66);
+          .should('have.length', 22);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-65"]').should('have.text', 'Z');
+        cy.get('[data-cy="selector-option-21"]').should('have.text', 'GHANA-4');
       });
   });
 
@@ -105,9 +102,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 71);
+          .should('have.length', 24);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-70"]').should('have.text', 'Z');
+        cy.get('[data-cy="selector-option-23"]').should('have.text', 'GHANA-4');
       });
   });
 

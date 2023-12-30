@@ -58,9 +58,9 @@ describe('Test the CropSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 112);
+          .should('have.length', 29);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'ARUGULA');
-        cy.get('[data-cy="selector-option-111"]').should(
+        cy.get('[data-cy="selector-option-28"]').should(
           'have.text',
           'ZUCCHINI'
         );

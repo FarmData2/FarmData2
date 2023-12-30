@@ -14,13 +14,13 @@ describe('Test the land utility functions', () => {
   it('Get the field and bed land assets', () => {
     cy.wrap(farmosUtil.getFieldsAndBeds()).then((land) => {
       expect(land).to.not.be.null;
-      expect(land.length).to.equal(65);
+      expect(land.length).to.equal(21);
 
       expect(land[0].attributes.name).to.equal('A');
       expect(land[0].type).to.equal('asset--land');
 
-      expect(land[64].attributes.name).to.equal('Z');
-      expect(land[64].type).to.equal('asset--land');
+      expect(land[20].attributes.name).to.equal('GHANA-4');
+      expect(land[20].type).to.equal('asset--land');
     });
   });
 
@@ -54,13 +54,13 @@ describe('Test the land utility functions', () => {
   it('Get the FieldOrBedNameToAsset map', () => {
     cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((landNameMap) => {
       expect(landNameMap).to.not.be.null;
-      expect(landNameMap.size).to.equal(65);
+      expect(landNameMap.size).to.equal(21);
 
       expect(landNameMap.get('A')).to.not.be.null;
       expect(landNameMap.get('A').type).to.equal('asset--land');
 
-      expect(landNameMap.get('Z')).to.not.be.null;
-      expect(landNameMap.get('Z').type).to.equal('asset--land');
+      expect(landNameMap.get('GHANA-4')).to.not.be.null;
+      expect(landNameMap.get('GHANA-4').type).to.equal('asset--land');
 
       expect(landNameMap.get('CHUAU-1')).to.not.be.null;
       expect(landNameMap.get('CHUAU-1').type).to.equal('asset--land');
@@ -72,7 +72,7 @@ describe('Test the land utility functions', () => {
   it('Get the FieldOrBedIdToAsset map', () => {
     cy.wrap(farmosUtil.getFieldOrBedIdToAssetMap()).then((landIdMap) => {
       expect(landIdMap).to.not.be.null;
-      expect(landIdMap.size).to.equal(65);
+      expect(landIdMap.size).to.equal(21);
 
       cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((landNameMap) => {
         const landAId = landNameMap.get('A').id;
