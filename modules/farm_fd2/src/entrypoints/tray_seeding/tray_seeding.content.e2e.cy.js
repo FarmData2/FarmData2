@@ -91,13 +91,13 @@ describe('Check the content of the Tray Seeding page.', () => {
     cy.get('[data-cy="seeding-location-name"]')
       .find('[data-cy="selector-input"]')
       .find('option')
-      .should('have.length', 6);
+      .should('have.length', 3);
     cy.get('[data-cy="seeding-location-name"]')
       .find('[data-cy="selector-option-1"]')
       .should('have.value', 'CHUAU');
     cy.get('[data-cy="seeding-location-name"]')
-      .find('[data-cy="selector-option-5"]')
-      .should('have.value', 'SEEDING BENCH');
+      .find('[data-cy="selector-option-2"]')
+      .should('have.value', 'GHANA');
   });
 
   it('Check trays field.', () => {
