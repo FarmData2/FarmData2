@@ -20,4 +20,15 @@ tray_seeding:
       tray_seeding/tray_seeding.css: {}
     component:
       shared/index.css: {}
-    
+
+seeding:
+  js:
+    seeding/seeding.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      seeding/seeding.css: {}
+    component:
+      shared/index.css: {}
