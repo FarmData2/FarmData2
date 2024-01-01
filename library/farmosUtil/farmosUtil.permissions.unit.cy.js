@@ -12,11 +12,13 @@ describe('Test the permissions checking utility functions', () => {
 
       // This will need to be updated for each change to the permissions list.
       // That is on purpose so that the rest of the test gets updated too!
-      expect(Object.keys(perms).length).to.equal(4);
+      expect(Object.keys(perms).length).to.equal(5);
 
       // Add checks for each additional permission here.
-      expect(perms['create-plant-asset']).to.be.true;
+      // Maintain in same order as the object returned from the API call.
+      expect(perms['create-equipment-asset']).to.be.true;
       expect(perms['create-land-asset']).to.be.true;
+      expect(perms['create-plant-asset']).to.be.true;
       expect(perms['create-structure-asset']).to.be.true;
       expect(perms['create-terms-in-tray_size']).to.be.true;
     });

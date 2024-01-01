@@ -32,7 +32,9 @@ class FD2_Controller extends ControllerBase
   public function permissions()
   {
     // List each permissions to be checked here.
+    // Maintain in alphabetical order.
     $perms = [
+      'create equipment asset',
       'create land asset',
       'create plant asset',
       'create structure asset',
