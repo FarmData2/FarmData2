@@ -1202,7 +1202,7 @@ export async function getLogCategoryIdToTermMap() {
  * This is useful when it is necessary to force the permissions to be refreshed.
  * (e.g. changing users during a test.)
  *
- * @category LogCategories
+ * @category Permissions
  */
 export function clearCachedPermissions() {
   clearCachedValue('permissions');
