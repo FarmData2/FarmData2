@@ -105,6 +105,12 @@ Best practice is to [reset the database state before tests are run](https://docs
   });
 ```
 
+You can change the database that will be used for testing by using the `installDB.bash` script manually prior to running the tests. This is useful when you want to run tests against a pre-release of the sample database. For example:
+
+```bash
+installDB.bash --release=v3.1.0-development.3 --asset=db.sample.tar.gz
+```
+
 Use: `cy.task('log', 'message')` to log messages to the console.
 Use: `cy.task('logObject', obj)` to log an object to the console.
 

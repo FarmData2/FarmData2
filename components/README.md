@@ -178,6 +178,12 @@ Best practice is to [reset the database state before tests are run](https://docs
   });
 ```
 
+You can change the database that will be used for testing by using the `installDB.bash` script manually prior to running the tests. This is useful when you want to run tests against a pre-release of the sample database. For example:
+
+```bash
+installDB.bash --release=v3.1.0-development.3 --asset=db.sample.tar.gz
+```
+
 Note: Every test `it` should wait for the `ready` event to be emitted before performing any tests. In some components this will be immediately, in others it will wait for an API call to complete. This is included in all tests for consistency and to reduce test flake.
 
 Use: `cy.task('log', 'message')` to log messages to the console.
