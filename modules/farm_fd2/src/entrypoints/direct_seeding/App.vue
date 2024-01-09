@@ -69,6 +69,36 @@
           v-on:ready="createdCount++"
         />
 
+        <SelectorBase
+          id="seeding-rows"
+          data-cy="seeding-rows"
+          label="Rows/Bed"
+          invalidFeedbackText="A number of rows is required"
+          v-model:selected="form.rowsPerBed"
+          v-bind:options="rowValues"
+          v-bind:required="true"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="validity.rowsPerBed = $event"
+          v-on:ready="createdCount++"
+        />
+
+        <NumericInput
+          id="seeding-bed-width"
+          data-cy="seeding-bed-width"
+          required
+          label="Bed Width (in)"
+          invalidFeedbackText="Bed width must be positive."
+          v-model:value="form.bedWidth"
+          v-bind:showValidityStyling="validity.show"
+          v-bind:decimalPlaces="0"
+          v-bind:incDecValues="[1, 10]"
+          v-bind:minValue="1"
+          v-on:valid="validity.bedWidth = $event"
+          v-on:ready="createdCount++"
+        />
+
+        <hr />
+
         <p>More stuff here</p>
 
         <hr />
@@ -110,6 +140,7 @@ import CropSelector from '@comps/CropSelector/CropSelector.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
@@ -121,16 +152,20 @@ export default {
     DateSelector,
     LocationSelector,
     NumericInput,
+    SelectorBase,
     CommentBox,
     SubmitResetButtons,
   },
   data() {
     return {
+      rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
       form: {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         cropName: null,
         locationName: null,
         bedFeet: 100,
+        rowsPerBed: '1',
+        bedWidth: 60,
         comment: null,
       },
       validity: {
@@ -139,6 +174,8 @@ export default {
         cropName: false,
         locationName: false,
         bedFeet: false,
+        rowsPerBed: false,
+        bedWidth: false,
         comment: false,
       },
       enableSubmit: true,
@@ -174,6 +211,8 @@ export default {
         this.form.seedingDate = dayjs().format('YYYY-MM-DD');
         this.form.locationName = null;
         this.form.bedFeet = 100;
+        this.form.rowsPerBed = '1';
+        this.form.bedWidth = 60;
       }
 
       this.form.cropName = null;
@@ -183,7 +222,7 @@ export default {
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 6;
+      return this.createdCount == 9;
     },
   },
   watch: {
@@ -211,7 +250,9 @@ export default {
 }
 
 #seeding-crop-name,
-#seeding-location-name {
+#seeding-location-name,
+#seeding-bed-feet,
+#seeding-rows {
   margin-bottom: 8px;
 }
 
