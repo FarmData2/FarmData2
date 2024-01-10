@@ -4,18 +4,26 @@ source colors.bash
 source lib.bash
 
 PWD="$(pwd)"
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd)
 
-# Get the path to the main repo directory.
-SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+TARGETS=()
 
-if [ "$#" -eq 1 ]; then
-    TARGET=$1
-    echo -e "${GREEN}Generating documentation for $TARGET.${NO_COLOR}"
-else
-    TARGET="all"
+# Parse command-line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --target) TARGETS+=("$2"); shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+if [ ${#TARGETS[@]} -eq 0 ]; then
+    TARGETS=("all")
     echo -e "${GREEN}Generating FarmData2 documentation for all components and libraries.${NO_COLOR}"
+else
+    echo -e "${GREEN}Generating documentation for specified targets.${NO_COLOR}"
 fi
 
 echo "  Deleting old docs..."
@@ -44,7 +52,7 @@ safe_cd "$REPO_ROOT_DIR"
 
 for DIR in $DIRS; do
     COMP_NAME=$(echo "$DIR" | cut -d/ -f1)
-    if [ "$TARGET" == "$COMP_NAME" ] || [ "$TARGET" == "all" ]; then
+    if [[ " ${TARGETS[@]} " =~ " ${COMP_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
         COMP_VUE_PATH="components/$COMP_NAME/$COMP_NAME.vue"
         COMP_MD_FILE="$COMP_NAME.md"
         DOCS_DIR="docs"
@@ -89,7 +97,7 @@ safe_cd "$REPO_ROOT_DIR"
 
 for LIB in $LIBS; do
     LIB_NAME=$(echo "$LIB" | cut -d/ -f1)
-    if [ "$LIB_NAME" != "cypress" ] && ([ "$TARGET" == "$LIB_NAME" ] || [ "$TARGET" == "all" ]); then
+    if [[ " ${TARGETS[@]} " =~ " ${LIB_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
         LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
         LIB_MD_FILE="$LIB_NAME.md"
         LIB_MD_PATH="docs/library/$LIB_MD_FILE"
