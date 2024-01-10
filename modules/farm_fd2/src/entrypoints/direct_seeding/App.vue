@@ -99,6 +99,17 @@
 
         <hr />
 
+        <!-- Equipment Selection -->
+        <EquipmentSelector
+          id="seeding-equipment"
+          data-cy="seeding-equipment"
+          v-model:selected="form.equipment"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="validity.equipment = $event"
+          v-on:ready="createdCount++"
+          v-on:error="(msg) => showErrorToast('Network Error', msg)"
+        />
+
         <p>More stuff here</p>
 
         <hr />
@@ -141,6 +152,7 @@ import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import EquipmentSelector from '@comps/EquipmentSelector/EquipmentSelector.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
@@ -153,6 +165,7 @@ export default {
     LocationSelector,
     NumericInput,
     SelectorBase,
+    EquipmentSelector,
     CommentBox,
     SubmitResetButtons,
   },
@@ -166,6 +179,7 @@ export default {
         bedFeet: 100,
         rowsPerBed: '1',
         bedWidth: 60,
+        equipment: null,
         comment: null,
       },
       validity: {
@@ -176,6 +190,7 @@ export default {
         bedFeet: false,
         rowsPerBed: false,
         bedWidth: false,
+        equipment: false,
         comment: false,
       },
       enableSubmit: true,

@@ -1,13 +1,25 @@
 <template>
-  <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
-  >
-    <p data-cy="placeholder">Component content goes here.</p>
-  </BFormGroup>
+  <div>
+    <SelectorBase
+      id="equipment-selector"
+      data-cy="equipment-selector"
+      label="Equipment"
+      invalidFeedbackText="Equipment must be selected"
+      v-bind:addOptionUrl="addEquipmentUrl"
+      v-bind:options="equipmentList"
+      v-bind:required="required"
+      v-bind:selected="selected"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:update:selected="handleUpdateSelected($event)"
+      v-on:valid="handleValid($event)"
+    />
+  </div>
 </template>
 
 <script>
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+//import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+
 /**
  * A new component.
  *
@@ -26,8 +38,8 @@
  */
 export default {
   name: 'EquipmentSelector',
-  components: {},
-  emits: ['ready', 'valid'],
+  components: { SelectorBase },
+  emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
      * Whether a value for the input element is required or not.
@@ -35,6 +47,16 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+
+    /* TODO: NEED TO KNOW HOW TO SELECT MULTIPLE ELEMENTS. Is it an array? */
+    /**
+     * The name of the selected equipment.
+     * This prop is watched and changes are relayed to the component's internal state.
+     */
+    selected: {
+      type: Array,
+      default: null,
     },
     /**
      * Whether validity styling should appear on input elements.
@@ -45,30 +67,38 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      equipmentList: ['A', 'B', 'C'],
+      canCreateEquipment: false,
+    };
   },
   computed: {
-    isValid() {
-      /*
-       * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.  This should account for whether the value is
-       * required or not if necessary.
-       */
-      return false;
-    },
-    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validityStyling() {
-      /*
-       * Edit this computed property to indicted the type of styling that should be applied
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
-       * other criteria that is necessary.
-       *
-       * Bind this computed property to the `state` prop of the components to be styled.
-       */
-      return false;
+    addEquipmentUrl() {
+      if (this.canCreateEquipment) {
+        return '/asset/add/equipment';
+      } else {
+        return null;
+      }
     },
   },
-  methods: {},
+  methods: {
+    handleUpdateSelected(event) {
+      /* TODO: Does this emit an array????? */
+
+      /**
+       * The selected equipment has changed.
+       * @property {Array<String>} event the names of the newly selected equipment.
+       */
+      this.$emit('update:selected', event);
+    },
+    handleValid(event) {
+      /**
+       * The validity of the selected tray size has changed.
+       * @property {boolean} event whether the selected tray size is valid or not.
+       */
+      this.$emit('valid', event);
+    },
+  },
   watch: {
     isValid() {
       /**
