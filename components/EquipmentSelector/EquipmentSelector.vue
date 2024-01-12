@@ -1,27 +1,21 @@
 <template>
-  <BAccordion
-    flush
-    id="equipment-accordion"
-    data-cy="equipment-accordion"
-  >
-    <BAccordionItem title="Equipment">
-      <SelectorBase
-        v-bind:id="'equipment-selector-' + (i + 1)"
-        v-bind:data-cy="'equipment-selector-' + (i + 1)"
-        v-for="(line, i) in [...selected, '']"
-        invalidFeedbackText="Equipment must be selected"
-        v-bind:label="String(i + 1)"
-        v-bind:key="i"
-        v-bind:addOptionUrl="addEquipmentUrl(i)"
-        v-bind:options="equipmentList"
-        v-bind:required="isRequired(i)"
-        v-bind:selected="selected[i]"
-        v-bind:showValidityStyling="showValidityStyling"
-        v-on:update:selected="handleUpdateSelected($event, i)"
-        v-on:valid="handleValid($event, i)"
-      />
-    </BAccordionItem>
-  </BAccordion>
+  <div>
+    <SelectorBase
+      v-bind:id="'equipment-selector-' + (i + 1)"
+      v-bind:data-cy="'equipment-selector-' + (i + 1)"
+      v-for="(line, i) in [...selected, '']"
+      invalidFeedbackText="Equipment must be selected"
+      v-bind:label="String(i + 1)"
+      v-bind:key="i"
+      v-bind:addOptionUrl="addEquipmentUrl(i)"
+      v-bind:options="equipmentList"
+      v-bind:required="isRequired(i)"
+      v-bind:selected="selected[i]"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:update:selected="handleUpdateSelected($event, i)"
+      v-on:valid="handleValid($event, i)"
+    />
+  </div>
 </template>
 
 <script>
@@ -31,8 +25,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 /**
  * A component for selecting equipment that was used for an activity
  * (e.g. a direct seeding). The user can select multiple pieces of
- * equipment as necessary.  The component appears in an accordion that
- * can be opened and closed.  When opened it initially displays a single
+ * equipment as necessary.  It initially displays a single
  * dropdown for selecting a piece of equipment.  When a piece of equipment
  * is selected another dropdown appears to allow the user to select
  * another piece of equipment.
@@ -55,8 +48,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * Attribute Name         | Description
  * -----------------------| -----------
- * `equipment-accordion`  | The accordion that contains the equipment selector.
- * `equipment-selector-i` | The `SelectorBase` component labeled `i:` (e.g. `1:`)
+ * `equipment-selector-i` | The ith `SelectorBase` component (labeled `i:`).
  */
 export default {
   name: 'EquipmentSelector',

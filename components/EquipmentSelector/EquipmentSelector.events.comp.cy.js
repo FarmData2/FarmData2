@@ -11,12 +11,7 @@ describe('Test the EquipmentSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" when component has been created', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
+  it('Emits "valid" when equipment selector has been created', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -31,7 +26,19 @@ describe('Test the EquipmentSelector component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', false);
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
+  });
+
+  it('Emits "update:selected" when selection is changed', () => {
+    expect(true).to.equal(false);
+  });
+
+  it('"update:selected" payload is array of all selected values', () => {
+    expect(true).to.equal(false);
+  });
+
+  it('Emits "error" if loading equipment fails', () => {
+    expect(true).to.equal(false);
   });
 });

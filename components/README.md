@@ -24,6 +24,8 @@ Custom FarmData2 Vue Components.
 
 ### Template
 
+- Include a `<div>` or a `<span>` inside `<template>` to ensure that `cy.get` and `cy.find` will work consistently across components. Without this extra level of nesting it seems that the Vue component element containing the component can sometimes be optimized away. Thus, trying to `cy.get` that element will fail in tests.
+
 - Many components will be one or more [_Form Group_](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/components/form-group) elements.
 
   - the label for a required input element is followed by `<sup v-if="required" class="text-danger">*</sup>`.
@@ -202,17 +204,20 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
     - check all `data-cy` elements exist and have right values for default props.
       - look at `<template>` to see what needs to be tested.
-      - check that all of the `data-cy` elements `exist` / `have.text` / `have.value` (as appropriate)
-      - if using a sub-component it is sufficient to check that the the sub-component if present.
-      - This test should check all of the required props and the default values of the optional props.
-      - e.g. `label`, `required`
-      - `showValidityStyling` should be checked if a sub-component is used that handles it.
-    - check all optional `props` are handled correctly
+      - check that each of the `data-cy` elements `exist`.
+      - typically done on one test.
+    - Check all required pros and default values for optional props:
+      - This test should check values for all required props and default values of all optional props.
+        - e.g. `label`, `required`, `showValidityStyling`
+      - use `have.class` / `have.text` / `have.value` on elements
+        - If component uses other components, check sub-component elements as necessary.
+      - can usually be done in one test.
+    - check that non-default `prop` values are handled correctly
       - Set each prop to a non-default value and check for its effect.
-        - can often be combined into a single test.
-      - If using a sub-component (e.g. `SelectorBase`, `NumericInput`) then
-        - Check sub-component elements to ensure that props are passed through.
-    - check that all content loaded via API calls is actually loaded.
+      - use `have.class` / `have.text` / `have.value` on elements
+        - If component uses other components, check sub-component elements as necessary.
+      - can often be done in one test.
+    - check that all content loaded via API on creation is loaded correctly.
       - e.g. crops or fields vs greenhouses in LocationSelector.
 
   - check styling (`*.styling.comp.cy.js`)
@@ -226,13 +231,14 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
   - check events (`*.events.comp.cy.js`)
 
     - check that all events listed in the component's `emits` property are emitted properly
-      - Note that the `ready` event is used in all tests so does not need to be tested separately.
-      - check that `update:prop_name` and `valid` are emitted as appropriate.
-        - if using a sub-component it is sufficient to check that these events are propagated by the parent component, it is not necessary to check their payloads or all circumstances for their emission - the tests of the sub-component will have done that.
-      - test all error events (including network errors from API requests) are emitted properly
-      - To do the test, do something to cause the event and check that it is emitted properly and has the correct payload.
-        - i.e. change the selection, type some text, etc...
-        - i.e. Use `cy.intercept` to generate network errors on the appropriate route.
+      - At least one test per event.
+        - Do something that should cause the event to be emitted.
+          - e.g. change the selection, type some text, etc...
+          - e.g. Use `cy.intercept` to generate network errors on the appropriate route.
+        - Check that it is emitted and has the correct payload.
+      - If using a sub-component check propagated events.
+        - It is not necessary to check the payloads for these events or all circumstances for their emission - the tests of the sub-component will have done that.
+      - The `ready` event is used in all tests so does not need to be tested separately.
 
   - check other behaviors (`*.behavior.comp.cy.js`)
 

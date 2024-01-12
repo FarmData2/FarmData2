@@ -102,16 +102,23 @@
         <hr />
 
         <!-- Equipment Selector-->
-        <EquipmentSelector
-          id="seeding-equipment"
-          data-cy="seeding-equipment"
-          v-model:selected="form.equipment"
-          v-bind:showValidityStyling="validity.show"
-          v-on:valid="validity.equipment = $event"
-          v-on:ready="createdCount++"
-          v-on:error="(msg) => showErrorToast('Network Error', msg)"
-        />
-
+        <BAccordion
+          flush
+          id="equipment-accordion"
+          data-cy="equipment-accordion"
+        >
+          <BAccordionItem title="Equipment">
+            <EquipmentSelector
+              id="seeding-equipment"
+              data-cy="seeding-equipment"
+              v-model:selected="form.equipment"
+              v-bind:showValidityStyling="validity.show"
+              v-on:valid="validity.equipment = $event"
+              v-on:ready="createdCount++"
+              v-on:error="(msg) => showErrorToast('Network Error', msg)"
+            />
+          </BAccordionItem>
+        </BAccordion>
         <hr />
 
         <p>More stuff here</p>
