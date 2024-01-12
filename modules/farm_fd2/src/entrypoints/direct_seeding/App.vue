@@ -69,19 +69,7 @@
           v-on:ready="createdCount++"
         />
 
-        <SelectorBase
-          id="seeding-rows"
-          data-cy="seeding-rows"
-          label="Rows/Bed"
-          invalidFeedbackText="A number of rows is required"
-          v-model:selected="form.rowsPerBed"
-          v-bind:options="rowValues"
-          v-bind:required="true"
-          v-bind:showValidityStyling="validity.show"
-          v-on:valid="validity.rowsPerBed = $event"
-          v-on:ready="createdCount++"
-        />
-
+        <!-- Bed Width -->
         <NumericInput
           id="seeding-bed-width"
           data-cy="seeding-bed-width"
@@ -97,9 +85,23 @@
           v-on:ready="createdCount++"
         />
 
+        <!-- Rows/Bed -->
+        <SelectorBase
+          id="seeding-rows"
+          data-cy="seeding-rows"
+          label="Rows/Bed"
+          invalidFeedbackText="A number of rows is required"
+          v-model:selected="form.rowsPerBed"
+          v-bind:options="rowValues"
+          v-bind:required="true"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="validity.rowsPerBed = $event"
+          v-on:ready="createdCount++"
+        />
+
         <hr />
 
-        <!-- Equipment Selection -->
+        <!-- Equipment Selector-->
         <EquipmentSelector
           id="seeding-equipment"
           data-cy="seeding-equipment"
@@ -109,6 +111,8 @@
           v-on:ready="createdCount++"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
         />
+
+        <hr />
 
         <p>More stuff here</p>
 
@@ -179,7 +183,7 @@ export default {
         bedFeet: 100,
         rowsPerBed: '1',
         bedWidth: 60,
-        equipment: null,
+        equipment: [],
         comment: null,
       },
       validity: {
@@ -214,6 +218,8 @@ export default {
           'success'
         );
 
+        console.dir(this.form);
+
         this.reset(true);
       } else {
         this.enableSubmit = false;
@@ -228,6 +234,7 @@ export default {
         this.form.bedFeet = 100;
         this.form.rowsPerBed = '1';
         this.form.bedWidth = 60;
+        this.form.equipment = [];
       }
 
       this.form.cropName = null;
@@ -237,7 +244,7 @@ export default {
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 9;
+      return this.createdCount == 10;
     },
   },
   watch: {
@@ -267,8 +274,13 @@ export default {
 #seeding-crop-name,
 #seeding-location-name,
 #seeding-bed-feet,
-#seeding-rows {
+#seeding-bed-width,
+#seeding-equipment-selector {
   margin-bottom: 8px;
+}
+
+#seeding-equipment {
+  margin-top: 3px;
 }
 
 #seeding-comment {
