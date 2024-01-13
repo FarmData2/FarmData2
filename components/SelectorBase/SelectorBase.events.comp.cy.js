@@ -134,4 +134,29 @@ describe('Test the SelectorBase component events', () => {
         cy.get('@validSpy').should('have.been.calledTwice');
       });
   });
+
+  it('Emits "update:selected" when selection is cleared', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'Two',
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-delete-button"]').click();
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', '');
+        cy.get('[data-cy="selector-input"]').should('have.value', null);
+      });
+  });
 });

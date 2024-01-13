@@ -37,6 +37,7 @@ describe('Test the default SelectorBase content', () => {
         cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
         cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
         cy.get('[data-cy="selector-add-button"]').should('not.exist');
+        cy.get('[data-cy="selector-delete-button"]').should('not.exist');
         cy.get('[data-cy="selector-invalid-feedback"]').should(
           'contain.text',
           'Invalid feedback text.'
@@ -74,6 +75,7 @@ describe('Test the default SelectorBase content', () => {
         cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
         cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
         cy.get('[data-cy="selector-add-button"]').should('not.exist');
+        cy.get('[data-cy="selector-delete-button"]').should('not.exist');
         cy.get('[data-cy="selector-invalid-feedback"]').should(
           'contain.text',
           'Invalid feedback text.'
@@ -84,7 +86,7 @@ describe('Test the default SelectorBase content', () => {
       });
   });
 
-  it('Test selected prop', () => {
+  it('Test selected prop and delete button when required', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(SelectorBase, {
@@ -102,6 +104,29 @@ describe('Test the default SelectorBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-input"]').should('have.value', 'Three');
+        cy.get('[data-cy="selector-delete-button"]').should('not.exist');
+      });
+  });
+
+  it('Test selected prop and delete button when not required', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: false,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'Three',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('have.value', 'Three');
+        cy.get('[data-cy="selector-delete-button"]').should('exist');
       });
   });
 
