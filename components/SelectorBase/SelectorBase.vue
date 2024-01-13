@@ -267,4 +267,8 @@ export default {
   padding-left: 5px;
   padding-right: 5px;
 }
+
+#selector-add-button {
+  width: 28px;
+}
 </style>
