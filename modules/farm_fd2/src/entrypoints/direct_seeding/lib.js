@@ -1,15 +1,31 @@
-/*
- * Add functions here so that they can be unit tested and
- * then used in the end point.
- *
- * This is typically used for the complicated logic involved
- * in creating farmOS records for a form.
- */
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+import dayjs from 'dayjs';
 
 /**
- * Just a function here to ensure things work.
- * @returns 1
+ * Create the farmOS records (asset, quantities and log) to represent
+ * a directseeding.
+ *
+ * @param {Object} formData the form data from the direct seeding form.
+ * @returns {Promise} a promise that resolves when the records are successfully created.
+ * The returned value is an object containing the asset, quantities and log that
+ * were sent to the server.  This object has the following properties:
+ * ```Javascript
+ * {
+ *   plantAsset: {asset--plant},
+ *   bedFeet: {quantity--standard},
+ *   rowsPerBed: {quantity--standard},
+ *   bedWidth: {quantity--standard},
+ *   seedingLog: {log--seeding},
+ *   equipment: [ {asset--equipment} ],
+ *   depth: {quantity--standard},
+ *   speed: {quantity--standard},
+ * }
+ * ```
+ * @throws {Error} if an error occurs while creating the farmOS records.
  */
-export function placeholder() {
-  return 1;
-}
+export async function submitForm(formData) {
+  let plantAsset = null;
+  let traysQuantity = null;
+  let traySizeQuantity = null;
+  let seedsQuantity = null;
+  let seedingLog = null;

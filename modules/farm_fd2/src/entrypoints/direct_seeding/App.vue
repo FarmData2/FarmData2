@@ -101,13 +101,14 @@
 
         <hr />
 
-        <!-- Equipment Selector-->
+        <!-- Equipment & Soil Disturbance-->
         <BAccordion
           flush
           id="equipment-accordion"
           data-cy="equipment-accordion"
         >
           <BAccordionItem title="Equipment & Soil Disturbance">
+            <!-- Equipment -->
             <EquipmentSelector
               id="seeding-equipment"
               data-cy="seeding-equipment"
@@ -116,6 +117,40 @@
               v-on:valid="validity.equipment = $event"
               v-on:ready="createdCount++"
               v-on:error="(msg) => showErrorToast('Network Error', msg)"
+            />
+
+            <!-- Soil Disturbance Depth -->
+            <NumericInput
+              id="seeding-soil-disturbance-depth"
+              data-cy="seeding-soil-disturbance-depth"
+              v-if="form.equipment.length > 0"
+              required
+              label="Depth (in)"
+              invalidFeedbackText="Depth must be a non-negative number."
+              v-model:value="form.depth"
+              v-bind:showValidityStyling="validity.show"
+              v-bind:decimalPlaces="1"
+              v-bind:incDecValues="[1, 6]"
+              v-bind:minValue="0"
+              v-on:valid="validity.depth = $event"
+              v-on:ready="createdCount++"
+            />
+
+            <!-- Soil Disturbance Speed -->
+            <NumericInput
+              id="seeding-soil-disturbance-speed"
+              data-cy="seeding-soil-disturbance-speed"
+              v-if="form.equipment.length > 0"
+              required
+              label="Speed (mph)"
+              invalidFeedbackText="Speed must be a non-negative number."
+              v-model:value="form.speed"
+              v-bind:showValidityStyling="validity.show"
+              v-bind:decimalPlaces="1"
+              v-bind:incDecValues="[1, 5]"
+              v-bind:minValue="0"
+              v-on:valid="validity.speed = $event"
+              v-on:ready="createdCount++"
             />
           </BAccordionItem>
         </BAccordion>
@@ -188,6 +223,8 @@ export default {
         rowsPerBed: '1',
         bedWidth: 60,
         equipment: [],
+        depth: 0,
+        speed: 0,
         comment: null,
       },
       validity: {
@@ -199,6 +236,8 @@ export default {
         rowsPerBed: false,
         bedWidth: false,
         equipment: false,
+        depth: false,
+        speed: false,
         comment: false,
       },
       enableSubmit: true,
@@ -211,7 +250,7 @@ export default {
     submit() {
       this.validity.show = true;
 
-      if (Object.values(this.validity).every((item) => item === true)) {
+      if (this.canSubmit) {
         this.disableSubmit = true;
         this.disableReset = true;
 
@@ -224,7 +263,9 @@ export default {
 
         console.dir(this.form);
 
-        this.reset(true);
+        setTimeout(() => {
+          //this.reset(true);
+        }, 500);
       } else {
         this.enableSubmit = false;
       }
@@ -239,6 +280,8 @@ export default {
         this.form.rowsPerBed = '1';
         this.form.bedWidth = 60;
         this.form.equipment = [];
+        this.form.depth = 0;
+        this.form.speed = 0;
       }
 
       this.form.cropName = null;
@@ -247,14 +290,31 @@ export default {
     },
   },
   computed: {
+    canSubmit() {
+      const required =
+        this.validity.seedingDate &&
+        this.validity.cropName &&
+        this.validity.locationName &&
+        this.validity.bedFeet &&
+        this.validity.rowsPerBed &&
+        this.validity.bedWidth;
+
+      if (!this.validity.equipment) {
+        // No equipment selected.
+        return required;
+      } else {
+        // If equipment is selected then speed and depth are required.
+        return required && this.validity.depth && this.validity.speed;
+      }
+    },
     pageDoneLoading() {
-      return this.createdCount == 10;
+      return this.createdCount == 12;
     },
   },
   watch: {
     validity: {
       handler() {
-        if (Object.values(this.validity).every((item) => item === true)) {
+        if (this.canSubmit) {
           this.enableSubmit = true;
         }
       },
@@ -285,6 +345,11 @@ export default {
 
 #seeding-equipment {
   margin-top: 3px;
+}
+
+#seeding-soil-disturbance-depth,
+#seeding-soil-disturbance-speed {
+  margin-top: 8px;
 }
 
 #seeding-comment {

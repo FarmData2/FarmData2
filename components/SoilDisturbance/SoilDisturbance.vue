@@ -1,13 +1,38 @@
 <template>
-  <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
-  >
-    <p data-cy="placeholder">Component content goes here.</p>
-  </BFormGroup>
+  <div>
+    <NumericInput
+      id="soil-disturbance-depth"
+      data-cy="soil-disturbance-depth"
+      label="Depth (in)"
+      invalidFeedbackText="Soil disturbance depth must be non-negative."
+      v-model:value="form.depth"
+      v-bind:showValidityStyling="validity.show"
+      v-bind:decimalPlaces="1"
+      v-bind:incDecValues="[1, 6]"
+      v-bind:minValue="0"
+      v-on:valid="validity.depth = $event"
+      v-on:ready="createdCount++"
+    />
+
+    <NumericInput
+      id="soil-disturbance-speed"
+      data-cy="soil-disturbance-speed"
+      label="Speed (mph)"
+      invalidFeedbackText="Soil disturbance speed must be non-negative."
+      v-model:value="form.speed"
+      v-bind:showValidityStyling="validity.show"
+      v-bind:decimalPlaces="1"
+      v-bind:incDecValues="[1, 5]"
+      v-bind:minValue="0"
+      v-on:valid="validity.speed = $event"
+      v-on:ready="createdCount++"
+    />
+  </div>
 </template>
 
 <script>
+import NumericInput from '@comps/NumericInput/NumericInput.vue';
+
 /**
  * A new component.
  *
@@ -26,7 +51,7 @@
  */
 export default {
   name: 'SoilDisturbance',
-  components: {},
+  components: { NumericInput },
   emits: ['ready', 'valid'],
   props: {
     /**
@@ -45,7 +70,17 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      form: {
+        depth: 0,
+        speed: 0,
+      },
+      validity: {
+        show: false,
+        depth: false,
+        speed: false,
+      },
+    };
   },
   computed: {
     isValid() {
@@ -89,3 +124,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#soil-disturbance-depth {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+</style>

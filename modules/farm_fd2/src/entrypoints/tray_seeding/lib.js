@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
  * @returns {Promise} a promise that resolves when the records are successfully created.
  * The returned value is an object containing the asset, quantities and log that
  * were sent to the server.  This object has the following properties:
+ * ```Javascript
  * {
  *   plantAsset: {asset--plant},
  *   traysQuantity: {quantity--standard},
@@ -16,6 +17,7 @@ import dayjs from 'dayjs';
  *   seedsQuantity: {quantity--standard},
  *   seedingLog: {log--seeding}
  * }
+ * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
 export async function submitForm(formData) {

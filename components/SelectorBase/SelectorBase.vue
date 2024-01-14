@@ -55,7 +55,7 @@
             v-if="!required && selectedOption != '' && selectedOption != null"
             id="selector-delete-button"
             data-cy="selector-delete-button"
-            variant="outline-danger"
+            variant="outline-warning"
             v-on:click="handleDelete()"
           >
             <svg
