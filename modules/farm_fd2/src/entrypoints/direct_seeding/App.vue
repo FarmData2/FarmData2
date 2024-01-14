@@ -107,7 +107,7 @@
           id="equipment-accordion"
           data-cy="equipment-accordion"
         >
-          <BAccordionItem title="Equipment">
+          <BAccordionItem title="Equipment & Soil Disturbance">
             <EquipmentSelector
               id="seeding-equipment"
               data-cy="seeding-equipment"
@@ -119,9 +119,6 @@
             />
           </BAccordionItem>
         </BAccordion>
-        <hr />
-
-        <p>More stuff here</p>
 
         <hr />
 
