@@ -26,7 +26,13 @@ export async function submitForm(formData) {
   let seedingLog = null;
 
   try {
-    plantAsset = await createPlantAsset(formData);
+    const assetName = formData.seedingDate + '_ts_' + formData.cropName;
+    plantAsset = await farmosUtil.createPlantAsset(
+      assetName,
+      formData.cropName,
+      formData.comment
+    );
+
     traysQuantity = await createTraysQuantity(formData, plantAsset);
     traySizeQuantity = await createTraySizeQuantity(formData);
     seedsQuantity = await createSeedsQuantity(formData);
@@ -108,18 +114,7 @@ export async function submitForm(formData) {
     }
 
     if (plantAsset) {
-      try {
-        await farmosUtil
-          .getFarmOSInstance()
-          .asset.delete('plant', plantAsset.id);
-      } catch (error) {
-        console.log('TraySeeding: \n');
-        console.log('  Unable to delete plant asset with:');
-        console.log('    name: ' + plantAsset.name);
-        console.log('      id: ' + plantAsset.id);
-        console.log(error.message);
-        console.dir(error);
-      }
+      await farmosUtil.deletePlantAsset(plantAsset.id);
     }
 
     throw Error('Error creating tray seeding.', error);

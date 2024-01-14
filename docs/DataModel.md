@@ -19,9 +19,10 @@ The general convention for naming logs and assets is:
     - `ds` - direct seeding
     - `cs` - cover crop seeding
     - `xp` - transplanting
-    - `ha` - harvesting
+    - `ha` - harvest
     - `sd` - soil disturbance
     - `sa` - soil amendment
+  - `<description>` is typically one word that describes the operation. For example, for a tray seeding the `<description>` is the name of the crop that was seeded.
 
 ### Assets
 

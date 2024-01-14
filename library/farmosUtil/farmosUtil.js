@@ -1275,3 +1275,82 @@ export async function checkPermission(permissionName) {
     return perm;
   }
 }
+
+/**
+ * Create a plant asset (i.e. an asset of type `asset--plant`).
+ *
+ * @param {string} assetName the name of the plant asset to create.
+ * @param {string} cropName the name of the crop to associate with the plant asset.
+ * @param {string} comment the comment to associate with this plant asset.
+ * @return {Object} the new plant asset.
+ * @throws {Error} if unable to create the plant asset.
+ *
+ * @category Plant
+ */
+export async function createPlantAsset(assetName, cropName, comment) {
+  const farm = await getFarmOSInstance();
+  const cropMap = await getCropNameToTermMap();
+
+  // create an asset--plant
+  const plantAsset = farm.asset.create({
+    type: 'asset--plant',
+    attributes: {
+      name: assetName,
+      status: 'active',
+      notes: { value: comment },
+    },
+    relationships: {
+      plant_type: [
+        {
+          type: 'taxonomy_term--plant_type',
+          id: cropMap.get(cropName).id,
+        },
+      ],
+    },
+  });
+
+  await farm.asset.send(plantAsset);
+
+  return plantAsset;
+}
+
+/**
+ * Get the plant asset with the specified id.
+ *
+ * @param {string} plantAssetId the id of the plant asset.
+ * @return {Object} the plant asset with the specified id.
+ * @throws {Error} if unable to fetch the plant asset.
+ *
+ * @category Plant
+ */
+export async function getPlantAsset(plantAssetId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.asset.fetch({
+    filter: { type: 'asset--plant', id: plantAssetId },
+  });
+
+  return results.data[0]; // only one asset with the plantAssetId.
+}
+
+/**
+ * Delete the plant asset with the specified id.
+ *
+ * @param {String} plantAssetId the id of the plant asset.
+ * @returns {Object} the response from the server.
+ *
+ * @category Plant
+ */
+export async function deletePlantAsset(plantAssetId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.asset.delete('plant', plantAssetId);
+    return result;
+  } catch (error) {
+    console.log('deletePlantAsset:');
+    console.log('  Unable to delete plant asset with id: ' + plantAssetId);
+    console.log(error.message);
+    console.log(error);
+  }
+}
