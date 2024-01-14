@@ -84,7 +84,10 @@ Custom FarmData2 Vue Components.
   - This prop is set by the entry point to indicates that bootstrap styling should be shown for inputs.
   - The component indicates the validity of inputs using its `isValid` computed property.
 
-    - Returns true if the input value is valid for the component.
+    - This can be a little confusing...
+    - This function should indicate whether the value in the component is valid to be submitted the farmOS database.
+      - Returns true if the input value is valid and false if not.
+    - The submit function in the page will use this value to determine if the submit button should be enabled or disabled and whether or not to add non-required fields to the submission.
 
   - The component indicates the type of styling to be used using its `invalidStyling` computed property.
 
