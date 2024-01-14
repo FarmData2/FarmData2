@@ -11,7 +11,7 @@ describe('Test the default EquipmentSelector content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check that just the first dropdown element exists', () => {
+  it('Check the first dropdown element', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(EquipmentSelector, {
@@ -43,6 +43,8 @@ describe('Test the default EquipmentSelector content', () => {
         cy.get('[data-cy="selector-required"]').should('not.exist');
         cy.get('[data-cy="selector-label"]').should('have.text', '1:');
         cy.get('[data-cy="selector-input"]').should('have.value', null);
+        cy.get('[data-cy="selector-delete-button"]').should('not.exist');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-input"]').should(
           'not.have.class',
           'is-valid'
@@ -69,7 +71,20 @@ describe('Test the default EquipmentSelector content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="equipment-selector-1"]').should('exist');
+        cy.get('[data-cy="equipment-selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="equipment-selector-1"]')
+          .find('[data-cy="selector-add-button"]')
+          .should('not.exist');
+
         cy.get('[data-cy="equipment-selector-2"]').should('exist');
+        cy.get('[data-cy="equipment-selector-2"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="equipment-selector-2"]')
+          .find('[data-cy="selector-add-button"]')
+          .should('exist');
 
         cy.get('[data-cy="equipment-selector-1"]')
           .find('[data-cy="selector-required"]')
@@ -78,7 +93,9 @@ describe('Test the default EquipmentSelector content', () => {
           .find('[data-cy="selector-required"]')
           .should('not.exist');
 
-        cy.get('[data-cy="selector-input"]').should('have.value', 'Tractor');
+        cy.get('[data-cy="equipment-selector-1"]')
+          .find('[data-cy="selector-input"]')
+          .should('have.value', 'Tractor');
       });
   });
 

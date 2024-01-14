@@ -1,12 +1,12 @@
 <template>
   <div>
     <SelectorBase
+      v-for="(selectedEquipment, i) in ['', ...selectedEquipment]"
+      v-bind:key="i"
       v-bind:id="'equipment-selector-' + (i + 1)"
       v-bind:data-cy="'equipment-selector-' + (i + 1)"
-      v-for="(line, i) in [...selected, '']"
       invalidFeedbackText="Equipment must be selected"
       v-bind:label="String(i + 1)"
-      v-bind:key="i"
       v-bind:addOptionUrl="addEquipmentUrl(i)"
       v-bind:options="equipmentList"
       v-bind:required="isRequired(i)"
@@ -40,7 +40,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *   v-bind:showValidityStyling="validity.show"
  *   v-on:valid="validity.equipment = $event"
  *   v-on:ready="createdCount++"
- *  v-on:error="(msg) => showErrorToast('Network Error', msg)"
+ *   v-on:error="(msg) => showErrorToast('Network Error', msg)"
  * />
  * ```
  *
@@ -48,7 +48,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * Attribute Name         | Description
  * -----------------------| -----------
- * `equipment-selector-i` | The ith `SelectorBase` component (labeled `i:`).
+ * `equipment-selector-i` | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
  */
 export default {
   name: 'EquipmentSelector',
@@ -86,10 +86,26 @@ export default {
       selectedEquipment: this.selected,
       valid: [],
       equipmentList: [],
-      canCreateEquipment: true,
+      canCreateEquipment: false,
     };
   },
-  computed: {},
+  computed: {
+    isValid() {
+      let allValid = false;
+
+      /*
+       * Will be valid if every SelectorBase has a valid value,
+       * except the last one, which is always blank.
+       */
+      if (this.selectedEquipment.length > 0) {
+        allValid = this.valid
+          .slice(0, this.selectedEquipment.length)
+          .every((valid) => valid === true);
+      }
+
+      return allValid;
+    },
+  },
   methods: {
     addEquipmentUrl(i) {
       if (i == this.selectedEquipment.length && this.canCreateEquipment) {
@@ -102,44 +118,37 @@ export default {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);
     },
     handleUpdateSelected(event, i) {
-      /*
-       * Skip events that are a result of the page setting the
-       * selected prop to [] which generates a selected event for
-       * the blank ('') first option in SelectorBase.
-       */
-      if (event != '') {
+      if (event === '') {
+        // The ith piece of equipment was removed.
+        this.selectedEquipment.splice(i, 1);
+        this.valid.splice(i, 1);
+      } else {
         this.selectedEquipment[i] = event;
-
-        /**
-         * The selected equipment has changed.
-         * @property {Array<String>} event the names of the newly selected equipment.
-         */
-        this.$emit('update:selected', this.selectedEquipment);
       }
+
+      /**
+       * The selected equipment has changed.
+       * @property {Array<String>} event the names of the newly selected equipment.
+       */
+      this.$emit('update:selected', this.selectedEquipment);
     },
     handleValid(event, i) {
       this.valid[i] = event;
-
-      let allValid = false;
-      // check if all but the last equipment line is valid
-      if (this.selectedEquipment.length == 1) {
-        allValid = this.valid[0];
-      } else {
-        allValid = this.valid
-          .slice(0, this.selectedEquipment.length - 1)
-          .every((valid) => valid === true);
-      }
-
+    },
+  },
+  watch: {
+    selected: {
+      handler() {
+        this.selectedEquipment = this.selected;
+      },
+      deep: true,
+    },
+    isValid() {
       /**
        * The validity of the selected equipment changed.
        * @property {boolean} event whether the selected equipment is valid or not.
        */
-      this.$emit('valid', allValid);
-    },
-  },
-  watch: {
-    selected() {
-      this.selectedEquipment = this.selected;
+      this.$emit('valid', this.isValid);
     },
   },
   created() {
@@ -154,8 +163,11 @@ export default {
       .catch((err) => {
         console.error('EquipmentSelector: Error fetching equipment.');
         console.error(err);
-        this.$emit('error', 'Unable to fetch locations.');
+        this.$emit('error', 'Unable to fetch equipment.');
       });
+
+    //Emit the initial valid state of the component's value.
+    this.$emit('valid', this.isValid);
 
     /**
      * The component is ready for use.
