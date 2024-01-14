@@ -11,7 +11,7 @@ describe('Test the SelectorBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" with true on creation', () => {
+  it('Emits "valid" with true on creation when selection is given', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -19,7 +19,6 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
-        required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         selected: 'One',
         onReady: readySpy,
@@ -35,7 +34,7 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Emits "valid" with false on creation', () => {
+  it('Emits "valid" with false on creation when no selection is given', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -43,7 +42,6 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
-        required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         selected: '',
         onReady: readySpy,
@@ -88,7 +86,6 @@ describe('Test the SelectorBase component events', () => {
 
     cy.mount(SelectorBase, {
       props: {
-        required: true,
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
@@ -113,7 +110,6 @@ describe('Test the SelectorBase component events', () => {
 
     cy.mount(SelectorBase, {
       props: {
-        required: true,
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
