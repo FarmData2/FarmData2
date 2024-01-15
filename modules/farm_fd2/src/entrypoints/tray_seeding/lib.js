@@ -74,9 +74,13 @@ export async function submitForm(formData) {
     };
   } catch (error) {
     console.log('TraySeeding: \n' + error.message);
-    console.dir(error);
+    console.log(error);
 
-    // Handle errors here by deleting any records that were created.
+    /*
+     * If an error occurred we will delete any of the farmOS records that were created.
+     * These must be deleted in the opposite order from the order in which they were
+     * created to ensure that a record is not deleted before something that refers to it.
+     */
     if (seedingLog) {
       await farmosUtil.deleteSeedingLog(seedingLog.id);
     }
