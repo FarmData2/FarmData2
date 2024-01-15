@@ -6,6 +6,8 @@
   - `seeding_tray`
   - `seeding_direct`
   - `seeding_cover_crop`
+- Activity Logs
+  - `activity_soil_disturbance_tillage`
 
 ## Units
 
@@ -47,6 +49,8 @@ A tray seeding consists of:
     - `Trays`: The number of trays that were seeded with units of `TRAYS`. This quantity sets the plant asset's inventory.
     - `Tray Size`:The number of cells in each tray with units of `CELLS/TRAY`.
     - `Seeds`:The total number of seeds planted with units of `SEEDS`. Note: This is computed from the other data entered in the form (trays x cells per tray x seeds per cell).
+  - References the `asset--plant` asset in its `relationship.assets` attribute.
+  - References the greenhouse in its `relationship.location` attribute.
 
 Logs and assets associated with a tray seeding will be named: `yyyy-mm-dd_ts_cropName`
 
@@ -60,16 +64,22 @@ A direct seeding consists of:
 
 - An `asset--plant` representing the seeded plant in the ground.
   - Comments associated with the direct seeding are stored in the `asset--plant` asset.
-- A `log--seeding` representing the seeding activity with three `quantity--standard` records with the labels:
-  - `Bed Feet`: the number of bed feet that were seeded with units of 'FEET'
-  - `Rows/Bed`: the number of rows in the bed that was seeded with units of `ROWS/BED'
-  - `Bed/Width`: the width of the bed that was seeded with units `INCHES`
+- A `log--seeding` representing the seeding activity:
+  - the log `category` set to `seeding_direct`
+  - three `quantity--standard` records with the labels:
+    - `Bed Feet`: the number of bed feet that were seeded with units of 'FEET'
+    - `Rows/Bed`: the number of rows in the bed that was seeded with units of `ROWS/BED'
+    - `Bed/Width`: the width of the bed that was seeded with units `INCHES`
+  - References the `asset--plant` asset in its `relationship.assets` attribute.
+  - References the field or bed in its `relationship.location` attribute.
 - A `log--activity` representing the soil disturbance associated with the direct seeding with:
   - the log `category` set to `tillage`
   - `equipment` relationships for all of the equipment used.
-  - Two `quantity--standard` records with the labels:
+  - two `quantity--standard` records with the labels:
     - `Depth`: the depth of the soil disturbed with units of `INCHES`
     - `Speed`: the rate at which the soil was disturbed with units of `MPH`
+  - References the `asset--plant` asset in its `relationship.assets` attribute.
+  - References the field or bed in its `relationship.location` attribute.
 
 Logs and assets associated with a direct seeding will be named: `yyyy-mm-dd_ds_cropName`
 
