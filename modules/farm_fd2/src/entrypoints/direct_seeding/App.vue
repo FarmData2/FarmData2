@@ -1,24 +1,36 @@
 <template>
-  <div>
-    <BToaster />
+  <div
+    id="direct-seeding"
+    data-cy="direct-seeding"
+  >
+    <BToaster
+      id="direct-seeding-toaster"
+      data-cy="direct-seeding-toaster"
+    />
     <BCard
+      id="direct-seeding-card"
+      data-cy="direct-seeding-card"
       bg-variant="light"
       header-tag="header"
     >
       <template #header>
         <h2
-          data-cy="seeding-header"
+          id="direct-seeding-header"
+          data-cy="direct-seeding-header"
           class="text-center"
         >
           Direct Seeding
         </h2>
       </template>
 
-      <BForm>
+      <BForm
+        id="direct-seeding-form"
+        data-cy="direct-seeding-form"
+      >
         <!-- Seeding Date -->
         <DateSelector
-          id="seeding-date"
-          data-cy="seeding-date"
+          id="direct-seeding-date"
+          data-cy="direct-seeding-date"
           required
           v-model:date="form.seedingDate"
           v-bind:showValidityStyling="validity.show"
@@ -28,8 +40,8 @@
 
         <!-- Crop Selection -->
         <CropSelector
-          id="seeding-crop-name"
-          data-cy="seeding-crop-name"
+          id="direct-seeding-crop"
+          data-cy="direct-seeding-crop"
           required
           v-model:selected="form.cropName"
           v-bind:showValidityStyling="validity.show"
@@ -40,8 +52,8 @@
 
         <!-- Location Selection -->
         <LocationSelector
-          id="seeding-location-name"
-          data-cy="seeding-location-name"
+          id="direct-seeding-location"
+          data-cy="direct-seeding-location"
           required
           includeFields
           v-model:selected="form.locationName"
@@ -55,8 +67,8 @@
 
         <!-- Bed Feet seeded -->
         <NumericInput
-          id="seeding-bed-feet"
-          data-cy="seeding-bed-feet"
+          id="direct-seeding-bed-feet"
+          data-cy="direct-seeding-bed-feet"
           required
           label="Bed Feet"
           invalidFeedbackText="Bed Feet must be positive."
@@ -71,8 +83,8 @@
 
         <!-- Bed Width -->
         <NumericInput
-          id="seeding-bed-width"
-          data-cy="seeding-bed-width"
+          id="direct-seeding-bed-width"
+          data-cy="direct-seeding-bed-width"
           required
           label="Bed Width (in)"
           invalidFeedbackText="Bed width must be positive."
@@ -87,8 +99,8 @@
 
         <!-- Rows/Bed -->
         <SelectorBase
-          id="seeding-rows"
-          data-cy="seeding-rows"
+          id="direct-seeding-rows-per-bed"
+          data-cy="direct-seeding-rows-per-bed"
           label="Rows/Bed"
           invalidFeedbackText="A number of rows is required"
           v-model:selected="form.rowsPerBed"
@@ -104,14 +116,27 @@
         <!-- Equipment & Soil Disturbance-->
         <BAccordion
           flush
-          id="equipment-accordion"
-          data-cy="equipment-accordion"
+          id="direct-seeding-equipment-accordion"
+          data-cy="direct-seeding-equipment-accordion"
         >
-          <BAccordionItem title="Equipment & Soil Disturbance">
+          <BAccordionItem
+            id="direct-seeding-equipment-accordion-item"
+            data-cy="direct-seeding-equipment-accordion-item"
+          >
+            <template #title>
+              <span
+                id="direct-seeding-equipment-accordion-title"
+                data-cy="direct-seeding-equipment-accordion-title"
+                class="w-100 text-center"
+              >
+                Equipment & Soil Disturbance
+              </span>
+            </template>
+
             <!-- Equipment -->
             <EquipmentSelector
-              id="seeding-equipment"
-              data-cy="seeding-equipment"
+              id="direct-seeding-equipment-selector"
+              data-cy="direct-seeding-equipment-selector"
               v-model:selected="form.equipment"
               v-bind:showValidityStyling="validity.show"
               v-on:valid="validity.equipment = $event"
@@ -121,9 +146,9 @@
 
             <!-- Soil Disturbance Depth -->
             <NumericInput
-              id="seeding-soil-disturbance-depth"
-              data-cy="seeding-soil-disturbance-depth"
-              v-if="form.equipment.length > 0"
+              id="direct-seeding-soil-disturbance-depth"
+              data-cy="direct-seeding-soil-disturbance-depth"
+              v-show="form.equipment.length > 0"
               required
               label="Depth (in)"
               invalidFeedbackText="Depth must be a non-negative number."
@@ -138,9 +163,9 @@
 
             <!-- Soil Disturbance Speed -->
             <NumericInput
-              id="seeding-soil-disturbance-speed"
-              data-cy="seeding-soil-disturbance-speed"
-              v-if="form.equipment.length > 0"
+              id="direct-seeding-soil-disturbance-speed"
+              data-cy="direct-seeding-soil-disturbance-speed"
+              v-show="form.equipment.length > 0"
               required
               label="Speed (mph)"
               invalidFeedbackText="Speed must be a non-negative number."
@@ -159,8 +184,8 @@
 
         <!-- Comment Box -->
         <CommentBox
-          id="seeding-comment"
-          data-cy="seeding-comment"
+          id="direct-seeding-comment"
+          data-cy="direct-seeding-comment"
           v-model:comment="form.comment"
           v-on:valid="validity.comment = $event"
           v-on:ready="createdCount++"
@@ -168,8 +193,8 @@
 
         <!-- Submit and Reset Buttons -->
         <SubmitResetButtons
-          id="seeding-submit-reset"
-          data-cy="seeding-submit-reset"
+          id="direct-seeding-submit-reset"
+          data-cy="direct-seeding-submit-reset"
           v-bind:enableSubmit="enableSubmit"
           v-bind:enableReset="enableReset"
           v-on:ready="createdCount++"
@@ -180,6 +205,7 @@
     </BCard>
 
     <div
+      id="page-loaded"
       data-cy="page-loaded"
       v-show="false"
     >
@@ -300,10 +326,10 @@ export default {
         this.validity.bedWidth;
 
       if (!this.validity.equipment) {
-        // No equipment selected.
+        // No equipment selected so speed and depth will not be used.
         return required;
       } else {
-        // If equipment is selected then speed and depth are required.
+        // If equipment is selected then valid speed and depth are required.
         return required && this.validity.depth && this.validity.speed;
       }
     },
@@ -330,29 +356,29 @@ export default {
 <style>
 @import url('@css/fd2-mobile.css');
 
-#seeding-date {
+#direct-seeding-date {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#seeding-crop-name,
-#seeding-location-name,
-#seeding-bed-feet,
-#seeding-bed-width,
-#seeding-equipment-selector {
+#direct-seeding-crop,
+#direct-seeding-location,
+#direct-seeding-bed-feet,
+#direct-seeding-bed-width,
+#direct-seeding-equipment-selector {
   margin-bottom: 8px;
 }
 
-#seeding-equipment {
+#direct-seeding-equipment {
   margin-top: 3px;
 }
 
-#seeding-soil-disturbance-depth,
-#seeding-soil-disturbance-speed {
+#direct-seeding-soil-disturbance-depth,
+#direct-seeding-soil-disturbance-speed {
   margin-top: 8px;
 }
 
-#seeding-comment {
+#direct-seeding-comment {
   margin-bottom: 15px;
 }
 </style>

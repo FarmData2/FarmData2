@@ -55,9 +55,15 @@ Document where these things are in the code somehow.
 
 - an example in the Examples module?
 
+- all elements have `id` and `data-cy` attributes
+
+  - prefixed with the entry point name
+  - cabob-case
+  - e.g. `direct-seeding-toaster`
+
 - all use the `fd2-mobile.css` stylesheet.
 
-  - add `<style>` to the `App.vue` for entry point specific styles.
+  - add `<style scoped>` to the `App.vue` for entry point specific styles.
 
 - Submit button is initially enabled.
 
@@ -118,48 +124,63 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
 Write code for submission of the form to farmOS in the lib.js file and unit test it.
 
-- all tests should clean up after themselves.
+- Tests do not need to clean up as the db is reset when running headless.
+- Can be explicitly reset for specific test files (as above) if necessary.
 
 ### E2E Testing
 
-Test: There will typically be 4 broad categories of tests. The lists below are not intended to be prescriptive or exhaustive.
+The `addEntryPoint.bash` script creates an `*.exists.e2e.cy.js` test file. It initially tests that admin can access the page. It should be augmented to test as follows:
 
-- `*.content.e2e.cy.js` - ensure that the content of the form is correct.
-  - All the components exist.
-  - All labels and fields (not tested by components) are correct.
-  - Default values are correct.
-  - Required items are marked required.
-  - Submit/Reset/etc are initially in the correct state.
-  - Correct increment / decrement buttons exist.
-  - etc...
-- `*.behavior.e2e.cy.js` - ensure that the form behaves correctly
-  - validity styling is shown at appropriate times
-  - Submit/Reset/etc are in the correct state as form changes.
-    - E.g. Submit is disabled when the form is invalid
-    - E.g. Submit is reenabled when the form becomes valid
-  - reset clears the form to default values.
-  - form controls work:
-    - E.g. any `+` to add new items go to correct url (if not already tested by the component)
-    - E.g. computed values are computed correctly.
-    - Check props that affect component behavior are correct.
-      - E.g. increment / decrement values are correct
-  - etc...
-- `*.permissions.*.e2e.cy.js` - ensure that correct content is shown based on permissions.
-  - Create a separate test for each permission that is checked.
-  - `+` buttons are not shown unless user has permission to edit vocabulary.
-  - etc...
-- `*.submit.e2e.cy.js` - ensure that the form submits correctly
-  - records are created in the database
-  - Submitting banner appears and disappears
-  - Success banner appears and disappears
-  - Error banner appear and disappears
-  - Sticky parts of form remain when submit is complete.
-  - etc...
+- `*.exists.e2e.cy.js` - ensure that the entry point exists and is accessible
+  - Check that user(s) with proper permission can access the page.
+  - Check that user(s) without permission (if one exists) cannot access the page.
+  - Check that the following standard elements exist on the page
+    - BToaster, BCard, header (contains proper title), BForm
+- `*.<component>.e2e.cy.js` - Component specific e2e tests with one test for each component in the entry point.
+  - Check that the component initially
+    - exists or not.
+    - is visible or not.
+    - is enabled or not.
+  - Check things that are set by props:
+    - label, required, default value, dropdown content, buttons etc...
+    - no need to duplicate tests from component's own tests.
+  - Test validity styling
+    - submit and check for appropriate validity styling (valid or invalid or none)
+    - may require that values be placed in non-required components to see style.
+  - Test behavior of the component
+    - increment/decrement buttons, become visible, invisible, etc.
+    - no need to duplicate tests from component's own tests.
+- `*.submitReset.e2e.cy.js` - Submit/reset component e2e tests
+  - Test that buttons are
+    - visible and are
+    - in the enabled state.
+  - Test enabling/disabling of submit button
+    - Configure form with one field invalid (helper function that sets all fields to a valid value might help here.)
+      - submit.
+      - check submit disabled.
+    - Make field valid, check submit enabled (don't submit)
+    - Repeat for each field.
+  - Test reset
+    - set all elements to valid state
+    - resets all elements to default state
+- `*.submission.e2e.cy.js` - test submission of the form.
+  - Test successful submit
+    - configure form with all fields valid
+    - submit
+    - check:
+      - creates all of the records
+      - shows/hides submitting banner
+      - resets form leaving "sticky" values in place.
+      - shows/hides success banner
+  - Test submit w/ error
+    - shows/hides error banner
 
 ### Testing Gotchas
 
-- Clear fields before typing in them.
-- Blur the final field that was modified before taking an action (E.g. Submit / Reset)
+- Clear fields with content before typing in them
+- blur any field that was `type()`d in or `clear()`ed.
+- When checking if a _selector_ or _numeric_ input is empty be sure to get the element from the sub-component (e.g. `selector-input` or `numeric-input`). Otherwise if you compare the parent component's value to `''` it will match but the sub-component's value should be compared to `null`.
+- If a contained `data-cy` is unique to a page just use it. `cy.get`ting the parent element and using `find` may not work. Very strange behavior.
 
 ## Entry point structure
 
