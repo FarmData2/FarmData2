@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <div>
     <BFormGroup
       id="selector-group"
       data-cy="selector-group"
@@ -84,7 +84,7 @@
         </BFormInvalidFeedback>
       </BInputGroup>
     </BFormGroup>
-  </span>
+  </div>
 </template>
 
 <script>
