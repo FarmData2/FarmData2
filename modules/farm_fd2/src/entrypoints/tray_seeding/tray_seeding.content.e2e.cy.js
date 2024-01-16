@@ -25,7 +25,7 @@ describe('Check the content of the Tray Seeding page.', () => {
     cy.get('[data-cy="seeding-header"]').should('contain.text', 'Tray Seeding');
   });
 
-  it('All components are visible.', () => {
+  it('Check component are visibility.', () => {
     cy.get('[data-cy="seeding-date"]').should('be.visible');
     cy.get('[data-cy="seeding-crop-name"]').should('be.visible');
     cy.get('[data-cy="seeding-location-name"]').should('be.visible');
