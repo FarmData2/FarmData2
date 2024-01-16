@@ -27,19 +27,14 @@ else
     echo -e "${GREEN}Generating documentation for specified targets.${NO_COLOR}"
 fi
 
-echo "  Deleting old docs..."
-rm -rf docs/components 2 &> /dev/null
-mkdir docs/components
-rm -rf docs/library 2 &> /dev/null
-mkdir docs/library
-echo "  Deleted."
-
-echo "  Creating index file: $INDEX_FILE..."
+echo "  Creating or updating index file: $INDEX_FILE..."
 INDEX_FILE="FarmData2.md"
 INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE"
-echo "# FarmData2 Documentation" > "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
-echo "  Created."
+if [[ ! -f "$INDEX_PATH" ]]; then
+    echo "# FarmData2 Documentation" > "$INDEX_PATH"
+    echo "" >> "$INDEX_PATH"
+fi
+echo "  Updated."
 
 echo "  Generating docs for all Components..."
 echo "    Adding Components section to $INDEX_FILE..."
@@ -51,42 +46,49 @@ safe_cd "$REPO_ROOT_DIR/components"
 DIRS=$(ls -d -- */)
 safe_cd "$REPO_ROOT_DIR"
 
+update_component_docs() {
+    local COMP_NAME=$1
+    local COMP_VUE_PATH="components/$COMP_NAME/$COMP_NAME.vue"
+    local COMP_MD_FILE="$COMP_NAME.md"
+    local DOCS_DIR="docs/components"
+
+    if [[ -f "$COMP_VUE_PATH" ]]; then
+        echo "    Generating docs for $COMP_NAME..."
+        npx vue-docgen "$COMP_VUE_PATH" "$DOCS_DIR"
+        mv "$DOCS_DIR/$COMP_NAME/$COMP_MD_FILE" "$DOCS_DIR/$COMP_MD_FILE"
+        rmdir "$DOCS_DIR/$COMP_NAME"
+        echo "      Docs generated for $COMP_NAME."
+    else
+        echo "      Component $COMP_NAME not found."
+    fi
+}
+
+# Function to update library documentation
+update_library_docs() {
+    local LIB_NAME=$1
+    local LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
+    local LIB_MD_FILE="$LIB_NAME.md"
+    local LIB_MD_PATH="docs/library/$LIB_MD_FILE"
+    local DOCS_DIR="docs/library"
+
+    if [[ -f "$LIB_JS_PATH" ]]; then
+        echo "      Generating docs for $LIB_NAME..."
+        npx jsdoc2md "$LIB_JS_PATH" > "$LIB_MD_PATH"
+        echo "        Docs generated for $LIB_NAME."
+    else
+        echo "      Library $LIB_NAME not found."
+    fi
+}
+
 for DIR in $DIRS; do
     COMP_NAME=$(echo "$DIR" | cut -d/ -f1)
     if [[ " ${TARGETS[@]} " =~ " ${COMP_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
-        COMP_VUE_PATH="components/$COMP_NAME/$COMP_NAME.vue"
-        COMP_MD_FILE="$COMP_NAME.md"
-        DOCS_DIR="docs"
-
-        echo "    Generating docs for $COMP_NAME..."
-        echo "      Creating docs for $COMP_NAME..."
-        npx vue-docgen "$COMP_VUE_PATH" "$DOCS_DIR"
-        mv "$DOCS_DIR/components/$COMP_NAME/$COMP_MD_FILE" "$DOCS_DIR/components/$COMP_MD_FILE"
-        rmdir "$DOCS_DIR/components/$COMP_NAME"
-        echo "      Created."
-
-        echo "      Adding link for $COMP_MD_FILE to $INDEX_FILE..."
-        DESC_TEXT=$(grep -m 1 -A 1 "/\*\*" "$COMP_VUE_PATH" | tail -1 | cut -d' ' -f3-)
-        COMP_MD_LINK="components/$COMP_MD_FILE"
-        echo "- [$COMP_NAME]($COMP_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
-        echo "      Added."
-
-        echo "      Adding back links from $COMP_MD_FILE to $INDEX_FILE..."
-        TMP_PATH="docs/components/$COMP_NAME.tmp"
-        echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-        echo "" >> "$TMP_PATH"
-        cat "docs/components/$COMP_MD_FILE" >> "$TMP_PATH"
-        echo "" >> "$TMP_PATH"
-        echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
-        mv -f "$TMP_PATH" "docs/components/$COMP_MD_FILE"
-        echo "      Added."
-        echo "    Generated."
+        update_component_docs "$COMP_NAME"
     fi
 done
-echo "  Generated."
+echo "  Components documentation generated."
 
 echo "  Generating docs for all libraries..."
-
 echo "    Adding Library section to $INDEX_FILE..."
 echo "## Library" >> "$INDEX_PATH"
 echo "" >> "$INDEX_PATH"
@@ -99,35 +101,10 @@ safe_cd "$REPO_ROOT_DIR"
 for LIB in $LIBS; do
     LIB_NAME=$(echo "$LIB" | cut -d/ -f1)
     if [[ " ${TARGETS[@]} " =~ " ${LIB_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
-        LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
-        LIB_MD_FILE="$LIB_NAME.md"
-        LIB_MD_PATH="docs/library/$LIB_MD_FILE"
-        DOCS_DIR="docs"
-
-        echo "      Generating docs for $LIB_NAME..."
-        echo "        Creating docs for $LIB_NAME..."
-        npx jsdoc2md "$LIB_JS_PATH" > "$LIB_MD_PATH"
-        echo "        Created."
-
-        echo "      Adding link for $LIB_MD_FILE to $INDEX_FILE..."
-        DESC_TEXT=$(grep "@description" "$LIB_JS_PATH" | cut -d' ' -f4-)
-        LIB_MD_LINK="library/$LIB_MD_FILE"
-        echo "- [$LIB_NAME]($LIB_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
-        echo "      Added."
-
-        echo "      Adding back links from $LIB_MD_FILE to $INDEX_FILE..."
-        TMP_PATH="docs/library/$LIB_NAME.tmp"
-        echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-        echo "" >> "$TMP_PATH"
-        cat "docs/library/$LIB_MD_FILE" >> "$TMP_PATH"
-        echo "" >> "$TMP_PATH"
-        echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
-        mv -f "$TMP_PATH" "docs/library/$LIB_MD_FILE"
-        echo "      Added."
-
-        echo "    Generated."
+        update_library_docs "$LIB_NAME"
     fi
 done
-echo "  Generated."
+echo "  Libraries documentation generated."
+
 
 echo -e "${GREEN}Done.${NO_COLOR}"
