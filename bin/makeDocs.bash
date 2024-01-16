@@ -106,5 +106,4 @@ for LIB in $LIBS; do
 done
 echo "  Libraries documentation generated."
 
-
 echo -e "${GREEN}Done.${NO_COLOR}"
