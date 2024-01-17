@@ -72,33 +72,35 @@ export async function submitForm(formData) {
       [bedFeetQuantity, rowsPerBedQuantity, bedWidthQuantity]
     );
 
-    depthQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.depth,
-      'Depth',
-      'INCHES'
-    );
+    if (formData.equipment.length > 0) {
+      depthQuantity = await farmosUtil.createStandardQuantity(
+        'length',
+        formData.depth,
+        'Depth',
+        'INCHES'
+      );
 
-    speedQuantity = await farmosUtil.createStandardQuantity(
-      'rate',
-      formData.speed,
-      'Speed',
-      'MPH'
-    );
+      speedQuantity = await farmosUtil.createStandardQuantity(
+        'rate',
+        formData.speed,
+        'Speed',
+        'MPH'
+      );
 
-    const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
-    for (const equipmentName of formData.equipment) {
-      equipmentAssets.push(equipmentMap.get(equipmentName));
+      const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
+      for (const equipmentName of formData.equipment) {
+        equipmentAssets.push(equipmentMap.get(equipmentName));
+      }
+
+      activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
+        formData.seedingDate,
+        formData.locationName,
+        'activity_soil_disturbance_tillage',
+        plantAsset,
+        [depthQuantity, speedQuantity],
+        equipmentAssets
+      );
     }
-
-    activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
-      formData.seedingDate,
-      formData.locationName,
-      'activity_soil_disturbance_tillage',
-      plantAsset,
-      [depthQuantity, speedQuantity],
-      equipmentAssets
-    );
 
     return {
       plantAsset: plantAsset,
