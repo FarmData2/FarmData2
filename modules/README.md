@@ -175,12 +175,13 @@ The `addEntryPoint.bash` script creates an `*.exists.e2e.cy.js` test file. It in
   - Test submit w/ error
     - shows/hides error banner
 
-### Testing Gotchas
+### Common Testing Gotchas
 
-- Clear fields with content before typing in them
-- blur any field that was `type()`d in or `clear()`ed.
-- When checking if a _selector_ or _numeric_ input is empty be sure to get the element from the sub-component (e.g. `selector-input` or `numeric-input`). Otherwise if you compare the parent component's value to `''` it will match but the sub-component's value should be compared to `null`.
+- `clear()` fields with content before `type()`ing in them
+- `blur()` any field that was `type()`d in or `clear()`ed before doing a submit or relying on its value. If changing lots of fields, then only need to `blur` the last one.
+- When setting or checking the value of a _selector_ or _numeric_ input be sure to get the element from the sub-component (e.g. `selector-input` or `numeric-input`). Some methods work on the parent component, but others do not. So, it is always safest to work with the `*-input` element itself.
 - If a contained `data-cy` is unique to a page just use it. `cy.get`ting the parent element and using `find` may not work. Very strange behavior.
+- To use `select()` on a component built on top of the `SelectorBase` component, you must use `cy.get(<component>).find('selector-input').select(<item>)`
 
 ## Entry point structure
 
