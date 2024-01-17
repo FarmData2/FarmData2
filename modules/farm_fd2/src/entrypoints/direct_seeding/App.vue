@@ -225,7 +225,7 @@ import EquipmentSelector from '@comps/EquipmentSelector/EquipmentSelector.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-//import * as lib from './lib.js';
+import * as lib from './lib.js';
 
 export default {
   components: {
@@ -287,11 +287,27 @@ export default {
           'success'
         );
 
-        console.dir(this.form);
-
-        setTimeout(() => {
-          //this.reset(true);
-        }, 500);
+        lib
+          .submitForm(this.form)
+          .then(() => {
+            uiUtil.hideToast();
+            this.reset(true); // keep sticky parts.
+            uiUtil.showToast(
+              'Direct seeding created.',
+              '',
+              'top-center',
+              'success',
+              2
+            );
+          })
+          .catch(() => {
+            uiUtil.hideToast();
+            this.showErrorToast(
+              'Error creating direct seeding.',
+              'Check your network connection and try again.'
+            );
+            this.enableSubmit = true;
+          });
       } else {
         this.enableSubmit = false;
       }
@@ -313,6 +329,15 @@ export default {
       this.form.cropName = null;
       this.form.comment = null;
       this.enableSubmit = true;
+    },
+    showErrorToast(title, message) {
+      if (!this.errorShown) {
+        this.errorShown = true;
+        this.enableSubmit = false;
+        this.enableReset = false;
+
+        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
+      }
     },
   },
   computed: {

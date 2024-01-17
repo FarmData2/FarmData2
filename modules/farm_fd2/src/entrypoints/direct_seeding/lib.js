@@ -117,36 +117,77 @@ export async function submitForm(formData) {
     console.log('DirectSeeding: \n' + error.message);
     console.log(error);
 
+    /*
+     * Attempt to delete any of the records that were created.  It is likely
+     * that if there was an error creating the records then there will
+     * be errors deleting them too.  So we try/catch those and swallow
+     * the exceptions and just emit a new error at the end.
+     */
+
     if (seedingLog) {
-      await farmosUtil.deleteSeedingLog(seedingLog.id);
+      try {
+        await farmosUtil.deleteSeedingLog(seedingLog.id);
+      } catch (error) {
+        console.log('Unable to delete seeding log: ' + seedingLog.id);
+      }
     }
 
     if (rowsPerBedQuantity) {
-      await farmosUtil.deleteStandardQuantity(rowsPerBedQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(rowsPerBedQuantity.id);
+      } catch (error) {
+        console.log(
+          'Unable to delete rowsPerBedQuantity: ' + rowsPerBedQuantity.id
+        );
+      }
     }
 
     if (bedWidthQuantity) {
-      await farmosUtil.deleteStandardQuantity(bedWidthQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(bedWidthQuantity.id);
+      } catch (error) {
+        console.log(
+          'Unable to delete bedWidthQuantity: ' + bedWidthQuantity.id
+        );
+      }
     }
 
     if (bedFeetQuantity) {
-      await farmosUtil.deleteStandardQuantity(bedFeetQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(bedFeetQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete bedFeetQuantity: ' + bedFeetQuantity.id);
+      }
     }
 
-    if (activityLog) {
-      // delete this.
-    }
+    /*
+     * Don't need to do the activity log, because if it didn't work
+     * it wouldn't have been created and if it did work then everything
+     * worked.
+     */
 
     if (depthQuantity) {
-      await farmosUtil.deleteStandardQuantity(depthQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(depthQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete depthQuantity: ' + depthQuantity.id);
+      }
     }
 
     if (speedQuantity) {
-      await farmosUtil.deleteStandardQuantity(speedQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(speedQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete speedQuantity: ' + speedQuantity.id);
+      }
     }
 
     if (plantAsset) {
-      await farmosUtil.deletePlantAsset(plantAsset.id);
+      try {
+        await farmosUtil.deletePlantAsset(plantAsset.id);
+      } catch (error) {
+        console.log('Unable to delete plantAsset: ' + plantAsset.id);
+      }
     }
 
     throw Error('Error creating direct seeding.', error);
