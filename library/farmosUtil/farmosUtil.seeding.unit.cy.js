@@ -50,8 +50,6 @@ describe('Test the seeding log functions', () => {
 
     cy.getAll(['@plantAsset', '@quantity', '@seedingLog']).then(
       ([plantAsset, quantity, seedingLog]) => {
-        console.log(seedingLog);
-
         cy.wrap(farmosUtil.getSeedingLog(seedingLog.id)).then((result) => {
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.purchase_date).to.contain('1999-01-02');

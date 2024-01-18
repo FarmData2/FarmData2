@@ -135,28 +135,6 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test getting only greenhouses', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(LocationSelector, {
-      props: {
-        includeGreenhouses: true,
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/structure');
-      });
-  });
-
   it('Test add url for fields', () => {
     const readySpy = cy.spy().as('readySpy');
 

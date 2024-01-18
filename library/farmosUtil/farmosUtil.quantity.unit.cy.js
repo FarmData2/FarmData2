@@ -76,8 +76,6 @@ describe('Test the quantity functions', () => {
     );
   });
 
-  // THIS FAILS
-  // THE QUANTITY NEEDS TO BE ATTACHED TO A LOG TO MAKE THE INVENTORY REGISTER.
   it('Create a quantity with an inventory adjustment', () => {
     cy.wrap(
       farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
