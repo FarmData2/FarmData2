@@ -16,3 +16,9 @@ farm.fd2_tray_seeding:
   parent: farm.fd2_seeding
   route_name: farm.fd2_tray_seeding.content
   weight: 100
+farm.fd2_direct_seeding:
+  title: 'Direct Seeding'
+  description: 'Data entry form for recording a direct seeding.'
+  parent: farm.fd2_seeding
+  route_name: farm.fd2_direct_seeding.content
+  weight: 110

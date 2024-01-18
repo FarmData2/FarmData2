@@ -18,13 +18,14 @@ function usage {
   echo ""
   echo "  -p|--prompt : Prompt for the release and database artifact to install."
   echo "    - No other flags may be specified with -p|--prompt."
+  echo "    - Only full releases are listed in the prompt, see below to use a pre-release."
   echo ""
   echo "  -r<release>|--release=<release> : Specify the release to use."
   echo "    - E.g. --release=v2.0.1"
   echo "    - E.g. --release=v2.0.2.development.1"
   echo "    - Releases can be found at https://github.com/FarmData2/FD2-SampleDBs/releases"
   echo ""
-  echo "    - If -r|--release is specified then a database asset may also be specified:"
+  echo "    - If -r|--release is specified then a database asset must also be specified:"
   echo "      -a<asset>|--asset=<asset> : Asset from the release to install."
   echo "        - E.g. --asset=db.sample.tar.gz"
   echo "        - E.g. --asset=db.base.tar.gz"
@@ -125,6 +126,8 @@ fi
 if [ -n "$CURRENT" ]; then
   DB_ASSET="db.sample.tar.gz"
 elif [ -n "$DB_RELEASE" ] && [ -n "$DB_ASSET" ]; then
+  echo "Checking if database asset $DB_ASSET exists in release $DB_RELEASE..."
+
   # shellcheck disable=SC2207
   RELEASES=(
     $(gh release list \
@@ -133,10 +136,8 @@ elif [ -n "$DB_RELEASE" ] && [ -n "$DB_ASSET" ]; then
   )
   # shellcheck disable=SC2207
   REL_INFO=$(gh release view --repo FarmData2/FD2-SampleDBs "$DB_RELEASE")
-
-  echo "Checking if database asset $DB_ASSET exists in release $DB_RELEASE..."
   echo "$REL_INFO" | eval grep "$DB_ASSET" > /dev/null
-  error_check "  Unable to verify that database asset exists in release."
+  error_check "  Unable to verify that database asset \"$DB_ASSET\" exists in release."
   echo "  Database asset exists in release."
 else
   if [ -n "$LATEST" ]; then
@@ -162,7 +163,8 @@ else
     )
 
     echo "The 5 most recent releases are shown."
-    echo "If an older or pre-release see --release and --asset in the help."
+    echo "If an older or pre-release see the --release and --asset flags."
+    echo "  Use installDB.bash --help for usage information."
     echo "Choose the release to use..."
     select DB_RELEASE in "${RELEASES[@]}"; do
       if (("$REPLY" <= 0 || "$REPLY" > "${#RELEASES[@]}")); then
@@ -199,8 +201,8 @@ else
     echo "  Deleted."
   fi
 
-  echo "Downloading database $DB_ASSET from release $DB_RELEASE..."
-  gh release download \
+  echo "Downloading database \"$DB_ASSET\" from release $DB_RELEASE..."
+  gh release download "$DB_RELEASE" \
     --repo FarmData2/FD2-SampleDBs \
     --dir /var/tmp \
     --pattern "$DB_ASSET" \

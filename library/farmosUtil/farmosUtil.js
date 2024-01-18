@@ -48,6 +48,7 @@
  */
 
 import farmOS from 'farmos';
+import dayjs from 'dayjs';
 import * as runExclusive from 'run-exclusive';
 
 /*
@@ -77,6 +78,7 @@ var fd2Cache = {
   units: null,
   log_categories: null,
   permissions: null,
+  equipment: null,
 };
 
 /*
@@ -1084,8 +1086,8 @@ export async function getUnits() {
  * @category Units
  */
 export async function getUnitToTermMap() {
-  const sizes = await getUnits();
-  const map = new Map(sizes.map((unit) => [unit.attributes.name, unit]));
+  const units = await getUnits();
+  const map = new Map(units.map((unit) => [unit.attributes.name, unit]));
   return map;
 }
 
@@ -1148,10 +1150,6 @@ export async function getLogCategories() {
       throw new Error('Unable to fetch log categories.', categories.rejected);
     }
 
-    categories.data.sort((o1, o2) =>
-      o1.attributes.name.localeCompare(o2.attributes.name)
-    );
-
     return categories.data;
   });
 }
@@ -1201,7 +1199,7 @@ export async function getLogCategoryIdToTermMap() {
  * This is useful when it is necessary to force the permissions to be refreshed.
  * (e.g. changing users during a test.)
  *
- * @category LogCategories
+ * @category Permissions
  */
 export function clearCachedPermissions() {
   clearCachedValue('permissions');
@@ -1273,5 +1271,559 @@ export async function checkPermission(permissionName) {
     throw new Error(`Permission ${permissionName} does not exist.`);
   } else {
     return perm;
+  }
+}
+
+/**
+ * Clear the cached results from prior calls to the `getEquipment` function.
+ * This is useful when an action may change the equipment that exist in the
+ * system
+ *
+ * @category Equipment
+ */
+export function clearCachedEquipment() {
+  clearCachedValue('equipment');
+}
+
+/**
+ * Get asset objects for equipment.
+ *
+ * Equipment is represented by asset objects with the `type` of `asset--equipment`.
+ *
+ * Equipment assets are categorized by references to a parent equipment asset.
+ * These categories include: `General`, `Seeding`, ... etc.
+ * A full list of categories can be found by looking at
+ * "Records" -> "Assets" -> "Equipment" in the farmOS interface.
+ *
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedEquipment`]{@link #module_farmosUtil.clearCachedEquipment}
+ * function to clear the cache.
+ *
+ * @throws {Error} if unable to fetch the equipment.
+ * @returns {Array<Object>} an alphabetized array of all of the assets representing equipment.
+ *
+ * @category Equipment
+ */
+export async function getEquipment() {
+  return fetchWithCaching('equipment', async () => {
+    const farm = await getFarmOSInstance();
+
+    const equipment = await farm.asset.fetch({
+      filter: {
+        type: 'asset--equipment',
+      },
+      limit: Infinity,
+    });
+
+    if (equipment.rejected.length != 0) {
+      throw new Error('Unable to fetch equipment.', equipment.rejected);
+    }
+
+    equipment.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return equipment.data;
+  });
+}
+
+/**
+ * Get a map from the name of an equipment asset to the
+ * farmOS equipment asset object.
+ *
+ * NOTE: This function makes a call to
+ * [`getEquipment`]{@link #module_farmosUtil.getEquipment}
+ * and builds the `Map` using the returned `Array<Object>`.
+ *
+ * @param {Array<String>} [categories] an array of equipment categories to include (e.g. `Seeding`, `General`).
+ * If omitted, all of the equipment assets will be added to the map.
+ * Note that the asset objects representing the equipment categories are never included in the map.
+ * @throws {Error} if unable to fetch the equipment.
+ * @returns {Map<String,Object>} a `Map` from the equipment asset `name` to the `equipment--asset` object.
+ *
+ * @category Equipment
+ */
+export async function getEquipmentNameToAssetMap(categories = []) {
+  const equipment = await getEquipment();
+
+  const parentIdToName = new Map(
+    equipment.map((eq) => [eq.id, eq.attributes.name])
+  );
+
+  function filter(filtered, eq) {
+    if (
+      // If the equipment has a parent
+      // and either the categories list is empty or
+      // the category name of the parent is in the list of categories
+      eq.relationships.parent.length != 0 &&
+      (categories.length == 0 ||
+        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+    ) {
+      filtered.set(eq.attributes.name, eq);
+    }
+    return filtered;
+  }
+
+  const map = equipment.reduce(filter, new Map());
+
+  return map;
+}
+
+/**
+ * Get a map from the id of an equipment asset to the
+ * farmOS asset object.
+ *
+ * NOTE: This function makes a call to
+ * [`getEquipment`]{@link #module_farmosUtil.getEquipment}
+ * and builds the `Map` using the returned `Array<Object>`
+ *
+ * @param {Array<String>} [categories] an array of equipment categories to include (e.g. `Seeding`, `General`).
+ * If omitted, all of the equipment assets will be added to the map.
+ * Note that the asset objects representing the equipment categories are never included in the map.
+
+ * @throws {Error} if unable to fetch the units.
+ * @returns {Map<String,Object>} a `Map` from the equipment asset `id` to the `equipment-asset` object.
+ *
+ * @category Equipment
+ */
+export async function getEquipmentIdToAssetMap(categories = []) {
+  const equipment = await getEquipment();
+
+  const parentIdToName = new Map(
+    equipment.map((eq) => [eq.id, eq.attributes.name])
+  );
+
+  function filter(filtered, eq) {
+    if (
+      // If the equipment has a parent
+      // and either the categories list is empty or
+      // the category name of the parent is in the list of categories
+      eq.relationships.parent.length != 0 &&
+      (categories.length == 0 ||
+        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+    ) {
+      filtered.set(eq.id, eq);
+    }
+    return filtered;
+  }
+
+  const map = equipment.reduce(filter, new Map());
+
+  return map;
+}
+
+/**
+ * Create a plant asset (i.e. an asset of type `asset--plant`).
+ *
+ * @param {string} assetName the name of the plant asset to create.
+ * @param {string} cropName the name of the crop to associate with the plant asset.
+ * @param {string} comment the comment to associate with this plant asset.
+ * @return {Object} the new plant asset.
+ * @throws {Error} if unable to create the plant asset.
+ *
+ * @category Plant
+ */
+export async function createPlantAsset(assetName, cropName, comment) {
+  const farm = await getFarmOSInstance();
+  const cropMap = await getCropNameToTermMap();
+
+  // create an asset--plant
+  const plantAsset = farm.asset.create({
+    type: 'asset--plant',
+    attributes: {
+      name: assetName,
+      status: 'active',
+      notes: { value: comment },
+    },
+    relationships: {
+      plant_type: [
+        {
+          type: 'taxonomy_term--plant_type',
+          id: cropMap.get(cropName).id,
+        },
+      ],
+    },
+  });
+
+  await farm.asset.send(plantAsset);
+
+  return plantAsset;
+}
+
+/**
+ * Get the plant asset with the specified id.
+ *
+ * @param {string} plantAssetId the id of the plant asset.
+ * @return {Object} the plant asset with the specified id.
+ * @throws {Error} if unable to fetch the plant asset.
+ *
+ * @category Plant
+ */
+export async function getPlantAsset(plantAssetId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.asset.fetch({
+    filter: { type: 'asset--plant', id: plantAssetId },
+  });
+
+  return results.data[0]; // only one asset with the plantAssetId.
+}
+
+/**
+ * Delete the plant asset with the specified id.
+ *
+ * @param {string} plantAssetId the id of the plant asset.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the plant asset.
+ *
+ * @category Plant
+ */
+export async function deletePlantAsset(plantAssetId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.asset.delete('plant', plantAssetId);
+    return result;
+  } catch (error) {
+    console.log('deletePlantAsset:');
+    console.log('  Unable to delete plant asset with id: ' + plantAssetId);
+    console.log(error.message);
+    console.log(error);
+    throw error;
+  }
+}
+
+/**
+ * Create a standard quantity (i.e. a quantity of type `quantity--standard`).
+ *
+ * @param {string} measure the measure type of the quantity (e.g. 'count', 'weight', 'volume')
+ * @param {number} value the value of the quantity
+ * @param {string} label a label for the quantity
+ * @param {string} units the unit of the quantity
+ * @param {Object} [inventoryAsset=null] the asset for which this quantity should adjust the inventory.
+ * @param {string} [inventoryAdjustment=null] the type of inventory adjustment to make (e.g. `increment`, `decrement`)
+ * @returns {Object} the new quantity object.
+ * @throws {Error} if unable to create the quantity.
+ *
+ * @category Quantity
+ */
+export async function createStandardQuantity(
+  measure,
+  value,
+  label,
+  units,
+  inventoryAsset = null,
+  inventoryAdjustment = null
+) {
+  const farm = await getFarmOSInstance();
+  const unitMap = await getUnitToTermMap();
+
+  // create the necessary quantities
+  const traysQuantity = farm.quantity.create({
+    type: 'quantity--standard',
+    attributes: {
+      measure: measure,
+      value: {
+        decimal: value,
+      },
+      label: label,
+      inventory_adjustment: inventoryAdjustment,
+    },
+    relationships: {
+      units: {
+        type: 'taxonomy_term--unit',
+        id: unitMap.get(units).id,
+      },
+      inventory_asset: inventoryAsset
+        ? {
+            type: inventoryAsset.type,
+            id: inventoryAsset.id,
+          }
+        : null,
+    },
+  });
+
+  await farm.quantity.send(traysQuantity);
+
+  return traysQuantity;
+}
+
+/**
+ * Get the standard quantity with the specified id.
+ *
+ * @param {string} quantityId the id of the standard quantity.
+ * @return {Object} the standard quantity with the specified id.
+ * @throws {Error} if unable to fetch the standard quantity.
+ *
+ * @category Quantity
+ */
+export async function getStandardQuantity(quantityId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.quantity.fetch({
+    filter: { type: 'quantity--standard', id: quantityId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the standard quantity with the specified id.
+ *
+ * @param {string} quantityId the id of the standard quantity.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the standard quantity.
+ *
+ * @category Quantity
+ */
+export async function deleteStandardQuantity(quantityId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.quantity.delete('standard', quantityId);
+    return result;
+  } catch (error) {
+    console.log('deleteStandardQuantity:');
+    console.log('  Unable to delete standard quantity with id: ' + quantityId);
+    console.log(error.message);
+    console.log(error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new seeding log.
+ *
+ * @param {string} seedingDate the date of the seeding
+ * @param {string} locationName the name of the location where the seeding occurred.
+ * This must be the name of a field, bed or greenhouse.
+ * @param {string} logCategory the type of seeding log ('seeding_tray', 'seeding_direct' , 'seeding_cover').
+ * @param {Object} plantAsset the plant asset created by the seeding.
+ * @param {Array<Object>} [quantities=[]] an array of quantity objects
+ * (e.g. `quantity--standard`) associated with the seeding.
+ * @returns {Object} the new seeding log.
+ * @throws {Error} if unable to create the seeding log.
+ *
+ * @category Seeding
+ */
+export async function createSeedingLog(
+  seedingDate,
+  locationName,
+  logCategory,
+  plantAsset,
+  quantities = []
+) {
+  let locationID = null;
+  if (logCategory === 'seeding_tray') {
+    const greenhouseMap = await getGreenhouseNameToAssetMap();
+    locationID = greenhouseMap.get(locationName).id;
+  } else {
+    const fieldMap = await getFieldOrBedNameToAssetMap();
+    locationID = fieldMap.get(locationName).id;
+  }
+
+  let quantitiesArray = [];
+  for (const quant of quantities) {
+    quantitiesArray.push({
+      type: quant.type,
+      id: quant.id,
+    });
+  }
+
+  const categoryMap = await getLogCategoryToTermMap();
+
+  const seedingLogData = {
+    type: 'log--seeding',
+    attributes: {
+      name: plantAsset.attributes.name,
+      timestamp: dayjs(seedingDate).format(),
+      status: 'done',
+      is_movement: true,
+      purchase_date: dayjs(seedingDate).format(),
+    },
+    relationships: {
+      location: [
+        {
+          type: 'asset--structure',
+          id: locationID,
+        },
+      ],
+      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      category: [
+        {
+          type: 'taxonomy_term--log_category',
+          id: categoryMap.get(logCategory).id,
+        },
+      ],
+      quantity: quantitiesArray,
+    },
+  };
+
+  const farm = await getFarmOSInstance();
+  const seedingLog = farm.log.create(seedingLogData);
+  await farm.log.send(seedingLog);
+
+  return seedingLog;
+}
+
+/**
+ * Get the seeding log with the specified id.
+ *
+ * @param {string} seedingLogId the id of the seeding log.
+ * @return {Object} the seeding log with the specified id.
+ * @throws {Error} if unable to fetch the seeding log.
+ *
+ * @category Seeding
+ */
+export async function getSeedingLog(seedingLogId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.log.fetch({
+    filter: { type: 'log--seeding', id: seedingLogId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the seeding log with the specified id.
+ *
+ * @param {string} seedingLogId the id of the seeding log.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the seeding log.
+ *
+ * @category Seeding
+ */
+export async function deleteSeedingLog(seedingLogId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.log.delete('seeding', seedingLogId);
+    return result;
+  } catch (error) {
+    console.log('deleteSeedingLog:');
+    console.log('  Unable to delete seeding log with id: ' + seedingLogId);
+    console.log(error.message);
+    console.log(error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new activity log (`log--activity`) for a soil disturbance.
+ *
+ * @param {string} disturbanceDate the date the disturbance took place.
+ * @param {string} locationName the location where the disturbance took place.
+ * @param {string} logCategory the log category indicating the type of disturbance (e.g. `disturbance_tillage`).
+ * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
+ * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
+ * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
+ * @returns {Object} the new activity log.
+ *
+ * @category Soil
+ */
+export async function createSoilDisturbanceActivityLog(
+  distrubanceDate,
+  locationName,
+  logCategory,
+  plantAsset = null,
+  quantities = [],
+  equipment = []
+) {
+  let locationID = null;
+  const fieldMap = await getFieldOrBedNameToAssetMap();
+  locationID = fieldMap.get(locationName).id;
+
+  let quantitiesArray = [];
+  for (const quant of quantities) {
+    quantitiesArray.push({
+      type: quant.type,
+      id: quant.id,
+    });
+  }
+
+  let equipmentArray = [];
+  for (const equip of equipment) {
+    equipmentArray.push({
+      type: equip.type,
+      id: equip.id,
+    });
+  }
+
+  const categoryMap = await getLogCategoryToTermMap();
+
+  const activityLogData = {
+    type: 'log--activity',
+    attributes: {
+      name: plantAsset.attributes.name,
+      timestamp: dayjs(distrubanceDate).format(),
+      status: 'done',
+      purchase_date: dayjs(distrubanceDate).format(),
+    },
+    relationships: {
+      location: [
+        {
+          type: 'asset--land',
+          id: locationID,
+        },
+      ],
+      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      category: [
+        {
+          type: 'taxonomy_term--log_category',
+          id: categoryMap.get(logCategory).id,
+        },
+      ],
+      quantity: quantitiesArray,
+      equipment: equipmentArray,
+    },
+  };
+
+  const farm = await getFarmOSInstance();
+  const activityLog = farm.log.create(activityLogData);
+  await farm.log.send(activityLog);
+
+  return activityLog;
+}
+
+/**
+ * Get the soil disturbance activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the soil disturbance activity log to get.
+ * @returns the soil disturbance activity log with the specified id.
+ *
+ * @category Soil
+ */
+export async function getSoilDisturbanceActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.log.fetch({
+    filter: { type: 'log--activity', id: activityLogId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the soil disturbance activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the soil disturbance activity log.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the soil disturbance activity log.
+ *
+ * @category Soil
+ */
+export async function deleteSoilDisturbanceActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.log.delete('activity', activityLogId);
+    return result;
+  } catch (error) {
+    console.log('deleteSoilDisturbanceActivityLog:');
+    console.log('  Unable to delete activity log with id: ' + activityLogId);
+    console.log(error.message);
+    console.log(error);
+    throw error;
   }
 }

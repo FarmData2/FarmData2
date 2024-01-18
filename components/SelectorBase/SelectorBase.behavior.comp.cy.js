@@ -91,13 +91,38 @@ describe('Test the SelectorBase behaviors', () => {
     });
   });
 
+  it('Delete clears selection', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'Two',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
+        cy.get('[data-cy="selector-delete-button"]').click();
+        cy.get('[data-cy="selector-input"]').should('have.value', null);
+      });
+  });
+
   it('Clicking add button goes to the addUrl', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.intercept('GET', 'http://farmos', {
-      statusCode: 200,
-      body: 'Add Option Form',
-    }).as('urlIntercept');
+    cy.intercept(
+      { method: 'GET', url: 'http://farmos', times: 1 },
+      {
+        statusCode: 200,
+        body: 'Add Option Form',
+      }
+    ).as('urlIntercept');
 
     cy.mount(SelectorBase, {
       props: {

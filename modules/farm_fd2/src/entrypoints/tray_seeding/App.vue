@@ -258,7 +258,6 @@ export default {
       this.form.comment = null;
       this.enableSubmit = true;
     },
-
     showErrorToast(title, message) {
       if (!this.errorShown) {
         this.errorShown = true;

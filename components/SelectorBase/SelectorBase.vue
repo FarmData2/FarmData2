@@ -42,13 +42,38 @@
             {{ option }}
           </BFormSelectOption>
         </BFormSelect>
-        <BInputGroupAppend v-if="addOptionUrl != null">
+        <BInputGroupAppend>
           <BButton
+            v-if="addOptionUrl != null"
+            id="selector-add-button"
             data-cy="selector-add-button"
             variant="outline-success"
             v-bind:href="addOptionUrl"
             >+</BButton
           >
+          <BButton
+            v-if="!required && selectedOption != '' && selectedOption != null"
+            id="selector-delete-button"
+            data-cy="selector-delete-button"
+            variant="outline-warning"
+            v-on:click="handleDelete()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-trash"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"
+              />
+              <path
+                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"
+              />
+            </svg>
+          </BButton>
         </BInputGroupAppend>
         <BFormInvalidFeedback
           id="selector-invalid-feedback"
@@ -71,6 +96,11 @@
  * they are consistent across all dropdowns.  Sub-components that use this base
  * component will define and pass through props, set the list of items and optionally
  * a URL for adding new options.
+ *
+ * A trash can button will appear if this component is not required and is not empty.
+ * This allows the user to clear a selection that was made for a non-required value.
+ * If the component is required, the trash can button will not appear, as the user
+ * must select a value and can change it if desired.
  *
  * See any of the `*Selector` components for examples of how this component
  * can be used.
@@ -104,6 +134,7 @@
  * selector-option-0         | The disabled blank option that appears first in the `BFormSelect` component.
  * selector-option-n         | The nth option in the `BFormSelect` component [1...n].
  * selector-add-button       | The `BButton` component that redirects to the page for adding a new option.
+ * selector-delete-button    | The `BButton` component with the trash icon that clears the selected option.
  * selector-invalid-feedback | The `BFormInvalidFeedback` component that displays help when input is invalid.
  */
 export default {
@@ -194,7 +225,11 @@ export default {
       }
     },
   },
-  methods: {},
+  methods: {
+    handleDelete() {
+      this.selectedOption = '';
+    },
+  },
   watch: {
     isValid() {
       /**
@@ -208,7 +243,8 @@ export default {
     },
     selectedOption() {
       /**
-       * The selected option has changed.
+       * The selected option has changed. When the selection is changed by clicking
+       * the trash icon to clear it, this event is emitted with '' as the payload.
        * @property {String} option the name of the newly selected option.
        */
       this.$emit('update:selected', this.selectedOption);
@@ -225,3 +261,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.btn {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#selector-add-button {
+  width: 28px;
+}
+</style>

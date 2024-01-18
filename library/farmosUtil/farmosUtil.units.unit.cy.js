@@ -14,7 +14,7 @@ describe('Test the units utility functions', () => {
   it('Get the units', () => {
     cy.wrap(farmosUtil.getUnits()).then((units) => {
       expect(units).to.not.be.null;
-      expect(units.length).to.equal(7);
+      expect(units.length).to.equal(13);
 
       expect(units[0].attributes.name).to.equal('CELLS');
       expect(units[0].attributes.description.value).to.equal(
@@ -22,9 +22,9 @@ describe('Test the units utility functions', () => {
       );
       expect(units[0].type).to.equal('taxonomy_term--unit');
 
-      expect(units[4].attributes.name).to.equal('SEEDS');
+      expect(units[4].attributes.name).to.equal('INCHES');
       expect(units[4].attributes.description.value).to.equal(
-        'A number of seeds.'
+        'A number of inches.'
       );
       expect(units[4].type).to.equal('taxonomy_term--unit');
     });
@@ -59,7 +59,7 @@ describe('Test the units utility functions', () => {
   it('Get the unitToTerm map', () => {
     cy.wrap(farmosUtil.getUnitToTermMap()).then((unitMap) => {
       expect(unitMap).to.not.be.null;
-      expect(unitMap.size).to.equal(7);
+      expect(unitMap.size).to.equal(13);
 
       expect(unitMap.get('Count')).to.not.be.null;
       expect(unitMap.get('Count').type).to.equal('taxonomy_term--unit');
@@ -72,7 +72,7 @@ describe('Test the units utility functions', () => {
   it('Get the UnitIdToAsset map', () => {
     cy.wrap(farmosUtil.getUnitIdToTermMap()).then((unitIdMap) => {
       expect(unitIdMap).to.not.be.null;
-      expect(unitIdMap.size).to.equal(7);
+      expect(unitIdMap.size).to.equal(13);
 
       cy.wrap(farmosUtil.getUnitToTermMap()).then((unitNameMap) => {
         const countId = unitNameMap.get('Count').id;
