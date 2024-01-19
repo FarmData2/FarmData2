@@ -257,7 +257,7 @@ error_check "Error starting farmOS."
 echo "  Started."
 
 echo "Clearing the Drupal cache..."
-clearDrupalCache.bash
+docker exec fd2_farmos drush cr
 error_check "Unable to clear the cache."
 echo "  Drupal cache cleared."
 
