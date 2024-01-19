@@ -6,6 +6,7 @@ export default defineConfig({
   video: false,
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
+  defaultCommandTimeout: 10000,
   component: {
     supportFile: '../cypress/support/component.js',
     indexHtmlFile: '../cypress/support/component-index.html',
