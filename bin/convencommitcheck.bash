@@ -6,7 +6,7 @@ VALID_TYPES=("build" "chore" "ci" "docs" "feat" "fix" "perf" "refactor" "style" 
 # Define valid scopes
 VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school")
 
-# Function to check if an element is in an array
+# Small helper array checker function.
 elementInArray() {
     local element
     local match="$1"
@@ -41,7 +41,7 @@ convertToConventionalCommit() {
     echo "$conventional_commit"
 }
 
-# Function to validate PR title
+# PR Validation
 validatePRTitle() {
     local pr_title="$1"
 
@@ -81,7 +81,7 @@ checkGhCliAuth() {
     fi
 }
 
-# Function to perform a squash merge with a conventional commit message
+# Perform a squash merge with a conventional commit message
 squashMergePR() {
     local pr_number="$1"
     local commit_message="$2"
@@ -110,12 +110,16 @@ if [ -z "$PR_NUMBER" ]; then
     exit 1
 fi
 
+# This section is a current work in progress.
+# Any feedback would be appreciated!
+# I wasn't sure about the converted commit format but this is just a sample implementation
+
 # Fetch PR title and body using GitHub CLI
 echo "Fetching PR #$PR_NUMBER from farmdata2/farmdata2..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
-# After validating the PR title
+# After validating the PR title - this is a WIP. Imagine if you could get an LLM to do conventional commits. CCaaS is a wild business idea.
 if ! validatePRTitle "$PR_TITLE"; then
     echo "Invalid PR title: $PR_TITLE"
     converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
