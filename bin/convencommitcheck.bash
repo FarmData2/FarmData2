@@ -85,7 +85,7 @@ checkGhCliAuth() {
 squashMergePR() {
     local pr_number="$1"
     local commit_message="$2"
-    local repo="farmdata2/farmdata2" 
+    local repo="farmdata2/farmdata2" # Default repository. Possible to add a working current repository to manage multiple and set it as an env var perhaps in the future.
 
     # Perform the squash merge
     gh pr merge "$pr_number" --repo "$repo" --squash --commit-title "$commit_message"
@@ -100,10 +100,10 @@ squashMergePR() {
 
 # Main script execution
 
-#Checks for GitHub CLI Authentication
+# Checks for GitHub CLI Authentication
 checkGhCliAuth
 
-#PR Retrieval
+# PR Retrieval
 PR_NUMBER="$1"
 if [ -z "$PR_NUMBER" ]; then
     echo "Please provide a PR number."
