@@ -65,6 +65,22 @@ validatePRTitle() {
     return 0
 }
 
+# Function to check GitHub CLI authentication
+checkGhCliAuth() {
+    echo "Checking GitHub CLI Authentication status."
+    if ! gh auth status > /dev/null 2>&1; then
+        echo "You are not logged in to the GitHub CLI."
+        echo "Attempting to log in..."
+        gh auth login
+        if [ $? -ne 0 ]; then
+            echo "GitHub CLI login failed. Please try again manually."
+            exit 1
+        fi
+    else
+        echo "You are already logged in to the GitHub CLI."
+    fi
+}
+
 # Function to perform a squash merge with a conventional commit message
 squashMergePR() {
     local pr_number="$1"
@@ -83,6 +99,11 @@ squashMergePR() {
 }
 
 # Main script execution
+
+#Checks for GitHub CLI Authentication
+checkGhCliAuth
+
+#PR Retrieval
 PR_NUMBER="$1"
 if [ -z "$PR_NUMBER" ]; then
     echo "Please provide a PR number."
