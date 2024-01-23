@@ -90,16 +90,6 @@ describe('Check the submission of Tray Seedings.', () => {
           cy.get('.toast', { timeout: 7000 }).should('not.exist');
         });
 
-      /*
-       * Note: Deleting the asset must come after deleting the log,
-       * because the asset is referenced by the log. But Cypress does
-       * not guarantee that when two async functions are invoked with
-       * cy.wrap() calls will execute in the order they are written.
-       * So the cy.get() here ensures that the log is deleted before
-       * the asset is deleted.
-       *
-       * See: https://docs.cypress.io/api/commands/wrap#Promises
-       */
       let plantFilter = { type: 'asset--plant', name: name };
 
       cy.wrap(farm.asset.fetch({ filter: plantFilter }))
