@@ -5,10 +5,10 @@ source lib.bash
 
 
 # Setting Env Variables
-PWD="$(pwd)"
-SCRIPT_PATH=$(readlink -f "$0")
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd)
+PWD="$(pwd)" #Current Working Dir
+SCRIPT_PATH=$(readlink -f "$0") # Script Path
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH") # Script Directory
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) #Repository Root Directory
 
 TARGETS=()
 
@@ -21,10 +21,10 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-INDEX_FILE="FarmData2.md"
+INDEX_FILE="FarmData2.md" 
 INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE"
 
-# Recreate the index file
+# Recreate the index file (Erases and rewrite into header upon regeneration)
 echo "# FarmData2 Documentation" > "$INDEX_PATH"
 echo "" >> "$INDEX_PATH"
 
@@ -44,7 +44,7 @@ update_docs() {
         fi
         echo "      Docs generated for $NAME."
 
-        # Add link to the index file
+        # Adds link to the index file
         echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
     else
         echo "      $TYPE $NAME not found."
