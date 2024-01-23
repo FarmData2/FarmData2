@@ -65,6 +65,23 @@ validatePRTitle() {
     return 0
 }
 
+# Function to perform a squash merge with a conventional commit message
+squashMergePR() {
+    local pr_number="$1"
+    local commit_message="$2"
+    local repo="farmdata2/farmdata2" 
+
+    # Perform the squash merge
+    gh pr merge "$pr_number" --repo "$repo" --squash --commit-title "$commit_message"
+
+    if [ $? -eq 0 ]; then
+        echo "Successfully squash merged PR #$pr_number."
+    else
+        echo "Failed to squash merge PR #$pr_number."
+        return 1
+    fi
+}
+
 # Main script execution
 PR_NUMBER="$1"
 if [ -z "$PR_NUMBER" ]; then
@@ -77,14 +94,25 @@ echo "Fetching PR #$PR_NUMBER from farmdata2/farmdata2..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
-# Validate PR title
+# After validating the PR title
 if ! validatePRTitle "$PR_TITLE"; then
     echo "Invalid PR title: $PR_TITLE"
     converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
     echo "Suggested conventional commit: $converted_commit"
+    
+    # Optional: Prompt for confirmation before performing the squash merge
+    read -p "Do you want to squash merge this PR with the above commit message? (y/n) " confirm
+    if [[ $confirm == [yY] ]]; then
+        squashMergePR "$PR_NUMBER" "$converted_commit"
+    fi
+
     exit 1
 else
     echo "Valid PR title: $PR_TITLE"
+    converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
+    
+    # Perform the squash merge with the valid commit message
+    squashMergePR "$PR_NUMBER" "$converted_commit"
 fi
 
 exit 0
