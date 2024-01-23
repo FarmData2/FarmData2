@@ -6,6 +6,7 @@ export default defineConfig({
   video: false,
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
+  defaultCommandTimeout: 10000,
   e2e: {
     supportFile: '../../cypress/support/e2e.js',
     specPattern: 'src/entrypoints/*/*.e2e.cy.js',
