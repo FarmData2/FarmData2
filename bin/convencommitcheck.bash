@@ -119,7 +119,7 @@ echo "Fetching PR #$PR_NUMBER from farmdata2/farmdata2..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
-# After validating the PR title - this is a WIP. Imagine if you could get an LLM to do conventional commits. CCaaS is a wild business idea.
+# Aftermath - validating the PR title - this is a WIP. 
 if ! validatePRTitle "$PR_TITLE"; then
     echo "Invalid PR title: $PR_TITLE"
     converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
