@@ -60,7 +60,7 @@ export async function submitForm(formData) {
     seedingLog = await farmosUtil.createSeedingLog(
       formData.seedingDate,
       formData.locationName,
-      'seeding_tray',
+      ['seeding', 'seeding_tray'],
       plantAsset,
       [traysQuantity, traySizeQuantity, seedsQuantity]
     );
