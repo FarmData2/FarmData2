@@ -73,7 +73,7 @@ cleanup() {
     echo "Builder terminated."
   fi
   # Exit the script
-  exit 130
+  exit $EXIT_CODE
 }
 # Trap SIGINT (Ctrl-C) and SIGTERM
 trap cleanup SIGINT SIGTERM
@@ -340,4 +340,4 @@ fi
 echo "Tests complete."
 
 # Runs normal cleanup
-cleanup
+cleanup "$EXIT_CODE"
