@@ -185,11 +185,18 @@ describe('Test the tray seeding lib', () => {
           result.seedingLog.relationships.asset[0].id
         );
 
+        expect(seedingLog.relationships.category.length).to.equal(2);
         expect(seedingLog.relationships.category[0].type).to.equal(
           'taxonomy_term--log_category'
         );
         expect(seedingLog.relationships.category[0].id).to.equal(
           result.seedingLog.relationships.category[0].id
+        );
+        expect(seedingLog.relationships.category[1].type).to.equal(
+          'taxonomy_term--log_category'
+        );
+        expect(seedingLog.relationships.category[1].id).to.equal(
+          result.seedingLog.relationships.category[1].id
         );
 
         expect(seedingLog.relationships.quantity.length).to.equal(3);

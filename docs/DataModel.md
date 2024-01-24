@@ -2,12 +2,27 @@
 
 ## Log Categories
 
-- Seeding Logs
-  - `seeding_tray`
-  - `seeding_direct`
-  - `seeding_cover_crop`
-- Activity Logs
-  - `activity_soil_disturbance_tillage`
+The following log categories are defined by the [conventions used for storing data related to the PASA Soil Health Benchmark Study](https://our-sci.gitlab.io/software/json_schema_distribution/staging_wiki/docs/Description%20and%20Specification) and one of them should be associated with every log that is created:
+
+```text
+amendment,For logs where soil amendments are made.
+grazing,For logs that record animal grazing events.
+irrigation,For logs associated with field irrigation.
+pest_disease_control,For logs related to pest or disease control.
+seeding,For logs associated with seedings.
+termination,For logs associated with termination of a planting.
+tillage,For logs representing soil disturbances.
+transplanting,For logs representing transplantation of a plant.
+weed_control,For logs related to weed control.
+```
+
+The following log categories are defined specifically by FarmData2 and should be applied to any log that is associated with the type of event described. For example, an activity log representing the `tillage` associated with a direct seeding should also have a `seeding_direct` log category.
+
+```text
+seeding_cover_crop,For logs associated with the seeding of a cover crop.
+seeding_direct,For logs associated with direct seedings.
+seeding_tray,For logs associated with seedings in trays.
+```
 
 ## Units
 

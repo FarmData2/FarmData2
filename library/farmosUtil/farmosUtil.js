@@ -1597,7 +1597,8 @@ export async function deleteStandardQuantity(quantityId) {
  * @param {string} seedingDate the date of the seeding
  * @param {string} locationName the name of the location where the seeding occurred.
  * This must be the name of a field, bed or greenhouse.
- * @param {string} logCategory the type of seeding log ('seeding_tray', 'seeding_direct' , 'seeding_cover').
+ * @param {Array<string>} logCategories the log categories associated with this log.
+ * Must include `seeding` and one of `seeding_tray` or `seeding_direct` or `seeding_cover_crop`.
  * @param {Object} plantAsset the plant asset created by the seeding.
  * @param {Array<Object>} [quantities=[]] an array of quantity objects
  * (e.g. `quantity--standard`) associated with the seeding.
@@ -1609,12 +1610,12 @@ export async function deleteStandardQuantity(quantityId) {
 export async function createSeedingLog(
   seedingDate,
   locationName,
-  logCategory,
+  logCategories,
   plantAsset,
   quantities = []
 ) {
   let locationID = null;
-  if (logCategory === 'seeding_tray') {
+  if (logCategories.includes('seeding_tray')) {
     const greenhouseMap = await getGreenhouseNameToAssetMap();
     locationID = greenhouseMap.get(locationName).id;
   } else {
@@ -1631,6 +1632,13 @@ export async function createSeedingLog(
   }
 
   const categoryMap = await getLogCategoryToTermMap();
+  let logCategoriesArray = [];
+  for (const cat of logCategories) {
+    logCategoriesArray.push({
+      type: 'taxonomy_term--log_category',
+      id: categoryMap.get(cat).id,
+    });
+  }
 
   const seedingLogData = {
     type: 'log--seeding',
@@ -1649,12 +1657,7 @@ export async function createSeedingLog(
         },
       ],
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
-      category: [
-        {
-          type: 'taxonomy_term--log_category',
-          id: categoryMap.get(logCategory).id,
-        },
-      ],
+      category: logCategoriesArray,
       quantity: quantitiesArray,
     },
   };
@@ -1714,7 +1717,8 @@ export async function deleteSeedingLog(seedingLogId) {
  *
  * @param {string} disturbanceDate the date the disturbance took place.
  * @param {string} locationName the location where the disturbance took place.
- * @param {string} logCategory the log category indicating the type of disturbance (e.g. `disturbance_tillage`).
+ * @param {Array<string>} logCategories the log categories associated with this log.
+ * Must include `tillage`.
  * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
  * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
  * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
@@ -1725,7 +1729,7 @@ export async function deleteSeedingLog(seedingLogId) {
 export async function createSoilDisturbanceActivityLog(
   distrubanceDate,
   locationName,
-  logCategory,
+  logCategories,
   plantAsset = null,
   quantities = [],
   equipment = []
@@ -1751,6 +1755,13 @@ export async function createSoilDisturbanceActivityLog(
   }
 
   const categoryMap = await getLogCategoryToTermMap();
+  let logCategoriesArray = [];
+  for (const cat of logCategories) {
+    logCategoriesArray.push({
+      type: 'taxonomy_term--log_category',
+      id: categoryMap.get(cat).id,
+    });
+  }
 
   const activityLogData = {
     type: 'log--activity',
@@ -1768,12 +1779,7 @@ export async function createSoilDisturbanceActivityLog(
         },
       ],
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
-      category: [
-        {
-          type: 'taxonomy_term--log_category',
-          id: categoryMap.get(logCategory).id,
-        },
-      ],
+      category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,
     },
