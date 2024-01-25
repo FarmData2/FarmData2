@@ -1,0 +1,45 @@
+<?php
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Add some FarmData2 specific terms to the log_category vocabulary.
+ */
+function farm_fd2_install() {
+  $vocab = 'log_category';
+
+  $items = [
+    ['name' => 'seeding_cover_crop', 'description' => 'For logs associated with the seeding of a cover crop.' ],
+    ['name' => 'seeding_direct', 'description' => 'For logs associated with direct seedings.' ],
+    ['name' => 'seeding_tray', 'description' => 'For logs associated with seedings in trays.' ],
+    
+    ['name' => 'amendment', 'description' => 'For logs where soil amendments are made.' ],
+    ['name' => 'grazing', 'description' => 'For logs that record animal grazing events' ],
+    ['name' => 'irrigation', 'description' => 'For logs associated with field irrigation.' ],
+    ['name' => 'pest_disease_control', 'description' => 'For logs related to pest or disease control.' ],
+    ['name' => 'seeding', 'description' => 'For logs associated with seedings.' ],
+    ['name' => 'termination', 'description' => 'For logs associated with termination of a planting.' ],
+    ['name' => 'tillage', 'description' => 'For logs representing soil disturbances.' ],
+    ['name' => 'transplanting', 'description' => 'For logs representing transplantation of a plant.' ],
+    ['name' => 'weed_control', 'description' => 'For logs related to weed control.' ],
+  ];
+
+  foreach ($items as $item) {
+
+    $terms = \Drupal::entityTypeManager()
+            ->getStorage('taxonomy_term')
+            ->loadByProperties([
+                    'vid' => $vocab,
+                    'name' =>$item['name'],
+                ]);
+
+    if(empty($terms)) {
+      $term = Term::create(array(
+        'parent' => array(),
+        'name' => $item['name'],
+        'description' => $item['description'],
+        'vid' => $vocab,
+      ))->save();
+    }
+  }
+}
+?>
