@@ -120,8 +120,8 @@
         <hr />
         <!-- Comment Box -->
         <CommentBox
-          id="seeding-comment"
-          data-cy="seeding-comment"
+          id="tray-seeding-comment"
+          data-cy="tray-seeding-comment"
           v-model:comment="form.comment"
           v-on:valid="validity.comment = $event"
           v-on:ready="createdCount++"
