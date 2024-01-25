@@ -3,7 +3,6 @@
 source colors.bash
 source lib.bash
 
-
 # Setting Env Variables
 PWD="$(pwd)" #Current Working Dir
 SCRIPT_PATH=$(readlink -f "$0") # Script Path
@@ -21,6 +20,11 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+# Default to generating all documentation if no targets are specified
+if [ ${#TARGETS[@]} -eq 0 ]; then
+    TARGETS=("all")
+fi
+
 INDEX_FILE="FarmData2.md" 
 INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE"
 
@@ -32,15 +36,15 @@ update_docs() {
     local TYPE=$1 # components or library
     local NAME=$2
     local PATH="$REPO_ROOT_DIR/$TYPE/$NAME"
-    local DOC_PATH="docs/$TYPE/$NAME.md"
+    local DOC_PATH="$TYPE/$NAME.md"
 
     if [[ -d "$PATH" ]]; then
         echo "    Generating docs for $NAME..."
         # Use vue-docgen or jsdoc2md based on type
         if [ "$TYPE" == "components" ]; then
-            npx vue-docgen "$PATH/$NAME.vue" -o "$REPO_ROOT_DIR/$DOC_PATH"
+            (cd "$REPO_ROOT_DIR" && npx vue-docgen "$PATH/$NAME.vue" -o "$DOC_PATH")
         else
-            npx jsdoc2md "$PATH/$NAME.js" > "$REPO_ROOT_DIR/$DOC_PATH"
+            (cd "$REPO_ROOT_DIR" && npx jsdoc2md "$PATH/$NAME.js" > "$DOC_PATH")
         fi
         echo "      Docs generated for $NAME."
 
