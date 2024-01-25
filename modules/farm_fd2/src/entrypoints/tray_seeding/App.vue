@@ -51,8 +51,8 @@
 
         <!-- Location Selection -->
         <LocationSelector
-          id="seeding-location-name"
-          data-cy="seeding-location-name"
+          id="tray-seeding-location"
+          data-cy="tray-seeding-location"
           required
           includeGreenhouses
           v-model:selected="form.locationName"
