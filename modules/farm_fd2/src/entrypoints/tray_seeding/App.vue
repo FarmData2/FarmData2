@@ -1,20 +1,31 @@
 <template>
-  <div>
-    <BToaster />
+  <div
+    id="tray-seeding"
+    data-cy="tray-seeding">
+    <BToaster
+      id="tray-seeding-toaster"
+      data-cy="tray-seeding-toaster"
+    />
     <BCard
+      id="tray-seeding-card"
+      data-cy="tray-seeding-card"
       bg-variant="light"
       header-tag="header"
     >
       <template #header>
         <h2
-          data-cy="seeding-header"
+          id="tray-seeding-header"
+          data-cy="tray-seeding-header"
           class="text-center"
         >
           Tray Seeding
         </h2>
       </template>
 
-      <BForm>
+      <BForm
+        id="tray-seeding-form"
+        data-cy="tray-seeding-form"
+      >
         <!-- Seeding Date -->
         <DateSelector
           id="seeding-date"
