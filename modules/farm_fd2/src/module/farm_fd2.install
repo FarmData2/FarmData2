@@ -5,41 +5,91 @@ use Drupal\taxonomy\Entity\Term;
  * Add some FarmData2 specific terms to the log_category vocabulary.
  */
 function farm_fd2_install() {
+  add_log_categories();
+}
+
+function add_log_categories() {
   $vocab = 'log_category';
 
-  $items = [
-    ['name' => 'seeding_cover_crop', 'description' => 'For logs associated with the seeding of a cover crop.' ],
-    ['name' => 'seeding_direct', 'description' => 'For logs associated with direct seedings.' ],
-    ['name' => 'seeding_tray', 'description' => 'For logs associated with seedings in trays.' ],
-    
-    ['name' => 'amendment', 'description' => 'For logs where soil amendments are made.' ],
-    ['name' => 'grazing', 'description' => 'For logs that record animal grazing events' ],
-    ['name' => 'irrigation', 'description' => 'For logs associated with field irrigation.' ],
-    ['name' => 'pest_disease_control', 'description' => 'For logs related to pest or disease control.' ],
-    ['name' => 'seeding', 'description' => 'For logs associated with seedings.' ],
-    ['name' => 'termination', 'description' => 'For logs associated with termination of a planting.' ],
-    ['name' => 'tillage', 'description' => 'For logs representing soil disturbances.' ],
-    ['name' => 'transplanting', 'description' => 'For logs representing transplantation of a plant.' ],
-    ['name' => 'weed_control', 'description' => 'For logs related to weed control.' ],
+  $terms = [
+        
+    ['name' => 'amendment', 'parent' => '', 'description' => 'For logs where soil amendments are made.' ],
+    ['name' => 'grazing', 'parent' => '', 'description' => 'For logs that record animal grazing events' ],
+    ['name' => 'irrigation', 'parent' => '', 'description' => 'For logs associated with field irrigation.' ],
+    ['name' => 'pest_disease_control', 'parent' => '', 'description' => 'For logs related to pest or disease control.' ],
+    ['name' => 'seeding', 'parent' => '', 'description' => 'For logs associated with seedings.' ],
+    ['name' => 'termination', 'parent' => '', 'description' => 'For logs associated with termination of a planting.' ],
+    ['name' => 'tillage', 'parent' => '', 'description' => 'For logs representing soil disturbances.' ],
+    ['name' => 'transplanting', 'parent' => '', 'description' => 'For logs representing transplantation of a plant.' ],
+    ['name' => 'weed_control', 'parent' => '', 'description' => 'For logs related to weed control.' ],
+
+    ['name' => 'seeding_cover_crop', 'parent' => 'seeding', 'description' => 'For logs associated with the seeding of a cover crop.' ],
+    ['name' => 'seeding_direct', 'parent' => 'seeding', 'description' => 'For logs associated with direct seedings.' ],
+    ['name' => 'seeding_tray', 'parent' => 'seeding', 'description' => 'For logs associated with seedings in trays.' ],
   ];
 
-  foreach ($items as $item) {
+  addTerms($vocab, $terms);
+}
 
-    $terms = \Drupal::entityTypeManager()
+function add_units() {
+  $vocab = 'unit';
+
+  $terms = [];
+
+  addTerms($vocab, $terms);
+}
+
+function addTerms($vocab, $terms) {
+  foreach ($terms as $term) {
+
+    $cur_term = \Drupal::entityTypeManager()
             ->getStorage('taxonomy_term')
             ->loadByProperties([
                     'vid' => $vocab,
-                    'name' =>$item['name'],
+                    'name' => $term['name'],
                 ]);
 
-    if(empty($terms)) {
-      $term = Term::create(array(
-        'parent' => array(),
-        'name' => $item['name'],
-        'description' => $item['description'],
+    if(empty($cur_term)) {
+      if($term['parent'] == '') {
+        $parent = array();
+      }
+      else {
+        $parent_tid = getTidByName($term['parent'], $vocab);
+        $parent = [$parent_tid];
+      }
+
+      $new_term = Term::create(array(
+        'parent' => $parent,
+        'name' => $term['name'],
+        'description' => $term['description'],
         'vid' => $vocab,
       ))->save();
     }
   }
+}
+
+/**
+ * Function adapted from: https://drupal.stackexchange.com/questions/225209/load-term-by-name
+ *
+ * Utility: find term by name and vid.
+ * @param null $name
+ *  Term name
+ * @param null $vid
+ *  Term vid
+ * @return int
+ *  Term id or 0 if none.
+ */
+function getTidByName($name = NULL, $vid = NULL) {
+  $properties = [];
+  if (!empty($name)) {
+    $properties['name'] = $name;
+  }
+  if (!empty($vid)) {
+    $properties['vid'] = $vid;
+  }
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties($properties);
+  $term = reset($terms);
+
+  return !empty($term) ? $term->id() : 0;
 }
 ?>
