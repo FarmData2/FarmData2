@@ -94,8 +94,8 @@
 
         <!-- Number of Seed / Cell -->
         <NumericInput
-          id="seeding-seeds"
-          data-cy="seeding-seeds"
+          id="tray-seeding-seeds"
+          data-cy="tray-seeding-seeds"
           required
           label="Seeds/Cell"
           invalidFeedbackText="Seeds must be positive."
