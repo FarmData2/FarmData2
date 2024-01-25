@@ -82,8 +82,8 @@
 
         <!-- Tray Size -->
         <TraySizeSelector
-          id="seeding-tray-size"
-          data-cy="seeding-tray-size"
+          id="tray-seeding-tray-size"
+          data-cy="tray-seeding-tray-size"
           required
           v-model:selected="form.traySize"
           v-bind:showValidityStyling="validity.show"
