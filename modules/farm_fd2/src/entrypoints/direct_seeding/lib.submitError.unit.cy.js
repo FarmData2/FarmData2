@@ -1,6 +1,6 @@
 import * as lib from './lib.js';
 
-describe('Test the direct seeding lib.', () => {
+describe('Test error when submitting the direct seeding lib.', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the tray_seeding entry point.  This will be passed
@@ -19,11 +19,6 @@ describe('Test the direct seeding lib.', () => {
     speed: 5,
     comment: 'A comment',
   };
-
-  before(() => {
-    cy.restoreLocalStorage();
-    cy.restoreSessionStorage();
-  });
 
   beforeEach(() => {
     cy.restoreLocalStorage();
