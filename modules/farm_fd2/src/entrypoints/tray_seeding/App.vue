@@ -66,8 +66,8 @@
 
         <!-- Number of Trays -->
         <NumericInput
-          id="seeding-trays"
-          data-cy="seeding-trays"
+          id="tray-seeding-trays"
+          data-cy="tray-seeding-trays"
           required
           label="Trays"
           invalidFeedbackText="Trays must be positive."
@@ -298,24 +298,24 @@ export default {
 <style>
 @import url('@css/fd2-mobile.css');
 
-#seeding-date {
+#tray-seeding-date {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#seeding-crop-name,
-#seeding-location-name,
-#seeding-tray-size,
-#seeding-seeds {
+#tray-seeding-crop,
+#tray-seeding-location,
+#tray-seeding-tray-size,
+#tray-seeding-seeds {
   margin-bottom: 8px;
 }
 
-#seeding-trays {
+#tray-seeding-trays {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#seeding-comment {
+#tray-seeding-comment {
   margin-bottom: 15px;
 }
 </style>
