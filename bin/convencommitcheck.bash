@@ -1,143 +1,116 @@
 #!/bin/bash
 
-# Define valid types
+# Define valid types and scopes
 VALID_TYPES=("build" "chore" "ci" "docs" "feat" "fix" "perf" "refactor" "style" "test")
+VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school" "none") # Added 'none' for no scope
 
-# Define valid scopes
-VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school")
-
-# Small helper array checker function.
+# Helper function to check if an element is in an array
 elementInArray() {
     local element
-    local match="$1"
-    shift
-    for element; do
-        [[ "$element" == "$match" ]] && return 0
+    for element in "${@:2}"; do
+        [[ "$element" == "$1" ]] && return 0
     done
     return 1
 }
 
-# Function to convert PR title and body to a conventional commit format
+# Function to prompt for a value with a default
+promptForValue() {
+    local prompt=$1
+    local default=$2
+    read -p "$prompt [$default]: " value
+    echo "${value:-$default}"
+}
+
+# Function to convert PR title to conventional commit format
 convertToConventionalCommit() {
-    local pr_title="$1"
-    local pr_body="$2"
+    local type=$1
+    local scope=$2
+    local description=$3
+    local body=$4
+    local breaking_change=$5
 
-    # Basic conversion logic (can be expanded as needed)
-    local type=$(echo "$pr_title" | cut -d':' -f1)
-    local description="$pr_title"
+    local commit_message="${type}"
+    if [[ "$scope" != "none" ]]; then
+        commit_message="${commit_message}(${scope})"
+    fi
+    commit_message="${commit_message}: ${description}"
 
-    # Default scope to 'core' if not provided
-    local scope="core"
-    if [[ "$pr_title" == *"("*")"* ]]; then
-        scope=$(echo "$pr_title" | cut -d'(' -f2 | cut -d')' -f1)
-        description=$(echo "$pr_title" | cut -d')' -f2-)
+    if [[ "$breaking_change" == "yes" ]]; then
+        commit_message="${commit_message}\n\nBREAKING CHANGE: ${body}"
+    else
+        commit_message="${commit_message}\n\n${body}"
     fi
 
-    # Construct the conventional commit message
-    local conventional_commit="${type}(${scope}): ${description}"
-    if [ -n "$pr_body" ]; then
-        conventional_commit="${conventional_commit} - ${pr_body}"
-    fi
-    echo "$conventional_commit"
+    echo "$commit_message"
 }
 
-# PR Validation
-validatePRTitle() {
-    local pr_title="$1"
-
-    # Extract type and scope from PR title
-    local type=$(echo "$pr_title" | cut -d':' -f1)
-    local scope=$(echo "$pr_title" | cut -d'(' -f2 | cut -d')' -f1)
-
-    # Check if type is valid
-    if ! elementInArray "$type" "${VALID_TYPES[@]}"; then
-        echo "Invalid commit type: $type"
-        return 1
-    fi
-
-    # Check if scope is valid
-    if ! elementInArray "$scope" "${VALID_SCOPES[@]}"; then
-        echo "Invalid commit scope: $scope"
-        return 1
-    fi
-
-    echo "PR title is valid."
-    return 0
-}
-
-# Function to check GitHub CLI authentication
+# Function to check and handle GitHub CLI authentication
 checkGhCliAuth() {
-    echo "Checking GitHub CLI Authentication status."
+    echo "Checking GitHub CLI Authentication status..."
     if ! gh auth status > /dev/null 2>&1; then
-        echo "You are not logged in to the GitHub CLI."
-        echo "Attempting to log in..."
-        gh auth login
-        if [ $? -ne 0 ]; then
-            echo "GitHub CLI login failed. Please try again manually."
-            exit 1
-        fi
+        echo "You are not logged in to the GitHub CLI. Logging in..."
+        gh auth login || { echo "GitHub CLI login failed. Please try again manually."; exit 1; }
     else
-        echo "You are already logged in to the GitHub CLI."
+        echo "Logged in to the GitHub CLI."
     fi
 }
 
-# Perform a squash merge with a conventional commit message
+# Function to perform a squash merge
 squashMergePR() {
-    local pr_number="$1"
-    local commit_message="$2"
-    local repo="farmdata2/farmdata2" # Default repository. Possible to add a working current repository to manage multiple and set it as an env var perhaps in the future.
+    local pr_number=$1
+    local commit_message=$2
+    local repo="farmdata2/farmdata2" # Default repository
 
-    # Perform the squash merge
-    gh pr merge "$pr_number" --repo "$repo" --squash --commit-title "$commit_message"
-
-    if [ $? -eq 0 ]; then
-        echo "Successfully squash merged PR #$pr_number."
-    else
-        echo "Failed to squash merge PR #$pr_number."
-        return 1
-    fi
+    gh pr merge "$pr_number" --repo "$repo" --squash --commit-title "$commit_message" && \
+    echo "Successfully merged PR #$pr_number." || \
+    { echo "Failed to merge PR #$pr_number."; return 1; }
 }
 
-# Main script execution
+# Script starts here
 
-# Checks for GitHub CLI Authentication
 checkGhCliAuth
 
-# PR Retrieval
-PR_NUMBER="$1"
-if [ -z "$PR_NUMBER" ]; then
-    echo "Please provide a PR number."
-    exit 1
-fi
+# Prompt for PR number if not provided
+PR_NUMBER=${1:-$(promptForValue "Enter PR number" "")}
+[ -z "$PR_NUMBER" ] && { echo "PR number is required."; exit 1; }
 
-# This section is a current work in progress.
-# Any feedback would be appreciated!
-# I wasn't sure about the converted commit format but this is just a sample implementation
-
-# Fetch PR title and body using GitHub CLI
-echo "Fetching PR #$PR_NUMBER from farmdata2/farmdata2..."
+# Fetch PR title and body
+echo "Fetching PR #$PR_NUMBER..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
-# Aftermath - validating the PR title - this is a WIP. 
-if ! validatePRTitle "$PR_TITLE"; then
-    echo "Invalid PR title: $PR_TITLE"
-    converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
-    echo "Suggested conventional commit: $converted_commit"
-    
-    # Optional: Prompt for confirmation before performing the squash merge
-    read -p "Do you want to squash merge this PR with the above commit message? (y/n) " confirm
-    if [[ $confirm == [yY] ]]; then
-        squashMergePR "$PR_NUMBER" "$converted_commit"
-    fi
+# Extract type, scope, and description from PR title
+TYPE=$(echo "$PR_TITLE" | cut -d':' -f1)
+SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1)
+DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
 
+# Validate and prompt for type and scope
+TYPE=${TYPE:-$(promptForValue "Enter commit type" "feat")}
+if ! elementInArray "$TYPE" "${VALID_TYPES[@]}"; then
+    echo "Invalid commit type: $TYPE. Please enter a valid type."
     exit 1
-else
-    echo "Valid PR title: $PR_TITLE"
-    converted_commit=$(convertToConventionalCommit "$PR_TITLE" "$PR_BODY")
-    
-    # Perform the squash merge with the valid commit message
-    squashMergePR "$PR_NUMBER" "$converted_commit"
 fi
 
-exit 0
+SCOPE=${SCOPE:-$(promptForValue "Enter commit scope" "none")}
+if ! elementInArray "$SCOPE" "${VALID_SCOPES[@]}"; then
+    echo "Invalid commit scope: $SCOPE. Please enter a valid scope."
+    exit 1
+fi
+
+# Prompt for breaking change
+BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
+
+# Generate the conventional commit message
+CONV_COMMIT=$(convertToConventionalCommit "$TYPE" "$SCOPE" "$DESCRIPTION" "$PR_BODY" "$BREAKING_CHANGE")
+
+# Provide options to accept or edit the commit message
+echo "Proposed commit message:"
+echo "$CONV_COMMIT"
+read -p "Do you want to (A)ccept, (E)dit, or (C)ancel? " choice
+case $choice in
+    [Ee]* ) nano <<< "$CONV_COMMIT";;
+    [Cc]* ) exit;;
+esac
+
+# Perform the squash merge
+squashMergePR "$PR_NUMBER" "$CONV_COMMIT"
