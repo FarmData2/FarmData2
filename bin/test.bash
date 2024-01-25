@@ -45,6 +45,9 @@ function usage {
 cleanup() {
   echo "Cleaning up..."
 
+  # Set default EXIT_CODE to 130 if not provided
+  EXIT_CODE=${1:-130}
+  
   # Terminate the dev server if it's running
   if [ -n "$DEV_GID" ]; then
     echo "Terminating the dev server..."
@@ -340,4 +343,4 @@ fi
 echo "Tests complete."
 
 # Runs normal cleanup
-cleanup "$EXIT_CODE"
+cleanup $EXIT_CODE
