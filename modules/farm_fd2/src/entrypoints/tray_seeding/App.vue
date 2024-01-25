@@ -28,8 +28,8 @@
       >
         <!-- Seeding Date -->
         <DateSelector
-          id="seeding-date"
-          data-cy="seeding-date"
+          id="tray-seeding-date"
+          data-cy="tray-seeding-date"
           required
           v-model:date="form.seedingDate"
           v-bind:showValidityStyling="validity.show"
