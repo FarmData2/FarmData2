@@ -67,7 +67,7 @@ export async function submitForm(formData) {
     seedingLog = await farmosUtil.createSeedingLog(
       formData.seedingDate,
       formData.locationName,
-      'seeding_direct',
+      ['seeding', 'seeding_direct'],
       plantAsset,
       [bedFeetQuantity, rowsPerBedQuantity, bedWidthQuantity]
     );
@@ -95,7 +95,7 @@ export async function submitForm(formData) {
       activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
         formData.seedingDate,
         formData.locationName,
-        'activity_soil_disturbance_tillage',
+        ['tillage', 'seeding_direct'],
         plantAsset,
         [depthQuantity, speedQuantity],
         equipmentAssets

@@ -176,11 +176,18 @@ describe('Test the direct seeding lib.', () => {
           result.seedingLog.relationships.asset[0].id
         );
 
+        expect(seedingLog.relationships.category.length).to.equal(2);
         expect(seedingLog.relationships.category[0].type).to.equal(
           'taxonomy_term--log_category'
         );
         expect(seedingLog.relationships.category[0].id).to.equal(
           result.seedingLog.relationships.category[0].id
+        );
+        expect(seedingLog.relationships.category[1].type).to.equal(
+          'taxonomy_term--log_category'
+        );
+        expect(seedingLog.relationships.category[1].id).to.equal(
+          result.seedingLog.relationships.category[1].id
         );
 
         expect(seedingLog.relationships.quantity.length).to.equal(3);
@@ -272,9 +279,15 @@ describe('Test the direct seeding lib.', () => {
       expect(activityLog.relationships.asset[0].id).to.equal(
         result.plantAsset.id
       );
+
+      expect(activityLog.relationships.category.length).to.equal(2);
       expect(activityLog.relationships.category[0].id).to.equal(
-        categoryMap.get('activity_soil_disturbance_tillage').id
+        categoryMap.get('tillage').id
       );
+      expect(activityLog.relationships.category[1].id).to.equal(
+        categoryMap.get('seeding_direct').id
+      );
+
       expect(activityLog.relationships.quantity.length).to.equal(2);
       expect(activityLog.relationships.quantity[0].id).to.equal(
         result.depthQuantity.id

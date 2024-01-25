@@ -41,7 +41,7 @@ describe('Test the seeding log functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'CHUAU',
-          'seeding_tray',
+          ['seeding', 'seeding_tray'],
           plantAsset,
           [quantity]
         )
@@ -58,9 +58,15 @@ describe('Test the seeding log functions', () => {
 
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(true);
+
+          expect(result.relationships.category.length).to.equal(2);
           expect(result.relationships.category[0].id).to.equal(
+            categoryMap.get('seeding').id
+          );
+          expect(result.relationships.category[1].id).to.equal(
             categoryMap.get('seeding_tray').id
           );
+
           expect(result.relationships.location[0].id).to.equal(
             greenhouseMap.get('CHUAU').id
           );
@@ -92,7 +98,7 @@ describe('Test the seeding log functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'A',
-          'seeding_direct',
+          ['seeding', 'seeding_direct'],
           plantAsset,
           [quantity]
         )
@@ -111,9 +117,15 @@ describe('Test the seeding log functions', () => {
 
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(true);
+
+          expect(result.relationships.category.length).to.equal(2);
           expect(result.relationships.category[0].id).to.equal(
+            categoryMap.get('seeding').id
+          );
+          expect(result.relationships.category[1].id).to.equal(
             categoryMap.get('seeding_direct').id
           );
+
           expect(result.relationships.location[0].id).to.equal(
             fieldMap.get('A').id
           );
@@ -138,7 +150,12 @@ describe('Test the seeding log functions', () => {
     cy.get('@plantAsset').then((plantAsset) => {
       cy.wrap(
         farmosUtil
-          .createSeedingLog('01/02/1999', 'CHUAU', 'seeding_tray', plantAsset)
+          .createSeedingLog(
+            '01/02/1999',
+            'CHUAU',
+            ['seeding', 'seeding_tray'],
+            plantAsset
+          )
           .then(() => {
             throw new Error('Creating seeding log should have failed.');
           })
@@ -165,7 +182,7 @@ describe('Test the seeding log functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'CHUAU',
-          'seeding_tray',
+          ['seeding', 'seeding_tray'],
           plantAsset,
           [quantity]
         )
