@@ -6,26 +6,27 @@ use Drupal\taxonomy\Entity\Term;
  */
 function farm_fd2_install() {
   add_log_categories();
+  add_units();
 }
 
 function add_log_categories() {
   $vocab = 'log_category';
 
   $terms = [
-        
     ['name' => 'amendment', 'parent' => '', 'description' => 'For logs where soil amendments are made.' ],
     ['name' => 'grazing', 'parent' => '', 'description' => 'For logs that record animal grazing events' ],
     ['name' => 'irrigation', 'parent' => '', 'description' => 'For logs associated with field irrigation.' ],
     ['name' => 'pest_disease_control', 'parent' => '', 'description' => 'For logs related to pest or disease control.' ],
+    
     ['name' => 'seeding', 'parent' => '', 'description' => 'For logs associated with seedings.' ],
+    ['name' => 'seeding_cover_crop', 'parent' => 'seeding', 'description' => 'For logs associated with the seeding of a cover crop.' ],
+    ['name' => 'seeding_direct', 'parent' => 'seeding', 'description' => 'For logs associated with direct seedings.' ],
+    ['name' => 'seeding_tray', 'parent' => 'seeding', 'description' => 'For logs associated with seedings in trays.' ],
+
     ['name' => 'termination', 'parent' => '', 'description' => 'For logs associated with termination of a planting.' ],
     ['name' => 'tillage', 'parent' => '', 'description' => 'For logs representing soil disturbances.' ],
     ['name' => 'transplanting', 'parent' => '', 'description' => 'For logs representing transplantation of a plant.' ],
     ['name' => 'weed_control', 'parent' => '', 'description' => 'For logs related to weed control.' ],
-
-    ['name' => 'seeding_cover_crop', 'parent' => 'seeding', 'description' => 'For logs associated with the seeding of a cover crop.' ],
-    ['name' => 'seeding_direct', 'parent' => 'seeding', 'description' => 'For logs associated with direct seedings.' ],
-    ['name' => 'seeding_tray', 'parent' => 'seeding', 'description' => 'For logs associated with seedings in trays.' ],
   ];
 
   addTerms($vocab, $terms);
@@ -34,7 +35,27 @@ function add_log_categories() {
 function add_units() {
   $vocab = 'unit';
 
-  $terms = [];
+  $terms = [
+    // Parent terms should be one of the defined farmOS measures.
+    // See: https://farmos.org/model/type/quantity/#measure
+
+    ['name' => 'Count', 'parent' => '', 'description' => 'Parent term for units that are counts.'],
+    ['name' => 'CELLS', 'parent' => 'Count', 'description' => 'A number of seeding tray cells.'],
+    ['name' => 'SEEDS', 'parent' => 'Count', 'description' => 'A number of seeds.'],
+    ['name' => 'TRAYS', 'parent' => 'Count', 'description' => 'A number of seeding trays.'],
+
+    ['name' => 'Length/depth', 'parent' => '', 'description' => 'Parent term for units that are lengths or depths.'],
+    ['name' => 'FEET', 'parent' => 'Length/depth', 'description' => 'A number of feet.'],
+    ['name' => 'INCHES', 'parent' => 'Length/depth', 'description' => 'A number of inches.'],
+
+    ['name' => 'Rate', 'parent' => '', 'description' => 'Parent term for units that are rates.'],
+    ['name' => 'MPH', 'parent' => 'Rate', 'description' => 'A speed in miles per hour.'],
+
+    ['name' => 'Ratio', 'parent' => '', 'description' => 'Parent term for units that are ratios.'],
+    ['name' => 'CELLS/TRAY', 'parent' => 'Ratio', 'description' => 'The number of cells in a seeding tray.'],
+    ['name' => 'ROWS/BED', 'parent' => 'Ratio', 'description' => 'The number of rows in a bed.'],
+    ['name' => 'SEEDS/CELL', 'parent' => 'Ratio', 'description' => 'The number of seeds per cell in a seeding tray.'],
+  ];
 
   addTerms($vocab, $terms);
 }
@@ -43,11 +64,11 @@ function addTerms($vocab, $terms) {
   foreach ($terms as $term) {
 
     $cur_term = \Drupal::entityTypeManager()
-            ->getStorage('taxonomy_term')
-            ->loadByProperties([
-                    'vid' => $vocab,
-                    'name' => $term['name'],
-                ]);
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'vid' => $vocab,
+        'name' => $term['name'],
+      ]);
 
     if(empty($cur_term)) {
       if($term['parent'] == '') {
@@ -87,7 +108,9 @@ function getTidByName($name = NULL, $vid = NULL) {
   if (!empty($vid)) {
     $properties['vid'] = $vid;
   }
-  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties($properties);
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties($properties);
   $term = reset($terms);
 
   return !empty($term) ? $term->id() : 0;
