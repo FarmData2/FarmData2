@@ -39,8 +39,8 @@
 
         <!-- Crop Selection -->
         <CropSelector
-          id="seeding-crop-name"
-          data-cy="seeding-crop-name"
+          id="tray-seeding-crop"
+          data-cy="tray-seeding-crop"
           required
           v-model:selected="form.cropName"
           v-bind:showValidityStyling="validity.show"
