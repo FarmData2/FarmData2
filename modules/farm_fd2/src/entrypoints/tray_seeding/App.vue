@@ -110,8 +110,8 @@
 
         <!-- Total Seeds -->
         <TextDisplay
-          id="seeding-total-seeds"
-          data-cy="seeding-total-seeds"
+          id="tray-seeding-total-seeds"
+          data-cy="tray-seeding-total-seeds"
           label="Total Seeds"
           v-bind:text="totalSeeds"
           v-on:ready="createdCount++"
