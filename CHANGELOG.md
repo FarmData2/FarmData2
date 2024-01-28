@@ -1,3 +1,54 @@
+## [1.2.0](https://github.com/FarmData2/FarmData2/compare/v1.1.1...v1.2.0) (2024-01-28)
+
+
+### Chores
+
+* **lib:** remove debugging output ([#118](https://github.com/FarmData2/FarmData2/issues/118)) ([0ee582d](https://github.com/FarmData2/FarmData2/commit/0ee582df68aaf2565005128cf282eb901e2ccee2))
+
+
+### Continuous Integration
+
+* fixes drupal-releae hook so it copies all changed files ([#116](https://github.com/FarmData2/FarmData2/issues/116)) ([35b0638](https://github.com/FarmData2/FarmData2/commit/35b06387320c471141703164426ea12837650753))
+
+
+### Documentation
+
+* updates draft of `INSTALL.md` with some additinoal details ([#143](https://github.com/FarmData2/FarmData2/issues/143)) ([14072bf](https://github.com/FarmData2/FarmData2/commit/14072bf669b515c2e477469e5f2be2ce2145db58))
+
+
+### Features
+
+* **fd2:** adds a direct seeding entry point ([#132](https://github.com/FarmData2/FarmData2/issues/132)) ([32fa656](https://github.com/FarmData2/FarmData2/commit/32fa6561b65de1a9256231d033f0913504829607)), closes [#129](https://github.com/FarmData2/FarmData2/issues/129)
+* **fd2:** adds the seeding parent menu ([#131](https://github.com/FarmData2/FarmData2/issues/131)) ([8f51c68](https://github.com/FarmData2/FarmData2/commit/8f51c685c6bde57818d099c36124ea5c0a15ad25)), closes [#129](https://github.com/FarmData2/FarmData2/issues/129)
+
+
+### Fixes
+
+* **dev:** adds bash trap and cleanup function to test.bash ([#144](https://github.com/FarmData2/FarmData2/issues/144)) ([850b56f](https://github.com/FarmData2/FarmData2/commit/850b56f740306ba56d5159a108956b4b57baf63f)), closes [#141](https://github.com/FarmData2/FarmData2/issues/141)
+* **fd2:** Added WSL2 Support ([#121](https://github.com/FarmData2/FarmData2/issues/121)) ([971472c](https://github.com/FarmData2/FarmData2/commit/971472c00a8b0b9c28aa50cf39b60aadc1e01d3d)), closes [#76](https://github.com/FarmData2/FarmData2/issues/76)
+* **fd2:** allows the use of multiple log categories ([#148](https://github.com/FarmData2/FarmData2/issues/148)) ([77fb182](https://github.com/FarmData2/FarmData2/commit/77fb1828244b2eaeb3adad54190e5c92d26016f6)), closes [#146](https://github.com/FarmData2/FarmData2/issues/146) [#108](https://github.com/FarmData2/FarmData2/issues/108)
+* **fd2:** creates log categories on module install ([#149](https://github.com/FarmData2/FarmData2/issues/149)) ([688bb29](https://github.com/FarmData2/FarmData2/commit/688bb294ffc10365ebf3a50f479f5f881a0b4318)), closes [#139](https://github.com/FarmData2/FarmData2/issues/139)
+* **fd2:** migrates creation of unit taxonomy terms to install ([#151](https://github.com/FarmData2/FarmData2/issues/151)) ([2f3d277](https://github.com/FarmData2/FarmData2/commit/2f3d27727dc00713abab3faefe651700e9cca80d)), closes [#139](https://github.com/FarmData2/FarmData2/issues/139)
+
+
+### Performance Improvements
+
+* **fd2:** Imporve user permissions checking ([#120](https://github.com/FarmData2/FarmData2/issues/120)) ([33f63c8](https://github.com/FarmData2/FarmData2/commit/33f63c878d81cf61521e2c90c3d8df94ee9b6b58)), closes [#119](https://github.com/FarmData2/FarmData2/issues/119)
+
+
+### Refactoring
+
+* **lib:** refactor caching in the farmosUtil.js library ([#125](https://github.com/FarmData2/FarmData2/issues/125)) ([0135c96](https://github.com/FarmData2/FarmData2/commit/0135c96758a71faf2e8d7b77ac2ffc1a0da30629)), closes [#92](https://github.com/FarmData2/FarmData2/issues/92)
+* move asset, quantity, log creation into `farmosUtil.js` ([#138](https://github.com/FarmData2/FarmData2/issues/138)) ([08151aa](https://github.com/FarmData2/FarmData2/commit/08151aae10c915a439763c8f76d97763b91553a9))
+
+
+### Tests
+
+* **fd2:** rewrite tray seeding tests to follow new conventions ([#155](https://github.com/FarmData2/FarmData2/issues/155)) ([6161918](https://github.com/FarmData2/FarmData2/commit/61619184d778ad65c666d1a8416f0b7c2b079c73)), closes [#140](https://github.com/FarmData2/FarmData2/issues/140) [#145](https://github.com/FarmData2/FarmData2/issues/145)
+* **fd2:** tests permission based access to tray seeding ([#117](https://github.com/FarmData2/FarmData2/issues/117)) ([9953389](https://github.com/FarmData2/FarmData2/commit/99533898edb75defabda4c409a8da893ec033be9))
+* **lib:** updates tests for log categories created by install ([#153](https://github.com/FarmData2/FarmData2/issues/153)) ([cb3115b](https://github.com/FarmData2/FarmData2/commit/cb3115ba29030a353f1e78d69f77e6b923270438))
+* patch the tests to work with smaller sample db ([#128](https://github.com/FarmData2/FarmData2/issues/128)) ([a8cea20](https://github.com/FarmData2/FarmData2/commit/a8cea2074dd54660aac0e6a87adcfc79a1792823))
+
 ## [1.1.1](https://github.com/FarmData2/FarmData2/compare/v1.1.0...v1.1.1) (2023-12-21)
 
 
