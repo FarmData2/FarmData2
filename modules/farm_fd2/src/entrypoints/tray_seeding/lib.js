@@ -82,23 +82,45 @@ export async function submitForm(formData) {
      * created to ensure that a record is not deleted before something that refers to it.
      */
     if (seedingLog) {
-      await farmosUtil.deleteSeedingLog(seedingLog.id);
+      try {
+        await farmosUtil.deleteSeedingLog(seedingLog.id);
+      } catch (error) {
+        console.log('Unable to delete seeding log: ' + seedingLog.id);
+      }
     }
 
     if (seedsQuantity) {
-      await farmosUtil.deleteStandardQuantity(seedsQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(seedsQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete seedsQuantity: ' + seedsQuantity.id);
+      }
     }
 
     if (traySizeQuantity) {
-      await farmosUtil.deleteStandardQuantity(traySizeQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(traySizeQuantity.id);
+      } catch (error) {
+        console.log(
+          'Unable to delete traySizeQuantity: ' + traySizeQuantity.id
+        );
+      }
     }
 
     if (traysQuantity) {
-      await farmosUtil.deleteStandardQuantity(traysQuantity.id);
+      try {
+        await farmosUtil.deleteStandardQuantity(traysQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete traysQuantity: ' + traysQuantity.id);
+      }
     }
 
     if (plantAsset) {
-      await farmosUtil.deletePlantAsset(plantAsset.id);
+      try {
+        await farmosUtil.deletePlantAsset(plantAsset.id);
+      } catch (error) {
+        console.log('Unable to delete plantAsset: ' + plantAsset.id);
+      }
     }
 
     throw Error('Error creating tray seeding.', error);

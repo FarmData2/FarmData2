@@ -123,7 +123,7 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="direct-seeding-crop"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-    cy.get('[data-cy="comment-input"]').clear();
+    cy.get('[data-cy="comment-input"]').should('have.value', '');
 
     // Finally check that the toast is hidden.
     cy.get('.toast').should('not.exist');

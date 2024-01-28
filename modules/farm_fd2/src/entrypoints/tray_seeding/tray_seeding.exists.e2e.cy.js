@@ -27,4 +27,18 @@ describe('Check that the tray_seeding entry point in farm_fd2 exists.', () => {
     cy.visit({ url: 'fd2/tray_seeding/', failOnStatusCode: false });
     cy.get('.page-title').should('contain.text', 'Access denied');
   });
+
+  it('Check overall page structure', () => {
+    cy.login('admin', 'admin');
+    cy.visit('fd2/tray_seeding/');
+    cy.waitForPage();
+
+    cy.get('[data-cy="tray-seeding"]').should('exist');
+    cy.get('[data-cy="tray-seeding-card"]').should('be.visible');
+    cy.get('[data-cy="tray-seeding-header"]').should(
+      'contain.text',
+      'Tray Seeding'
+    );
+    cy.get('[data-cy="tray-seeding-form"]').should('be.visible');
+  });
 });

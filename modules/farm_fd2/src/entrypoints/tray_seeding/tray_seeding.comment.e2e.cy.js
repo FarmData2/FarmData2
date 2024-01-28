@@ -1,10 +1,10 @@
-describe('Direct Seeding: Comment Component', () => {
+describe('Tray Seeding: Comment Component', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
 
     cy.login('admin', 'admin');
-    cy.visit('fd2/direct_seeding/');
+    cy.visit('fd2/tray_seeding/');
     cy.waitForPage();
   });
 
@@ -14,7 +14,7 @@ describe('Direct Seeding: Comment Component', () => {
   });
 
   it('Comment component exists, is visible, is enabled', () => {
-    cy.get('[data-cy="direct-seeding-comment"]').should('exist');
+    cy.get('[data-cy="tray-seeding-comment"]').should('exist');
     cy.get('[data-cy="comment-input"]')
       .should('be.visible')
       .should('be.enabled');
