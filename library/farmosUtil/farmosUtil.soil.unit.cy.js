@@ -13,7 +13,7 @@ describe('Test the soil disturbance activity log functions', () => {
       categoryMap = map;
     });
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
     });
 

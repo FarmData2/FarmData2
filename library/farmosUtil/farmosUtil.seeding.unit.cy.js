@@ -17,7 +17,7 @@ describe('Test the seeding log functions', () => {
       greenhouseMap = map;
     });
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
     });
   });
