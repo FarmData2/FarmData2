@@ -80,9 +80,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 22);
+          .should('have.length', 9);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-21"]').should('have.text', 'GHANA-4');
+        cy.get('[data-cy="selector-option-8"]').should('have.text', 'G');
       });
   });
 
@@ -102,9 +102,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 24);
+          .should('have.length', 11);
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-23"]').should('have.text', 'GHANA-4');
+        cy.get('[data-cy="selector-option-10"]').should('have.text', 'GHANA');
       });
   });
 

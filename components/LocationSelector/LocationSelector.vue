@@ -6,19 +6,55 @@
       label="Location"
       invalidFeedbackText="A location is required"
       v-bind:addOptionUrl="addLocationUrl"
-      v-bind:options="locationList"
+      v-bind:options="locations"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
     />
+    <!--
+    <BAccordion
+      flush
+      id="location-selector-beds-accordion"
+      data-cy="location-selector-beds-accordion"
+      v-if="showBedSelection"
+    >
+      <BAccordionItem
+        id="location-selector-beds-accordion-item"
+        data-cy="location-selector-beds-accordion-item"
+        visible
+      >
+        <template #title>
+          <span
+            id="location-selector-beds-accordion-title"
+            data-cy="location-selector-beds-accordion-title"
+            class="w-100 text-center"
+          >
+            Select Beds
+          </span>
+        </template>
+      -->
+        <BFormCheckboxGroup
+          id="location-selector-beds"
+          data-cy="location-selector-beds"
+          name="location-selector-beds"
+          v-model="checkedBeds"
+          v-on:change="handleUpdateBeds($event)"
+          v-bind:options="beds"
+          v-if="showBedSelection"
+        />
+        <!--
+      </BAccordionItem>
+    </BAccordion>
+  -->
   </div>
 </template>
 
 <script>
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import { BFormCheckboxGroup } from 'bootstrap-vue-next';
 
 /**
  * The LocationSelector component provides a UI element that allows the user to select a location.
@@ -50,8 +86,8 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  */
 export default {
   name: 'LocationSelector',
-  components: { SelectorBase },
-  emits: ['ready', 'update:selected', 'valid'],
+  components: { SelectorBase, BFormCheckboxGroup },
+  emits: ['ready', 'update:selected', 'update:beds', 'valid'],
   props: {
     /**
      * Whether to include fields in the list of locations.
@@ -66,6 +102,13 @@ export default {
     includeGreenhouses: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Allow selection of beds within a location if they exist.
+     */
+    allowBedSelection: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Whether a location selection is required or not.
@@ -83,6 +126,14 @@ export default {
       default: null,
     },
     /**
+     * An array of the names of beds that are currently selected.
+     * This prop is watched and changes are relayed to the component's internal state.
+     */
+    selectedBeds: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * Whether validity styling should appear on the location dropdown.
      */
     showValidityStyling: {
@@ -92,7 +143,27 @@ export default {
   },
   data() {
     return {
-      locationList: [],
+      /*
+       * Need to maintain this because the loop for updates to the selected
+       * prop do not work when doing component tests.  The update:selected event
+       * is emitted, but because there is no actual page using the component there
+       * is no listener to update the prop. Thus the recomputation of beds would
+       * not occur. So, beds() was written to depend upon this attribute and thus
+       * when it changes beds() will be recomputed.
+       */
+      selectedLocation: this.selected,
+
+      /*
+       * Have to use a v-model and watch the selectedBeds prop here
+       * because the BCheckboxGroup change event does not tell us which
+       * box is unchecked when one is unchecked.  This way the checkedBeds
+       * attribute always contains the names of all checked beds.
+       */
+      checkedBeds: [],
+
+      fieldMap: new Map(),
+      greenhouseMap: new Map(),
+      bedObjs: [],
       canCreateLand: false,
       canCreateStructure: false,
     };
@@ -115,9 +186,78 @@ export default {
         return null;
       }
     },
+    locations() {
+      let fieldNames = [];
+      if (this.includeFields) {
+        fieldNames = Array.from(this.fieldMap.values()).map(
+          (field) => field.attributes.name
+        );
+      }
+
+      let greenhouseNames = [];
+      if (this.includeGreenhouses) {
+        greenhouseNames = Array.from(this.greenhouseMap.values()).map(
+          (greenhouse) => greenhouse.attributes.name
+        );
+      }
+
+      let locationNames = [...fieldNames, ...greenhouseNames];
+      locationNames.sort();
+
+      return locationNames;
+    },
+    beds() {
+      if (!this.allowBedSelection) {
+        return [];
+      } else {
+        // Get a list of the beds associated with the selected location
+        let bedNames = this.bedObjs
+          .filter((bed) => {
+            let parentID = bed.relationships.parent[0].id;
+
+            if (this.includeFields) {
+              let parentField = this.fieldMap.get(parentID);
+              if (parentField) {
+                return this.selectedLocation == parentField.attributes.name;
+              }
+            }
+
+            if (this.includeGreenhouses) {
+              let parentGreenhouse = this.greenhouseMap.get(parentID);
+              if (parentGreenhouse) {
+                return (
+                  this.selectedLocation == parentGreenhouse.attributes.name
+                );
+              }
+            }
+
+            return false;
+          })
+          .map((bed) => bed.attributes.name);
+
+        bedNames.sort();
+        return bedNames;
+      }
+    },
+    showBedSelection() {
+      return this.allowBedSelection && this.beds.length > 0;
+    },
   },
   methods: {
+    handleUpdateBeds(event) {
+      /**
+       * The selected beds have changed.
+       * @property {Array<string>} event an array containing the names of the selected beds.
+       */
+      this.$emit('update:beds', this.checkedBeds);
+    },
     handleUpdateSelected(event) {
+      /*
+       * Update the selected location so that the beds computed property
+       * will recompute.
+       */
+      this.selectedLocation = event;
+
       /**
        * The selected location has changed.
        * @property {string} event the name of the new selected location.
@@ -132,37 +272,45 @@ export default {
       this.$emit('valid', event);
     },
   },
-  watch: {},
+  watch: {
+    selectedBeds() {
+      this.checkedBeds = this.selectedBeds;
+    },
+    selected() {
+      this.updateBeds++;
+    },
+  },
   created() {
-    let land = [];
     let canCreateLand = false;
+    let fieldMap = null;
     if (this.includeFields) {
       canCreateLand = farmosUtil.checkPermission('create-land-asset');
-
-      land = farmosUtil.getFieldOrBedNameToAssetMap().then((fieldMap) => {
-        let fields = Array.from(fieldMap.keys());
-        return fields;
-      });
+      fieldMap = farmosUtil.getFieldIdToAssetMap();
     }
 
-    let structures = [];
     let canCreateStructure = false;
+    let greenhouseMap = null;
     if (this.includeGreenhouses) {
       canCreateStructure = farmosUtil.checkPermission('create-structure-asset');
-
-      structures = farmosUtil
-        .getGreenhouseNameToAssetMap()
-        .then((greenhouseMap) => {
-          let gh = Array.from(greenhouseMap.keys());
-          return gh;
-        });
+      greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
     }
 
-    Promise.all([land, structures, canCreateLand, canCreateStructure])
-      .then(([land, structures, createLand, createStructure]) => {
-        const allLocationsList = [...land, ...structures];
-        this.locationList = allLocationsList.sort();
+    let beds = null;
+    if (this.allowBedSelection) {
+      beds = farmosUtil.getBeds();
+    }
 
+    Promise.all([
+      fieldMap,
+      greenhouseMap,
+      beds,
+      canCreateLand,
+      canCreateStructure,
+    ])
+      .then(([fieldMap, greenhouseMap, beds, createLand, createStructure]) => {
+        this.fieldMap = fieldMap;
+        this.greenhouseMap = greenhouseMap;
+        this.bedObjs = beds;
         this.canCreateLand = createLand;
         this.canCreateStructure = createStructure;
 
