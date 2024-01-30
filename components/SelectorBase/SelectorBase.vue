@@ -3,7 +3,7 @@
     <BFormGroup
       id="selector-group"
       data-cy="selector-group"
-      label-for="crop-select"
+      label-for="selector-input"
       label-cols="auto"
       label-align="end"
     >
