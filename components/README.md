@@ -292,7 +292,7 @@ Inside the script, after the imports and just before the `export default {` line
 - This block should give an example of how to place the component in a page.
 - This block must document the data-cy attributes of the component.
 
-````Javascript
+```Javascript
 /**
  * This component does blah blah blah...
  *
@@ -311,7 +311,7 @@ Inside the script, after the imports and just before the `export default {` line
  * `data-cy-att-name`    | Identify the element tagged with the attribute.
  * `another-one`         | Blah blah.
  */
-````
+```
 
 ### Props
 
