@@ -205,21 +205,22 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
   - check initial content (`*.content.comp.cy.js`)
 
-    - check all `data-cy` elements exist and have right values for default props.
-      - look at `<template>` to see what needs to be tested.
-      - check that each of the `data-cy` elements `exist`.
-      - typically done on one test.
-    - Check all required pros and default values for optional props:
-      - This test should check values for all required props and default values of all optional props.
-        - e.g. `label`, `required`, `showValidityStyling`
-      - use `have.class` / `have.text` / `have.value` on elements
+    - Check required props and default prop values
+      - Set only required props in the test.
+      - check effect of all required props
+        - e.g. `label`, `invalidFeedback`, etc.
+      - Check default values of all optional props.
+        - e.g. `required`, `showValidityStyling`, etc.
+      - look at `<template>` to see what elements need to be tested.
+        - check existence of `data-cy` elements using `exist`.
+        - use `have.class` / `have.text` / `have.value` on elements
         - If component uses other components, check sub-component elements as necessary.
       - can usually be done in one test.
-    - check that non-default `prop` values are handled correctly
-      - Set each prop to a non-default value and check for its effect.
+    - check that non-default optional `prop` values are handled correctly
+      - Set each optional prop to a non-default value and check for its effect.
       - use `have.class` / `have.text` / `have.value` on elements
         - If component uses other components, check sub-component elements as necessary.
-      - can often be done in one test.
+      - some tests can be combined.
     - check that all content loaded via API on creation is loaded correctly.
       - e.g. crops or fields vs greenhouses in LocationSelector.
 
@@ -227,8 +228,8 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
     - check that the type of valid/invalid styling to be shows as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
       - This is often an enumeration test that checks all 8 combinations of these values.
-      - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required.
-        - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
+    - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required.
+      - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
     - If a component is never styled (e.g. `CommentBox` or `TextDisplay`) then this test is not required.
 
   - check events (`*.events.comp.cy.js`)
@@ -264,6 +265,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
       - Create a `farmOS` instance as `guest` (which should not have many permissions.)
         - Check that the UI elements / behaviors that should not be present are not present.
       - Note: `worker#` and `manager#` have appropriate permissions when logging into farmOS, but when running via API they need to request a scope, which is not currently implemented in `farmosUtil.js`.
+    - If there is no user permission based content then this test is not required.
 
 ## Documenting components
 
