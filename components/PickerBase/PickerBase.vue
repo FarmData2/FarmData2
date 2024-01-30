@@ -43,7 +43,8 @@
 
 <script>
 /**
- * A new component.
+ * A base component for a "picker" component that allows the user to
+ * pick multiple items using checkboxes.
  *
  * ## Usage Example
  *
@@ -54,9 +55,20 @@
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * Attribute Name            | Description
+ * --------------------------| -----------
+ * `picker-group`            | The `BFormGroup` component containing the picker.
+ * `picker-label`            | The label for the picker.
+ * `picker-required`         | Indicator of whether at least one item is required to be picked or not.
+ * `picker-input`            | The `BInputGroup` component containing the picker.
+ * `picker-options`          | The `BFormCheckboxGroup` component that displays the check boxes.
+ * `picker-invalid-feedback` | The `BFormInvalidFeedback` component that displays the invalid feedback.
+ *
+ * Note: The `picker-options` component is the stock BootstrapVue `BFormCheckboxGroup`
+ * component.  Thus, there are not `data-cy` attributes defined for each of the
+ * checkbox input components in the `BFormCheckboxGroup` component.  This means that
+ * those must be accessed differently in the tests using `.children()` or `.eq()`.
+ * See the `PickerBase.*.comp.cy.js` files for examples.
  */
 export default {
   name: 'PickerBase',
