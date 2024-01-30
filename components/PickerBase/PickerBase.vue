@@ -1,9 +1,43 @@
 <template>
   <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
+    id="picker-group"
+    data-cy="picker-group"
+    label-for="picker-options"
+    label-cols="auto"
+    label-align="end"
   >
-    <p data-cy="placeholder">Component content goes here.</p>
+    <template v-slot:label>
+      <span data-cy="picker-label">{{ label }}:</span>
+      <sup
+        data-cy="picker-required"
+        class="text-danger"
+        v-if="required"
+        >*</sup
+      >
+    </template>
+
+    <BInputGroup
+      id="picker-input"
+      data-cy="picker-input"
+    >
+      <BFormCheckboxGroup
+        data-cy="picker-options"
+        id="picker-options"
+        name="picker-options"
+        v-model="checked"
+        v-bind:options="options"
+        v-bind:state="validationStyling"
+        v-on:change="updatePicked($event)"
+      />
+
+      <BFormInvalidFeedback
+        id="picker-invalid-feedback"
+        data-cy="picker-invalid-feedback"
+        v-bind:state="validationStyling"
+      >
+        {{ invalidFeedbackText }}
+      </BFormInvalidFeedback>
+    </BInputGroup>
   </BFormGroup>
 </template>
 
@@ -27,14 +61,21 @@
 export default {
   name: 'PickerBase',
   components: {},
-  emits: ['ready', 'valid'],
+  emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
-     * Whether a value for the input element is required or not.
+     * Whether it is required that at least one item be picked or not.
      */
     required: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * The text to display if the input is invalid.
+     */
+    invalidFeedbackText: {
+      type: String,
+      required: true,
     },
     /**
      * Whether validity styling should appear on input elements.
@@ -43,32 +84,61 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * The label for the picker.
+     */
+    label: {
+      type: String,
+      required: true,
+    },
+    /**
+     * An array of strings for the options to be displayed in the picker.
+     */
+    options: {
+      type: Array,
+      required: true,
+    },
+    /**
+     * An an array of strings indicating which picker options are checked.
+     */
+    picked: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
-    return {};
+    return {
+      checked: this.picked,
+    };
   },
   computed: {
     isValid() {
-      /*
-       * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.  This should account for whether the value is 
-       * required or not if necessary.
-       */
-      return false;
+      return !this.required || this.checked.length > 0;
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validityStyling() {
-      /*
-       * Edit this computed property to indicted the type of styling that should be applied 
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
-       * other criteria that is necessary.
-       * 
-       * Bind this computed property to the `state` prop of the components to be styled.
-       */
-      return false;
+    validationStyling() {
+      const R = this.required;
+      const V = this.isValid;
+      const S = this.showValidityStyling;
+
+      if (V && S) {
+        return true;
+      } else if (R && !V && S) {
+        return false;
+      } else {
+        return null;
+      }
     },
   },
-  methods: {},
+  methods: {
+    updatePicked() {
+      /**
+       * The picked options have changed.
+       * @property {Array} picked An array of strings with the text of the picker options are checked.
+       */
+      this.$emit('update:picked', this.checked);
+    },
+  },
   watch: {
     isValid() {
       /**
@@ -76,6 +146,9 @@ export default {
        * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
+    },
+    picked() {
+      this.checked = this.picked;
     },
   },
   created() {
