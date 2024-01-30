@@ -13,6 +13,18 @@
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
     />
+
+    <PickerBase
+      id="bed-picker"
+      data-cy="bed-picker"
+      label="Beds"
+      invalidFeedbackText="A bed is required"
+      v-bind:checked="checkedBeds"
+      v-bind:options="beds"
+      v-on:change="handleUpdateBeds($event)"
+      v-if="showBedSelection"
+    />
+
     <!--
     <BAccordion
       flush
@@ -34,7 +46,7 @@
             Select Beds
           </span>
         </template>
-      -->
+    
         <BFormCheckboxGroup
           id="location-selector-beds"
           data-cy="location-selector-beds"
@@ -44,7 +56,7 @@
           v-bind:options="beds"
           v-if="showBedSelection"
         />
-        <!--
+        
       </BAccordionItem>
     </BAccordion>
   -->
@@ -53,6 +65,7 @@
 
 <script>
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import PickerBase from '@comps/PickerBase/PickerBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 import { BFormCheckboxGroup } from 'bootstrap-vue-next';
 
@@ -86,7 +99,7 @@ import { BFormCheckboxGroup } from 'bootstrap-vue-next';
  */
 export default {
   name: 'LocationSelector',
-  components: { SelectorBase, BFormCheckboxGroup },
+  components: { SelectorBase, PickerBase },
   emits: ['ready', 'update:selected', 'update:beds', 'valid'],
   props: {
     /**
