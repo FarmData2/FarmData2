@@ -43,8 +43,9 @@
 
 <script>
 /**
- * A base component for a "picker" component that allows the user to
- * pick multiple items using checkboxes.
+ * A base component that allows the user to pick multiple items using checkboxes.
+ * This will typically be used as a base for building special purpose 
+ * "picker" components (e.g. `BedPicker`).
  *
  * ## Usage Example
  *
