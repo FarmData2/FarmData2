@@ -44,14 +44,25 @@
 <script>
 /**
  * A base component that allows the user to pick multiple items using checkboxes.
- * This will typically be used as a base for building special purpose 
+ * This will typically be used as a base for building special purpose
  * "picker" components (e.g. `BedPicker`).
  *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <PickerBase
+ *   v-if="bedList.length > 0"
+ *   id="bed-picker"
+ *   data-cy="bed-picker"
+ *   invalidFeedbackText="At least one bed is required"
+ *   label="Beds"
+ *   v-bind:options="bedList"
+ *   v-bind:picked="picked"
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="showValidityStyling"
+ *   v-on:update:picked="handleUpdatePicked($event)"
+ *   v-on:valid="handleValid($event)"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
@@ -77,25 +88,11 @@ export default {
   emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
-     * Whether it is required that at least one item be picked or not.
-     */
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * The text to display if the input is invalid.
      */
     invalidFeedbackText: {
       type: String,
       required: true,
-    },
-    /**
-     * Whether validity styling should appear on input elements.
-     */
-    showValidityStyling: {
-      type: Boolean,
-      default: false,
     },
     /**
      * The label for the picker.
@@ -106,6 +103,7 @@ export default {
     },
     /**
      * An array of strings for the options to be displayed in the picker.
+     * This prop is watched and changes will be reflected in the component.
      */
     options: {
       type: Array,
@@ -113,10 +111,26 @@ export default {
     },
     /**
      * An an array of strings indicating which picker options are checked.
+     * This prop is watched and changes will be reflected in the component.
      */
     picked: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * Whether it is required that at least one item be picked or not.
+     */
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether validity styling should appear on input elements.
+     * This prop is watched and changes will be reflected in the component.
+     */
+    showValidityStyling: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
