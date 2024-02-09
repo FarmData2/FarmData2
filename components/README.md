@@ -11,6 +11,11 @@ Custom FarmData2 Vue Components.
 - use `addComponent.bash`
 
   - describe its use...
+    - creates its own branch
+  - To add component in a branch...
+    - run it
+    - switch to branch
+    - then commit
 
 - modify `.vue` file as appropriate.
 - modify the `.comp.cy.js` file as appropriate.
@@ -220,7 +225,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
       - Set each optional prop to a non-default value and check for its effect.
       - use `have.class` / `have.text` / `have.value` on elements
         - If component uses other components, check sub-component elements as necessary.
-      - some tests can be combined.
+      - ideally one test per optional prop.
     - check that all content loaded via API on creation is loaded correctly.
       - e.g. crops or fields vs greenhouses in LocationSelector.
 
@@ -228,7 +233,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
     - check that the type of valid/invalid styling to be shows as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
       - This is often an enumeration test that checks all 8 combinations of these values.
-    - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required.
+    - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required because the prop will have been tested by the `content` test and the styling will have been tested by the sub-component.
       - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
     - If a component is never styled (e.g. `CommentBox` or `TextDisplay`) then this test is not required.
 
