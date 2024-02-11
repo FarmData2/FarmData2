@@ -11,7 +11,7 @@ describe('Test the default LocationSelector content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check for the SelectorBase element', () => {
+  it('The base elements exist', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -24,11 +24,13 @@ describe('Test the default LocationSelector content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="location-selector"]').should('exist');
-        cy.get('[data-cy="selector-group"]').should('exist');
+        cy.get('[data-cy="location-selector-beds-accordion"]').should(
+          'not.exist'
+        );
       });
   });
 
-  it('Check that required prop is false by default', () => {
+  it('Required prop is false by default', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -44,7 +46,7 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test getting only greenhouses', () => {
+  it('Get only greenhouses', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -65,7 +67,7 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test getting only fields', () => {
+  it('Get only fields', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -86,7 +88,7 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test getting fields and greenhouses', () => {
+  it('Get both fields and greenhouses', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -108,7 +110,7 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Check that props are passed through to the SelectorBase', () => {
+  it('Props are passed through to the SelectorBase', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -135,7 +137,76 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test add url for fields', () => {
+  it('Props are passed through to the BedPicker', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        required: true,
+        showValidityStyling: true,
+        selected: 'CHUAU',
+        pickedBeds: ['CHUAU-1', 'CHUAU-3'],
+        requireBedSelection: true,
+        includeGreenhouses: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(0)
+          .should('have.class', 'is-valid');
+
+        cy.get('[data-cy="picker-required"]').should('have.text', '*');
+
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(0)
+          .should('be.checked');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(1)
+          .should('not.be.checked');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(2)
+          .should('be.checked');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(3)
+          .should('not.be.checked');
+      });
+  });
+
+  it('BedPicker can be disabled with allowBedSelection', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        required: true,
+        showValidityStyling: true,
+        selected: 'CHUAU',
+        allowBedSelection: false,
+        includeGreenhouses: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="location-selector-beds-accordion"]').should(
+          'not.exist'
+        );
+      });
+  });
+
+  it('Add url for fields is correct', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -157,7 +228,29 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Test add url for both fields and greenhouses', () => {
+  it('Add url for greenhouses is correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="location-selector"]').should('exist');
+
+        cy.get('[data-cy="selector-add-button"]')
+          .should('have.attr', 'href')
+          .then((href) => href)
+          .should('eq', '/asset/add/structure');
+      });
+  });
+
+  it('Add url for both fields and greenhouses is correct', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {

@@ -70,4 +70,92 @@ describe('Test the LocationSelector component behavior', () => {
         });
     });
   });
+
+  it('Correct beds are shown when a location with beds is selected.', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="location-selector-beds-accordion"]').should(
+          'not.exist'
+        );
+
+        // Greenhouse
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+        cy.get('[data-cy="picker-options"]')
+          .children()
+          .eq(0)
+          .should('have.text', 'CHUAU-1');
+
+        // No beds
+        cy.get('[data-cy="selector-input"]').select('A');
+        cy.get('[data-cy="location-selector-beds-accordion"]').should(
+          'not.exist'
+        );
+
+        // Field
+        cy.get('[data-cy="selector-input"]').select('ALF');
+        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+        cy.get('[data-cy="picker-options"]')
+          .children()
+          .eq(0)
+          .should('have.text', 'ALF-1');
+      });
+  });
+
+  it('pickedBeds prop is reactive', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+        selected: 'CHUAU',
+        pickedBeds: ['CHUAU-1', 'CHUAU-3'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-input"]').should('have.value', 'CHUAU');
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(0)
+            .should('be.checked');
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(2)
+            .should('be.checked');
+
+          wrapper.setProps({ pickedBeds: ['CHUAU-2', 'CHUAU-4'] });
+
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(0)
+            .should('not.be.checked');
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(1)
+            .should('be.checked');
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(2)
+            .should('not.be.checked');
+          cy.get('[data-cy="picker-options"]')
+            .find('input')
+            .eq(3)
+            .should('be.checked');
+        });
+    });
+  });
 });

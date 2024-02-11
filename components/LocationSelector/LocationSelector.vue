@@ -11,21 +11,9 @@
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
-      v-on:valid="handleValid($event)"
+      v-on:valid="handleLocationValid($event)"
     />
 
-    <PickerBase
-      id="bed-picker"
-      data-cy="bed-picker"
-      label="Beds"
-      invalidFeedbackText="A bed is required"
-      v-bind:checked="checkedBeds"
-      v-bind:options="beds"
-      v-on:change="handleUpdateBeds($event)"
-      v-if="showBedSelection"
-    />
-
-    <!--
     <BAccordion
       flush
       id="location-selector-beds-accordion"
@@ -46,28 +34,26 @@
             Select Beds
           </span>
         </template>
-    
-        <BFormCheckboxGroup
-          id="location-selector-beds"
-          data-cy="location-selector-beds"
-          name="location-selector-beds"
-          v-model="checkedBeds"
-          v-on:change="handleUpdateBeds($event)"
-          v-bind:options="beds"
-          v-if="showBedSelection"
+
+        <BedPicker
+          id="location-selector-bed-picker"
+          data-cy="location-selector-bed-picker"
+          v-bind:location="selectedLocation"
+          v-bind:picked="checkedBeds"
+          v-bind:required="requireBedSelection"
+          v-on:update:picked="handleUpdateBeds($event)"
+          v-bind:showValidityStyling="showValidityStyling"
+          v-on:valid="handleBedsValid($event)"
         />
-        
       </BAccordionItem>
     </BAccordion>
-  -->
   </div>
 </template>
 
 <script>
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
-import PickerBase from '@comps/PickerBase/PickerBase.vue';
+import BedPicker from '@comps/BedPicker/BedPicker.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
-import { BFormCheckboxGroup } from 'bootstrap-vue-next';
 
 /**
  * The LocationSelector component provides a UI element that allows the user to select a location.
@@ -75,32 +61,20 @@ import { BFormCheckboxGroup } from 'bootstrap-vue-next';
  * ## Usage Example
  *
  * ```html
- * <LocationSelector
- *   id="seeding-location"
- *   data-cy="seeding-location"
- *   required
- *   includeGreenhouses
- *   v-model:selected="form.location"
- *   v-bind:showValidityStyling="validity.show"
- *   v-on:valid="validity.location = $event"
- *   v-on:ready="createdCount++"
- *   v-on:error="
- *     (msg) =>
- *       uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
- *   "
- * />
+ * TODO: Update this example to include props for BedPicker.
  * ```
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * `location-selector`   | The `SelectorBase` component containing the dropdown.
+ * Attribute Name                 | Description
+ * -------------------------------| -----------
+ * `location-selector`            | The `SelectorBase` component containing the locations dropdown.
+ * `location-selector-bed-picker` | The `BedPicker` component containing the beds.
  */
 export default {
   name: 'LocationSelector',
-  components: { SelectorBase, PickerBase },
-  emits: ['ready', 'update:selected', 'update:beds', 'valid'],
+  components: { SelectorBase, BedPicker },
+  emits: ['error', 'ready', 'update:selected', 'update:beds', 'valid'],
   props: {
     /**
      * Whether to include fields in the list of locations.
@@ -124,6 +98,14 @@ export default {
       default: true,
     },
     /**
+     * Whether at least one bed must be selected if the location
+     * contains beds and `allowBedSelection` is true.
+     */
+    requireBedSelection: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Whether a location selection is required or not.
      */
     required: {
@@ -139,10 +121,10 @@ export default {
       default: null,
     },
     /**
-     * An array of the names of beds that are currently selected.
+     * An array of the names of beds that are currently picked.
      * This prop is watched and changes are relayed to the component's internal state.
      */
-    selectedBeds: {
+    pickedBeds: {
       type: Array,
       default: () => [],
     },
@@ -172,7 +154,15 @@ export default {
        * box is unchecked when one is unchecked.  This way the checkedBeds
        * attribute always contains the names of all checked beds.
        */
-      checkedBeds: [],
+      checkedBeds: this.pickedBeds,
+
+      /**
+       * Set these to null so that they will be changed when the sub-components
+       * emit their valid events on creation.  That will ensure that this component
+       * then also emits its valid event.
+       */
+      locationValid: null,
+      bedsValid: null,
 
       fieldMap: new Map(),
       greenhouseMap: new Map(),
@@ -252,12 +242,25 @@ export default {
         return bedNames;
       }
     },
+    valid() {
+      let bv = true;
+      if (this.allowBedSelection) {
+        // need to account for this.bedsValid possibly being null here.
+        if (!this.bedsValid) {
+          bv = false;
+        }
+      }
+
+      return this.locationValid && bv;
+    },
     showBedSelection() {
       return this.allowBedSelection && this.beds.length > 0;
     },
   },
   methods: {
     handleUpdateBeds(event) {
+      this.checkedBeds = event;
+
       /**
        * The selected beds have changed.
        * @property {Array<string>} event an array containing the names of the selected beds.
@@ -265,10 +268,6 @@ export default {
       this.$emit('update:beds', this.checkedBeds);
     },
     handleUpdateSelected(event) {
-      /*
-       * Update the selected location so that the beds computed property
-       * will recompute.
-       */
       this.selectedLocation = event;
 
       /**
@@ -277,20 +276,26 @@ export default {
        */
       this.$emit('update:selected', event);
     },
-    handleValid(event) {
-      /**
-       * The validity of the selected location has changed.
-       * @property {boolean} event whether the selected location is valid or not.
-       */
-      this.$emit('valid', event);
+    handleLocationValid(event) {
+      this.locationValid = event;
+    },
+    handleBedsValid(event) {
+      this.bedsValid = event;
     },
   },
   watch: {
     selectedBeds() {
       this.checkedBeds = this.selectedBeds;
     },
-    selected() {
-      this.updateBeds++;
+    pickedBeds() {
+      this.checkedBeds = this.pickedBeds;
+    },
+    valid() {
+      /**
+       * The validity of the selected location or beds has changed.
+       * @property {boolean} event whether the selections are valid or not.
+       */
+      this.$emit('valid', this.valid);
     },
   },
   created() {
