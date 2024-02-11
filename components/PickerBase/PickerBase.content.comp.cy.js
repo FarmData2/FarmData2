@@ -38,12 +38,19 @@ describe('Test the default PickerBase content', () => {
         cy.get('[data-cy="picker-options"]')
           .children()
           .eq(0)
-          .should('have.text', 'Option 1')
+          .should('have.text', 'Option 1');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(0)
           .should('not.be.checked');
+
         cy.get('[data-cy="picker-options"]')
           .children()
           .eq(3)
-          .should('contain.text', 'Option 4')
+          .should('contain.text', 'Option 4');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(3)
           .should('not.be.checked');
 
         cy.get('[data-cy="picker-invalid-feedback"]').should(
