@@ -182,14 +182,18 @@ export default {
         return null;
       }
     },
+    percentPicked() {
+      return this.checked.length / this.options.length;
+    },
   },
   methods: {
     updatePicked() {
       /**
        * The picked options have changed.
-       * @property {Array} picked An array of strings with the text of the picker options are checked.
+       * @property {Array} picked An array of strings with the names of the picked options.
+       * @property {number} percent The percentage of options that were picked.
        */
-      this.$emit('update:picked', this.checked);
+      this.$emit('update:picked', this.checked, this.percentPicked);
     },
     pickAll() {
       if (this.checked.length === this.options.length) {
