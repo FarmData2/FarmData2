@@ -53,6 +53,8 @@ describe('Test the default PickerBase content', () => {
           .eq(3)
           .should('not.be.checked');
 
+        cy.get('[data-cy="picker-all-button"]').should('exist');
+
         cy.get('[data-cy="picker-invalid-feedback"]').should(
           'contain.text',
           'Invalid feedback text.'
@@ -113,6 +115,25 @@ describe('Test the default PickerBase content', () => {
           .find('input')
           .eq(3)
           .should('not.be.checked');
+      });
+  });
+
+  it('Test showAllButton prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        showAllButton: false,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-all-button"]').should('not.exist');
       });
   });
 

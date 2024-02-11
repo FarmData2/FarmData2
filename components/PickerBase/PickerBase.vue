@@ -7,13 +7,31 @@
     label-align="end"
   >
     <template v-slot:label>
-      <span data-cy="picker-label">{{ label }}:</span>
-      <sup
-        data-cy="picker-required"
-        class="text-danger"
-        v-if="required"
-        >*</sup
-      >
+      <div class="d-grid d-md-flex">
+        <div>
+          <span
+            id="picker-label"
+            data-cy="picker-label"
+            >{{ label }}:</span
+          >
+          <sup
+            id="picker-required"
+            data-cy="picker-required"
+            class="text-danger"
+            v-if="required"
+            >*</sup
+          >
+        </div>
+        <BButton
+          v-if="showAllButton"
+          id="picker-all-button"
+          data-cy="picker-all-button"
+          size="sm"
+          variant="primary"
+          v-on:click="pickAll()"
+          >All</BButton
+        >
+      </div>
     </template>
 
     <BInputGroup
@@ -74,12 +92,13 @@
  * `picker-required`         | Indicator of whether at least one item is required to be picked or not.
  * `picker-input`            | The `BInputGroup` component containing the picker.
  * `picker-options`          | The `BFormCheckboxGroup` component that displays the check boxes.
+ * `picker-all-button`       | The `BButton` component for the select "All" button.
  * `picker-invalid-feedback` | The `BFormInvalidFeedback` component that displays the invalid feedback.
  *
  * Note: The `picker-options` component is the stock BootstrapVue `BFormCheckboxGroup`
  * component.  Thus, there are not `data-cy` attributes defined for each of the
  * checkbox input components in the `BFormCheckboxGroup` component.  This means that
- * those must be accessed differently in the tests using `.children()` or `.eq()`.
+ * those must be accessed differently in the tests using `.children()`, `.find()` and `.eq()`.
  * See the `PickerBase.*.comp.cy.js` files for examples.
  */
 export default {
@@ -125,6 +144,13 @@ export default {
       default: false,
     },
     /**
+     * Whether the select "All" button should be displayed below the picker label.
+     */
+    showAllButton: {
+      type: Boolean,
+      default: true,
+    },
+    /**
      * Whether validity styling should appear on input elements.
      * This prop is watched and changes will be reflected in the component.
      */
@@ -164,6 +190,13 @@ export default {
        * @property {Array} picked An array of strings with the text of the picker options are checked.
        */
       this.$emit('update:picked', this.checked);
+    },
+    pickAll() {
+      if (this.checked.length === this.options.length) {
+        this.checked = [];
+      } else {
+        this.checked = [...this.options];
+      }
     },
   },
   watch: {

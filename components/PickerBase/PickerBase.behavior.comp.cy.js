@@ -125,4 +125,75 @@ describe('Test the PickerBase component behavior', () => {
         });
     });
   });
+
+  it('All button selects all beds if none selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-all-button"]').click();
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .each((input) => {
+            cy.wrap(input).should('be.checked');
+          });
+      });
+  });
+
+  it('All button selects all beds if some but not all selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1', 'Option 3'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-all-button"]').click();
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .each((input) => {
+            cy.wrap(input).should('be.checked');
+          });
+      });
+  });
+
+  it('All button clears all beds if all selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-all-button"]').click();
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .each((input) => {
+            cy.wrap(input).should('not.be.checked');
+          });
+      });
+  });
 });
