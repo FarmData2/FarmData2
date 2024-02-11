@@ -16,19 +16,19 @@
 
     <BAccordion
       flush
-      id="location-selector-beds-accordion"
-      data-cy="location-selector-beds-accordion"
+      id="location-beds-accordion"
+      data-cy="location-beds-accordion"
       v-if="showBedSelection"
     >
       <BAccordionItem
-        id="location-selector-beds-accordion-item"
-        data-cy="location-selector-beds-accordion-item"
+        id="location-beds-accordion-item"
+        data-cy="location-beds-accordion-item"
         visible
       >
         <template #title>
           <span
-            id="location-selector-beds-accordion-title"
-            data-cy="location-selector-beds-accordion-title"
+            id="location-beds-accordion-title"
+            data-cy="location-beds-accordion-title"
             class="w-100 text-center"
           >
             Select Beds
@@ -36,8 +36,8 @@
         </template>
 
         <BedPicker
-          id="location-selector-bed-picker"
-          data-cy="location-selector-bed-picker"
+          id="location-bed-picker"
+          data-cy="location-bed-picker"
           v-bind:location="selectedLocation"
           v-bind:picked="checkedBeds"
           v-bind:required="requireBedSelection"
@@ -67,10 +67,13 @@ import { BAccordion } from 'bootstrap-vue-next';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name                 | Description
- * -------------------------------| -----------
- * `location-selector`            | The `SelectorBase` component containing the locations dropdown.
- * `location-selector-bed-picker` | The `BedPicker` component containing the beds.
+ * Attribute Name                  | Description
+ * --------------------------------| -----------
+ * `location-selector`             | The `SelectorBase` component containing the locations dropdown.
+ * `location-beds-accordion` }     | The `BAccordion` component containing the `BedPicker`.
+ * `location-beds-accordion-item`  | The `BAccordionItem` component containing the `BedPicker`.
+ * `location-beds-accordion-title` | The title displayed in the `BAccordionItem` containing the `BedPicker`.
+ * `location-bed-picker`           | The `BedPicker` component containing the beds.
  */
 export default {
   name: 'LocationSelector',

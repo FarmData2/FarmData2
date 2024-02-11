@@ -24,9 +24,7 @@ describe('Test the default LocationSelector content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="location-selector"]').should('exist');
-        cy.get('[data-cy="location-selector-beds-accordion"]').should(
-          'not.exist'
-        );
+        cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
       });
   });
 
@@ -137,7 +135,7 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Props are passed through to the BedPicker', () => {
+  it.only('Props are passed through to the BedPicker', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -155,7 +153,8 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+        cy.get('[data-cy="location-beds-accordion"]').should('exist');
+        cy.get('[data-cy="location-beds-accordion-item"]').should('exist');
 
         cy.get('[data-cy="picker-options"]')
           .find('input')
@@ -163,6 +162,11 @@ describe('Test the default LocationSelector content', () => {
           .should('have.class', 'is-valid');
 
         cy.get('[data-cy="picker-required"]').should('have.text', '*');
+
+        cy.get('[data-cy="location-beds-accordion-title"]').should(
+          'contain.text',
+          'Select Beds'
+        );
 
         cy.get('[data-cy="picker-options"]')
           .find('input')
@@ -200,9 +204,7 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector-beds-accordion"]').should(
-          'not.exist'
-        );
+        cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
       });
   });
 

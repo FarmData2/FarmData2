@@ -11,7 +11,7 @@ describe('Test the LocationSelector component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Test that selected prop is reactive', () => {
+  it('selected prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -31,7 +31,7 @@ describe('Test the LocationSelector component behavior', () => {
     });
   });
 
-  it('Test that showValidityStyling prop is reactive', () => {
+  it('ShowValidityStyling prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -85,13 +85,11 @@ describe('Test the LocationSelector component behavior', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector-beds-accordion"]').should(
-          'not.exist'
-        );
+        cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
 
         // Greenhouse
         cy.get('[data-cy="selector-input"]').select('CHUAU');
-        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+        cy.get('[data-cy="location-beds-accordion"]').should('exist');
         cy.get('[data-cy="picker-options"]')
           .children()
           .eq(0)
@@ -99,13 +97,11 @@ describe('Test the LocationSelector component behavior', () => {
 
         // No beds
         cy.get('[data-cy="selector-input"]').select('A');
-        cy.get('[data-cy="location-selector-beds-accordion"]').should(
-          'not.exist'
-        );
+        cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
 
         // Field
         cy.get('[data-cy="selector-input"]').select('ALF');
-        cy.get('[data-cy="location-selector-beds-accordion"]').should('exist');
+        cy.get('[data-cy="location-beds-accordion"]').should('exist');
         cy.get('[data-cy="picker-options"]')
           .children()
           .eq(0)
