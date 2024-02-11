@@ -189,3 +189,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#picker-options {
+  padding-top: 7px;
+}
+</style>
