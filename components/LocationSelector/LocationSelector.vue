@@ -54,6 +54,7 @@
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 import BedPicker from '@comps/BedPicker/BedPicker.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import { BAccordion } from 'bootstrap-vue-next';
 
 /**
  * The LocationSelector component provides a UI element that allows the user to select a location.
@@ -73,7 +74,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  */
 export default {
   name: 'LocationSelector',
-  components: { SelectorBase, BedPicker },
+  components: { SelectorBase, BedPicker, BAccordion },
   emits: ['error', 'ready', 'update:selected', 'update:beds', 'valid'],
   props: {
     /**
@@ -270,6 +271,11 @@ export default {
     handleUpdateSelected(event) {
       this.selectedLocation = event;
 
+      // Clear any picked beds for the new location.
+      if (this.pickedBeds.length > 0) {
+        this.handleUpdateBeds([]);
+      }
+
       /**
        * The selected location has changed.
        * @property {string} event the name of the new selected location.
@@ -345,3 +351,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#location-selector-beds-accordion {
+  padding-top: 3px;
+}
+</style>

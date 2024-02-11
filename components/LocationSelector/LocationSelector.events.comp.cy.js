@@ -64,19 +64,19 @@ describe('Test the LocationSelector component events', () => {
         onReady: readySpy,
         onValid: validSpy,
       },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          wrapper.setProps({ selected: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        });
     });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+
+        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
   });
 
   it('"valid" event works when bed selection changes validity', () => {
@@ -157,6 +157,35 @@ describe('Test the LocationSelector component events', () => {
 
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', ['CHUAU-1']);
+      });
+  });
+
+  it('Selected beds are cleared when location is changed', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        selected: 'CHUAU',
+        pickedBeds: ['CHUAU-1', 'CHUAU-3'],
+        onReady: readySpy,
+        'onUpdate:beds': updateSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('GHANA');
+
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', []);
+
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', []);
       });
   });
 
