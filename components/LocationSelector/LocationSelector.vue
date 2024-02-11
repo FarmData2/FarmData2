@@ -81,16 +81,25 @@ export default {
   emits: ['error', 'ready', 'update:selected', 'update:beds', 'valid'],
   props: {
     /**
-     * Whether to include fields in the list of locations.
+     * Whether to include all fields in the list of locations.
      */
     includeFields: {
       type: Boolean,
       default: false,
     },
     /**
-     * Whether to include greenhouses in the list of locations.
+     * Whether to include all greenhouses in the list of locations.
      */
     includeGreenhouses: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether to include only greenhouses with beds in the list of locations.
+     * If `includeGreenhouses` is also true, then all greenhouses will be included
+     * even if this property is true.
+     */
+    includeGreenhousesWithBeds: {
       type: Boolean,
       default: false,
     },
@@ -180,14 +189,17 @@ export default {
       // return the appropriate url for land, structure or just asset if both
       if (
         this.includeFields &&
-        this.includeGreenhouses &&
+        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
         this.canCreateLand &&
         this.canCreateStructure
       ) {
         return '/asset/add';
       } else if (this.includeFields && this.canCreateLand) {
         return '/asset/add/land';
-      } else if (this.includeGreenhouses && this.canCreateStructure) {
+      } else if (
+        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+        this.canCreateStructure
+      ) {
         return '/asset/add/structure';
       } else {
         return null;
@@ -206,6 +218,15 @@ export default {
         greenhouseNames = Array.from(this.greenhouseMap.values()).map(
           (greenhouse) => greenhouse.attributes.name
         );
+      } else if (this.includeGreenhousesWithBeds) {
+        greenhouseNames = Array.from(this.greenhouseMap.values())
+          .filter((greenhouse) => {
+            // Include only greenhouses that are a parent for a bed.
+            return this.bedObjs.some((bed) => {
+              return bed.relationships.parent[0].id == greenhouse.id;
+            });
+          })
+          .map((greenhouse) => greenhouse.attributes.name);
       }
 
       let locationNames = [...fieldNames, ...greenhouseNames];
@@ -229,7 +250,7 @@ export default {
               }
             }
 
-            if (this.includeGreenhouses) {
+            if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
               let parentGreenhouse = this.greenhouseMap.get(parentID);
               if (parentGreenhouse) {
                 return (
@@ -318,7 +339,7 @@ export default {
 
     let canCreateStructure = false;
     let greenhouseMap = null;
-    if (this.includeGreenhouses) {
+    if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
       canCreateStructure = farmosUtil.checkPermission('create-structure-asset');
       greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
     }
