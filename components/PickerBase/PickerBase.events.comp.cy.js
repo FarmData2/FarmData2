@@ -76,19 +76,18 @@ describe('Test the PickerBase component events', () => {
       .then(() => {
         cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', ['Option 1'], 0.25);
+        cy.get('@updateSpy').should('have.been.calledWith', ['Option 1']);
 
         cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
         cy.get('@updateSpy').should('have.been.calledTwice');
-        cy.get('@updateSpy').should(
-          'have.been.calledWith',
-          ['Option 1', 'Option 2'],
-          0.5
-        );
+        cy.get('@updateSpy').should('have.been.calledWith', [
+          'Option 1',
+          'Option 2',
+        ]);
 
         cy.get('[data-cy="picker-options"]').find('input').eq(0).uncheck();
         cy.get('@updateSpy').should('have.been.calledThrice');
-        cy.get('@updateSpy').should('have.been.calledWith', ['Option 2'], 0.25);
+        cy.get('@updateSpy').should('have.been.calledWith', ['Option 2']);
       });
   });
 
