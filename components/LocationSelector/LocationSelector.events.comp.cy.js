@@ -156,7 +156,7 @@ describe('Test the LocationSelector component events', () => {
         cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
 
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', ['CHUAU-1']);
+        cy.get('@updateSpy').should('have.been.calledWith', ['CHUAU-1'], 5);
       });
   });
 
@@ -180,12 +180,12 @@ describe('Test the LocationSelector component events', () => {
         cy.get('[data-cy="selector-input"]').select('GHANA');
 
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', []);
+        cy.get('@updateSpy').should('have.been.calledWith', [], 4);
 
         cy.get('[data-cy="selector-input"]').select('CHUAU');
 
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', []);
+        cy.get('@updateSpy').should('have.been.calledWith', [], 5);
       });
   });
 

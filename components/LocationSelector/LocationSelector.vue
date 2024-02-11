@@ -264,9 +264,10 @@ export default {
 
       /**
        * The selected beds have changed.
-       * @property {Array<string>} event an array containing the names of the selected beds.
+       * @property {Array<string>} checkedBeds an array containing the names of the selected beds.
+       * @property {number} totalBeds the total number of beds in the selected location.
        */
-      this.$emit('update:beds', this.checkedBeds);
+      this.$emit('update:beds', this.checkedBeds, this.beds.length);
     },
     handleUpdateSelected(event) {
       this.selectedLocation = event;
