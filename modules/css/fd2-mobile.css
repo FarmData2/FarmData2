@@ -60,8 +60,12 @@ h2.text-center {
   margin-bottom: 0px !important;
 }
 
-.accordion {
-  border: 0px !important;
+.accordion-item {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  border-style: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
   box-shadow: none !important;
 }
 
