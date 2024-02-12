@@ -10,15 +10,15 @@
  */
 
 #block-gin-page-title {
-  display: none;
+  display: none !important;
 }
 
 header.region {
-  display: none;
+  display: none !important;
 }
 
 div.help {
-  display: none;
+  display: none !important;
 }
 
 div.region {
@@ -54,10 +54,18 @@ h2.text-center {
 }
 
 .layout-container {
+  margin: 0px !important;
+}
+
+.accordion {
+  padding: 0px !important;
+  margin: 0px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.accordion-header {
   margin-top: 0px !important;
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
 }
 
 .accordion-item {
