@@ -28,8 +28,16 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <BedPicker
+ *   id="location-bed-picker"
+ *   data-cy="location-bed-picker"
+ *   v-bind:location="selectedLocation"
+ *   v-bind:picked="checkedBeds"
+ *   v-bind:required="requireBedSelection"
+ *   v-on:update:picked="handleUpdateBeds($event)"
+ *   v-bind:showValidityStyling="showValidityStyling"
+ *   v-on:valid="handleBedsValid($event)"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
