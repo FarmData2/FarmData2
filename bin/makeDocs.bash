@@ -3,11 +3,11 @@
 source colors.bash
 source lib.bash
 
-# Setting Env Variables
-PWD="$(pwd)" # Current Working Dir
-SCRIPT_PATH=$(readlink -f "$0") # Script Path
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH") # Script Directory
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # Repository Root Directory
+# Setting Environment Variables with unique names to avoid overwriting system PATH
+CURRENT_WORKING_DIR="$(pwd)"
+ABSOLUTE_SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR_PATH=$(dirname "$ABSOLUTE_SCRIPT_PATH")
+REPOSITORY_ROOT_DIR=$(builtin cd "$SCRIPT_DIR_PATH/.." && pwd)
 
 TARGETS=()
 
@@ -25,53 +25,50 @@ if [ ${#TARGETS[@]} -eq 0 ]; then
     TARGETS=("all")
 fi
 
-INDEX_FILE="FarmData2.md" 
-INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE"
+INDEX_FILENAME="FarmData2.md"
+INDEX_FILEPATH="$REPOSITORY_ROOT_DIR/docs/$INDEX_FILENAME"
 
 # Recreate the index file (Erases and rewrite into header upon regeneration)
-echo "# FarmData2 Documentation" > "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
+echo "# FarmData2 Documentation" > "$INDEX_FILEPATH"
+echo "" >> "$INDEX_FILEPATH"
 
 update_docs() {
-    local TYPE=$1 # components or library
-    local NAME=$2
-    local PATH="$REPO_ROOT_DIR/$TYPE/$NAME"
-    local DOC_PATH="$TYPE/$NAME.md"
-    local DESC_TEXT=""
+    local DOCTYPE=$1 # components or library
+    local DOCNAME=$2
+    local DOCPATH="$REPOSITORY_ROOT_DIR/$DOCTYPE/$DOCNAME"
+    local DOCFILE_PATH="$DOCTYPE/$DOCNAME.md"
 
-    if [[ -d "$PATH" ]]; then
-        echo "    Generating docs for $NAME..."
+    if [[ -d "$DOCPATH" ]]; then
+        echo "    Generating docs for $DOCNAME..."
         # Use vue-docgen or jsdoc2md based on type
-        if [ "$TYPE" == "components" ]; then
-            DESC_TEXT=$(grep -m 1 -A 1 "<\!--" "$PATH/$NAME.vue" | tail -1 | cut -d' ' -f2-)
-            (cd "$REPO_ROOT_DIR" && npx vue-docgen "$PATH/$NAME.vue" -o "$DOC_PATH")
+        if [ "$DOCTYPE" == "components" ]; then
+            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen "$DOCPATH/$DOCNAME.vue" -o "$DOCFILE_PATH")
         else
-            DESC_TEXT=$(grep -m 1 "/**" "$PATH/$NAME.js" -A 2 | tail -1 | cut -d' ' -f2-)
-            (cd "$REPO_ROOT_DIR" && npx jsdoc2md "$PATH/$NAME.js" > "$DOC_PATH")
+            (cd "$REPOSITORY_ROOT_DIR" && npx jsdoc2md "$DOCPATH/$DOCNAME.js" > "$DOCFILE_PATH")
         fi
-        echo "      Docs generated for $NAME."
+        echo "      Docs generated for $DOCNAME."
 
         # Adds link to the index file
-        echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
+        echo "- [$DOCNAME]($DOCFILE_PATH)" >> "$INDEX_FILEPATH"
     else
-        echo "      $TYPE $NAME not found."
+        echo "      $DOCTYPE $DOCNAME not found."
     fi
 }
 
-echo "## Components" >> "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
+echo "## Components" >> "$INDEX_FILEPATH"
+echo "" >> "$INDEX_FILEPATH"
 
-for COMPONENT in $(ls -d -- $REPO_ROOT_DIR/components/*/); do
+for COMPONENT in $(ls -d -- $REPOSITORY_ROOT_DIR/components/*/); do
     COMPONENT_NAME=$(basename "$COMPONENT")
     if [[ " ${TARGETS[@]} " =~ " ${COMPONENT_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
         update_docs "components" "$COMPONENT_NAME"
     fi
 done
 
-echo "## Library" >> "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
+echo "## Library" >> "$INDEX_FILEPATH"
+echo "" >> "$INDEX_FILEPATH"
 
-for LIBRARY in $(ls -d -- $REPO_ROOT_DIR/library/*/); do
+for LIBRARY in $(ls -d -- $REPOSITORY_ROOT_DIR/library/*/); do
     LIBRARY_NAME=$(basename "$LIBRARY")
     if [[ " ${TARGETS[@]} " =~ " ${LIBRARY_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
         update_docs "library" "$LIBRARY_NAME"
