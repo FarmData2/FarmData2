@@ -98,18 +98,17 @@ export default {
   },
   computed: {
     isValid() {
-      return dayjs(this.chosenDate).isValid();
+      const validDate = dayjs(this.chosenDate).isValid();
+      if (!this.required) {
+        return validDate;
+      } else {
+        return validDate && this.chosenDate !== '';
+      }
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validityStyling() {
-      const R = this.required;
-      const V = this.isValid;
-      const S = this.showValidityStyling;
-
-      if (V && S) {
-        return true;
-      } else if (R && !V && S) {
-        return false;
+      if (this.showValidityStyling) {
+        return this.isValid;
       } else {
         return null;
       }

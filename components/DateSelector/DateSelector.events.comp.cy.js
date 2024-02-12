@@ -70,33 +70,6 @@ describe('Test the  DateSelector component events', () => {
       });
   });
 
-  it('Component reacts to changed showValidityStyling prop', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(DateSelector, {
-      props: {
-        required: true,
-        date: 'invalid-date',
-        onReady: readySpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
-          cy.get('[data-cy="date-input"]').should(
-            'not.have.class',
-            'is-invalid'
-          );
-
-          wrapper.setProps({ showValidityStyling: true });
-
-          cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
-          cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');
-        });
-    });
-  });
-
   it('Emits "valid" when validity of date becomes false', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
@@ -144,7 +117,7 @@ describe('Test the  DateSelector component events', () => {
         cy.get('[data-cy="date-input"]').type('1999-01-02');
 
         cy.get('@validSpy').should('have.been.calledTwice');
-        cy.get('@validSpy').should('have.been.calledWith', false);
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 

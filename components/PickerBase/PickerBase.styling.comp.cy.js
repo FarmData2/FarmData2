@@ -12,33 +12,26 @@ describe('Test the PickerBase component styling', () => {
   });
 
   /*
-   * There are 8 possibilities for styling...
+   * There are 4 possibilities for styling...
    *
-   * Note: empty -> no options are checked.
-   *
-   * required    empty        showInvalidStyling  Tested by Test
-   * false       false        false               1. Not required - not empty - not showing
-   * false       false        true                2. Not required - not empty - showing
-   * false       true         false               3. Not required - empty - not showing
-   * false       true         true                4. Not required - empty - showing
-   * true        false        false               5. Required - not empty - not showing
-   * true        false        true                6. Required - not empty - showing
-   * true        true         false               7. Required - empty - not showing
-   * true        true         true                8. Required - empty - showing
+   * showValidityStyling    isValid   Tested by Test
+   * false                  false     1. Not showing, not valid
+   * false                  true      2. Not showing, valid
+   * true                   false     3. Showing, not valid
+   * true                   true      4. Showing, valid
    */
 
-  it('1. Not required - not empty - not showing', () => {
+  it.only('1. Not showing, not valid', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(PickerBase, {
       props: {
-        onReady: readySpy,
+        required: true,
+        showValidityStyling: false,
         label: 'Picker',
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
         invalidFeedbackText: 'Invalid feedback text.',
-        required: false,
-        picked: ['Option 1'],
-        showValidityStyling: false,
+        onReady: readySpy,
       },
     });
 
@@ -62,48 +55,18 @@ describe('Test the PickerBase component styling', () => {
       });
   });
 
-  it('2. Not required - not empty - showing', () => {
+  it.only('2. Not showing, valid', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(PickerBase, {
       props: {
-        onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: false,
-        picked: ['Option 1'],
-        showValidityStyling: true,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('have.class', 'is-valid');
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-invalid');
-        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
-      });
-  });
-
-  it('3. Not required - empty - not showing', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PickerBase, {
-      props: {
-        onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: false,
-        picked: [],
+        required: true,
         showValidityStyling: false,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1'],
+        invalidFeedbackText: 'Invalid feedback text.',
+        onReady: readySpy,
       },
     });
 
@@ -122,138 +85,17 @@ describe('Test the PickerBase component styling', () => {
       });
   });
 
-  it('4. Not required - empty - showing', () => {
+  it.only('3. Showing, not valid', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(PickerBase, {
       props: {
-        onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: false,
-        picked: [],
+        required: true,
         showValidityStyling: true,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('have.class', 'is-valid');
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-invalid');
-        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
-      });
-  });
-
-  it('5. Required - not empty - not showing', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PickerBase, {
-      props: {
-        onReady: readySpy,
         label: 'Picker',
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
         invalidFeedbackText: 'Invalid feedback text.',
-        required: true,
-        picked: ['Option 1'],
-        showValidityStyling: false,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-valid');
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-invalid');
-        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
-      });
-  });
-
-  it('6. Required - not empty - showing', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PickerBase, {
-      props: {
         onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: true,
-        picked: ['Option 1'],
-        showValidityStyling: true,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('have.class', 'is-valid');
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-invalid');
-        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
-      });
-  });
-
-  it('7. Required - empty - not showing', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PickerBase, {
-      props: {
-        onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: true,
-        picked: [],
-        showValidityStyling: false,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-valid');
-        cy.get('[data-cy="picker-options"]')
-          .find('input')
-          .eq(0)
-          .should('not.have.class', 'is-invalid');
-        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
-      });
-  });
-
-  it('8. Required - empty - showing', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PickerBase, {
-      props: {
-        onReady: readySpy,
-        label: 'Picker',
-        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-        invalidFeedbackText: 'Invalid feedback text.',
-        required: true,
-        picked: [],
-        showValidityStyling: true,
       },
     });
 
@@ -269,6 +111,36 @@ describe('Test the PickerBase component styling', () => {
           .eq(0)
           .should('have.class', 'is-invalid');
         cy.get('[data-cy="picker-invalid-feedback"]').should('be.visible');
+      });
+  });
+
+  it.only('4. Showing, valid', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        required: true,
+        showValidityStyling: true,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1'],
+        invalidFeedbackText: 'Invalid feedback text.',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(0)
+          .should('have.class', 'is-valid');
+        cy.get('[data-cy="picker-options"]')
+          .find('input')
+          .eq(0)
+          .should('not.have.class', 'is-invalid');
+        cy.get('[data-cy="picker-invalid-feedback"]').should('not.be.visible');
       });
   });
 });

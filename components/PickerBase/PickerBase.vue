@@ -170,16 +170,10 @@ export default {
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      const R = this.required;
-      const V = this.isValid;
-      const S = this.showValidityStyling;
-
-      if (V && S) {
-        return true;
-      } else if (R && !V && S) {
-        return false;
-      } else {
+      if (!this.showValidityStyling) {
         return null;
+      } else {
+        return this.isValid;
       }
     },
   },
@@ -224,7 +218,7 @@ export default {
 </script>
 
 <style scoped>
-#picker-options {
+#picker-input {
   padding-top: 7px;
 }
 </style>

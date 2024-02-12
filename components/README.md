@@ -89,9 +89,9 @@ Custom FarmData2 Vue Components.
   - This prop is set by the entry point to indicates that bootstrap styling should be shown for inputs.
   - The component indicates the validity of inputs using its `isValid` computed property.
 
-    - This can be a little confusing...
-    - This function should indicate whether the value in the component is valid to be submitted the farmOS database.
-      - Returns true if the input value is valid and false if not.
+    - If `isValid` returns false if the component should block submission of the form that contains it.
+      - If the component is not required then blank/empty/no value/etc is considered a valid value.
+      - If the component is required then blank/empty/no value/etc is not considered a valid value.
     - The submit function in the page will use this value to determine if the submit button should be enabled or disabled and whether or not to add non-required fields to the submission.
 
   - The component indicates the type of styling to be used using its `invalidStyling` computed property.
@@ -297,7 +297,7 @@ Inside the script, after the imports and just before the `export default {` line
 - This block should give an example of how to place the component in a page.
 - This block must document the data-cy attributes of the component.
 
-```Javascript
+````Javascript
 /**
  * This component does blah blah blah...
  *
@@ -316,7 +316,7 @@ Inside the script, after the imports and just before the `export default {` line
  * `data-cy-att-name`    | Identify the element tagged with the attribute.
  * `another-one`         | Blah blah.
  */
-```
+````
 
 ### Props
 

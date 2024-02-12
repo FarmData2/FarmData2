@@ -12,13 +12,75 @@ describe('Test the LocationSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('"valid" event is propagated on creation', () => {
+  /**
+   * There are 6 cases for the valid event:
+   *
+   * Required     allowBedSelection   requireBedSelection   Test
+   * false        false               false                 1. Not required, beds not allowed, beds not required
+   * false        false               true                  Doesn't make sense
+   * false        true                false                 2. Not required, beds allowed, beds not required
+   * false        true                true                  3. Not required, beds allowed, beds required
+   * true         false               false                 4. Required, beds not allowed, beds not required
+   * true         false               true                  Doesn't make sense
+   * true         true                false                 5. Required, beds allowed, beds not required
+   * true         true                true                  6. Required, beds allowed, beds required
+   */
+  it('"valid" event: 1. Not required, beds not allowed, beds not required', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(LocationSelector, {
       props: {
         includeGreenhouses: true,
+        required: false,
+        allowBedSelection: false,
+        requireBedSelection: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('"valid" event: 2. Not required, beds allowed, beds not required', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        required: false,
+        allowBedSelection: true,
+        requireBedSelection: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('"valid" event: 3. Not required, beds allowed, beds required', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        required: false,
+        allowBedSelection: true,
+        requireBedSelection: true,
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -32,14 +94,62 @@ describe('Test the LocationSelector component events', () => {
       });
   });
 
-  it('"valid" event works when bed selection disabled', () => {
+  it('"valid" event: 4. Required, beds not allowed, beds not required', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(LocationSelector, {
       props: {
         includeGreenhouses: true,
+        required: true,
         allowBedSelection: false,
+        requireBedSelection: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('"valid" event:  5. Required, beds allowed, beds not required', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        required: true,
+        allowBedSelection: true,
+        requireBedSelection: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('"valid" event: 6. Required, beds allowed, beds required', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        required: true,
+        allowBedSelection: true,
+        requireBedSelection: true,
         onReady: readySpy,
         onValid: validSpy,
       },

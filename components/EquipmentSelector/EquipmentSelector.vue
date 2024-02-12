@@ -84,26 +84,18 @@ export default {
   data() {
     return {
       selectedEquipment: this.selected,
-      valid: [],
+      valid: [null],
       equipmentList: [],
       canCreateEquipment: false,
     };
   },
   computed: {
     isValid() {
-      let allValid = false;
-
       /*
-       * Will be valid if every SelectorBase has a valid value,
-       * except the last one, which is always blank.
+       * The whole list will be valid if the first
+       * SelectorBase has a valid value.
        */
-      if (this.selectedEquipment.length > 0) {
-        allValid = this.valid
-          .slice(0, this.selectedEquipment.length)
-          .every((valid) => valid === true);
-      }
-
-      return allValid;
+      return this.valid[0] === true;
     },
   },
   methods: {

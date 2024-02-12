@@ -112,7 +112,8 @@ export default {
     },
     /**
      * Whether at least one bed must be selected if the location
-     * contains beds and `allowBedSelection` is true.
+     * contains beds and `allowBedSelection` is true.  If `allowBedSelection`
+     * is false, this property is ignored.
      */
     requireBedSelection: {
       type: Boolean,
@@ -267,12 +268,12 @@ export default {
         return bedNames;
       }
     },
-    valid() {
+    isValid() {
       let bv = true;
       if (this.allowBedSelection) {
-        // need to account for this.bedsValid possibly being null here.
-        if (!this.bedsValid) {
-          bv = false;
+        if (this.requireBedSelection) {
+          // A bed is required so the BedPicker must report a valid pick.
+          bv = !(this.bedsValid === null || !this.bedsValid);
         }
       }
 
@@ -321,12 +322,12 @@ export default {
     pickedBeds() {
       this.checkedBeds = this.pickedBeds;
     },
-    valid() {
+    isValid() {
       /**
        * The validity of the selected location or beds has changed.
        * @property {boolean} event whether the selections are valid or not.
        */
-      this.$emit('valid', this.valid);
+      this.$emit('valid', this.isValid);
     },
   },
   created() {
@@ -378,7 +379,7 @@ export default {
 </script>
 
 <style scoped>
-#location-selector-beds-accordion {
+#location-beds-accordion {
   padding-top: 3px;
 }
 </style>
