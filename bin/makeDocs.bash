@@ -26,7 +26,7 @@ if [ ${#TARGETS[@]} -eq 0 ]; then
 fi
 
 INDEX_FILENAME="FarmData2.md"
-INDEX_FILEPATH="$REPOSITORY_ROOT_DIR/docs/$INDEX_FILENAME"
+INDEX_FILEPATH="$REPOSITORY_ROOT_DIR/$INDEX_FILENAME"
 
 # Recreate the index file (Erases and rewrite into header upon regeneration)
 echo "# FarmData2 Documentation" > "$INDEX_FILEPATH"
