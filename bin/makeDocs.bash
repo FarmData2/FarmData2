@@ -3,12 +3,6 @@
 source colors.bash
 source lib.bash
 
-# Ensure Node.js and npm are installed. I'm not sure if we need this but I just wanted to put it in.
-if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
-    echo "Node.js or npm is not installed. Please install them first."
-    exit 1
-fi
-
 # Setting Env Variables
 PWD="$(pwd)" # Current Working Dir
 SCRIPT_PATH=$(readlink -f "$0") # Script Path
@@ -57,8 +51,8 @@ update_docs() {
         fi
         echo "      Docs generated for $NAME."
 
-        # Adds link and description to the index file
-        echo "- [$NAME]($DOC_PATH) - $DESC_TEXT" >> "$INDEX_PATH"
+        # Adds link to the index file
+        echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
     else
         echo "      $TYPE $NAME not found."
     fi
