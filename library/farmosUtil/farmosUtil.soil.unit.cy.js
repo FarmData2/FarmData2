@@ -51,7 +51,7 @@ describe('Test the soil disturbance activity log functions', () => {
           farmosUtil.createSoilDisturbanceActivityLog(
             '1999-01-02',
             'A',
-            'activity_soil_disturbance_tillage',
+            ['tillage', 'seeding_direct'],
             plantAsset,
             [depthQuantity, speedQuantity],
             equipmentArray
@@ -78,9 +78,15 @@ describe('Test the soil disturbance activity log functions', () => {
             fieldMap.get('A').id
           );
           expect(result.relationships.asset[0].id).to.equal(plantAsset.id);
+
+          expect(result.relationships.category.length).to.equal(2);
           expect(result.relationships.category[0].id).to.equal(
-            categoryMap.get('activity_soil_disturbance_tillage').id
+            categoryMap.get('tillage').id
           );
+          expect(result.relationships.category[1].id).to.equal(
+            categoryMap.get('seeding_direct').id
+          );
+
           expect(result.relationships.quantity.length).to.equal(2);
           expect(result.relationships.quantity[0].id).to.equal(
             depthQuantity.id
@@ -115,7 +121,7 @@ describe('Test the soil disturbance activity log functions', () => {
           .createSoilDisturbanceActivityLog(
             '1999-01-02',
             'A',
-            'activity_soil_disturbance_tillage',
+            ['tillage'],
             plantAsset
           )
           .then(() => {
@@ -142,7 +148,7 @@ describe('Test the soil disturbance activity log functions', () => {
         farmosUtil.createSoilDisturbanceActivityLog(
           '1999-01-02',
           'A',
-          'activity_soil_disturbance_tillage',
+          ['tillage'],
           plantAsset
         )
       ).as('soilLog');

@@ -41,6 +41,46 @@ function usage {
   exit 255
 }
 
+# Define cleanup() function. This needs to be defined ASAP to catch SIGINT and SIGTERM at the earliest signs of trouble.
+cleanup() {
+  echo "Cleaning up..."
+
+  # Set default EXIT_CODE to 130 if not provided
+  EXIT_CODE=${1:-130}
+  
+  # Terminate the dev server if it's running
+  if [ -n "$DEV_GID" ]; then
+    echo "Terminating the dev server..."
+    kill -INT -- -"$DEV_GID"
+    echo "Dev server terminated."
+  fi
+
+  # Terminate the builder if it's running
+  if [ -n "$BUILDER_GID" ]; then
+    echo "Terminating the builder..."
+    kill -INT -- -"$BUILDER_GID"
+    echo "Builder terminated."
+  fi
+
+  # Terminate the preview server if it's running
+  if [ -n "$PREVIEW_GID" ]; then
+    echo "Terminating preview server..."
+    kill -INT -- -"$PREVIEW_GID"
+    echo "Preview server terminated."
+  fi
+
+  # Terminate the live builder if it's running
+  if [ -n "$LIVE_GID" ]; then
+    echo "Terminating the builder..."
+    kill -INT -- -"$LIVE_GID"
+    echo "Builder terminated."
+  fi
+  # Exit the script
+  exit $EXIT_CODE
+}
+# Trap SIGINT (Ctrl-C) and SIGTERM
+trap cleanup SIGINT SIGTERM
+
 # Change into the main repo directory.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
@@ -302,29 +342,5 @@ fi
 
 echo "Tests complete."
 
-# If we brought up a server, then take it back down.
-if [ -n "$DEV_PID" ]; then
-  echo "Terminating the dev server..."
-  kill -INT -- -"$DEV_GID"
-  echo "Dev server terminated."
-fi
-
-if [ -n "$BUILDER_GID" ]; then
-  echo "Terminating the builder..."
-  kill -INT -- -"$BUILDER_GID"
-  echo "Builder terminated."
-fi
-
-if [ -n "$PREVIEW_GID" ]; then
-  echo "Terminating preview server..."
-  kill -INT -- -"$PREVIEW_GID"
-  echo "Preview server terminated."
-fi
-
-if [ -n "$LIVE_GID" ]; then
-  echo "Terminating the builder..."
-  kill -INT -- -"$LIVE_GID"
-  echo "Builder terminated."
-fi
-
-exit "$EXIT_CODE"
+# Runs normal cleanup
+cleanup $EXIT_CODE
