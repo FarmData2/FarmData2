@@ -56,9 +56,10 @@
           data-cy="direct-seeding-location"
           required
           includeFields
+          includeGreenhousesWithBeds
           v-model:selected="form.locationName"
           v-bind:showValidityStyling="validity.show"
-          v-on:valid="validity.locationName = $event"
+          v-on:valid="validity.location = $event"
           v-on:ready="createdCount++"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
         />
@@ -257,7 +258,7 @@ export default {
         show: false,
         seedingDate: false,
         cropName: false,
-        locationName: false,
+        location: false,
         bedFeet: false,
         rowsPerBed: false,
         bedWidth: false,
@@ -345,7 +346,7 @@ export default {
       const required =
         this.validity.seedingDate &&
         this.validity.cropName &&
-        this.validity.locationName &&
+        this.validity.location &&
         this.validity.bedFeet &&
         this.validity.rowsPerBed &&
         this.validity.bedWidth;

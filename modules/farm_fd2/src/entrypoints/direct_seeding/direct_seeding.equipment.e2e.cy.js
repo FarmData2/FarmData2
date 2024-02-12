@@ -54,13 +54,13 @@ describe('Direct Seeding: Equipment Component', () => {
     );
   });
 
-  it('Equipment validity styling not shown when equipment not selected', () => {
+  it('Equipment validity styling shown when equipment not selected', () => {
     cy.get('[data-cy="direct-seeding-equipment-accordion-title"]').click();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="direct-seeding-equipment-selector"]')
       .find('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
-      .should('not.have.class', 'is-valid')
+      .should('have.class', 'is-valid')
       .should('not.have.class', 'is-invalid');
   });
 
