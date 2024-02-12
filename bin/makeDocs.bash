@@ -3,11 +3,17 @@
 source colors.bash
 source lib.bash
 
+# Ensure Node.js and npm are installed. I'm not sure if we need this but I just wanted to put it in.
+if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+    echo "Node.js or npm is not installed. Please install them first."
+    exit 1
+fi
+
 # Setting Env Variables
-PWD="$(pwd)" #Current Working Dir
+PWD="$(pwd)" # Current Working Dir
 SCRIPT_PATH=$(readlink -f "$0") # Script Path
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH") # Script Directory
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) #Repository Root Directory
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # Repository Root Directory
 
 TARGETS=()
 
@@ -37,19 +43,22 @@ update_docs() {
     local NAME=$2
     local PATH="$REPO_ROOT_DIR/$TYPE/$NAME"
     local DOC_PATH="$TYPE/$NAME.md"
+    local DESC_TEXT=""
 
     if [[ -d "$PATH" ]]; then
         echo "    Generating docs for $NAME..."
         # Use vue-docgen or jsdoc2md based on type
         if [ "$TYPE" == "components" ]; then
+            DESC_TEXT=$(grep -m 1 -A 1 "<\!--" "$PATH/$NAME.vue" | tail -1 | cut -d' ' -f2-)
             (cd "$REPO_ROOT_DIR" && npx vue-docgen "$PATH/$NAME.vue" -o "$DOC_PATH")
         else
+            DESC_TEXT=$(grep -m 1 "/**" "$PATH/$NAME.js" -A 2 | tail -1 | cut -d' ' -f2-)
             (cd "$REPO_ROOT_DIR" && npx jsdoc2md "$PATH/$NAME.js" > "$DOC_PATH")
         fi
         echo "      Docs generated for $NAME."
 
-        # Adds link to the index file
-        echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
+        # Adds link and description to the index file
+        echo "- [$NAME]($DOC_PATH) - $DESC_TEXT" >> "$INDEX_PATH"
     else
         echo "      $TYPE $NAME not found."
     fi
