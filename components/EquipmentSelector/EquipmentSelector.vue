@@ -151,20 +151,23 @@ export default {
       .then(([canCreate, equipmentMap]) => {
         this.canCreateEquipment = canCreate;
         this.equipmentList = Array.from(equipmentMap.keys());
+
+        //Emit the initial valid state of the component's value.
+        this.$emit('valid', this.isValid);
+
+        /**
+         * The component is ready for use.
+         */
+        this.$emit('ready');
       })
       .catch((err) => {
         console.error('EquipmentSelector: Error fetching equipment.');
         console.error(err);
+        /**
+         * An error occurred loading the equipment.
+         */
         this.$emit('error', 'Unable to fetch equipment.');
       });
-
-    //Emit the initial valid state of the component's value.
-    this.$emit('valid', this.isValid);
-
-    /**
-     * The component is ready for use.
-     */
-    this.$emit('ready');
   },
 };
 </script>
