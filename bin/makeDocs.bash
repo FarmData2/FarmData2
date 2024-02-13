@@ -64,23 +64,25 @@ echo "# FarmData2 Documentation" > "$INDEX_FILEPATH"
 echo "" >> "$INDEX_FILEPATH"
 
 update_docs() {
-    local DOCTYPE=$1
-    local DOCNAME=$2
-    local DOCPATH="$REPOSITORY_ROOT_DIR/$DOCTYPE/$DOCNAME"
-    local DOCFILE_PATH="docs/$DOCTYPE/$DOCNAME.md"
+    local TYPE=$1 # components or library
+    local NAME=$2
+    local PATH="$REPO_ROOT_DIR/$TYPE/$NAME"
+    local DOC_PATH="$TYPE/$NAME.md"
 
-    if [[ -d "$DOCPATH" ]]; then
-        echo "    Generating docs for $DOCNAME..."
-        if [ "$DOCTYPE" == "components" ]; then
-            # Adjust the following line to match the correct syntax for vue-docgen
-            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen "$DOCPATH/$DOCNAME.vue" > "$DOCFILE_PATH")
+    if [[ -d "$PATH" ]]; then
+        echo "    Generating docs for $NAME..."
+        # Use vue-docgen or jsdoc2md based on type
+        if [ "$TYPE" == "components" ]; then
+            (cd "$REPO_ROOT_DIR" && npx vue-docgen "$PATH/$NAME.vue" -o "$DOC_PATH")
         else
-            (cd "$REPOSITORY_ROOT_DIR" && npx jsdoc2md "$DOCPATH/$DOCNAME.js" > "$DOCFILE_PATH")
+            (cd "$REPO_ROOT_DIR" && npx jsdoc2md "$PATH/$NAME.js" > "$DOC_PATH")
         fi
-        echo "      Docs generated for $DOCNAME."
-        echo "- [$DOCNAME]($DOCFILE_PATH)" >> "$INDEX_FILEPATH"
+        echo "      Docs generated for $NAME."
+
+        # Adds link to the index file
+        echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
     else
-        echo "      $DOCTYPE $DOCNAME not found."
+        echo "      $TYPE $NAME not found."
     fi
 }
 
