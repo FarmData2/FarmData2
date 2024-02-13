@@ -11,11 +11,35 @@ REPOSITORY_ROOT_DIR=$(builtin cd "$SCRIPT_DIR_PATH/.." && pwd)
 
 TARGETS=()
 
+usage() {
+    echo "Usage: $0 [options...]"
+    echo "Options:"
+    echo "  --target <target_name>    Specify a target for documentation generation."
+    echo "  --list-targets            List all valid targets for documentation."
+    echo "  --help                    Show this help message and exit."
+    echo ""
+    echo "If no targets are specified, documentation for all components and libraries will be generated."
+}
+
+list_targets() {
+    echo "Valid targets:"
+    echo "  Components:"
+    for COMPONENT in $(ls -d -- $REPOSITORY_ROOT_DIR/components/*/); do
+        echo "    - $(basename "$COMPONENT")"
+    done
+    echo "  Library:"
+    for LIBRARY in $(ls -d -- $REPOSITORY_ROOT_DIR/library/*/); do
+        echo "    - $(basename "$LIBRARY")"
+    done
+}
+
 # Parsing all command line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --target) TARGETS+=("$2"); shift ;;
-        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+        --list-targets) list_targets; exit 0 ;;
+        --help) usage; exit 0 ;;
+        *) echo "Unknown parameter passed: $1"; usage; exit 1 ;;
     esac
     shift
 done
@@ -33,22 +57,19 @@ echo "# FarmData2 Documentation" > "$INDEX_FILEPATH"
 echo "" >> "$INDEX_FILEPATH"
 
 update_docs() {
-    local DOCTYPE=$1 # components or library
+    local DOCTYPE=$1
     local DOCNAME=$2
     local DOCPATH="$REPOSITORY_ROOT_DIR/$DOCTYPE/$DOCNAME"
     local DOCFILE_PATH="$DOCTYPE/$DOCNAME.md"
 
     if [[ -d "$DOCPATH" ]]; then
         echo "    Generating docs for $DOCNAME..."
-        # Use vue-docgen or jsdoc2md based on type
         if [ "$DOCTYPE" == "components" ]; then
             (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen "$DOCPATH/$DOCNAME.vue" -o "$DOCFILE_PATH")
         else
             (cd "$REPOSITORY_ROOT_DIR" && npx jsdoc2md "$DOCPATH/$DOCNAME.js" > "$DOCFILE_PATH")
         fi
         echo "      Docs generated for $DOCNAME."
-
-        # Adds link to the index file
         echo "- [$DOCNAME]($DOCFILE_PATH)" >> "$INDEX_FILEPATH"
     else
         echo "      $DOCTYPE $DOCNAME not found."
