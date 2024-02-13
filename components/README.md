@@ -99,7 +99,7 @@ Custom FarmData2 Vue Components.
     - This function returns:
       - `true` to apply valid styling (green check)
       - `false` to apply invalid styling (red x and invalidFeedbackText)
-      - `null` to not apply either styling.
+      - `null` to not apply either styling. This should be applied when showValidityStyling is set false, and also non-required inputs that are blank.
 
   - The `showValidityStyling` prop should be is set by the entry point to
     - `true` when "Submit" is clicked
@@ -109,10 +109,15 @@ Custom FarmData2 Vue Components.
 - Components manage props, state and events to allow page to change state via the prop.
 
   - The component provides a `prop` for every value that is collected by the component
-  - The component watches the `props` and the state variables that are `v-modeled` to input elements
-  - when a watched prop changes the component updates its state.
-  - When the state for a value that a component collects changes, the component emits an `updated:prop_name` event with a payload giving the new value of the prop.
-  - The entry point should `v-model` the prop to an element in its `data.form`
+    - An entry point can `v-model` the associated `prop` to an element in its `data.form`
+  - The `prop` is assigned to some internal state (in `data`)
+  - The internal state is `v-model`ed to the input element or sub-component.
+  - The component watches the `props`
+    - when a watched `prop` changes the component updates the internal state.
+  - The component listens (`v-on`) for `update` events from the input element or sub-component.
+    - When an `update` event occurs the component emits an `updated:prop_name` event with a payload communicating the new value of the `prop` to the entry point or parent component.
+
+- NOTE: Keeping internal state allows for more thorough testing of the component apart from a page that changes props in response to events (i.e. closes the loop). It make this loop more explicit and makes the code more idiomatic across components.
 
 - All events emitted must be kabob-case.
 
@@ -128,6 +133,7 @@ Custom FarmData2 Vue Components.
 
   - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - The component `watch`es the `isValid` computed property for changes and emits this event.
+  - This event should also be emitted exactly once when the component is first created.
 
 - If a component only contains one element, then it should be wrapped in a `<div>` element. See the `CommentComponent` component for an example and explanation.
 
@@ -201,6 +207,15 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
 - Visible in the console when running headless.
 - Click on the task in the test events output to print to console in Cypress gui.
+
+- Add pointers to canonical examples of tests:
+  - basic existence
+    - checking styles
+  - events
+    - interacting with elements
+    - generating network errors
+  - changing props
+  - Others???
 
 ### Component Tests Organization
 
