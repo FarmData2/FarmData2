@@ -63,6 +63,7 @@
       v-bind:decimalPlaces="0"
       v-bind:incDecValues="[5, 10, 25]"
       v-bind:minValue="1"
+      v-bind:maxValue="100"
       v-on:update:value="handleAreaUpdate()"
       v-on:valid="validity.area = $event"
     />
