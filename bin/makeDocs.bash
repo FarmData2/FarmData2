@@ -3,12 +3,11 @@
 source colors.bash
 source lib.bash
 
-
 # Setting Env Variables
-PWD="$(pwd)" #Current Working Dir
+PWD="$(pwd)" # Current Working Dir
 SCRIPT_PATH=$(readlink -f "$0") # Script Path
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH") # Script Directory
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) #Repository Root Directory
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # Repository Root Directory
 
 TARGETS=()
 
@@ -44,6 +43,9 @@ update_docs() {
         fi
         echo "      Docs generated for $NAME."
 
+        # Print the component or library that was built
+        echo -e "${GREEN}Built $TYPE: $NAME${NO_COLOR}"
+
         # Adds link to the index file
         echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
     else
@@ -71,4 +73,4 @@ for LIBRARY in $(ls -d -- $REPO_ROOT_DIR/library/*/); do
     fi
 done
 
-echo -e "${GREEN}Done.${NO_COLOR}"
+echo -e "${GREEN}Documentation generation complete.${NO_COLOR}"
