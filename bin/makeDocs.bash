@@ -82,7 +82,7 @@ update_docs() {
     else
         echo "      $DOCTYPE $DOCNAME not found."
     fi
-}}
+}
 
 echo "## Components" >> "$INDEX_FILEPATH"
 echo "" >> "$INDEX_FILEPATH"
