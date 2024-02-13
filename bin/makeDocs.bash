@@ -72,7 +72,8 @@ update_docs() {
     if [[ -d "$DOCPATH" ]]; then
         echo "    Generating docs for $DOCNAME..."
         if [ "$DOCTYPE" == "components" ]; then
-            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen -c "$DOCPATH/$DOCNAME.vue" -o "$DOCFILE_PATH")
+            # Adjust the following line to match the correct syntax for vue-docgen
+            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen "$DOCPATH/$DOCNAME.vue" > "$DOCFILE_PATH")
         else
             (cd "$REPOSITORY_ROOT_DIR" && npx jsdoc2md "$DOCPATH/$DOCNAME.js" > "$DOCFILE_PATH")
         fi
@@ -81,7 +82,7 @@ update_docs() {
     else
         echo "      $DOCTYPE $DOCNAME not found."
     fi
-}
+}}
 
 echo "## Components" >> "$INDEX_FILEPATH"
 echo "" >> "$INDEX_FILEPATH"
