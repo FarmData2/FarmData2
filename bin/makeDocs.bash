@@ -49,8 +49,15 @@ if [ ${#TARGETS[@]} -eq 0 ]; then
     TARGETS=("all")
 fi
 
+# Ensure the docs directory is properly structured
+echo "Preparing documentation directories..."
+rm -rf "$REPOSITORY_ROOT_DIR/docs/components" 2>/dev/null
+mkdir -p "$REPOSITORY_ROOT_DIR/docs/components"
+rm -rf "$REPOSITORY_ROOT_DIR/docs/library" 2>/dev/null
+mkdir -p "$REPOSITORY_ROOT_DIR/docs/library"
+
 INDEX_FILENAME="FarmData2.md"
-INDEX_FILEPATH="$REPOSITORY_ROOT_DIR/$INDEX_FILENAME"
+INDEX_FILEPATH="$REPOSITORY_ROOT_DIR/docs/$INDEX_FILENAME"
 
 # Recreate the index file (Erases and rewrite into header upon regeneration)
 echo "# FarmData2 Documentation" > "$INDEX_FILEPATH"
@@ -60,12 +67,12 @@ update_docs() {
     local DOCTYPE=$1
     local DOCNAME=$2
     local DOCPATH="$REPOSITORY_ROOT_DIR/$DOCTYPE/$DOCNAME"
-    local DOCFILE_PATH="$DOCTYPE/$DOCNAME.md"
+    local DOCFILE_PATH="docs/$DOCTYPE/$DOCNAME.md"
 
     if [[ -d "$DOCPATH" ]]; then
         echo "    Generating docs for $DOCNAME..."
         if [ "$DOCTYPE" == "components" ]; then
-            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen "$DOCPATH/$DOCNAME.vue" -o "$DOCFILE_PATH")
+            (cd "$REPOSITORY_ROOT_DIR" && npx vue-docgen -c "$DOCPATH/$DOCNAME.vue" -o "$DOCFILE_PATH")
         else
             (cd "$REPOSITORY_ROOT_DIR" && npx jsdoc2md "$DOCPATH/$DOCNAME.js" > "$DOCFILE_PATH")
         fi
