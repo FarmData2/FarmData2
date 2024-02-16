@@ -27,6 +27,10 @@ describe('Test the default SoilDisturbance content', () => {
         cy.get('[data-cy="soil-disturbance-equipment-selector"]').should(
           'exist'
         );
+        cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
+        cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
+        cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
+        cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
       });
   });
 
@@ -127,6 +131,24 @@ describe('Test the default SoilDisturbance content', () => {
         cy.get('[data-cy="soil-disturbance-passes"]')
           .find('[data-cy="numeric-input"]')
           .should('have.value', '2');
+      });
+  });
+
+  it('Check includePasses prop as false', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: false,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
       });
   });
 });

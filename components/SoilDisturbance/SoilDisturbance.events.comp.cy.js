@@ -20,14 +20,14 @@ describe('Test the SoilDisturbance component events', () => {
         onReady: readySpy,
         onValid: validSpy,
       },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        });
     });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
-      });
   });
 
   it('Initial "valid" event is correct when required', () => {
@@ -72,7 +72,10 @@ describe('Test the SoilDisturbance component events', () => {
           .find('[data-cy="selector-input"]')
           .select('Tractor');
 
-        cy.get('@validSpy').should('have.been.calledTwice');
+        // One on creation of EquipmentSelector
+        // One on selection of equipment.
+        // One on creation of the depth, speed, area elements.
+        cy.get('@validSpy').should('have.been.calledThrice');
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });

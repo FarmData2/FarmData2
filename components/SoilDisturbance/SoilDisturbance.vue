@@ -12,15 +12,15 @@
       v-bind:required="required"
       v-on:update:selected="handleEquipmentUpdate()"
       v-on:valid="validity.equipment = $event"
-      v-on:ready="equipmentSelectorReady()"
       v-on:error="handleError(msg)"
+      v-on:ready="equipmentSelectorReady()"
     />
 
     <!-- Soil Disturbance Depth -->
     <NumericInput
       id="soil-disturbance-depth"
       data-cy="soil-disturbance-depth"
-      v-show="form.equipment.length > 0"
+      v-if="form.equipment.length > 0"
       required
       label="Depth (in)"
       invalidFeedbackText="Depth must be a non-negative number."
@@ -37,7 +37,7 @@
     <NumericInput
       id="soil-disturbance-speed"
       data-cy="soil-disturbance-speed"
-      v-show="form.equipment.length > 0"
+      v-if="form.equipment.length > 0"
       required
       label="Speed (mph)"
       invalidFeedbackText="Speed must be a non-negative number."
@@ -54,7 +54,7 @@
     <NumericInput
       id="soil-disturbance-area"
       data-cy="soil-disturbance-area"
-      v-show="form.equipment.length > 0"
+      v-if="form.equipment.length > 0"
       required
       label="Area (%)"
       invalidFeedbackText="Area must be a positive number."
@@ -72,7 +72,7 @@
     <NumericInput
       id="soil-disturbance-passes"
       data-cy="soil-disturbance-passes"
-      v-show="form.equipment.length > 0 && includePasses"
+      v-if="form.equipment.length > 0 && includePasses"
       required
       label="Passes"
       invalidFeedbackText="Passes must be a positive number."
@@ -108,10 +108,11 @@ import NumericInput from '@comps/NumericInput/NumericInput.vue';
  * Attribute Name                        | Description
  * --------------------------------------| -----------
  * `soil-disturbance-group`              | The `BFormGroup` element containing all of the sub-components.
- * 'soil-disturbance-equipment-selector' | The `EquipmentSelector` component.
- * 'soil-disturbance-depth'              | The `NumericInput` component for the depth of the disruption.
- * 'soil-disturbance-speed'              | The `NumericInput` component for the speed of the disruption.
- * 'soil-disturbance-area'               | The `NumericInput` component for the percentage of the area
+ * `soil-disturbance-equipment-selector` | The `EquipmentSelector` component.
+ * `soil-disturbance-depth`              | The `NumericInput` component for the depth of the disruption.
+ * `soil-disturbance-speed`              | The `NumericInput` component for the speed of the disruption.
+ * `soil-disturbance-area`               | The `NumericInput` component for the percentage of the area
+ * `soil-disturbance-passes`             | The `NumericInput` component for the number of passes over the area.
  */
 export default {
   name: 'SoilDisturbance',
@@ -194,6 +195,8 @@ export default {
         passes: this.passes,
       },
       validity: {
+        ready: false,
+
         /*
          * Initialize these to null to ensure that the valid event is emitted
          * on creation whether isValid is true or false.
@@ -209,7 +212,7 @@ export default {
   },
   computed: {
     isValid() {
-      if (!this.form.equipment.length === 0) {
+      if (this.form.equipment.length === 0) {
         return this.validity.equipment;
       } else if (!this.includePasses) {
         return (
@@ -277,12 +280,6 @@ export default {
       this.$emit('error', msg);
     },
     equipmentSelectorReady() {
-      /*
-       * Note: We only need to wait for the equipment selector to be ready.
-       * It is the only one that makes API calls and the others are not
-       * created until a piece of equipment is selected.
-       */
-
       /**
        * The component is ready for use.
        */
@@ -290,6 +287,15 @@ export default {
     },
   },
   watch: {
+    isValid() {
+      if (this.isValid != null) {
+        /**
+         * The validity of the component has changed.
+         * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
+         */
+        this.$emit('valid', this.isValid);
+      }
+    },
     equipment() {
       this.form.equipment = this.equipment;
     },
@@ -304,13 +310,6 @@ export default {
     },
     passes() {
       this.form.passes = this.passes;
-    },
-    isValid() {
-      /**
-       * The validity of the component has changed.  Also emitted when the component is created.
-       * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
-       */
-      this.$emit('valid', this.isValid);
     },
   },
   created() {},

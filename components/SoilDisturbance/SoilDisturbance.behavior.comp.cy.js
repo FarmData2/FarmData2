@@ -11,6 +11,30 @@ describe('Test the SoilDisturbance component behavior', () => {
     cy.saveSessionStorage();
   });
 
+  it('numeric fields appear when equipment is selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-equipment-selector"]')
+          .find('[data-cy="selector-input"]')
+          .select('Tractor');
+
+        cy.get('[data-cy="soil-disturbance-depth"]').should('exist');
+        cy.get('[data-cy="soil-disturbance-speed"]').should('exist');
+        cy.get('[data-cy="soil-disturbance-area"]').should('exist');
+        cy.get('[data-cy="soil-disturbance-passes"]').should('exist');
+      });
+  });
+
   it('equipment prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
