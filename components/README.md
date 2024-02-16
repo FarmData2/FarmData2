@@ -133,7 +133,9 @@ Custom FarmData2 Vue Components.
 
   - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - The component `watch`es the `isValid` computed property for changes and emits this event.
-  - This event should also be emitted exactly once when the component is first created.
+  - This event should be emitted when:
+    - any time the component's `isValid` computed property changes. This should be done with a `watch` for the `isValid` computed property.
+      - If `isValid` is `null` then this watcher should not emit the event.
 
 - If a component only contains one element, then it should be wrapped in a `<div>` element. See the `CommentComponent` component for an example and explanation.
 
