@@ -46,7 +46,7 @@ describe('Test the EquipmentSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
@@ -68,7 +68,7 @@ describe('Test the EquipmentSelector component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         // one call in created() and one due to change in isValid.
-        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
@@ -89,7 +89,7 @@ describe('Test the EquipmentSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });

@@ -95,7 +95,7 @@ export default {
        * The whole list will be valid if the first
        * SelectorBase has a valid value.
        */
-      return this.valid[0] === true;
+      return this.valid[0];
     },
   },
   methods: {
@@ -153,7 +153,7 @@ export default {
         this.equipmentList = Array.from(equipmentMap.keys());
 
         //Emit the initial valid state of the component's value.
-        this.$emit('valid', this.isValid);
+        //this.$emit('valid', this.isValid);
 
         /**
          * The component is ready for use.
