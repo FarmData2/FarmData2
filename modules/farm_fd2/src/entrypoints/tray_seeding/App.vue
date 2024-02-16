@@ -1,24 +1,35 @@
 <template>
-  <div>
-    <BToaster />
+  <div
+    id="tray-seeding"
+    data-cy="tray-seeding">
+    <BToaster
+      id="tray-seeding-toaster"
+      data-cy="tray-seeding-toaster"
+    />
     <BCard
+      id="tray-seeding-card"
+      data-cy="tray-seeding-card"
       bg-variant="light"
       header-tag="header"
     >
       <template #header>
         <h2
-          data-cy="seeding-header"
+          id="tray-seeding-header"
+          data-cy="tray-seeding-header"
           class="text-center"
         >
           Tray Seeding
         </h2>
       </template>
 
-      <BForm>
+      <BForm
+        id="tray-seeding-form"
+        data-cy="tray-seeding-form"
+      >
         <!-- Seeding Date -->
         <DateSelector
-          id="seeding-date"
-          data-cy="seeding-date"
+          id="tray-seeding-date"
+          data-cy="tray-seeding-date"
           required
           v-model:date="form.seedingDate"
           v-bind:showValidityStyling="validity.show"
@@ -28,8 +39,8 @@
 
         <!-- Crop Selection -->
         <CropSelector
-          id="seeding-crop-name"
-          data-cy="seeding-crop-name"
+          id="tray-seeding-crop"
+          data-cy="tray-seeding-crop"
           required
           v-model:selected="form.cropName"
           v-bind:showValidityStyling="validity.show"
@@ -40,8 +51,8 @@
 
         <!-- Location Selection -->
         <LocationSelector
-          id="seeding-location-name"
-          data-cy="seeding-location-name"
+          id="tray-seeding-location"
+          data-cy="tray-seeding-location"
           required
           includeGreenhouses
           v-model:selected="form.locationName"
@@ -55,8 +66,8 @@
 
         <!-- Number of Trays -->
         <NumericInput
-          id="seeding-trays"
-          data-cy="seeding-trays"
+          id="tray-seeding-trays"
+          data-cy="tray-seeding-trays"
           required
           label="Trays"
           invalidFeedbackText="Trays must be positive."
@@ -71,8 +82,8 @@
 
         <!-- Tray Size -->
         <TraySizeSelector
-          id="seeding-tray-size"
-          data-cy="seeding-tray-size"
+          id="tray-seeding-tray-size"
+          data-cy="tray-seeding-tray-size"
           required
           v-model:selected="form.traySize"
           v-bind:showValidityStyling="validity.show"
@@ -83,8 +94,8 @@
 
         <!-- Number of Seed / Cell -->
         <NumericInput
-          id="seeding-seeds"
-          data-cy="seeding-seeds"
+          id="tray-seeding-seeds"
+          data-cy="tray-seeding-seeds"
           required
           label="Seeds/Cell"
           invalidFeedbackText="Seeds must be positive."
@@ -99,8 +110,8 @@
 
         <!-- Total Seeds -->
         <TextDisplay
-          id="seeding-total-seeds"
-          data-cy="seeding-total-seeds"
+          id="tray-seeding-total-seeds"
+          data-cy="tray-seeding-total-seeds"
           label="Total Seeds"
           v-bind:text="totalSeeds"
           v-on:ready="createdCount++"
@@ -109,8 +120,8 @@
         <hr />
         <!-- Comment Box -->
         <CommentBox
-          id="seeding-comment"
-          data-cy="seeding-comment"
+          id="tray-seeding-comment"
+          data-cy="tray-seeding-comment"
           v-model:comment="form.comment"
           v-on:valid="validity.comment = $event"
           v-on:ready="createdCount++"
@@ -287,24 +298,24 @@ export default {
 <style>
 @import url('@css/fd2-mobile.css');
 
-#seeding-date {
+#tray-seeding-date {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#seeding-crop-name,
-#seeding-location-name,
-#seeding-tray-size,
-#seeding-seeds {
+#tray-seeding-crop,
+#tray-seeding-location,
+#tray-seeding-tray-size,
+#tray-seeding-seeds {
   margin-bottom: 8px;
 }
 
-#seeding-trays {
+#tray-seeding-trays {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#seeding-comment {
+#tray-seeding-comment {
   margin-bottom: 15px;
 }
 </style>

@@ -24,6 +24,10 @@ let viteConfig = {
           dest: '.',
         },
         {
+          src: '../module/*.install',
+          dest: '.',
+        },
+        {
           src: '../module/Controller',
           dest: 'src/',
         },
