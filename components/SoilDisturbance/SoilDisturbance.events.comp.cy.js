@@ -1,4 +1,5 @@
 import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the SoilDisturbance component events', () => {
   beforeEach(() => {
@@ -389,5 +390,25 @@ describe('Test the SoilDisturbance component events', () => {
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', 2);
       });
+  });
+
+  it('Emits "error" if loading equipment fails', () => {
+    farmosUtil.clearCachedEquipment();
+
+    const errorSpy = cy.spy().as('errorSpy');
+
+    cy.intercept('GET', '**/api/asset/equipment?*', {
+      forceNetworkError: true,
+    });
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        onError: errorSpy,
+      },
+    }).then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledOnce')
+        .should('have.been.calledWith', 'Unable to fetch equipment.');
+    });
   });
 });

@@ -12,7 +12,7 @@
       v-bind:required="required"
       v-on:update:selected="handleEquipmentUpdate()"
       v-on:valid="validity.equipment = $event"
-      v-on:error="handleError(msg)"
+      v-on:error="handleError($event)"
       v-on:ready="equipmentSelectorReady()"
     />
 
