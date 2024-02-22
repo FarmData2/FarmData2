@@ -151,4 +151,366 @@ describe('Test the default SoilDisturbance content', () => {
         cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
       });
   });
+
+  it('Numeric fields marked required', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        required: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-required"]')
+          .should('exist');
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-required"]')
+          .should('exist');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-required"]')
+          .should('exist');
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-required"]')
+          .should('exist');
+      });
+  });
+
+  it('Numeric fields have validity styling', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        required: true,
+        showValidityStyling: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.class', 'is-valid');
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.class', 'is-valid');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.class', 'is-valid');
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.class', 'is-valid');
+      });
+  });
+
+  it('Depth increments are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-increase-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1.0');
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-increase-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '7.0');
+
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-increase-lg"]')
+          .should('not.exist');
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-decrease-lg"]')
+          .should('not.exist');
+
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-decrease-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1.0');
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '0.0');
+      });
+  });
+
+  it('Depth min is correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-depth"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '0.0');
+      });
+  });
+
+  it('Speed increments are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-increase-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1.0');
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-increase-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '6.0');
+
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-increase-lg"]')
+          .should('not.exist');
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-decrease-lg"]')
+          .should('not.exist');
+
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-decrease-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1.0');
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '0.0');
+      });
+  });
+
+  it('Speed min is correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-speed"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '0.0');
+      });
+  });
+
+  it('Area increments are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-decrease-lg"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '75');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-decrease-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '65');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '60');
+
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-increase-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '65');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-increase-md"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '75');
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-increase-lg"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '100');
+      });
+  });
+
+  it('Area min/max are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-increase-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '100');
+
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .as('area');
+        cy.get('@area').clear();
+        cy.get('@area').type('1');
+        cy.get('@area').blur();
+
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-area"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1');
+      });
+  });
+
+  it('Passes increments are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-increase-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '2');
+
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-increase-md"]')
+          .should('not.exist');
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-increase-lg"]')
+          .should('not.exist');
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-decrease-lg"]')
+          .should('not.exist');
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-decrease-md"]')
+          .should('not.exist');
+
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1');
+      });
+  });
+
+  it('Passes min/max are correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SoilDisturbance, {
+      props: {
+        includePasses: true,
+        equipment: ['Tractor'],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-decrease-sm"]')
+          .click();
+        cy.get('[data-cy="soil-disturbance-passes"]')
+          .find('[data-cy="numeric-input"]')
+          .should('have.value', '1');
+      });
+  });
 });
