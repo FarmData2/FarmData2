@@ -249,7 +249,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
   - check styling (`*.styling.comp.cy.js`)
 
     - check that the type of valid/invalid styling to be shows as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
-      - This is often an enumeration test that checks all 8 combinations of these values.
+      - This is often an enumeration test that checks all combinations of these values.
     - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required because the prop will have been tested by the `content` test and the styling will have been tested by the sub-component.
       - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
     - If a component is never styled (e.g. `CommentBox` or `TextDisplay`) then this test is not required.
