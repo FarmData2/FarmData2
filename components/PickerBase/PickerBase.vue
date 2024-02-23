@@ -191,6 +191,8 @@ export default {
       } else {
         this.checked = [...this.options];
       }
+
+      this.updatePicked();
     },
   },
   watch: {

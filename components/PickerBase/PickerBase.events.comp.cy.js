@@ -91,6 +91,35 @@ describe('Test the PickerBase component events', () => {
       });
   });
 
+  it('Emits "update:picked" when "All" button is clicked', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        invalidFeedbackText: 'Invalid feedback text.',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-all-button"]').click();
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', [
+          'Option 1',
+          'Option 2',
+          'Option 3',
+          'Option 4',
+        ]);
+      });
+  });
+
   it('Emits "update:valid" true when becomes valid', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
