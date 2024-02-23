@@ -1809,6 +1809,9 @@ export async function deleteSeedingLog(seedingLogId) {
  *
  * @param {string} disturbanceDate the date the disturbance took place.
  * @param {string} locationName the location where the disturbance took place.
+ * This must be the name of a field or greenhouse.
+ * @param {Array<string>} bedNames the names of the bed(s) where the disturbance occurred.
+ * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `tillage`.
  * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
@@ -1821,14 +1824,41 @@ export async function deleteSeedingLog(seedingLogId) {
 export async function createSoilDisturbanceActivityLog(
   distrubanceDate,
   locationName,
+  bedNames = [],
   logCategories,
   plantAsset = null,
   quantities = [],
   equipment = []
 ) {
-  let locationID = null;
+  let locations = [];
   const fieldMap = await getFieldNameToAssetMap();
-  locationID = fieldMap.get(locationName).id;
+  let location = fieldMap.get(locationName);
+  if (location) {
+    // location is a field.
+    locations.push({
+      type: 'asset--land',
+      id: location.id,
+    });
+  } else {
+    // location is a greenhouse.
+    const greenhouseMap = await getGreenhouseNameToAssetMap();
+    const locationID = greenhouseMap.get(locationName).id;
+    locations.push({
+      type: 'asset--structure',
+      id: locationID,
+    });
+  }
+
+  if (bedNames.length > 0) {
+    const bedMap = await getBedNameToAssetMap();
+    for (const bed of bedNames) {
+      const bedID = bedMap.get(bed).id;
+      locations.push({
+        type: 'asset--land',
+        id: bedID,
+      });
+    }
+  }
 
   let quantitiesArray = [];
   for (const quant of quantities) {
@@ -1864,12 +1894,7 @@ export async function createSoilDisturbanceActivityLog(
       purchase_date: dayjs(distrubanceDate).format(),
     },
     relationships: {
-      location: [
-        {
-          type: 'asset--land',
-          id: locationID,
-        },
-      ],
+      location: locations,
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
       category: logCategoriesArray,
       quantity: quantitiesArray,
