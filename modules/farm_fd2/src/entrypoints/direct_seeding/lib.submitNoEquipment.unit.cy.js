@@ -12,6 +12,7 @@ describe('Test the direct seeding lib.', () => {
     seedingDate: '1950-01-02',
     cropName: 'BROCCOLI',
     locationName: 'A',
+    beds: [],
     bedFeet: 100,
     rowsPerBed: '1',
     bedWidth: 60,
@@ -28,7 +29,7 @@ describe('Test the direct seeding lib.', () => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
     });
 
@@ -159,6 +160,7 @@ describe('Test the direct seeding lib.', () => {
         expect(seedingLog.attributes.is_movement).to.be.true;
         expect(seedingLog.attributes.purchase_date).to.contain('1950-01-02');
 
+        expect(seedingLog.relationships.location.length).to.equal(1);
         expect(seedingLog.relationships.location[0].type).to.equal(
           'asset--land'
         );

@@ -11,7 +11,8 @@ describe('Test the direct seeding lib.', () => {
   let form = {
     seedingDate: '1950-01-02',
     cropName: 'BROCCOLI',
-    locationName: 'A',
+    locationName: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
     bedFeet: 100,
     rowsPerBed: '1',
     bedWidth: 60,
@@ -29,7 +30,7 @@ describe('Test the direct seeding lib.', () => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
     });
 
@@ -164,11 +165,15 @@ describe('Test the direct seeding lib.', () => {
         expect(seedingLog.attributes.is_movement).to.be.true;
         expect(seedingLog.attributes.purchase_date).to.contain('1950-01-02');
 
-        expect(seedingLog.relationships.location[0].type).to.equal(
-          'asset--land'
-        );
+        expect(seedingLog.relationships.location.length).to.equal(3);
         expect(seedingLog.relationships.location[0].id).to.equal(
           result.seedingLog.relationships.location[0].id
+        );
+        expect(seedingLog.relationships.location[1].id).to.equal(
+          result.seedingLog.relationships.location[1].id
+        );
+        expect(seedingLog.relationships.location[2].id).to.equal(
+          result.seedingLog.relationships.location[2].id
         );
 
         expect(seedingLog.relationships.asset[0].type).to.equal('asset--plant');
@@ -273,9 +278,17 @@ describe('Test the direct seeding lib.', () => {
       expect(activityLog.attributes.status).to.equal('done');
       expect(activityLog.attributes.is_movement).to.equal(false);
 
+      expect(activityLog.relationships.location.length).to.equal(3);
       expect(activityLog.relationships.location[0].id).to.equal(
-        fieldMap.get('A').id
+        result.activityLog.relationships.location[0].id
       );
+      expect(activityLog.relationships.location[1].id).to.equal(
+        result.activityLog.relationships.location[1].id
+      );
+      expect(activityLog.relationships.location[2].id).to.equal(
+        result.activityLog.relationships.location[2].id
+      );
+
       expect(activityLog.relationships.asset[0].id).to.equal(
         result.plantAsset.id
       );

@@ -11,6 +11,7 @@ describe('Test error when submitting the direct seeding lib.', () => {
     seedingDate: '1950-01-02',
     cropName: 'BROCCOLI',
     locationName: 'A',
+    beds: [],
     bedFeet: 100,
     rowsPerBed: '1',
     bedWidth: 60,
