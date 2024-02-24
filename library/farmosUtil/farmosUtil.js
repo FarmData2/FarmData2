@@ -1693,18 +1693,20 @@ export async function createSeedingLog(
   quantities = []
 ) {
   let locations = [];
-  if (logCategories.includes('seeding_tray')) {
+  const fieldMap = await getFieldNameToAssetMap();
+  let location = fieldMap.get(locationName);
+  if (location) {
+    // location is a field.
+    locations.push({
+      type: 'asset--land',
+      id: location.id,
+    });
+  } else {
+    // location is a greenhouse.
     const greenhouseMap = await getGreenhouseNameToAssetMap();
     const locationID = greenhouseMap.get(locationName).id;
     locations.push({
       type: 'asset--structure',
-      id: locationID,
-    });
-  } else {
-    const fieldMap = await getFieldNameToAssetMap();
-    const locationID = fieldMap.get(locationName).id;
-    locations.push({
-      type: 'asset--land',
       id: locationID,
     });
   }
