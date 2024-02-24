@@ -32,6 +32,7 @@ export async function submitForm(formData) {
   let equipmentAssets = [];
   let depthQuantity = null;
   let speedQuantity = null;
+  let areaQuantity = null;
   let activityLog = null;
 
   try {
@@ -88,6 +89,13 @@ export async function submitForm(formData) {
         'MPH'
       );
 
+      areaQuantity = await farmosUtil.createStandardQuantity(
+        'ratio',
+        formData.area,
+        'Area',
+        'PERCENT'
+      );
+
       const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
       for (const equipmentName of formData.equipment) {
         equipmentAssets.push(equipmentMap.get(equipmentName));
@@ -99,7 +107,7 @@ export async function submitForm(formData) {
         formData.beds,
         ['tillage', 'seeding_direct'],
         plantAsset,
-        [depthQuantity, speedQuantity],
+        [depthQuantity, speedQuantity, areaQuantity],
         equipmentAssets
       );
     }
@@ -112,6 +120,7 @@ export async function submitForm(formData) {
       seedingLog: seedingLog,
       depthQuantity: depthQuantity,
       speedQuantity: speedQuantity,
+      areaQuantity: areaQuantity,
       equipment: equipmentAssets,
       activityLog: activityLog,
     };
@@ -181,6 +190,14 @@ export async function submitForm(formData) {
         await farmosUtil.deleteStandardQuantity(speedQuantity.id);
       } catch (error) {
         console.log('Unable to delete speedQuantity: ' + speedQuantity.id);
+      }
+    }
+
+    if (areaQuantity) {
+      try {
+        await farmosUtil.deleteStandardQuantity(areaQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete areaQuantity: ' + areaQuantity.id);
       }
     }
 

@@ -1,7 +1,7 @@
 import * as lib from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-describe('Test the direct seeding lib.', () => {
+describe('Submit w/o equipment using teh direct_seeding lib.', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the tray_seeding entry point.  This will be passed
@@ -19,6 +19,7 @@ describe('Test the direct seeding lib.', () => {
     equipment: [],
     depth: 0,
     speed: 0,
+    araea: 0,
     comment: 'A comment',
   };
 

@@ -1,6 +1,6 @@
 import * as lib from './lib.js';
 
-describe('Test error when submitting the direct seeding lib.', () => {
+describe('Error when submitting using the direct_seeding lib.', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the tray_seeding entry point.  This will be passed
@@ -18,6 +18,7 @@ describe('Test error when submitting the direct seeding lib.', () => {
     equipment: ['Tractor'],
     depth: 6,
     speed: 5,
+    area: 50,
     comment: 'A comment',
   };
 
@@ -82,7 +83,7 @@ describe('Test error when submitting the direct seeding lib.', () => {
           })
           .catch((error) => {
             expect(error.message).to.equal('Error creating direct seeding.');
-            expect(standardQuantityDeletes).to.equal(5);
+            expect(standardQuantityDeletes).to.equal(6);
             expect(seedingLogDeletes).to.equal(1);
             expect(plantAssetDeletes).to.equal(1);
           }),
