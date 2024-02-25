@@ -46,8 +46,8 @@
           v-model:selected="form.cropName"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.cropName = $event"
-          v-on:ready="createdCount++"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
+          v-on:ready="createdCount++"
         />
 
         <!-- Location Selection -->
@@ -58,10 +58,14 @@
           includeFields
           includeGreenhousesWithBeds
           v-model:selected="form.locationName"
+          v-bind:pickedBeds="form.beds"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:ready="createdCount++"
+          v-on:update:beds="
+            (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
+          "
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
+          v-on:ready="createdCount++"
         />
 
         <hr />
@@ -117,65 +121,38 @@
         <!-- Equipment & Soil Disturbance-->
         <BAccordion
           flush
-          id="direct-seeding-equipment-accordion"
-          data-cy="direct-seeding-equipment-accordion"
+          id="direct-seeding-soil-disturbance-accordion"
+          data-cy="direct-seeding-soil-disturbance-accordion"
         >
           <BAccordionItem
-            id="direct-seeding-equipment-accordion-item"
-            data-cy="direct-seeding-equipment-accordion-item"
+            id="direct-seeding-soil-disturbance-accordion-item"
+            data-cy="direct-seeding-soil-disturbance-accordion-item"
           >
             <template #title>
               <span
-                id="direct-seeding-equipment-accordion-title"
-                data-cy="direct-seeding-equipment-accordion-title"
+                id="direct-seeding-soil-disturbance-accordion-title"
+                data-cy="direct-seeding-soil-disturbance-accordion-title"
                 class="w-100 text-center"
               >
                 Equipment & Soil Disturbance
               </span>
             </template>
 
-            <!-- Equipment -->
-            <EquipmentSelector
-              id="direct-seeding-equipment-selector"
-              data-cy="direct-seeding-equipment-selector"
-              v-model:selected="form.equipment"
+            <!-- Soil Disturbance -->
+            <SoilDisturbance
+              id="direct-seeding-soil-disturbance"
+              data-cy="direct-seeding-soil-disturbance"
               v-bind:showValidityStyling="validity.show"
-              v-on:valid="validity.equipment = $event"
-              v-on:ready="createdCount++"
+              v-bind:equipment="form.equipment"
+              v-bind:depth="form.depth"
+              v-bind:speed="form.speed"
+              v-bind:area="form.area"
+              v-on:valid="validity.soilDisturbance = $event"
+              v-on:update:equipment="form.equipment = $event"
+              v-on:update:depth="form.depth = $event"
+              v-on:update:speed="form.speed = $event"
+              v-on:update:area="form.area = $event"
               v-on:error="(msg) => showErrorToast('Network Error', msg)"
-            />
-
-            <!-- Soil Disturbance Depth -->
-            <NumericInput
-              id="direct-seeding-soil-disturbance-depth"
-              data-cy="direct-seeding-soil-disturbance-depth"
-              v-show="form.equipment.length > 0"
-              required
-              label="Depth (in)"
-              invalidFeedbackText="Depth must be a non-negative number."
-              v-model:value="form.depth"
-              v-bind:showValidityStyling="validity.show"
-              v-bind:decimalPlaces="1"
-              v-bind:incDecValues="[1, 6]"
-              v-bind:minValue="0"
-              v-on:valid="validity.depth = $event"
-              v-on:ready="createdCount++"
-            />
-
-            <!-- Soil Disturbance Speed -->
-            <NumericInput
-              id="direct-seeding-soil-disturbance-speed"
-              data-cy="direct-seeding-soil-disturbance-speed"
-              v-show="form.equipment.length > 0"
-              required
-              label="Speed (mph)"
-              invalidFeedbackText="Speed must be a non-negative number."
-              v-model:value="form.speed"
-              v-bind:showValidityStyling="validity.show"
-              v-bind:decimalPlaces="1"
-              v-bind:incDecValues="[1, 5]"
-              v-bind:minValue="0"
-              v-on:valid="validity.speed = $event"
               v-on:ready="createdCount++"
             />
           </BAccordionItem>
@@ -222,7 +199,7 @@ import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
-import EquipmentSelector from '@comps/EquipmentSelector/EquipmentSelector.vue';
+import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
@@ -235,7 +212,7 @@ export default {
     LocationSelector,
     NumericInput,
     SelectorBase,
-    EquipmentSelector,
+    SoilDisturbance,
     CommentBox,
     SubmitResetButtons,
   },
@@ -246,12 +223,14 @@ export default {
         seedingDate: dayjs().format('YYYY-MM-DD'),
         cropName: null,
         locationName: null,
+        beds: [],
         bedFeet: 100,
         rowsPerBed: '1',
         bedWidth: 60,
         equipment: [],
         depth: 0,
         speed: 0,
+        area: 100,
         comment: null,
       },
       validity: {
@@ -262,9 +241,7 @@ export default {
         bedFeet: false,
         rowsPerBed: false,
         bedWidth: false,
-        equipment: false,
-        depth: false,
-        speed: false,
+        soilDisturbance: false,
         comment: false,
       },
       enableSubmit: true,
@@ -274,6 +251,15 @@ export default {
     };
   },
   methods: {
+    handleBedsUpdate(checkedBeds, totalBeds) {
+      this.form.beds = checkedBeds;
+
+      if (checkedBeds.length == 0) {
+        this.form.area = 100;
+      } else {
+        this.form.area = (checkedBeds.length / totalBeds) * 100;
+      }
+    },
     submit() {
       this.validity.show = true;
 
@@ -319,12 +305,14 @@ export default {
       if (!sticky) {
         this.form.seedingDate = dayjs().format('YYYY-MM-DD');
         this.form.locationName = null;
+        this.form.beds = [];
         this.form.bedFeet = 100;
         this.form.rowsPerBed = '1';
         this.form.bedWidth = 60;
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
+        this.form.area = 100;
       }
 
       this.form.cropName = null;
@@ -348,19 +336,14 @@ export default {
         this.validity.cropName &&
         this.validity.location &&
         this.validity.bedFeet &&
+        this.validity.bedWidth &&
         this.validity.rowsPerBed &&
-        this.validity.bedWidth;
+        this.validity.soilDisturbance;
 
-      if (!this.validity.equipment) {
-        // No equipment selected so speed and depth will not be used.
-        return required;
-      } else {
-        // If equipment is selected then valid speed and depth are required.
-        return required && this.validity.depth && this.validity.speed;
-      }
+      return required;
     },
     pageDoneLoading() {
-      return this.createdCount == 12;
+      return this.createdCount == 10;
     },
   },
   watch: {
