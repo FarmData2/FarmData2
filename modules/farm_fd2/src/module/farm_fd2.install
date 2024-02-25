@@ -53,6 +53,7 @@ function add_units() {
 
     ['name' => 'Ratio', 'parent' => '', 'description' => 'Parent term for units that are ratios.'],
     ['name' => 'CELLS/TRAY', 'parent' => 'Ratio', 'description' => 'The number of cells in a seeding tray.'],
+    ['name' => 'PERCENT', 'parent' => 'Ratio', 'description' => 'A percentage of a whole'],
     ['name' => 'ROWS/BED', 'parent' => 'Ratio', 'description' => 'The number of rows in a bed.'],
     ['name' => 'SEEDS/CELL', 'parent' => 'Ratio', 'description' => 'The number of seeds per cell in a seeding tray.'],
   ];
