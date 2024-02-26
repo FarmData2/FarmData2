@@ -259,19 +259,10 @@ export default {
       }
     },
     validityStyling() {
-      const R = this.required;
-      const E = this.isEmpty;
-      const V = this.isValid;
-      const S = this.showValidityStyling;
-
-      if (!S) {
-        return null;
-      } else if (!E && V) {
-        return true;
-      } else if (!R && E) {
-        return null;
+      if (this.showValidityStyling) {
+        return this.isValid;
       } else {
-        return false;
+        return null;
       }
     },
   },

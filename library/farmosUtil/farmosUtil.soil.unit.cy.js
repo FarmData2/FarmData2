@@ -2,7 +2,9 @@ import * as farmosUtil from './farmosUtil';
 
 describe('Test the soil disturbance activity log functions', () => {
   let categoryMap = null;
+  let greenhouseMap = null;
   let fieldMap = null;
+  let bedMap = null;
   let equipmentMap = null;
 
   beforeEach(() => {
@@ -13,8 +15,16 @@ describe('Test the soil disturbance activity log functions', () => {
       categoryMap = map;
     });
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((map) => {
+      greenhouseMap = map;
+    });
+
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
+    });
+
+    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
+      bedMap = map;
     });
 
     cy.wrap(farmosUtil.getEquipmentNameToAssetMap()).then((map) => {
@@ -27,7 +37,7 @@ describe('Test the soil disturbance activity log functions', () => {
     cy.saveSessionStorage();
   });
 
-  it('Create a soil disturbance activity log', () => {
+  it('Create a soil disturbance activity log for a field', () => {
     cy.wrap(
       farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
     ).as('plantAsset');
@@ -51,6 +61,7 @@ describe('Test the soil disturbance activity log functions', () => {
           farmosUtil.createSoilDisturbanceActivityLog(
             '1999-01-02',
             'A',
+            [],
             ['tillage', 'seeding_direct'],
             plantAsset,
             [depthQuantity, speedQuantity],
@@ -106,6 +117,92 @@ describe('Test the soil disturbance activity log functions', () => {
     });
   });
 
+  it('Create a soil disturbance activity log for a Greenhouse w/ beds', () => {
+    cy.wrap(
+      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+    ).as('plantAsset');
+
+    cy.wrap(
+      farmosUtil.createStandardQuantity('length', 7, 'Depth', 'INCHES')
+    ).as('depthQuantity');
+
+    cy.wrap(farmosUtil.createStandardQuantity('rate', 5, 'Speed', 'MPH')).as(
+      'speedQuantity'
+    );
+
+    const equipmentArray = [equipmentMap.get('Seeding Drill')];
+
+    cy.getAll(['@plantAsset', '@depthQuantity', '@speedQuantity']).then(
+      ([plantAsset, depthQuantity, speedQuantity]) => {
+        cy.wrap(
+          farmosUtil.createSoilDisturbanceActivityLog(
+            '1999-01-02',
+            'CHUAU',
+            ['CHUAU-1', 'CHUAU-2'],
+            ['tillage', 'seeding_direct'],
+            plantAsset,
+            [depthQuantity, speedQuantity],
+            equipmentArray
+          )
+        ).as('soilLog');
+      }
+    );
+
+    cy.getAll([
+      '@plantAsset',
+      '@depthQuantity',
+      '@speedQuantity',
+      '@soilLog',
+    ]).then(([plantAsset, depthQuantity, speedQuantity, soilLog]) => {
+      cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
+        (result) => {
+          expect(result.type).to.equal('log--activity');
+          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.timestamp).to.contain('1999-01-02');
+          expect(result.attributes.status).to.equal('done');
+          expect(result.attributes.is_movement).to.equal(false);
+
+          expect(result.relationships.location.length).to.equal(3);
+          expect(result.relationships.location[0].id).to.equal(
+            greenhouseMap.get('CHUAU').id
+          );
+          expect(result.relationships.location[0].type).to.equal(
+            'asset--structure'
+          );
+          expect(result.relationships.location[1].id).to.equal(
+            bedMap.get('CHUAU-1').id
+          );
+          expect(result.relationships.location[1].type).to.equal('asset--land');
+          expect(result.relationships.location[2].id).to.equal(
+            bedMap.get('CHUAU-2').id
+          );
+          expect(result.relationships.location[2].type).to.equal('asset--land');
+          expect(result.relationships.asset[0].id).to.equal(plantAsset.id);
+
+          expect(result.relationships.category.length).to.equal(2);
+          expect(result.relationships.category[0].id).to.equal(
+            categoryMap.get('tillage').id
+          );
+          expect(result.relationships.category[1].id).to.equal(
+            categoryMap.get('seeding_direct').id
+          );
+
+          expect(result.relationships.quantity.length).to.equal(2);
+          expect(result.relationships.quantity[0].id).to.equal(
+            depthQuantity.id
+          );
+          expect(result.relationships.quantity[1].id).to.equal(
+            speedQuantity.id
+          );
+          expect(result.relationships.equipment.length).to.equal(1);
+          expect(result.relationships.equipment[0].id).to.equal(
+            equipmentArray[0].id
+          );
+        }
+      );
+    });
+  });
+
   it('Error creating soil disturbance activity log', { retries: 4 }, () => {
     cy.intercept('POST', '**/api/log/activity', {
       statusCode: 401,
@@ -121,6 +218,7 @@ describe('Test the soil disturbance activity log functions', () => {
           .createSoilDisturbanceActivityLog(
             '1999-01-02',
             'A',
+            [],
             ['tillage'],
             plantAsset
           )
@@ -148,6 +246,7 @@ describe('Test the soil disturbance activity log functions', () => {
         farmosUtil.createSoilDisturbanceActivityLog(
           '1999-01-02',
           'A',
+          [],
           ['tillage'],
           plantAsset
         )

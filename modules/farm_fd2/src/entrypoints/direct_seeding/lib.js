@@ -13,11 +13,13 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   plantAsset: {asset--plant},
  *   bedFeet: {quantity--standard},
  *   rowsPerBed: {quantity--standard},
+ *   rowFeet: {quantity--standard},
  *   bedWidth: {quantity--standard},
  *   seedingLog: {log--seeding},
  *   equipment: [ {asset--equipment} ],
  *   depth: {quantity--standard},
  *   speed: {quantity--standard},
+ *   area: {quantity--standard},
  *   activityLog: {log--activity},
  * }
  * ```
@@ -27,11 +29,13 @@ export async function submitForm(formData) {
   let plantAsset = null;
   let bedFeetQuantity = null;
   let rowsPerBedQuantity = null;
+  let rowFeetQuantity = null;
   let bedWidthQuantity = null;
   let seedingLog = null;
   let equipmentAssets = [];
   let depthQuantity = null;
   let speedQuantity = null;
+  let areaQuantity = null;
   let activityLog = null;
 
   try {
@@ -57,6 +61,15 @@ export async function submitForm(formData) {
       'ROWS/BED'
     );
 
+    rowFeetQuantity = await farmosUtil.createStandardQuantity(
+      'length',
+      formData.bedFeet * formData.rowsPerBed,
+      'Row Feet',
+      'FEET',
+      plantAsset,
+      'increment'
+    );
+
     bedWidthQuantity = await farmosUtil.createStandardQuantity(
       'length',
       formData.bedWidth,
@@ -67,9 +80,10 @@ export async function submitForm(formData) {
     seedingLog = await farmosUtil.createSeedingLog(
       formData.seedingDate,
       formData.locationName,
+      formData.beds,
       ['seeding', 'seeding_direct'],
       plantAsset,
-      [bedFeetQuantity, rowsPerBedQuantity, bedWidthQuantity]
+      [bedFeetQuantity, rowsPerBedQuantity, rowFeetQuantity, bedWidthQuantity]
     );
 
     if (formData.equipment.length > 0) {
@@ -87,6 +101,13 @@ export async function submitForm(formData) {
         'MPH'
       );
 
+      areaQuantity = await farmosUtil.createStandardQuantity(
+        'ratio',
+        formData.area,
+        'Area',
+        'PERCENT'
+      );
+
       const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
       for (const equipmentName of formData.equipment) {
         equipmentAssets.push(equipmentMap.get(equipmentName));
@@ -95,9 +116,10 @@ export async function submitForm(formData) {
       activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
         formData.seedingDate,
         formData.locationName,
+        formData.beds,
         ['tillage', 'seeding_direct'],
         plantAsset,
-        [depthQuantity, speedQuantity],
+        [depthQuantity, speedQuantity, areaQuantity],
         equipmentAssets
       );
     }
@@ -106,10 +128,12 @@ export async function submitForm(formData) {
       plantAsset: plantAsset,
       bedFeetQuantity: bedFeetQuantity,
       rowsPerBedQuantity: rowsPerBedQuantity,
+      rowFeetQuantity: rowFeetQuantity,
       bedWidthQuantity: bedWidthQuantity,
       seedingLog: seedingLog,
       depthQuantity: depthQuantity,
       speedQuantity: speedQuantity,
+      areaQuantity: areaQuantity,
       equipment: equipmentAssets,
       activityLog: activityLog,
     };
@@ -129,6 +153,14 @@ export async function submitForm(formData) {
         await farmosUtil.deleteSeedingLog(seedingLog.id);
       } catch (error) {
         console.log('Unable to delete seeding log: ' + seedingLog.id);
+      }
+    }
+
+    if (rowFeetQuantity) {
+      try {
+        await farmosUtil.deleteStandardQuantity(rowFeetQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete rowFeetQuantity: ' + rowFeetQuantity.id);
       }
     }
 
@@ -179,6 +211,14 @@ export async function submitForm(formData) {
         await farmosUtil.deleteStandardQuantity(speedQuantity.id);
       } catch (error) {
         console.log('Unable to delete speedQuantity: ' + speedQuantity.id);
+      }
+    }
+
+    if (areaQuantity) {
+      try {
+        await farmosUtil.deleteStandardQuantity(areaQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete areaQuantity: ' + areaQuantity.id);
       }
     }
 

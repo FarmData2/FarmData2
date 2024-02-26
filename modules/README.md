@@ -49,6 +49,13 @@ Inside each of the above module directories there are the following directories 
 - Edit `App.vue` to implement the entry point.
 - Add `\*.cy.js` files to test the new entry point.
 
+## Rebuilding Modules
+
+- run
+  - `npm run build:fd2`
+  - `npm run build:examples`
+  - `npm run build:school`
+
 ## Entry Point Conventions
 
 Document where these things are in the code somehow.
@@ -89,6 +96,19 @@ Document where these things are in the code somehow.
 A component can check the permissions of the logged in farmOS user using appropriate function in `farmosUtil.js`.
 
 If a permission needs to be checked that is not yet supported it can be added to the `$perms` array in the `permissions` function in `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
+
+## Log Categories and Units
+
+The log categories and units used by FarmData2 are installed by the `farm_fd2.install` file in `modules/farm_fd2/src/module`.
+
+To add new log categories or units:
+
+- Edit the `farm_fd2.install` file.
+- Rebuild the module.
+- Uninstall the FarmData2 module (machine name: `farm_fd2`)
+- Re-enable the Farmdata2 module.
+
+Note: the `installDB.bash` script also uninstalls and re-enables the FarmData2 module. Thus, changes to the log categories and units will be reflected when tests are run headless.
 
 ## Testing
 

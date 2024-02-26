@@ -18,6 +18,7 @@ describe('Test the TraySizeSelector events', () => {
 
     cy.mount(TraySizeSelector, {
       props: {
+        required: true,
         onReady: readySpy,
         onValid: validSpy,
       },

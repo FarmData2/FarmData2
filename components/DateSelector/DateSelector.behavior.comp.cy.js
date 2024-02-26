@@ -31,4 +31,31 @@ describe('Test the DateSelector behavior', () => {
         });
     });
   });
+
+  it('Component reacts to changed showValidityStyling prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        date: 'invalid-date',
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+          cy.get('[data-cy="date-input"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidityStyling: true });
+
+          cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+          cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');
+        });
+    });
+  });
 });

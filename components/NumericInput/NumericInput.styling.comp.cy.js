@@ -189,10 +189,7 @@ describe('Test the NumericInput styling', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="numeric-input"]').should(
-          'not.have.class',
-          'is-valid'
-        );
+        cy.get('[data-cy="numeric-input"]').should('have.class', 'is-valid');
         cy.get('[data-cy="numeric-input"]').should(
           'not.have.class',
           'is-invalid'

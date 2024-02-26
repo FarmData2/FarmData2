@@ -99,6 +99,7 @@ describe('Test the quantity functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'CHUAU',
+          [],
           ['seeding_tray'],
           plantAsset,
           [quantity]

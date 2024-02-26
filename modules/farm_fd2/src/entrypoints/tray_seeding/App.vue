@@ -1,7 +1,8 @@
 <template>
   <div
     id="tray-seeding"
-    data-cy="tray-seeding">
+    data-cy="tray-seeding"
+  >
     <BToaster
       id="tray-seeding-toaster"
       data-cy="tray-seeding-toaster"
@@ -56,6 +57,7 @@
           required
           includeGreenhouses
           v-model:selected="form.locationName"
+          v-bind:allowBedSelection="false"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.locationName = $event"
           v-on:ready="createdCount++"

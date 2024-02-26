@@ -12,12 +12,13 @@ describe('Test the EquipmentSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" false on creation if no equipment is selected', () => {
+  it('Emits "valid" false on creation if required and no equipment is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(EquipmentSelector, {
       props: {
+        required: true,
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -31,7 +32,7 @@ describe('Test the EquipmentSelector component events', () => {
       });
   });
 
-  it('Emits "valid" true on creation if one piece of equipment is selected', () => {
+  it('Emits "valid" true on creation if not required and no equipment is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -39,7 +40,6 @@ describe('Test the EquipmentSelector component events', () => {
       props: {
         onReady: readySpy,
         onValid: validSpy,
-        selected: ['Tractor'],
       },
     });
 
@@ -51,12 +51,35 @@ describe('Test the EquipmentSelector component events', () => {
       });
   });
 
-  it('Emits "valid" true on creation if multiple equipment are selected', () => {
+  it('Emits "valid" true on creation if required and one piece of equipment is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(EquipmentSelector, {
       props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+        selected: ['Tractor'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // one call in created() and one due to change in isValid.
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('Emits "valid" true on creation if required and multiple equipment are selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(EquipmentSelector, {
+      props: {
+        required: true,
         onReady: readySpy,
         onValid: validSpy,
         selected: ['Tractor', 'Planter'],

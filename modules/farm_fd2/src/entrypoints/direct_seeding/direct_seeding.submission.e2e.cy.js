@@ -19,9 +19,20 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="direct-seeding-crop"]')
       .find('[data-cy="selector-input"]')
       .select('ARUGULA');
+
     cy.get('[data-cy="direct-seeding-location"]')
       .find('[data-cy="selector-input"]')
-      .select('A');
+      .select('ALF');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .click();
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .click();
 
     cy.get('[data-cy="direct-seeding-bed-feet"]')
       .find('[data-cy="numeric-input"]')
@@ -39,22 +50,30 @@ describe('Direct Seeding: Submission tests', () => {
       .find('[data-cy="selector-input"]')
       .select('5');
 
-    cy.get('[data-cy="direct-seeding-equipment-accordion-title"]').click();
-    cy.get('[data-cy="direct-seeding-equipment-selector"]')
+    cy.get(
+      '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .clear();
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .type('6');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .clear();
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('5');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .type('50');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -62,7 +81,7 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="submit-button"]').click();
   }
 
-  it('Test successful submission', () => {
+  it.only('Test successful submission', () => {
     /*
      * Create a spy to watch for the activity log created by the
      * lib.submitForm function that is called when the "Submit"
@@ -91,14 +110,24 @@ describe('Direct Seeding: Submission tests', () => {
      * No need to check the db for the records as the lib unit tests
      * already do that.
      */
-    cy.get('@submitSpy').should('be.called');
+    cy.get('@submitSpy').should('be.calledOnce');
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
+
     cy.get('[data-cy="direct-seeding-location"]')
       .find('[data-cy="selector-input"]')
-      .should('have.value', 'A');
-
+      .should('have.value', 'ALF');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .should('be.checked');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .should('be.checked');
     cy.get('[data-cy="direct-seeding-bed-feet"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '200');
@@ -109,15 +138,21 @@ describe('Direct Seeding: Submission tests', () => {
       .find('[data-cy="selector-input"]')
       .should('have.value', '5');
 
-    cy.get('[data-cy="direct-seeding-equipment-selector"]')
+    cy.get(
+      '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Tractor');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '6.0');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '5.0');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '50');
 
     // Check that the other parts of the form are reset.
     cy.get('[data-cy="direct-seeding-crop"]')

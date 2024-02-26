@@ -71,8 +71,9 @@ var fd2Cache = {
   farm: null,
 
   users: null,
-  fields_and_beds: null,
+  fields: null,
   greenhouses: null,
+  beds: null,
   crops: null,
   tray_sizes: null,
   units: null,
@@ -656,46 +657,33 @@ export async function getUserIdToUserMap() {
 }
 
 /**
- * Clear the cached results from prior calls to the `getFieldsAndBeds` function.
- * This is useful when an action may change the fields and beds that exist in the
+ * Clear the cached results from prior calls to the `getFields` function.
+ * This is useful when an action may change the fields that exist in the
  * system
  *
- * @category FieldsAndBeds
+ * @category Fields
  */
-export function clearCachedFieldsAndBeds() {
-  clearCachedValue('fields_and_beds');
+export function clearCachedFields() {
+  clearCachedValue('fields');
 }
 
 /**
- * Get the asset objects for all of the active places that represent fields or beds.
- * These are the assets of type `asset--land` that have `land_type` of either
- * `field` or `bed`.  The fields and beds will appear in alphabetical order
- * by the value of the `attributes.name` property.
+ * Get the asset objects for all of the active locations that represent fields.
+ * These are the assets of type `asset--land` that have `land_type` of `field`.
+ * The fields will appear in alphabetical order by the value of the `attributes.name` property.
  *
  * NOTE: The result of this function is cached.
- * Use the [`clearCachedFieldsAndBeds`]{@link #module_farmosUtil.clearCachedFieldsAndBeds}
+ * Use the [`clearCachedFields`]{@link #module_farmosUtil.clearCachedFields}
  * function to clear the cache.
  *
- * @throws {Error} if unable to fetch the fields and beds.
- * @returns {Array<Object>} a array of all of land assets representing fields or beds.
+ * @throws {Error} if unable to fetch the fields.
+ * @returns {Array<Object>} a array of all of land assets representing fields.
  *
- * @category FieldsAndBeds
+ * @category Fields
  */
-export async function getFieldsAndBeds() {
-  return fetchWithCaching('fields_and_beds', async () => {
+export async function getFields() {
+  return fetchWithCaching('fields', async () => {
     const farm = await getFarmOSInstance();
-
-    // Done as two requests for now because of a bug in the farmOS.js library.
-    // https://github.com/farmOS/farmOS.js/issues/86
-
-    const beds = await farm.asset.fetch({
-      filter: {
-        type: 'asset--land',
-        land_type: 'bed',
-        status: 'active',
-      },
-      limit: Infinity,
-    });
 
     const fields = await farm.asset.fetch({
       filter: {
@@ -706,55 +694,142 @@ export async function getFieldsAndBeds() {
       limit: Infinity,
     });
 
-    const rejects = fields.rejected.concat(beds.rejected);
-    if (rejects.length != 0) {
-      throw new Error('Unable to fetch fields and beds.', rejects);
+    if (fields.rejected.length != 0) {
+      throw new Error('Unable to fetch fields.', fields.rejected);
     }
 
-    const land = fields.data.concat(beds.data);
-    land.sort((o1, o2) => o1.attributes.name.localeCompare(o2.attributes.name));
+    fields.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
 
-    return land;
+    return fields.data;
   });
 }
 
 /**
- * Get a map from the name of a field or bed land asset to the
+ * Get a map from the name of a field land asset to the
  * farmOS land asset object.
  *
  * NOTE: This function makes a call to
- * [`getFieldsAndBeds`]{@link #module_farmosUtil.getFieldsAndBeds}
+ * [`getFields`]{@link #module_farmosUtil.getFields}
  * and builds the `Map` using the returned `Array<Object>`.
  *
- * @throws {Error} if unable to fetch the fields and beds.
- * @returns {Map<String,Object>} a `Map` from the field or bed `name` to the `asset--land` object.
+ * @throws {Error} if unable to fetch the fields.
+ * @returns {Map<String,Object>} a `Map` from the field `name` to the `asset--land` object.
  *
- * @category FieldsAndBeds
+ * @category Fields
  */
-export async function getFieldOrBedNameToAssetMap() {
-  const fieldsAndBeds = await getFieldsAndBeds();
-  const map = new Map(
-    fieldsAndBeds.map((land) => [land.attributes.name, land])
-  );
+export async function getFieldNameToAssetMap() {
+  const fields = await getFields();
+  const map = new Map(fields.map((field) => [field.attributes.name, field]));
   return map;
 }
 
 /**
- * Get a map from the id of a field or bed land asset to the
+ * Get a map from the id of a field land asset to the
  * farmOS land asset object.
  *
  * NOTE: This function makes a call to
- * [`getFieldsAndBeds`]{@link #module_farmosUtil.getFieldsAndBeds}
+ * [`getFields`]{@link #module_farmosUtil.getFields}
  * and builds the `Map` using the returned `Array<Object>`.
  *
- * @throws {Error} if unable to fetch the fields and beds.
- * @returns {Map<String,Object>} a `Map` from the field or bed `id` to the `asset--land` object.
+ * @throws {Error} if unable to fetch the fields.
+ * @returns {Map<String,Object>} a `Map` from the field `id` to the `asset--land` object.
  *
- * @category FieldsAndBeds
+ * @category Fields
  */
-export async function getFieldOrBedIdToAssetMap() {
-  const fieldsAndBeds = await getFieldsAndBeds();
-  const map = new Map(fieldsAndBeds.map((land) => [land.id, land]));
+export async function getFieldIdToAssetMap() {
+  const fields = await getFields();
+  const map = new Map(fields.map((field) => [field.id, field]));
+  return map;
+}
+
+/**
+ * Clear the cached results from prior calls to the `getBeds` function.
+ * This is useful when an action may change the beds that exist in the
+ * system
+ *
+ * @category Beds
+ */
+export function clearCachedBeds() {
+  clearCachedValue('beds');
+}
+
+/**
+ * Get the asset objects for all of the active places that represent beds.
+ * These are the assets of type `asset--land` that have `land_type` of `bed`.
+ * The fields and beds will appear in alphabetical order
+ * by the value of the `attributes.name` property.
+ *
+ * NOTE: The result of this function is cached.
+ * Use the [`clearCachedBeds`]{@link #module_farmosUtil.clearCachedBeds}
+ * function to clear the cache.
+ *
+ * @throws {Error} if unable to fetch the beds.
+ * @returns {Array<Object>} a array of all of land assets representing beds.
+ *
+ * @category Beds
+ */
+export async function getBeds() {
+  return fetchWithCaching('beds', async () => {
+    const farm = await getFarmOSInstance();
+
+    const beds = await farm.asset.fetch({
+      filter: {
+        type: 'asset--land',
+        land_type: 'bed',
+        status: 'active',
+      },
+      limit: Infinity,
+    });
+
+    if (beds.rejected.length != 0) {
+      throw new Error('Unable to fetch beds.', beds.rejected);
+    }
+
+    beds.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
+    return beds.data;
+  });
+}
+
+/**
+ * Get a map from the name of a bed land asset to the
+ * farmOS land asset object.
+ *
+ * NOTE: This function makes a call to
+ * [`getBeds`]{@link #module_farmosUtil.getBeds}
+ * and builds the `Map` using the returned `Array<Object>`.
+ *
+ * @throws {Error} if unable to fetch the beds.
+ * @returns {Map<String,Object>} a `Map` from the bed `name` to the `asset--land` object.
+ *
+ * @category Beds
+ */
+export async function getBedNameToAssetMap() {
+  const beds = await getBeds();
+  const map = new Map(beds.map((bed) => [bed.attributes.name, bed]));
+  return map;
+}
+
+/**
+ * Get a map from the id of a bed land asset to the
+ * farmOS land asset object.
+ *
+ * NOTE: This function makes a call to
+ * [`getBeds`]{@link #module_farmosUtil.getBeds}
+ * and builds the `Map` using the returned `Array<Object>`.
+ *
+ * @throws {Error} if unable to fetch the beds.
+ * @returns {Map<String,Object>} a `Map` from the bed `id` to the `asset--land` object.
+ *
+ * @category Beds
+ */
+export async function getBedIdToAssetMap() {
+  const beds = await getBeds();
+  const map = new Map(beds.map((bed) => [bed.id, bed]));
   return map;
 }
 
@@ -1596,7 +1671,9 @@ export async function deleteStandardQuantity(quantityId) {
  *
  * @param {string} seedingDate the date of the seeding
  * @param {string} locationName the name of the location where the seeding occurred.
- * This must be the name of a field, bed or greenhouse.
+ * This must be the name of a field or greenhouse.
+ * @param {Array<string>} bedNames the names of the bed(s) where the seeding occurred.
+ * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `seeding` and one of `seeding_tray` or `seeding_direct` or `seeding_cover_crop`.
  * @param {Object} plantAsset the plant asset created by the seeding.
@@ -1610,17 +1687,39 @@ export async function deleteStandardQuantity(quantityId) {
 export async function createSeedingLog(
   seedingDate,
   locationName,
+  bedNames,
   logCategories,
   plantAsset,
   quantities = []
 ) {
-  let locationID = null;
-  if (logCategories.includes('seeding_tray')) {
-    const greenhouseMap = await getGreenhouseNameToAssetMap();
-    locationID = greenhouseMap.get(locationName).id;
+  let locations = [];
+  const fieldMap = await getFieldNameToAssetMap();
+  let location = fieldMap.get(locationName);
+  if (location) {
+    // location is a field.
+    locations.push({
+      type: 'asset--land',
+      id: location.id,
+    });
   } else {
-    const fieldMap = await getFieldOrBedNameToAssetMap();
-    locationID = fieldMap.get(locationName).id;
+    // location is a greenhouse.
+    const greenhouseMap = await getGreenhouseNameToAssetMap();
+    const locationID = greenhouseMap.get(locationName).id;
+    locations.push({
+      type: 'asset--structure',
+      id: locationID,
+    });
+  }
+
+  if (bedNames.length > 0) {
+    const bedMap = await getBedNameToAssetMap();
+    for (const bed of bedNames) {
+      const bedID = bedMap.get(bed).id;
+      locations.push({
+        type: 'asset--land',
+        id: bedID,
+      });
+    }
   }
 
   let quantitiesArray = [];
@@ -1650,12 +1749,7 @@ export async function createSeedingLog(
       purchase_date: dayjs(seedingDate).format(),
     },
     relationships: {
-      location: [
-        {
-          type: 'asset--structure',
-          id: locationID,
-        },
-      ],
+      location: locations,
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
       category: logCategoriesArray,
       quantity: quantitiesArray,
@@ -1717,6 +1811,9 @@ export async function deleteSeedingLog(seedingLogId) {
  *
  * @param {string} disturbanceDate the date the disturbance took place.
  * @param {string} locationName the location where the disturbance took place.
+ * This must be the name of a field or greenhouse.
+ * @param {Array<string>} bedNames the names of the bed(s) where the disturbance occurred.
+ * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `tillage`.
  * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
@@ -1729,14 +1826,41 @@ export async function deleteSeedingLog(seedingLogId) {
 export async function createSoilDisturbanceActivityLog(
   distrubanceDate,
   locationName,
+  bedNames = [],
   logCategories,
   plantAsset = null,
   quantities = [],
   equipment = []
 ) {
-  let locationID = null;
-  const fieldMap = await getFieldOrBedNameToAssetMap();
-  locationID = fieldMap.get(locationName).id;
+  let locations = [];
+  const fieldMap = await getFieldNameToAssetMap();
+  let location = fieldMap.get(locationName);
+  if (location) {
+    // location is a field.
+    locations.push({
+      type: 'asset--land',
+      id: location.id,
+    });
+  } else {
+    // location is a greenhouse.
+    const greenhouseMap = await getGreenhouseNameToAssetMap();
+    const locationID = greenhouseMap.get(locationName).id;
+    locations.push({
+      type: 'asset--structure',
+      id: locationID,
+    });
+  }
+
+  if (bedNames.length > 0) {
+    const bedMap = await getBedNameToAssetMap();
+    for (const bed of bedNames) {
+      const bedID = bedMap.get(bed).id;
+      locations.push({
+        type: 'asset--land',
+        id: bedID,
+      });
+    }
+  }
 
   let quantitiesArray = [];
   for (const quant of quantities) {
@@ -1772,12 +1896,7 @@ export async function createSoilDisturbanceActivityLog(
       purchase_date: dayjs(distrubanceDate).format(),
     },
     relationships: {
-      location: [
-        {
-          type: 'asset--land',
-          id: locationID,
-        },
-      ],
+      location: locations,
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
       category: logCategoriesArray,
       quantity: quantitiesArray,

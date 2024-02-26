@@ -10,15 +10,15 @@
  */
 
 #block-gin-page-title {
-  display: none;
+  display: none !important;
 }
 
 header.region {
-  display: none;
+  display: none !important;
 }
 
 div.help {
-  display: none;
+  display: none !important;
 }
 
 div.region {
@@ -54,14 +54,26 @@ h2.text-center {
 }
 
 .layout-container {
-  margin-top: 0px !important;
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
+  margin: 0px !important;
 }
 
 .accordion {
-  border: 0px !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.accordion-header {
+  margin-top: 0px !important;
+}
+
+.accordion-item {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  border-style: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
   box-shadow: none !important;
 }
 

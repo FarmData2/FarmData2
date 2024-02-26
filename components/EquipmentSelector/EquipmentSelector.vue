@@ -84,26 +84,18 @@ export default {
   data() {
     return {
       selectedEquipment: this.selected,
-      valid: [],
+      valid: [null],
       equipmentList: [],
       canCreateEquipment: false,
     };
   },
   computed: {
     isValid() {
-      let allValid = false;
-
       /*
-       * Will be valid if every SelectorBase has a valid value,
-       * except the last one, which is always blank.
+       * The whole list will be valid if the first
+       * SelectorBase has a valid value.
        */
-      if (this.selectedEquipment.length > 0) {
-        allValid = this.valid
-          .slice(0, this.selectedEquipment.length)
-          .every((valid) => valid === true);
-      }
-
-      return allValid;
+      return this.valid[0];
     },
   },
   methods: {
@@ -159,20 +151,23 @@ export default {
       .then(([canCreate, equipmentMap]) => {
         this.canCreateEquipment = canCreate;
         this.equipmentList = Array.from(equipmentMap.keys());
+
+        //Emit the initial valid state of the component's value.
+        //this.$emit('valid', this.isValid);
+
+        /**
+         * The component is ready for use.
+         */
+        this.$emit('ready');
       })
       .catch((err) => {
         console.error('EquipmentSelector: Error fetching equipment.');
         console.error(err);
+        /**
+         * An error occurred loading the equipment.
+         */
         this.$emit('error', 'Unable to fetch equipment.');
       });
-
-    //Emit the initial valid state of the component's value.
-    this.$emit('valid', this.isValid);
-
-    /**
-     * The component is ready for use.
-     */
-    this.$emit('ready');
   },
 };
 </script>
