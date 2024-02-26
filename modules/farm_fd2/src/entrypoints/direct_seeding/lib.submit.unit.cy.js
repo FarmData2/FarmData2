@@ -14,7 +14,7 @@ describe('Submission using the direct_seeding lib.', () => {
     locationName: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
     bedFeet: 100,
-    rowsPerBed: '1',
+    rowsPerBed: '3',
     bedWidth: 60,
     equipment: ['Tractor'],
     depth: 6,
@@ -78,11 +78,15 @@ describe('Submission using the direct_seeding lib.', () => {
         expect(plantAsset.relationships.location[0].id).to.equal(
           fieldMap.get(form.locationName).id
         );
+
+        expect(plantAsset.attributes.inventory[0].measure).to.equal('length');
+        expect(plantAsset.attributes.inventory[0].value).to.equal('300');
+        expect(plantAsset.attributes.inventory[0].units).to.equal('FEET');
       }
     );
   });
 
-  it('Check the bed feed quantity--standard', () => {
+  it('Check the bed feet quantity--standard', () => {
     cy.wrap(farmosUtil.getStandardQuantity(result.bedFeetQuantity.id)).then(
       (bedFeetQuantity) => {
         expect(bedFeetQuantity.type).to.equal('quantity--standard');
@@ -92,9 +96,7 @@ describe('Submission using the direct_seeding lib.', () => {
         );
         expect(bedFeetQuantity.attributes.label).to.equal('Bed Feet');
 
-        expect(bedFeetQuantity.attributes.inventory_adjustment).to.equal(
-          'increment'
-        );
+        expect(bedFeetQuantity.attributes.inventory_adjustment).to.be.null;
 
         expect(bedFeetQuantity.relationships.units.type).to.equal(
           'taxonomy_term--unit'
@@ -103,12 +105,7 @@ describe('Submission using the direct_seeding lib.', () => {
           result.bedFeetQuantity.relationships.units.id
         );
 
-        expect(bedFeetQuantity.relationships.inventory_asset.type).to.equal(
-          'asset--plant'
-        );
-        expect(bedFeetQuantity.relationships.inventory_asset.id).to.equal(
-          result.bedFeetQuantity.relationships.inventory_asset.id
-        );
+        expect(bedFeetQuantity.relationships.inventory_asset).to.be.null;
       }
     );
   });
@@ -133,6 +130,37 @@ describe('Submission using the direct_seeding lib.', () => {
         );
 
         expect(rowsPerBedQuantity.relationships.inventory_asset).to.be.null;
+      }
+    );
+  });
+
+  it('Check the row feet quantity--standard', () => {
+    cy.wrap(farmosUtil.getStandardQuantity(result.rowFeetQuantity.id)).then(
+      (rowFeetQuantity) => {
+        expect(rowFeetQuantity.type).to.equal('quantity--standard');
+        expect(rowFeetQuantity.attributes.measure).to.equal('length');
+        expect(rowFeetQuantity.attributes.value.decimal).to.equal(
+          (form.bedFeet * form.rowsPerBed).toString()
+        );
+        expect(rowFeetQuantity.attributes.label).to.equal('Row Feet');
+
+        expect(rowFeetQuantity.attributes.inventory_adjustment).to.equal(
+          'increment'
+        );
+
+        expect(rowFeetQuantity.relationships.units.type).to.equal(
+          'taxonomy_term--unit'
+        );
+        expect(rowFeetQuantity.relationships.units.id).to.equal(
+          result.rowFeetQuantity.relationships.units.id
+        );
+
+        expect(rowFeetQuantity.relationships.inventory_asset.type).to.equal(
+          'asset--plant'
+        );
+        expect(rowFeetQuantity.relationships.inventory_asset.id).to.equal(
+          result.rowFeetQuantity.relationships.inventory_asset.id
+        );
       }
     );
   });
@@ -203,25 +231,18 @@ describe('Submission using the direct_seeding lib.', () => {
           result.seedingLog.relationships.category[1].id
         );
 
-        expect(seedingLog.relationships.quantity.length).to.equal(3);
+        expect(seedingLog.relationships.quantity.length).to.equal(4);
         expect(seedingLog.relationships.quantity[0].type).to.equal(
           'quantity--standard'
         );
-        expect(seedingLog.relationships.quantity[0].id).to.equal(
-          result.seedingLog.relationships.quantity[0].id
-        );
-        expect(seedingLog.relationships.quantity[1].type).to.equal(
-          'quantity--standard'
-        );
-        expect(seedingLog.relationships.quantity[1].id).to.equal(
-          result.seedingLog.relationships.quantity[1].id
-        );
-        expect(seedingLog.relationships.quantity[2].type).to.equal(
-          'quantity--standard'
-        );
-        expect(seedingLog.relationships.quantity[2].id).to.equal(
-          result.seedingLog.relationships.quantity[2].id
-        );
+        for (let i = 1; i < 4; i++) {
+          expect(seedingLog.relationships.quantity[i].type).to.equal(
+            'quantity--standard'
+          );
+          expect(seedingLog.relationships.quantity[i].id).to.equal(
+            result.seedingLog.relationships.quantity[i].id
+          );
+        }
       }
     );
   });

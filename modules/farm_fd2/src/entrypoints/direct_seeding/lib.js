@@ -13,6 +13,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   plantAsset: {asset--plant},
  *   bedFeet: {quantity--standard},
  *   rowsPerBed: {quantity--standard},
+ *   rowFeet: {quantity--standard},
  *   bedWidth: {quantity--standard},
  *   seedingLog: {log--seeding},
  *   equipment: [ {asset--equipment} ],
@@ -28,6 +29,7 @@ export async function submitForm(formData) {
   let plantAsset = null;
   let bedFeetQuantity = null;
   let rowsPerBedQuantity = null;
+  let rowFeetQuantity = null;
   let bedWidthQuantity = null;
   let seedingLog = null;
   let equipmentAssets = [];
@@ -49,9 +51,7 @@ export async function submitForm(formData) {
       'length',
       formData.bedFeet,
       'Bed Feet',
-      'FEET',
-      plantAsset,
-      'increment'
+      'FEET'
     );
 
     rowsPerBedQuantity = await farmosUtil.createStandardQuantity(
@@ -59,6 +59,15 @@ export async function submitForm(formData) {
       formData.rowsPerBed,
       'Rows/Bed',
       'ROWS/BED'
+    );
+
+    rowFeetQuantity = await farmosUtil.createStandardQuantity(
+      'length',
+      formData.bedFeet * formData.rowsPerBed,
+      'Row Feet',
+      'FEET',
+      plantAsset,
+      'increment'
     );
 
     bedWidthQuantity = await farmosUtil.createStandardQuantity(
@@ -74,7 +83,7 @@ export async function submitForm(formData) {
       formData.beds,
       ['seeding', 'seeding_direct'],
       plantAsset,
-      [bedFeetQuantity, rowsPerBedQuantity, bedWidthQuantity]
+      [bedFeetQuantity, rowsPerBedQuantity, rowFeetQuantity, bedWidthQuantity]
     );
 
     if (formData.equipment.length > 0) {
@@ -119,6 +128,7 @@ export async function submitForm(formData) {
       plantAsset: plantAsset,
       bedFeetQuantity: bedFeetQuantity,
       rowsPerBedQuantity: rowsPerBedQuantity,
+      rowFeetQuantity: rowFeetQuantity,
       bedWidthQuantity: bedWidthQuantity,
       seedingLog: seedingLog,
       depthQuantity: depthQuantity,
@@ -143,6 +153,14 @@ export async function submitForm(formData) {
         await farmosUtil.deleteSeedingLog(seedingLog.id);
       } catch (error) {
         console.log('Unable to delete seeding log: ' + seedingLog.id);
+      }
+    }
+
+    if (rowFeetQuantity) {
+      try {
+        await farmosUtil.deleteStandardQuantity(rowFeetQuantity.id);
+      } catch (error) {
+        console.log('Unable to delete rowFeetQuantity: ' + rowFeetQuantity.id);
       }
     }
 

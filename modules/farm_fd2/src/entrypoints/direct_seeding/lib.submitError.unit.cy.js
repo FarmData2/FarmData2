@@ -83,7 +83,7 @@ describe('Error when submitting using the direct_seeding lib.', () => {
           })
           .catch((error) => {
             expect(error.message).to.equal('Error creating direct seeding.');
-            expect(standardQuantityDeletes).to.equal(6);
+            expect(standardQuantityDeletes).to.equal(7);
             expect(seedingLogDeletes).to.equal(1);
             expect(plantAssetDeletes).to.equal(1);
           }),
