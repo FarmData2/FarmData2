@@ -18,6 +18,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   equipment: [ {asset--equipment} ],
  *   depth: {quantity--standard},
  *   speed: {quantity--standard},
+ *   area: {quantity--standard},
  *   activityLog: {log--activity},
  * }
  * ```
@@ -48,7 +49,9 @@ export async function submitForm(formData) {
       'length',
       formData.bedFeet,
       'Bed Feet',
-      'FEET'
+      'FEET',
+      plantAsset,
+      'increment'
     );
 
     rowsPerBedQuantity = await farmosUtil.createStandardQuantity(

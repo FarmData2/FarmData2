@@ -1,7 +1,7 @@
 import * as lib from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-describe('Submit w/o equipment using teh direct_seeding lib.', () => {
+describe('Submit w/o equipment using the direct_seeding lib.', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the tray_seeding entry point.  This will be passed
@@ -87,7 +87,9 @@ describe('Submit w/o equipment using teh direct_seeding lib.', () => {
         );
         expect(bedFeetQuantity.attributes.label).to.equal('Bed Feet');
 
-        expect(bedFeetQuantity.attributes.inventory_adjustment).to.be.null;
+        expect(bedFeetQuantity.attributes.inventory_adjustment).to.equal(
+          'increment'
+        );
 
         expect(bedFeetQuantity.relationships.units.type).to.equal(
           'taxonomy_term--unit'
@@ -96,7 +98,12 @@ describe('Submit w/o equipment using teh direct_seeding lib.', () => {
           result.bedFeetQuantity.relationships.units.id
         );
 
-        expect(bedFeetQuantity.relationships.inventory_asset).to.be.null;
+        expect(bedFeetQuantity.relationships.inventory_asset.type).to.equal(
+          'asset--plant'
+        );
+        expect(bedFeetQuantity.relationships.inventory_asset.id).to.equal(
+          result.bedFeetQuantity.relationships.inventory_asset.id
+        );
       }
     );
   });

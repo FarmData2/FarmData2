@@ -92,7 +92,9 @@ describe('Submission using the direct_seeding lib.', () => {
         );
         expect(bedFeetQuantity.attributes.label).to.equal('Bed Feet');
 
-        expect(bedFeetQuantity.attributes.inventory_adjustment).to.be.null;
+        expect(bedFeetQuantity.attributes.inventory_adjustment).to.equal(
+          'increment'
+        );
 
         expect(bedFeetQuantity.relationships.units.type).to.equal(
           'taxonomy_term--unit'
@@ -101,7 +103,12 @@ describe('Submission using the direct_seeding lib.', () => {
           result.bedFeetQuantity.relationships.units.id
         );
 
-        expect(bedFeetQuantity.relationships.inventory_asset).to.be.null;
+        expect(bedFeetQuantity.relationships.inventory_asset.type).to.equal(
+          'asset--plant'
+        );
+        expect(bedFeetQuantity.relationships.inventory_asset.id).to.equal(
+          result.bedFeetQuantity.relationships.inventory_asset.id
+        );
       }
     );
   });
