@@ -82,17 +82,19 @@ A direct seeding consists of:
 - A `log--seeding` representing the seeding activity:
   - the log `category` set to `seeding_direct`
   - three `quantity--standard` records with the labels:
-    - `Bed Feet`: the number of bed feet that were seeded with units of 'FEET'
+    - `Bed Feet`: the number of bed feet that were seeded with units of 'FEET'.
     - `Rows/Bed`: the number of rows in the bed that was seeded with units of `ROWS/BED'
+    - `Row Feet`: the number of row feet that were seeded with units of `FEET`. This quantity is an inventory quantity that increments the Row Feet inventory of the plant asset.
     - `Bed/Width`: the width of the bed that was seeded with units `INCHES`
   - References the `asset--plant` asset in its `relationship.assets` attribute.
-  - References the field or bed in its `relationship.location` attribute.
+  - References the field/greenhouse and beds (if selected) in its `relationship.location` attribute.
 - A `log--activity` representing the soil disturbance associated with the direct seeding with:
   - the log `category` set to `tillage`
   - `equipment` relationships for all of the equipment used.
-  - two `quantity--standard` records with the labels:
+  - three `quantity--standard` records with the labels:
     - `Depth`: the depth of the soil disturbed with units of `INCHES`
     - `Speed`: the rate at which the soil was disturbed with units of `MPH`
+    - `Area`: the area of the soil disturbed as a percentage of the location (e.g. 50% of the field) with units of `PERCENT`.
   - References the `asset--plant` asset in its `relationship.assets` attribute.
   - References the field or bed in its `relationship.location` attribute.
 
@@ -104,14 +106,16 @@ See `modules/farm_fd2/src/entrypoints/direct_seeding/lib.js` for the details of 
 
 ## Transplanting
 
-- Decrease Trays inventory on the planting and create new in ground planting for each transplant operation.
+- Decrease Trays inventory on the planting and create new in ground planting for each transplant operation. Increment the Row Feet inventory on the planting.
 
 NOTE: There is no transplant log type.
 
-- Possibly just use an activity log with a transplanting log category?
+- Use an activity log with a transplanting log category.
 
 ## Harvesting
 
-- Decrease row/feed inventory on the in ground planting.
+- Decrease FEET inventory on the planting.
 
 ## Soil Disturbance
+
+## Soil Amendment
