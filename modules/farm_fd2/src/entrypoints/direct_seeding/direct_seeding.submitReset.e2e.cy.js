@@ -80,7 +80,7 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
   it('Invalid date disables submit', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="direct-seeding-date"]').clear();
+    cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
   });
@@ -189,7 +189,7 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
-  it.only('Reset button resets form', () => {
+  it('Reset button resets form', () => {
     populateForm();
     cy.get('[data-cy="reset-button"]').click();
 
