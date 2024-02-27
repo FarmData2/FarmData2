@@ -61,18 +61,23 @@ squashMergePR() {
     { echo "Failed to merge PR #$pr_number."; return 1; }
 }
 # Entrypoint for main
+
 checkGhCliAuth
+
 # Prompt for PR number if not provided
 PR_NUMBER=${1:-$(promptForValue "Enter PR number" "")}
 [ -z "$PR_NUMBER" ] && { echo "PR number is required."; exit 1; }
+
 # Fetch PR title and body
 echo "Fetching PR #$PR_NUMBER..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
+
 # Extract type, scope, and description from PR title
 TYPE=$(echo "$PR_TITLE" | cut -d':' -f1)
 SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1)
 DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
+
 # Validate and prompt for type and scope
 TYPE=${TYPE:-$(promptForValue "Enter commit type" "feat")}
 if ! elementInArray "$TYPE" "${VALID_TYPES[@]}"; then
@@ -84,10 +89,13 @@ if ! elementInArray "$SCOPE" "${VALID_SCOPES[@]}"; then
     echo "Invalid commit scope: $SCOPE. Please enter a valid scope."
     exit 1
 fi
+
 # Prompt for breaking change
 BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
+
 # Generate the conventional commit message
 CONV_COMMIT=$(convertToConventionalCommit "$TYPE" "$SCOPE" "$DESCRIPTION" "$PR_BODY" "$BREAKING_CHANGE")
+
 # Provide options to accept or edit the commit message
 echo "Proposed commit message:"
 echo "$CONV_COMMIT"
@@ -96,5 +104,6 @@ case $choice in
     [Ee]* ) nano <<< "$CONV_COMMIT";;
     [Cc]* ) exit;;
 esac
+
 # Perform the squash merge
 squashMergePR "$PR_NUMBER" "$CONV_COMMIT"
