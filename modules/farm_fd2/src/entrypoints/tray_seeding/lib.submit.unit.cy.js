@@ -74,6 +74,10 @@ describe('Test the tray seeding lib', () => {
         expect(plantAsset.relationships.location[0].id).to.equal(
           greenhouseMap.get(form.locationName).id
         );
+
+        expect(plantAsset.attributes.inventory[0].measure).to.equal('count');
+        expect(plantAsset.attributes.inventory[0].value).to.equal('25');
+        expect(plantAsset.attributes.inventory[0].units).to.equal('TRAYS');
       }
     );
   });
@@ -200,24 +204,14 @@ describe('Test the tray seeding lib', () => {
         );
 
         expect(seedingLog.relationships.quantity.length).to.equal(3);
-        expect(seedingLog.relationships.quantity[0].type).to.equal(
-          'quantity--standard'
-        );
-        expect(seedingLog.relationships.quantity[0].id).to.equal(
-          result.seedingLog.relationships.quantity[0].id
-        );
-        expect(seedingLog.relationships.quantity[1].type).to.equal(
-          'quantity--standard'
-        );
-        expect(seedingLog.relationships.quantity[1].id).to.equal(
-          result.seedingLog.relationships.quantity[1].id
-        );
-        expect(seedingLog.relationships.quantity[2].type).to.equal(
-          'quantity--standard'
-        );
-        expect(seedingLog.relationships.quantity[2].id).to.equal(
-          result.seedingLog.relationships.quantity[2].id
-        );
+        for (let i = 0; i < seedingLog.relationships.quantity.length; i++) {
+          expect(seedingLog.relationships.quantity[i].type).to.equal(
+            'quantity--standard'
+          );
+          expect(seedingLog.relationships.quantity[i].id).to.equal(
+            result.seedingLog.relationships.quantity[i].id
+          );
+        }
       }
     );
   });

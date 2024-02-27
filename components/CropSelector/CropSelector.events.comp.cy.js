@@ -18,6 +18,7 @@ describe('Test the CropSelector events', () => {
 
     cy.mount(CropSelector, {
       props: {
+        required: true,
         onReady: readySpy,
         onValid: validSpy,
       },

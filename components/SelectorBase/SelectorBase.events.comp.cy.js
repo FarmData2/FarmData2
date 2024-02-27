@@ -11,7 +11,7 @@ describe('Test the SelectorBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" with true on creation when selection is given', () => {
+  it('Emits "valid" true on creation when not required', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -19,8 +19,8 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
+        required: false,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        selected: 'One',
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -34,7 +34,7 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Emits "valid" with false on creation when no selection is given', () => {
+  it('Emits "valid" false on creation when required and no selection given', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -42,8 +42,8 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
+        required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        selected: '',
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -54,6 +54,30 @@ describe('Test the SelectorBase component events', () => {
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('Emits "valid" true on creation when required and selection given', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        required: true,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'One',
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
@@ -88,6 +112,7 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
+        required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
         onValid: validSpy,
@@ -112,6 +137,7 @@ describe('Test the SelectorBase component events', () => {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
+        required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
         onValid: validSpy,

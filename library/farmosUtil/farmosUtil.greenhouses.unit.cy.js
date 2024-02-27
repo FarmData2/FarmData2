@@ -14,13 +14,16 @@ describe('Test the greenhouse utility functions', () => {
   it('Get the greenhouse structure assets', () => {
     cy.wrap(farmosUtil.getGreenhouses()).then((gh) => {
       expect(gh).to.not.be.null;
-      expect(gh.length).to.equal(2);
+      expect(gh.length).to.equal(3);
 
       expect(gh[0].attributes.name).to.equal('CHUAU');
       expect(gh[0].type).to.equal('asset--structure');
 
       expect(gh[1].attributes.name).to.equal('GHANA');
       expect(gh[1].type).to.equal('asset--structure');
+
+      expect(gh[2].attributes.name).to.equal('JASMINE');
+      expect(gh[2].type).to.equal('asset--structure');
     });
   });
 
@@ -58,13 +61,16 @@ describe('Test the greenhouse utility functions', () => {
   it('Get the GreenhouseNameToAsset map', () => {
     cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((ghNameMap) => {
       expect(ghNameMap).to.not.be.null;
-      expect(ghNameMap.size).to.equal(2);
+      expect(ghNameMap.size).to.equal(3);
 
       expect(ghNameMap.get('CHUAU')).to.not.be.null;
       expect(ghNameMap.get('CHUAU').type).to.equal('asset--structure');
 
       expect(ghNameMap.get('GHANA')).to.not.be.null;
       expect(ghNameMap.get('GHANA').type).to.equal('asset--structure');
+
+      expect(ghNameMap.get('JASMINE')).to.not.be.null;
+      expect(ghNameMap.get('JASMINE').type).to.equal('asset--structure');
 
       expect(ghNameMap.get('A')).to.be.undefined;
     });
@@ -73,16 +79,20 @@ describe('Test the greenhouse utility functions', () => {
   it('Get the GreenhouseIdToAsset map', () => {
     cy.wrap(farmosUtil.getGreenhouseIdToAssetMap()).then((ghIdMap) => {
       expect(ghIdMap).to.not.be.null;
-      expect(ghIdMap.size).to.equal(2);
+      expect(ghIdMap.size).to.equal(3);
 
       cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((ghNameMap) => {
         const chuauId = ghNameMap.get('CHUAU').id;
         expect(ghIdMap.get(chuauId).attributes.name).to.equal('CHUAU');
         expect(ghIdMap.get(chuauId).type).to.equal('asset--structure');
 
-        const sbId = ghNameMap.get('GHANA').id;
-        expect(ghIdMap.get(sbId).attributes.name).to.equal('GHANA');
-        expect(ghIdMap.get(sbId).type).to.equal('asset--structure');
+        const ghanaId = ghNameMap.get('GHANA').id;
+        expect(ghIdMap.get(ghanaId).attributes.name).to.equal('GHANA');
+        expect(ghIdMap.get(ghanaId).type).to.equal('asset--structure');
+
+        const jasmineId = ghNameMap.get('JASMINE').id;
+        expect(ghIdMap.get(jasmineId).attributes.name).to.equal('JASMINE');
+        expect(ghIdMap.get(jasmineId).type).to.equal('asset--structure');
       });
     });
   });

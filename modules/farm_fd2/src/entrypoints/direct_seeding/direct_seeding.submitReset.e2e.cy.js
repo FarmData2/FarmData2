@@ -33,19 +33,54 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     if (!skipLocation) {
       cy.get('[data-cy="direct-seeding-location"]')
         .find('[data-cy="selector-input"]')
-        .select('A');
+        .select('ALF');
+      cy.get('[data-cy="direct-seeding-location"]')
+        .find('[data-cy="picker-options"]')
+        .find('input')
+        .eq(0)
+        .click();
+      cy.get('[data-cy="direct-seeding-location"]')
+        .find('[data-cy="picker-options"]')
+        .find('input')
+        .eq(3)
+        .click();
     }
 
-    cy.get('[data-cy="direct-seeding-equipment-accordion-title"]').click();
-    cy.get('[data-cy="direct-seeding-equipment-selector"]')
+    cy.get(
+      '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type('6');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type('3');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .type('25');
+
+    cy.get('[data-cy="comment-input"]').clear();
+    cy.get('[data-cy="comment-input"]').type('Test comment');
+    cy.get('[data-cy="comment-input"]').blur();
   }
 
   it('Invalid date disables submit', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="direct-seeding-date"]').clear();
+    cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
   });
@@ -97,10 +132,10 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
   it('Invalid depth disables submit if equipment is selected', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .clear();
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .blur();
 
@@ -117,10 +152,30 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
   it('Invalid speed disables submit if equipment is selected', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .clear();
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-delete-button"]')
+      .click();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Invalid area disables submit if equipment is selected', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
       .blur();
 
@@ -145,9 +200,27 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="direct-seeding-crop"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
+
     cy.get('[data-cy="direct-seeding-location"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .should('not.exist');
+
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .should('not.be.checked');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .should('not.be.checked');
 
     cy.get('[data-cy="direct-seeding-bed-feet"]')
       .find('[data-cy="numeric-input"]')
@@ -162,11 +235,22 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-    cy.get('[data-cy="direct-seeding-soil-disturbance-depth"]')
+    cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
+
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '0.0');
-    cy.get('[data-cy="direct-seeding-soil-disturbance-speed"]')
+    cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '0.0');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '100');
   });
 });

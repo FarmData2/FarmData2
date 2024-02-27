@@ -11,6 +11,11 @@ Custom FarmData2 Vue Components.
 - use `addComponent.bash`
 
   - describe its use...
+    - creates its own branch
+  - To add component in a branch...
+    - run it
+    - switch to branch
+    - then commit
 
 - modify `.vue` file as appropriate.
 - modify the `.comp.cy.js` file as appropriate.
@@ -84,9 +89,9 @@ Custom FarmData2 Vue Components.
   - This prop is set by the entry point to indicates that bootstrap styling should be shown for inputs.
   - The component indicates the validity of inputs using its `isValid` computed property.
 
-    - This can be a little confusing...
-    - This function should indicate whether the value in the component is valid to be submitted the farmOS database.
-      - Returns true if the input value is valid and false if not.
+    - If `isValid` returns false if the component should block submission of the form that contains it.
+      - If the component is not required then blank/empty/no value/etc is considered a valid value.
+      - If the component is required then blank/empty/no value/etc is not considered a valid value.
     - The submit function in the page will use this value to determine if the submit button should be enabled or disabled and whether or not to add non-required fields to the submission.
 
   - The component indicates the type of styling to be used using its `invalidStyling` computed property.
@@ -94,7 +99,7 @@ Custom FarmData2 Vue Components.
     - This function returns:
       - `true` to apply valid styling (green check)
       - `false` to apply invalid styling (red x and invalidFeedbackText)
-      - `null` to not apply either styling.
+      - `null` to not apply either styling. This should be applied when showValidityStyling is set false, and also non-required inputs that are blank.
 
   - The `showValidityStyling` prop should be is set by the entry point to
     - `true` when "Submit" is clicked
@@ -104,10 +109,15 @@ Custom FarmData2 Vue Components.
 - Components manage props, state and events to allow page to change state via the prop.
 
   - The component provides a `prop` for every value that is collected by the component
-  - The component watches the `props` and the state variables that are `v-modeled` to input elements
-  - when a watched prop changes the component updates its state.
-  - When the state for a value that a component collects changes, the component emits an `updated:prop_name` event with a payload giving the new value of the prop.
-  - The entry point should `v-model` the prop to an element in its `data.form`
+    - An entry point can `v-model` the associated `prop` to an element in its `data.form`
+  - The `prop` is assigned to some internal state (in `data`)
+  - The internal state is `v-model`ed to the input element or sub-component.
+  - The component watches the `props`
+    - when a watched `prop` changes the component updates the internal state.
+  - The component listens (`v-on`) for `update` events from the input element or sub-component.
+    - When an `update` event occurs the component emits an `updated:prop_name` event with a payload communicating the new value of the `prop` to the entry point or parent component.
+
+- NOTE: Keeping internal state allows for more thorough testing of the component apart from a page that changes props in response to events (i.e. closes the loop). It make this loop more explicit and makes the code more idiomatic across components.
 
 - All events emitted must be kabob-case.
 
@@ -123,6 +133,9 @@ Custom FarmData2 Vue Components.
 
   - This event will have a `boolean` payload indicating if the component's value is valid or not.
   - The component `watch`es the `isValid` computed property for changes and emits this event.
+  - This event should be emitted when:
+    - any time the component's `isValid` computed property changes. This should be done with a `watch` for the `isValid` computed property.
+      - If `isValid` is `null` then this watcher should not emit the event.
 
 - If a component only contains one element, then it should be wrapped in a `<div>` element. See the `CommentComponent` component for an example and explanation.
 
@@ -197,6 +210,15 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 - Visible in the console when running headless.
 - Click on the task in the test events output to print to console in Cypress gui.
 
+- Add pointers to canonical examples of tests:
+  - basic existence
+    - checking styles
+  - events
+    - interacting with elements
+    - generating network errors
+  - changing props
+  - Others???
+
 ### Component Tests Organization
 
 - Every component should have tests that:
@@ -205,30 +227,31 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
   - check initial content (`*.content.comp.cy.js`)
 
-    - check all `data-cy` elements exist and have right values for default props.
-      - look at `<template>` to see what needs to be tested.
-      - check that each of the `data-cy` elements `exist`.
-      - typically done on one test.
-    - Check all required pros and default values for optional props:
-      - This test should check values for all required props and default values of all optional props.
-        - e.g. `label`, `required`, `showValidityStyling`
-      - use `have.class` / `have.text` / `have.value` on elements
+    - Check required props and default prop values
+      - Set only required props in the test.
+      - check effect of all required props
+        - e.g. `label`, `invalidFeedback`, etc.
+      - Check default values of all optional props.
+        - e.g. `required`, `showValidityStyling`, etc.
+      - look at `<template>` to see what elements need to be tested.
+        - check existence of `data-cy` elements using `exist`.
+        - use `have.class` / `have.text` / `have.value` on elements
         - If component uses other components, check sub-component elements as necessary.
       - can usually be done in one test.
-    - check that non-default `prop` values are handled correctly
-      - Set each prop to a non-default value and check for its effect.
+    - check that non-default optional `prop` values are handled correctly
+      - Set each optional prop to a non-default value and check for its effect.
       - use `have.class` / `have.text` / `have.value` on elements
         - If component uses other components, check sub-component elements as necessary.
-      - can often be done in one test.
+      - ideally one test per optional prop.
     - check that all content loaded via API on creation is loaded correctly.
       - e.g. crops or fields vs greenhouses in LocationSelector.
 
   - check styling (`*.styling.comp.cy.js`)
 
     - check that the type of valid/invalid styling to be shows as expected based on `isValid` `required`, `showValidityStyling` and any other criteria that is necessary.
-      - This is often an enumeration test that checks all 8 combinations of these values.
-      - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required.
-        - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
+      - This is often an enumeration test that checks all combinations of these values.
+    - If the computations for displaying the valid/invalid styling are done by a sub-component (e.g. `SelectorBase`) then this test is not required because the prop will have been tested by the `content` test and the styling will have been tested by the sub-component.
+      - The `content` test will have checked that `showValidityStyling` is passed and the sub-component's tests will have checked that the type of styling to show is correct.
     - If a component is never styled (e.g. `CommentBox` or `TextDisplay`) then this test is not required.
 
   - check events (`*.events.comp.cy.js`)
@@ -264,6 +287,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
       - Create a `farmOS` instance as `guest` (which should not have many permissions.)
         - Check that the UI elements / behaviors that should not be present are not present.
       - Note: `worker#` and `manager#` have appropriate permissions when logging into farmOS, but when running via API they need to request a scope, which is not currently implemented in `farmosUtil.js`.
+    - If there is no user permission based content then this test is not required.
 
 ## Documenting components
 

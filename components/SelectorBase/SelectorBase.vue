@@ -3,7 +3,7 @@
     <BFormGroup
       id="selector-group"
       data-cy="selector-group"
-      label-for="crop-select"
+      label-for="selector-input"
       label-cols="auto"
       label-align="end"
     >
@@ -208,18 +208,16 @@ export default {
   },
   computed: {
     isValid() {
-      return this.selectedOption != null && this.selectedOption != '';
+      if (this.required) {
+        return this.selectedOption != null && this.selectedOption != '';
+      } else {
+        return true;
+      }
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      const R = this.required;
-      const V = this.isValid;
-      const S = this.showValidityStyling;
-
-      if (V && S) {
-        return true;
-      } else if (R && !V && S) {
-        return false;
+      if (this.showValidityStyling) {
+        return this.isValid;
       } else {
         return null;
       }

@@ -4,6 +4,7 @@ describe('Test the seeding log functions', () => {
   let greenhouseMap = null;
   let categoryMap = null;
   let fieldMap = null;
+  let bedMap = null;
 
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -17,8 +18,12 @@ describe('Test the seeding log functions', () => {
       greenhouseMap = map;
     });
 
-    cy.wrap(farmosUtil.getFieldOrBedNameToAssetMap()).then((map) => {
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
       fieldMap = map;
+    });
+
+    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
+      bedMap = map;
     });
   });
 
@@ -41,6 +46,7 @@ describe('Test the seeding log functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'CHUAU',
+          [],
           ['seeding', 'seeding_tray'],
           plantAsset,
           [quantity]
@@ -70,6 +76,9 @@ describe('Test the seeding log functions', () => {
           expect(result.relationships.location[0].id).to.equal(
             greenhouseMap.get('CHUAU').id
           );
+          expect(result.relationships.location[0].type).to.equal(
+            'asset--structure'
+          );
           expect(result.relationships.asset[0].id).to.equal(plantAsset.id);
 
           expect(result.relationships.quantity.length).to.equal(1);
@@ -79,12 +88,7 @@ describe('Test the seeding log functions', () => {
     );
   });
 
-  it('Create a direct seeding log', () => {
-    /*
-     * Test this also because it fetches location id from the
-     * fields and beds map instead of the greenhouses map.
-     */
-
+  it('Create a direct seeding log w/ beds', () => {
     cy.wrap(
       farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
     ).as('plantAsset');
@@ -97,7 +101,8 @@ describe('Test the seeding log functions', () => {
       cy.wrap(
         farmosUtil.createSeedingLog(
           '01/02/1999',
-          'A',
+          'ALF',
+          ['ALF-1', 'ALF-3'],
           ['seeding', 'seeding_direct'],
           plantAsset,
           [quantity]
@@ -107,8 +112,6 @@ describe('Test the seeding log functions', () => {
 
     cy.getAll(['@plantAsset', '@quantity', '@seedingLog']).then(
       ([plantAsset, quantity, seedingLog]) => {
-        console.log(seedingLog);
-
         cy.wrap(farmosUtil.getSeedingLog(seedingLog.id)).then((result) => {
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.purchase_date).to.contain('1999-01-02');
@@ -126,9 +129,19 @@ describe('Test the seeding log functions', () => {
             categoryMap.get('seeding_direct').id
           );
 
+          expect(result.relationships.location.length).to.equal(3);
           expect(result.relationships.location[0].id).to.equal(
-            fieldMap.get('A').id
+            fieldMap.get('ALF').id
           );
+          expect(result.relationships.location[0].type).to.equal('asset--land');
+          expect(result.relationships.location[1].id).to.equal(
+            bedMap.get('ALF-1').id
+          );
+          expect(result.relationships.location[1].type).to.equal('asset--land');
+          expect(result.relationships.location[2].id).to.equal(
+            bedMap.get('ALF-3').id
+          );
+          expect(result.relationships.location[2].type).to.equal('asset--land');
           expect(result.relationships.asset[0].id).to.equal(plantAsset.id);
 
           expect(result.relationships.quantity.length).to.equal(1);
@@ -153,6 +166,7 @@ describe('Test the seeding log functions', () => {
           .createSeedingLog(
             '01/02/1999',
             'CHUAU',
+            [],
             ['seeding', 'seeding_tray'],
             plantAsset
           )
@@ -182,6 +196,7 @@ describe('Test the seeding log functions', () => {
         farmosUtil.createSeedingLog(
           '01/02/1999',
           'CHUAU',
+          [],
           ['seeding', 'seeding_tray'],
           plantAsset,
           [quantity]
