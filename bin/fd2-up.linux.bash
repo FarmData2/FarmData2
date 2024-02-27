@@ -68,15 +68,23 @@ then
   if [ -z "$FD2GRP_EXISTS" ];
   then
     echo "  Creating fd2grp group on host."
-    FD2GRP_GID=$(cat "$SCRIPT_DIR"/fd2grp.gid)
+    FD2GRP_GID=$(tail -n 1 "$SCRIPT_DIR"/fd2grp.gid)
     FD2GRP_GID_EXISTS=$(grep ":$FD2GRP_GID:" /etc/group)
     if [ -n "$FD2GRP_GID_EXISTS" ];
     then
       echo "Attempted to create the fd2grp with GID=$FD2GRP_GID."
       echo "Host machine already has a group with that GID."
-      echo "Change the group number in docker/dev/f2grp.gid to an unused GID."
-      echo "Then run ./fd2-up.bash again."
-      exit -1
+      echo "Finding an unused GID for fd2grp."
+
+      desired_gid=$((FD2GRP_GID + 1))
+      while true; do
+        if ! getent group $desired_gid > /dev/null; then
+            break
+        fi
+        ((desired_gid++))
+      done
+      FD2GRP_GID=$desired_gid
+      echo "  Found unused GID=$FD2GRP_GID for fd2grp."
     fi
 
     sudo -S groupadd --gid $FD2GRP_GID fd2grp
