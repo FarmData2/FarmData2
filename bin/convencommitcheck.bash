@@ -28,22 +28,18 @@ convertToConventionalCommit() {
     local description=$3
     local body=$4
     local breaking_change=$5
-
     local commit_message="${type}"
     if [[ "$scope" != "none" ]]; then
         commit_message="${commit_message}(${scope})"
     fi
     commit_message="${commit_message}: ${description}"
-
     if [[ "$breaking_change" == "yes" ]]; then
         commit_message="${commit_message}\n\nBREAKING CHANGE: ${body}"
     else
         commit_message="${commit_message}\n\n${body}"
     fi
-
     echo "$commit_message"
 }
-
 # Function to check and handle GitHub CLI authentication
 checkGhCliAuth() {
     echo "Checking GitHub CLI Authentication status..."
@@ -54,7 +50,6 @@ checkGhCliAuth() {
         echo "Logged in to the GitHub CLI."
     fi
 }
-
 # Function to perform a squash merge
 squashMergePR() {
     local pr_number=$1
@@ -65,44 +60,34 @@ squashMergePR() {
     echo "Successfully merged PR #$pr_number." || \
     { echo "Failed to merge PR #$pr_number."; return 1; }
 }
-
-# Script starts here
-
+# Entrypoint for main
 checkGhCliAuth
-
 # Prompt for PR number if not provided
 PR_NUMBER=${1:-$(promptForValue "Enter PR number" "")}
 [ -z "$PR_NUMBER" ] && { echo "PR number is required."; exit 1; }
-
 # Fetch PR title and body
 echo "Fetching PR #$PR_NUMBER..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
-
 # Extract type, scope, and description from PR title
 TYPE=$(echo "$PR_TITLE" | cut -d':' -f1)
 SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1)
 DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
-
 # Validate and prompt for type and scope
 TYPE=${TYPE:-$(promptForValue "Enter commit type" "feat")}
 if ! elementInArray "$TYPE" "${VALID_TYPES[@]}"; then
     echo "Invalid commit type: $TYPE. Please enter a valid type."
     exit 1
 fi
-
 SCOPE=${SCOPE:-$(promptForValue "Enter commit scope" "none")}
 if ! elementInArray "$SCOPE" "${VALID_SCOPES[@]}"; then
     echo "Invalid commit scope: $SCOPE. Please enter a valid scope."
     exit 1
 fi
-
 # Prompt for breaking change
 BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
-
 # Generate the conventional commit message
 CONV_COMMIT=$(convertToConventionalCommit "$TYPE" "$SCOPE" "$DESCRIPTION" "$PR_BODY" "$BREAKING_CHANGE")
-
 # Provide options to accept or edit the commit message
 echo "Proposed commit message:"
 echo "$CONV_COMMIT"
@@ -111,6 +96,5 @@ case $choice in
     [Ee]* ) nano <<< "$CONV_COMMIT";;
     [Cc]* ) exit;;
 esac
-
 # Perform the squash merge
 squashMergePR "$PR_NUMBER" "$CONV_COMMIT"
