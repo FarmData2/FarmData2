@@ -42,7 +42,7 @@ import dayjs from 'dayjs';
 /**
  * The DateSelector component provides a UI element for selecting a date.
  *
- * ## Live Example:
+ * ## Live Example
  * 
  * <a href="http://farmos/fd2_examples/date_selector">The DateSelector Example</a>
  * 
