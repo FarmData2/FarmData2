@@ -15,15 +15,37 @@ elementInArray() {
     return 1
 }
 
-
-# Function to prompt for a value with a default
+# Helper function to print an array
+printArray() {
+    local arr=("$@")
+    for item in "${arr[@]}"; do
+        echo " - $item"
+    done
+}
+# Function to prompt for a value with a default, displaying valid options and requiring valid input
 promptForValue() {
     local prompt=$1
     local default=$2
-    read -p "$prompt [$default]: " value
-    echo "${value:-$default}"
+    local -n validOptions=$3 # Using nameref for indirect reference to the array
+    local value
+    while true; do
+        echo "$prompt"
+        if [[ -n ${validOptions} ]]; then
+            echo "Valid options are:"
+            for item in "${validOptions[@]}"; do
+                echo " - $item"
+            done
+        fi
+        read -p "Your choice [$default]: " value
+        value="${value:-$default}"
+        if [[ " ${validOptions[*]} " =~ " ${value} " || "$value" == "$default" ]]; then
+            echo "$value"
+            return 0 
+        else
+            echo "Invalid input: '$value'. Please enter a valid value."
+        fi
+    done
 }
-
 # Function to convert PR title to conventional commit format
 convertToConventionalCommit() {
     local type=$1
@@ -81,17 +103,9 @@ TYPE=$(echo "$PR_TITLE" | cut -d':' -f1 | tr '[:upper:]' '[:lower:]')
 SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1 | tr '[:upper:]' '[:lower:]')
 DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
 
-# Validate and prompt for type and scope
-TYPE=${TYPE:-$(promptForValue "Enter commit type" "feat")}
-if ! elementInArray "$TYPE" "${VALID_TYPES[@]}"; then
-    echo "Invalid commit type: $TYPE. Please enter a valid type."
-    exit 1
-fi
-SCOPE=${SCOPE:-$(promptForValue "Enter commit scope" "none")}
-if ! elementInArray "$SCOPE" "${VALID_SCOPES[@]}"; then
-    echo "Invalid commit scope: $SCOPE. Please enter a valid scope."
-    exit 1
-fi
+# TYPE and SCOPE prompts (validation done in pfv function)
+TYPE=$(promptForValue "Enter commit type" "feat" VALID_TYPES)
+SCOPE=$(promptForValue "Enter commit scope" "none" VALID_SCOPES)
 
 # Prompt for breaking change
 BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
