@@ -7,11 +7,14 @@ VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school" "none") # Added 'none
 # Helper function to check if an element is in an array
 elementInArray() {
     local element
+    shopt -s nocasematch # Enable case-insensitive matching
     for element in "${@:2}"; do
-        [[ "$element" == "$1" ]] && return 0
+        [[ "$element" == "$1" ]] && { shopt -u nocasematch; return 0; } 
     done
+    shopt -u nocasematch # Disable case-insensitive matching
     return 1
 }
+
 
 # Function to prompt for a value with a default
 promptForValue() {
@@ -74,8 +77,8 @@ PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq 
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
 # Extract type, scope, and description from PR title
-TYPE=$(echo "$PR_TITLE" | cut -d':' -f1)
-SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1)
+TYPE=$(echo "$PR_TITLE" | cut -d':' -f1 | tr '[:upper:]' '[:lower:]')
+SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1 | tr '[:upper:]' '[:lower:]')
 DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
 
 # Validate and prompt for type and scope
