@@ -123,6 +123,7 @@ if [[ "$BREAKING_CHANGE" == "yes" ]]; then
     # Check if the PR body already contains a BREAKING CHANGE footer and extract it if present in PR body
     if [[ "$PR_BODY" =~ "BREAKING CHANGE:" ]]; then
         BREAKING_CHANGE_DESCRIPTION=$(echo "$PR_BODY" | sed -n '/BREAKING CHANGE:/,$p')
+        echo "Breaking changes found and appended to commit."
     else
         echo "You indicated this is a breaking change. Please provide a specific description of the breaking change."
         read -p "Enter breaking change description: " BREAKING_CHANGE_DESCRIPTION
