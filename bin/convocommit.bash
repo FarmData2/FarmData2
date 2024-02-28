@@ -53,18 +53,26 @@ convertToConventionalCommit() {
     local description=$3
     local body=$4
     local breaking_change=$5
-    local commit_message="${type}"
+    local breaking_change_description=$6 
+    local commit_message="${type}" 
+    
     if [[ "$scope" != "none" ]]; then
         commit_message="${commit_message}(${scope})"
-    fi
+    fi 
+    
     commit_message="${commit_message}: ${description}"
-    if [[ "$breaking_change" == "yes" ]]; then
-        commit_message="${commit_message}\n\nBREAKING CHANGE: ${body}"
+    
+    if [[ "$breaking_change" == "yes" && -n "$breaking_change_description" ]]; then
+        commit_message="${commit_message}\n\nBREAKING CHANGE: ${breaking_change_description}"
+    elif [[ "$breaking_change" == "yes" ]]; then
+        commit_message="${commit_message}\n\n${body}"
     else
         commit_message="${commit_message}\n\n${body}"
     fi
+    
     echo "$commit_message"
 }
+
 # Function to check and handle GitHub CLI authentication
 checkGhCliAuth() {
     echo "Checking GitHub CLI Authentication status..."
@@ -109,9 +117,20 @@ SCOPE=$(promptForValue "Enter commit scope" "none" VALID_SCOPES)
 
 # Prompt for breaking change
 BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
+BREAKING_CHANGE_DESCRIPTION=""
+
+if [[ "$BREAKING_CHANGE" == "yes" ]]; then
+    # Check if the PR body already contains a BREAKING CHANGE footer and extract it if present in PR body
+    if [[ "$PR_BODY" =~ "BREAKING CHANGE:" ]]; then
+        BREAKING_CHANGE_DESCRIPTION=$(echo "$PR_BODY" | sed -n '/BREAKING CHANGE:/,$p')
+    else
+        echo "You indicated this is a breaking change. Please provide a specific description of the breaking change."
+        read -p "Enter breaking change description: " BREAKING_CHANGE_DESCRIPTION
+    fi
+fi
 
 # Generate the conventional commit message
-CONV_COMMIT=$(convertToConventionalCommit "$TYPE" "$SCOPE" "$DESCRIPTION" "$PR_BODY" "$BREAKING_CHANGE")
+CONV_COMMIT=$(convertToConventionalCommit "$TYPE" "$SCOPE" "$DESCRIPTION" "$PR_BODY" "$BREAKING_CHANGE" "$BREAKING_CHANGE_DESCRIPTION")
 
 # Provide options to accept or edit the commit message
 echo "Proposed commit message:"
