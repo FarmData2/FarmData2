@@ -9,6 +9,17 @@ main:
       main/main.css: {}
     component:
       shared/index.css: {}
+component_examples:
+  js:
+    component_examples/component_examples.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      component_examples/component_examples.css: {}
+    component:
+      shared/index.css: {}
 date_selector:
   js:
     date_selector/date_selector.js:
