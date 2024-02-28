@@ -4,3 +4,9 @@ farm.fd2_examples_main:
   parent: farm.base
   route_name: farm.fd2_examples.content
   weight: 110
+farm.fd2_examples_date_selector:
+  title: 'DateSelector Example'
+  description: 'Example for use of the DateSelector component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_date_selector.content
+  weight: 100
