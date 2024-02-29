@@ -1,7 +1,14 @@
 #!/bin/bash
 
-source ./lib.bash
-source ./colors.bash
+# Get the path to the main repo directory.
+SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+
+source "$SCRIPT_DIR/lib.bash"
+source "$SCRIPT_DIR/colors.bash"
+
+safe_cd "$REPO_ROOT_DIR"
 
 # Ensuring this script is not being run as root.
 RUNNING_AS_ROOT=$(id -un | grep "root")
@@ -30,12 +37,6 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
   echo "  setting in Docker Desktop -> Settings -> Advanced is enabled."
   exit 255
 fi
-
-# Get the path to the main repo directory.
-SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
-safe_cd "$REPO_ROOT_DIR"
 
 echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
 
