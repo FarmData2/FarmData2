@@ -82,7 +82,7 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
       echo "  Found unused GID=$FD2GRP_GID for fd2grp."
     fi
 
-    sudo -S groupadd --gid "$FD2GRP_GID"S fd2grp
+    sudo -S groupadd --gid "$FD2GRP_GID" fd2grp
     error_check
     echo "  fd2grp group created on host with GID=$FD2GRP_GID."
   else
