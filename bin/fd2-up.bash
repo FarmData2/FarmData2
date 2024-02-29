@@ -51,7 +51,7 @@ echo "  Full path: $FD2_PATH"
 
 # Create the .fd2 directory if it does not exist.
 # This directory is used for development environment configuration information.
-if [ -d ~/.fd2 ]; then
+if [ ! -d ~/.fd2 ]; then
   echo "Creating the ~/.fd2 configuration directory."
   mkdir ~/.fd2
   echo "  The ~/.fd2 configuration directory created."
