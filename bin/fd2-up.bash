@@ -92,7 +92,7 @@ docker rm fd2_farmos &> /dev/null
 docker rm fd2_dev &> /dev/null
 
 echo "Starting containers..."
-safe_cd docker
+safe_cd "$FD2_DIR/docker"
 
 # Note: Any command line args are passed to the docker-compose up command
 docker compose up -d "$@"
