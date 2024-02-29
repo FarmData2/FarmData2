@@ -49,13 +49,13 @@ safe_cd docker
 echo "Starting development environment from $FD2_DIR."
 echo "  Full path: $FD2_PATH"
 
-# (Re)create the .fd2 directory.
+# Create the .fd2 directory if it does not exist.
 # This directory is used for development environment configuration information.
-# It is recreated on each start.
-echo "Creating the ~/.fd2 configuration directory."
-rm -fr ~/.fd2 2> /dev/null
-mkdir ~/.fd2
-echo "  The ~/.fd2 configuration directory created."
+if [ -d ~/.fd2 ]; then
+  echo "Creating the ~/.fd2 configuration directory."
+  mkdir ~/.fd2
+  echo "  The ~/.fd2 configuration directory created."
+fi
 
 # Determine the host operating system.
 echo "Detecting host Operating System..."

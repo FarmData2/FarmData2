@@ -17,6 +17,7 @@ entrypoints
 farmadata
 farmdata
 farmos
+getent
 getopt
 gids
 isready
@@ -28,6 +29,7 @@ localstorage
 mfinelli
 Michal
 mryhryki
+newgrp
 novnc
 PASA
 pgid
@@ -44,6 +46,7 @@ shellcheck
 shfmt
 toplevel
 unplugin
+usermod
 vite
 vuejs
 vuese

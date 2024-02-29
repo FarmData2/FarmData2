@@ -2,32 +2,29 @@
 
 # test change.
 
-if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ];
-then
+if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
   echo "Configuring Linux or Windows (WSL) host..."
   # We now know this path exists on all platforms.
   DOCKER_SOCK_PATH=/var/run/docker.sock
   echo "  Using docker socket at $DOCKER_SOCK_PATH."
   # If the docker group doesn't exist on the host, create it.
   DOCKER_GRP_EXISTS=$(grep "docker" /etc/group)
-  if [ -z "$DOCKER_GRP_EXISTS" ];
-  then
+  if [ -z "$DOCKER_GRP_EXISTS" ]; then
     echo "  Creating new docker group on host."
     sudo groupadd docker
     error_check
-    DOCKER_GRP_GID=$(cat /etc/group | grep "^docker:" | cut -d':' -f3)
+    DOCKER_GRP_GID=$(grep "^docker:" /etc/group | cut -d':' -f3)
     echo "  docker group created with GID=$DOCKER_GRP_GID."
-  else 
-    DOCKER_GRP_GID=$(cat /etc/group | grep "^docker:" | cut -d':' -f3)
+  else
+    DOCKER_GRP_GID=$(grep "^docker:" /etc/group | cut -d':' -f3)
     echo "  docker group exists on host with GID=$DOCKER_GRP_GID."
   fi
 
   # If the current user is not in the docker group add them.
   USER_IN_DOCKER_GRP=$(groups | grep "docker")
-  if [ -z "$USER_IN_DOCKER_GRP" ];
-  then 
+  if [ -z "$USER_IN_DOCKER_GRP" ]; then
     echo "  Adding user $(id -un) to the docker group."
-    sudo usermod -a -G docker $(id -un)
+    sudo usermod -a -G docker "$(id -un)"
     error_check
     echo "  User $(id -un) added to the docker group."
     echo "  ***"
@@ -39,9 +36,9 @@ then
   fi
 
   # If the docker.sock does not belong to the docker group assign it.
+  # shellcheck disable=SC2010
   SOCK_IN_DOCKER_GRP=$(ls -lH "$DOCKER_SOCK_PATH" | grep " docker ")
-  if [ -z "$SOCK_IN_DOCKER_GRP" ];
-  then
+  if [ -z "$SOCK_IN_DOCKER_GRP" ]; then
     echo "  Assigning $DOCKER_SOCK_PATH to the docker group."
     sudo chgrp docker $DOCKER_SOCK_PATH
     error_check
@@ -51,27 +48,25 @@ then
   fi
 
   # If the docker group does not have write permission to docker.sock add it.
+  # shellcheck disable=SC2012
   DOCKER_GRP_RW_SOCK=$(ls -lH $DOCKER_SOCK_PATH | cut -c 5-6 | grep "rw")
-  if [ -z "$DOCKER_GRP_RW_SOCK" ];
-  then
+  if [ -z "$DOCKER_GRP_RW_SOCK" ]; then
     echo "  Granting docker group RW access to $DOCKER_SOCK_PATH."
     sudo chmod g+rw $DOCKER_SOCK_PATH
     error_check
     echo "  docker group granted RW access to $DOCKER_SOCK_PATH."
-  else 
+  else
     echo "  docker group has RW access to $DOCKER_SOCK_PATH."
   fi
 
   echo "Configuring FarmData2 group (fd2grp)..."
   # If group fd2grp does not exist on host create it
   FD2GRP_EXISTS=$(grep "fd2grp" /etc/group)
-  if [ -z "$FD2GRP_EXISTS" ];
-  then
+  if [ -z "$FD2GRP_EXISTS" ]; then
     echo "  Creating fd2grp group on host."
     FD2GRP_GID=$(tail -n 1 "$SCRIPT_DIR"/fd2grp.gid)
     FD2GRP_GID_EXISTS=$(grep ":$FD2GRP_GID:" /etc/group)
-    if [ -n "$FD2GRP_GID_EXISTS" ];
-    then
+    if [ -n "$FD2GRP_GID_EXISTS" ]; then
       echo "Attempted to create the fd2grp with GID=$FD2GRP_GID."
       echo "Host machine already has a group with that GID."
       echo "Finding an unused GID for fd2grp."
@@ -79,7 +74,7 @@ then
       desired_gid=$((FD2GRP_GID + 1))
       while true; do
         if ! getent group $desired_gid > /dev/null; then
-            break
+          break
         fi
         ((desired_gid++))
       done
@@ -87,7 +82,7 @@ then
       echo "  Found unused GID=$FD2GRP_GID for fd2grp."
     fi
 
-    sudo -S groupadd --gid $FD2GRP_GID fd2grp
+    sudo -S groupadd --gid "$FD2GRP_GID"S fd2grp
     error_check
     echo "  fd2grp group created on host with GID=$FD2GRP_GID."
   else
@@ -97,10 +92,9 @@ then
 
   # If the current user is not in the fd2grp then add them.
   USER_IN_FD2GRP=$(groups | grep "fd2grp")
-  if [ -z "$USER_IN_FD2GRP" ];
-  then
+  if [ -z "$USER_IN_FD2GRP" ]; then
     echo "  Adding user $(id -un) to the fd2grp group."
-    sudo usermod -a -G fd2grp $(id -un)
+    sudo usermod -a -G fd2grp "$(id -un)"
     error_check
     echo "  User user $(id -un) added to the fd2grp group."
     echo "  ***"
@@ -112,11 +106,11 @@ then
   fi
 
   # If the FarmData2 directory is not in the fd2grp then set it.
-  FD2GRP_OWNS_FD2=$(ls -ld ../../$FD2_DIR | grep " fd2grp ")
-  if [ -z "$FD2GRP_OWNS_FD2" ];
-  then
+  # shellcheck disable=SC2010
+  FD2GRP_OWNS_FD2=$(ls -ld "../../$FD2_DIR" | grep " fd2grp ")
+  if [ -z "$FD2GRP_OWNS_FD2" ]; then
     echo "  Assigning $FD2_DIR to the fd2grp group."
-    sudo chgrp -R fd2grp ../../$FD2_DIR
+    sudo chgrp -R fd2grp "../../$FD2_DIR"
     error_check
     echo "  $FD2_DIR assigned to the fd2grp group."
   else
@@ -124,18 +118,19 @@ then
   fi
 
   # If the fd2grp does not have RW access to FarmData2 change it.
-  FD2GRP_RW_FD2=$(ls -ld ../../$FD2_DIR | cut -c 5-6 | grep "rw")
-  if [ -z "$FD2GRP_RW_FD2" ];
-  then
+  # shellcheck disable=SC2012
+  FD2GRP_RW_FD2=$(ls -ld "../../$FD2_DIR" | cut -c 5-6 | grep "rw")
+  if [ -z "$FD2GRP_RW_FD2" ]; then
     echo "  Granting fd2grp RW access to $FD2_DIR."
-    sudo chmod -R g+rw ../../$FD2_DIR
+    sudo chmod -R g+rw "../../$FD2_DIR"
     error_check
     echo "  fd2grp granted RW access to $FD2_DIR."
   else
     echo "  fd2grp has RW access to $FD2_DIR."
   fi
 
+  rm -rf ~/.fd2/gids &> /dev/null
   mkdir ~/.fd2/gids
-  echo $FD2GRP_GID > ~/.fd2/gids/fd2grp.gid
-  echo $DOCKER_GRP_GID > ~/.fd2/gids/docker.gid
+  echo "$FD2GRP_GID" > ~/.fd2/gids/fd2grp.gid
+  echo "$DOCKER_GRP_GID" > ~/.fd2/gids/docker.gid
 fi
