@@ -106,10 +106,10 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
 
   # If the FarmData2 directory is not in the fd2grp then set it.
   # shellcheck disable=SC2010
-  FD2GRP_OWNS_FD2=$(ls -ld "../../$FD2_DIR" | grep " fd2grp ")
+  FD2GRP_OWNS_FD2=$(ls -ld "$FD2_PATH" | grep " fd2grp ")
   if [ -z "$FD2GRP_OWNS_FD2" ]; then
     echo "  Assigning $FD2_DIR to the fd2grp group."
-    sudo chgrp -R fd2grp "../../$FD2_DIR"
+    sudo chgrp -R fd2grp "$FD2_PATH"
     error_check
     echo "  $FD2_DIR assigned to the fd2grp group."
   else
@@ -118,10 +118,10 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
 
   # If the fd2grp does not have RW access to FarmData2 change it.
   # shellcheck disable=SC2012
-  FD2GRP_RW_FD2=$(ls -ld "../../$FD2_DIR" | cut -c 5-6 | grep "rw")
+  FD2GRP_RW_FD2=$(ls -ld "$FD2_PATH" | cut -c 5-6 | grep "rw")
   if [ -z "$FD2GRP_RW_FD2" ]; then
     echo "  Granting fd2grp RW access to $FD2_DIR."
-    sudo chmod -R g+rw "../../$FD2_DIR"
+    sudo chmod -R g+rw "$FD2_PATH"
     error_check
     echo "  fd2grp granted RW access to $FD2_DIR."
   else
