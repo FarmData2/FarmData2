@@ -1,6 +1,5 @@
-# fd2-up-orig.bash...
-
-# test change.
+# Handles all of the permissions issues that arise when mounting
+# directories from the host machine into the container on linux/wsl.
 
 if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
   echo "Configuring Linux or Windows (WSL) host..."

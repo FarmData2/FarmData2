@@ -44,7 +44,6 @@ echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLO
 # changed by the user.
 FD2_PATH=$(pwd)
 FD2_DIR=$(basename "$FD2_PATH")
-safe_cd docker
 
 echo "Starting development environment from $FD2_DIR."
 echo "  Full path: $FD2_PATH"
@@ -93,6 +92,8 @@ docker rm fd2_farmos &> /dev/null
 docker rm fd2_dev &> /dev/null
 
 echo "Starting containers..."
+safe_cd docker
+
 # Note: Any command line args are passed to the docker-compose up command
 docker compose up -d "$@"
 
