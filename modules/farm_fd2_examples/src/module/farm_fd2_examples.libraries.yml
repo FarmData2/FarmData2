@@ -20,6 +20,17 @@ component_examples:
       component_examples/component_examples.css: {}
     component:
       shared/index.css: {}
+bed_picker:
+  js:
+    bed_picker/bed_picker.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      bed_picker/bed_picker.css: {}
+    component:
+      shared/index.css: {}
 date_selector:
   js:
     date_selector/date_selector.js:
@@ -31,7 +42,6 @@ date_selector:
       date_selector/date_selector.css: {}
     component:
       shared/index.css: {}
-
 picker_base:
   js:
     picker_base/picker_base.js:

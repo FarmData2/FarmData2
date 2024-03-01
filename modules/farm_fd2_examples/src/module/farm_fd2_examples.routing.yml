@@ -12,6 +12,13 @@ farm.fd2_examples_component_examples.content:
     _title: 'Component Examples'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_bed_picker.content:
+  path: '/fd2_examples/bed_picker'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'BedPicker Example'
+  requirements:
+    _permission: 'access content'
 farm.fd2_examples_date_selector.content:
   path: '/fd2_examples/date_selector'
   defaults:

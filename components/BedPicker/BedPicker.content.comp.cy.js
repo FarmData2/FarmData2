@@ -24,7 +24,7 @@ describe('Test the default BedPicker content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="bed-picker"]').should('exist');
+        cy.get('[data-cy="bed-picker"]').should('be.visible');
         cy.get('[data-cy="picker-label"]').should('have.text', 'Beds:');
         cy.get('[data-cy="picker-options"]')
           .children()
@@ -55,7 +55,7 @@ describe('Test the default BedPicker content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="bed-picker"]').should('exist');
+        cy.get('[data-cy="bed-picker"]').should('be.visible');
         cy.get('[data-cy="picker-options"]')
           .children()
           .should('have.length', 4);
@@ -141,6 +141,24 @@ describe('Test the default BedPicker content', () => {
           .find('input')
           .eq(3)
           .should('not.be.checked');
+      });
+  });
+
+  it('Check hidden if no beds in location', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(BedPicker, {
+      props: {
+        onReady: readySpy,
+        location: 'B',
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="bed-picker"]').should('not.be.visible');
       });
   });
 });
