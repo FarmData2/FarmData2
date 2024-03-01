@@ -21,87 +21,130 @@
   />
   <hr />
 
-  <strong>Component Props:</strong>
-  <ul>
-    <li>
-      <BFormCheckbox
-        id="required-checkbox"
-        data-cy="required-checkbox"
-        switch
-        v-model="required"
-      >
-        required
-      </BFormCheckbox>
-    </li>
-    <li>
-      <BFormCheckbox
-        id="styling-checkbox"
-        data-cy="styling-checkbox"
-        switch
-        v-model="validity.showStyling"
-      >
-        showValidityStyling
-      </BFormCheckbox>
-    </li>
-    <li>
-      <BButtonGroup>
-        <BButton
-          id="alf-button"
-          data-cy="alf-button"
-          variant="outline-primary"
-          size="sm"
-          v-on:click="location = 'ALF'"
-        >
-          ALF
-        </BButton>
-        <BButton
-          id="chuau-button"
-          data-cy="chuau-button"
-          variant="outline-primary"
-          size="sm"
-          v-on:click="location = 'CHUAU'"
-        >
-          CHUAU
-        </BButton>
-        <BButton
-          id="ghana-button"
-          data-cy="ghana-button"
-          variant="outline-primary"
-          size="sm"
-          v-on:click="location = 'GHANA'"
-        >
-          GHANA
-        </BButton>
-      </BButtonGroup>
-      location
-    </li>
-    <li>
-      <BButton
-        id="picked-button"
-        data-cy="picked-button"
-        variant="outline-primary"
-        size="sm"
-        v-on:click="
-          bed = location + '-1';
-          index = form.beds.indexOf(bed);
-          if (index > -1) {
-            form.beds.splice(index, 1);
-          } else {
-            form.beds.push(bed);
-          }
-        "
-      >
-        Toggle first bed
-      </BButton>
-      picked
-    </li>
-  </ul>
+  <h5>Component Props:</h5>
+  <table>
+    <thead>
+      <th>Prop</th>
+      <th>Control</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>location</td>
+        <td>
+          <BButtonGroup>
+            <BButton
+              id="alf-button"
+              data-cy="alf-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="location = 'ALF'"
+            >
+              ALF
+            </BButton>
+            <BButton
+              id="b-button"
+              data-cy="b-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="location = 'B'"
+            >
+              B
+            </BButton>
+            <BButton
+              id="chuau-button"
+              data-cy="chuau-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="location = 'CHUAU'"
+            >
+              CHUAU
+            </BButton>
+            <BButton
+              id="ghana-button"
+              data-cy="ghana-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="location = 'GHANA'"
+            >
+              GHANA
+            </BButton>
+            <BButton
+              id="jasmine-button"
+              data-cy="jasmine-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="location = 'JASMINE'"
+            >
+              JASMINE
+            </BButton>
+          </BButtonGroup>
+        </td>
+      </tr>
+      <tr>
+        <td>picked</td>
+        <td>
+          <BButton
+            id="picked-button"
+            data-cy="picked-button"
+            variant="outline-primary"
+            size="sm"
+            v-bind:disabled="!['ALF', 'CHUAU', 'GHANA'].includes(location)"
+            v-on:click="
+              bed = location + '-1';
+              index = form.beds.indexOf(bed);
+              if (index > -1) {
+                form.beds.splice(index, 1);
+              } else {
+                form.beds.push(bed);
+              }
+            "
+          >
+            Toggle first bed
+          </BButton>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-  <strong>Component State:</strong>
-  <ul>
-    <li>beds: {{ form.beds }}</li>
-    <li>valid: {{ validity.beds }}</li>
-  </ul>
+  <h5>Component State:</h5>
+  <table>
+    <thead>
+      <th>Event</th>
+      <th>Payload</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>picked</td>
+        <td>{{ form.beds }}</td>
+      </tr>
+      <tr>
+        <td>valid</td>
+        <td>{{ validity.beds }}</td>
+      </tr>
+    </tbody>
+  </table>
 
   <div
     data-cy="page-loaded"
@@ -152,3 +195,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@import url('@css/fd2-examples.css');
+</style>
