@@ -93,9 +93,10 @@ squashMergePR() {
     echo "Successfully merged PR #$pr_number." || \
     { echo "Failed to merge PR #$pr_number."; return 1; }
 }
-# Entrypoint for main
-
+# Entrypoint after main
 checkGhCliAuth
+
+# Check for git 
 
 # Prompt for PR number if not provided
 PR_NUMBER=${1:-$(promptForValue "Enter PR number" "")}
@@ -106,7 +107,7 @@ echo "Fetching PR #$PR_NUMBER..."
 PR_TITLE=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json title --jq '.title')
 PR_BODY=$(gh pr view "$PR_NUMBER" --repo farmdata2/farmdata2 --json body --jq '.body')
 
-# Extract type, scope, and description from PR title
+# Extract type, scope, and description from PR 
 TYPE=$(echo "$PR_TITLE" | cut -d':' -f1 | tr '[:upper:]' '[:lower:]')
 SCOPE=$(echo "$PR_TITLE" | cut -d'(' -f2 | cut -d')' -f1 | tr '[:upper:]' '[:lower:]')
 DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
@@ -115,7 +116,7 @@ DESCRIPTION=$(echo "$PR_TITLE" | cut -d')' -f2- | cut -d':' -f2-)
 TYPE=$(promptForValue "Enter commit type" "feat" VALID_TYPES)
 SCOPE=$(promptForValue "Enter commit scope" "none" VALID_SCOPES)
 
-# Prompt for breaking change
+# Prompt for breaking change and check for existing breaking change description
 BREAKING_CHANGE=$(promptForValue "Is this a breaking change (yes/no)" "no")
 BREAKING_CHANGE_DESCRIPTION=""
 
