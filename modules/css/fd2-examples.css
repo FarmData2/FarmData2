@@ -1,0 +1,31 @@
+table {
+  border: 1px solid black;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: auto;
+}
+
+th {
+  border: 1px solid black;
+  background: rgb(228 240 245);
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 30px;
+  font-weight: bold;
+}
+
+td {
+  border: 1px solid black;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+hr {
+  border-top: 2px solid black;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}

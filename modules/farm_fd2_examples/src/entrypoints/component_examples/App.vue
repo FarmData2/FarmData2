@@ -4,6 +4,10 @@
     <li>
       <a href="date_selector">DateSelector</a>: Component for selecting a date.
     </li>
+    <li>
+      <a href="picker_base">PickerBase</a>: Base component for picking multiple
+      items via checkboxes.
+    </li>
   </ul>
 
   <div

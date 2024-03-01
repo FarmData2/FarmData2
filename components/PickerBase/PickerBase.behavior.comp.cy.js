@@ -134,6 +134,7 @@ describe('Test the PickerBase component behavior', () => {
         onReady: readySpy,
         label: 'Picker',
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        invalidFeedbackText: 'Invalid feedback text.',
       },
     });
 
@@ -158,6 +159,7 @@ describe('Test the PickerBase component behavior', () => {
         label: 'Picker',
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
         picked: ['Option 1', 'Option 3'],
+        invalidFeedbackText: 'Invalid feedback text.',
       },
     });
 
@@ -182,6 +184,7 @@ describe('Test the PickerBase component behavior', () => {
         label: 'Picker',
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
         picked: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        invalidFeedbackText: 'Invalid feedback text.',
       },
     });
 
@@ -195,5 +198,32 @@ describe('Test the PickerBase component behavior', () => {
             cy.wrap(input).should('not.be.checked');
           });
       });
+  });
+
+  it('Changing option adjusts picked options if necessary', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    const newOpts = ['Option 2', 'Option 4'];
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1', 'Option 2', 'Option 3'],
+        invalidFeedbackText: 'Invalid feedback text.',
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          wrapper.setProps({ options: newOpts });
+          cy.get('@updateSpy').should('have.been.calledOnce');
+          cy.get('@updateSpy').should('have.been.calledWith', ['Option 2']);
+        });
+    });
   });
 });
