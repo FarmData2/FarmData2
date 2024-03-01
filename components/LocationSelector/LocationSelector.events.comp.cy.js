@@ -289,12 +289,12 @@ describe('Test the LocationSelector component events', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]').select('GHANA');
 
-        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledTwice');
         cy.get('@updateSpy').should('have.been.calledWith', [], 4);
 
         cy.get('[data-cy="selector-input"]').select('CHUAU');
 
-        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledThrice');
         cy.get('@updateSpy').should('have.been.calledWith', [], 5);
       });
   });
