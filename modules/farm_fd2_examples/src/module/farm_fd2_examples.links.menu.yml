@@ -16,3 +16,9 @@ farm.fd2_examples_date_selector:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_date_selector.content
   weight: 100
+farm.fd2_examples_bed_picker:
+  title: 'BedPicker'
+  description: 'Example for use of the BedPicker component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_bed_picker.content
+  weight: 100
