@@ -65,21 +65,27 @@
  * This will typically be used as a base for building special purpose
  * "picker" components (e.g. `BedPicker`).
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/picker_base">The PickerBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picker_base/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <PickerBase
- *   v-if="bedList.length > 0"
  *   id="bed-picker"
  *   data-cy="bed-picker"
- *   invalidFeedbackText="At least one bed is required"
- *   label="Beds"
- *   v-bind:options="bedList"
- *   v-bind:picked="picked"
+ *   label="Options"
+ *   invalid-feedback-text="At least one choice is required"
  *   v-bind:required="required"
- *   v-bind:showValidityStyling="showValidityStyling"
- *   v-on:update:picked="handleUpdatePicked($event)"
- *   v-on:valid="handleValid($event)"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:showAllButton="showAllButton"
+ *   v-bind:options="options"
+ *   v-model:picked="form.picked"
+ *   v-on:valid="(valid) => (validity.picked = valid)"
+ *   v-on:ready="createdCount++"
  * />
  * ```
  *
@@ -205,6 +211,17 @@ export default {
     },
     picked() {
       this.checked = this.picked;
+    },
+    options: {
+      handler() {
+        if (this.checked.length > 0) {
+          this.checked = this.checked.filter((option) =>
+            this.options.includes(option)
+          );
+        }
+        this.updatePicked();
+      },
+      deep: true,
     },
   },
   created() {
