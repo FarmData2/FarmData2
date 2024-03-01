@@ -4,6 +4,58 @@
 VALID_TYPES=("build" "chore" "ci" "docs" "feat" "fix" "perf" "refactor" "style" "test")
 VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school" "none") # Added 'none' for no scope
 
+# Default values for flags
+TYPE=""
+SCOPE=""
+DESCRIPTION=""
+PR_BODY=""
+BREAKING_CHANGE="no"
+BREAKING_CHANGE_DESCRIPTION=""
+REPO_URL=""
+
+# Function to display help
+displayHelp() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --type <type>                            Type of commit (e.g., feat, fix)"
+    echo "  --scope <scope>                          Scope of the commit (e.g., lib, none)"
+    echo "  --description <description>              Description of the commit"
+    echo "  --body <body>                            Body of the commit message"
+    echo "  --breaking-change <yes|no>               Specify if the commit introduces a breaking change"
+    echo "  --breaking-change-description <desc>     Description of the breaking change"
+    echo "  --repo <GitHub repo URL>                 GitHub repository URL (e.g., https://github.com/user/repo)"
+    echo "  --help                                   Display this help and exit"
+    echo ""
+    echo "Interactive prompts will be used for missing required options."
+}
+
+# Parse command line options
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --type) TYPE="$2"; shift ;;
+        --scope) SCOPE="$2"; shift ;;
+        --description) DESCRIPTION="$2"; shift ;;
+        --body) PR_BODY="$2"; shift ;;
+        --breaking-change) BREAKING_CHANGE="$2"; shift ;;
+        --breaking-change-description) BREAKING_CHANGE_DESCRIPTION="$2"; shift ;;
+        --repo) REPO_URL="$2"; shift ;;
+        --help) displayHelp; exit 0 ;;
+        *) echo "Unknown option: $1"; displayHelp; exit 1 ;;
+    esac
+    shift
+done
+
+# Extract repository info from URL or current git context
+if [[ -n "$REPO_URL" ]]; then
+    REPO=$(echo "$REPO_URL" | grep -oP '(?<=github.com/).+')
+elif git rev-parse --git-dir > /dev/null 2>&1; then
+    REPO=$(git remote get-url origin | grep -oP '(?<=github.com/).+')
+else
+    echo "Error: Repository URL is required if not in a git repository folder."
+    exit 1
+fi
+
 # Helper function to check if an element is in an array
 elementInArray() {
     local element
@@ -22,6 +74,8 @@ printArray() {
         echo " - $item"
     done
 }
+
+
 # Function to prompt for a value with a default, displaying valid options and requiring valid input
 promptForValue() {
     local prompt=$1
