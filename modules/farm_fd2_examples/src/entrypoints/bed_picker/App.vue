@@ -53,53 +53,47 @@
       <tr>
         <td>location</td>
         <td>
-          <BButtonGroup>
-            <BButton
+          <BFormRadioGroup
+            buttons
+            button-variant="outline-primary"
+            size="sm"
+          >
+            <BFormRadio
               id="alf-button"
               data-cy="alf-button"
-              variant="outline-primary"
-              size="sm"
               v-on:click="location = 'ALF'"
             >
               ALF
-            </BButton>
-            <BButton
+            </BFormRadio>
+            <BFormRadio
               id="b-button"
               data-cy="b-button"
-              variant="outline-primary"
-              size="sm"
               v-on:click="location = 'B'"
             >
               B
-            </BButton>
-            <BButton
+            </BFormRadio>
+            <BFormRadio
               id="chuau-button"
               data-cy="chuau-button"
-              variant="outline-primary"
-              size="sm"
               v-on:click="location = 'CHUAU'"
             >
               CHUAU
-            </BButton>
-            <BButton
+            </BFormRadio>
+            <BFormRadio
               id="ghana-button"
               data-cy="ghana-button"
-              variant="outline-primary"
-              size="sm"
               v-on:click="location = 'GHANA'"
             >
               GHANA
-            </BButton>
-            <BButton
+            </BFormRadio>
+            <BFormRadio
               id="jasmine-button"
               data-cy="jasmine-button"
-              variant="outline-primary"
-              size="sm"
               v-on:click="location = 'JASMINE'"
             >
               JASMINE
-            </BButton>
-          </BButtonGroup>
+            </BFormRadio>
+          </BFormRadioGroup>
         </td>
       </tr>
       <tr>

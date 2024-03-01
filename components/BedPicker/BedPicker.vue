@@ -1,7 +1,7 @@
 <template>
   <div>
     <PickerBase
-      v-if="bedList.length > 0"
+      v-show="bedList.length > 0"
       id="bed-picker"
       data-cy="bed-picker"
       invalidFeedbackText="At least one bed is required"
@@ -54,7 +54,6 @@ export default {
     /**
      * The name of the location for which the `BedPicker` should show beds.
      * The `BedPicker` will fetch any beds associated with this location.
-     * This prop is watched and changes will be reflected in the component.
      */
     location: {
       type: String,
@@ -62,7 +61,6 @@ export default {
     },
     /**
      * The beds that are currently picked.
-     * This prop is watched and changes will be reflected in the component.
      */
     picked: {
       type: Array,
@@ -77,7 +75,6 @@ export default {
     },
     /**
      * Whether validity styling should appear on input elements.
-     * This prop is watched and changes will be reflected in the component.
      */
     showValidityStyling: {
       type: Boolean,
