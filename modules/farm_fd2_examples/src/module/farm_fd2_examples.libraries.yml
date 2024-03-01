@@ -31,3 +31,15 @@ date_selector:
       date_selector/date_selector.css: {}
     component:
       shared/index.css: {}
+
+picker_base:
+  js:
+    picker_base/picker_base.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      picker_base/picker_base.css: {}
+    component:
+      shared/index.css: {}

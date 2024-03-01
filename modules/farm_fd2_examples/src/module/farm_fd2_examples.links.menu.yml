@@ -16,3 +16,9 @@ farm.fd2_examples_date_selector:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_date_selector.content
   weight: 100
+farm.fd2_examples_picker_base:
+  title: 'PickerBase'
+  description: 'Example of the use of the PickerBase component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_picker_base.content
+  weight: 100

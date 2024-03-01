@@ -19,3 +19,10 @@ farm.fd2_examples_date_selector.content:
     _title: 'DateSelector Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_picker_base.content:
+  path: '/fd2_examples/picker_base'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'PickerBase Example'
+  requirements:
+    _permission: 'access content'
