@@ -25,7 +25,7 @@ displayHelp() {
     echo "  --body <body>                           Body of the commit message."
     echo "  --breaking-change <yes|no>              Specify if the commit introduces a breaking change."
     echo "  --breaking-change-description <desc>    Description of the breaking change."
-    echo "  --repo <GitHub repo URL>                GitHub repository URL (e.g., https://github.com/user/repo)."
+    echo "  --repo <GitHub repo URL>                GitHub repository URL. Supports HTTPS, SSH, and '.git' links (e.g., https://github.com/user/repo, git@github.com:user/repo.git)."
     echo "  --pr-number <PR number>                 The number of the pull request to merge."
     echo "  --help                                  Display this help message and exit."
     echo ""
@@ -35,7 +35,7 @@ displayHelp() {
     echo "Example:"
     echo "  $0 --type feat --scope lib --description \"Add new feature\" --pr-number 123 --repo https://github.com/user/repo"
     echo ""
-    echo "This script uses the GitHub CLI (gh) and expects it to be authenticated."
+    echo "This script uses the GitHub CLI (gh) and expects it to be installed and authenticated."
 }
 
 # Parse command line options
