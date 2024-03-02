@@ -2,7 +2,7 @@
 
 # Define valid types and scopes
 VALID_TYPES=("build" "chore" "ci" "docs" "feat" "fix" "perf" "refactor" "style" "test")
-VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school" "none") # Added 'none' for no scope
+VALID_SCOPES=("dev" "comp" "lib" "fd2" "examples" "school" "none") # Added 'none' for no scope 
 
 # Default values for flags
 TYPE=""
@@ -74,7 +74,7 @@ printArray() {
     done
 }
 
-# Function to prompt for a value with a default, displaying valid options and requiring valid input
+# Helper function to prompt for a value with a default, displaying valid options and requiring valid input
 promptForValue() {
     local prompt=$1
     local default=$2
@@ -269,5 +269,6 @@ case $choice in
         echo "Accepting commit and beginning squash merge."
         ;;
 esac
+
 # Perform the squash merge 
 squashMergePR "$PR_NUMBER" "$CONV_COMMIT" "$REPO"
