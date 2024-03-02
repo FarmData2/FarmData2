@@ -11,9 +11,9 @@ function usage {
   echo "  The default behavior if no flags are provided is to install the"
   echo "  latest release of the sample database."
   echo ""
-  echo "  -c|--current : Reinstall the most recently installed database."
-  echo "    - The file /var/tmp/db.sample.tar.gz will be installed if it exists."
-  echo "    - If /var/tmp/db.sample.tar.gz does not exist then the -p|--prompt behavior will be used."
+  echo "  -c|--current : Reinstall the most recently installed sample database."
+  echo "    - The file ~/.fd2/db.sample.tar.gz will be installed if it exists."
+  echo "    - If ~/.fd2/db.sample.tar.gz does not exist then the default behavior will be used."
   echo "    - No other flags may be specified with -c|--current."
   echo ""
   echo "  -p|--prompt : Prompt for the release and database artifact to install."
@@ -94,7 +94,7 @@ fi
 
 if [ -n "$PROMPT" ]; then
   if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$CURRENT" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} When -p|--prompt is specified, no other flags maybe included."
+    echo -e "${ON_RED}ERROR:${NO_COLOR} When -p|--prompt is specified, no other flags may be included."
     echo "Use installDB.bash --help for usage information"
     exit 255
   fi
@@ -107,11 +107,10 @@ if [ -n "$CURRENT" ]; then
     exit 255
   fi
 
-  if [ ! -f "/var/tmp/db.sample.tar.gz" ]; then
-    echo "/var/tmp/db.sample.tar.gz does not exist."
-    echo "Defaulting to -p|--prompt behavior."
+  if [ ! -f "$HOME/.fd2/db.sample.tar.gz" ]; then
+    echo "$HOME/.fd2/db.sample.tar.gz does not exist."
+    echo "Defaulting to default behavior."
     unset CURRENT
-    PROMPT=1
   fi
 fi
 
@@ -190,13 +189,13 @@ else
 fi
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from /var/tmp...${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $HOME/.fd2/...${NO_COLOR}"
 else
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from release $DB_RELEASE...${NO_COLOR}"
 
-  if [ -f "/var/tmp/$DB_ASSET" ]; then
+  if [ -f "$HOME/.fd2/$DB_ASSET" ]; then
     echo "Deleting existing database archives..."
-    rm "/var/tmp/$DB_ASSET"
+    rm "$HOME/.fd2/$DB_ASSET"
     error_check "Unable to delete existing database archives."
     echo "  Deleted."
   fi
@@ -204,7 +203,7 @@ else
   echo "Downloading database \"$DB_ASSET\" from release $DB_RELEASE..."
   gh release download "$DB_RELEASE" \
     --repo FarmData2/FD2-SampleDBs \
-    --dir /var/tmp \
+    --dir "$HOME/.fd2/" \
     --pattern "$DB_ASSET" \
     --clobber
   error_check "Unable to download the database."
@@ -238,7 +237,7 @@ error_check "Unable to delete the current database."
 echo "  Deleted."
 
 echo "Extracting $DB_ASSET..."
-echo "fd2dev" | sudo -Sk -p "" tar -xzf "/var/tmp/$DB_ASSET" > /dev/null
+echo "fd2dev" | sudo -Sk -p "" tar -xzf "$HOME/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "  Extracted."
 
@@ -269,7 +268,7 @@ error_check "Unable to clear the cache."
 echo "  Drupal cache cleared."
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from /var/tmp.${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $HOME/.fd2/.${NO_COLOR}"
 else
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from release $DB_RELEASE.${NO_COLOR}"
 fi

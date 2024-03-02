@@ -1,7 +1,14 @@
 #!/bin/bash
 
-source ./lib.bash
-source ./colors.bash
+# Get the path to the main repo directory.
+SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+
+source "$SCRIPT_DIR/lib.bash"
+source "$SCRIPT_DIR/colors.bash"
+
+safe_cd "$REPO_ROOT_DIR"
 
 # Ensuring this script is not being run as root.
 RUNNING_AS_ROOT=$(id -un | grep "root")
@@ -31,12 +38,6 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
   exit 255
 fi
 
-# Get the path to the main repo directory.
-SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
-safe_cd "$REPO_ROOT_DIR"
-
 echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
 
 # Get the name of the directory containing the FarmData2 repo.
@@ -44,18 +45,17 @@ echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLO
 # changed by the user.
 FD2_PATH=$(pwd)
 FD2_DIR=$(basename "$FD2_PATH")
-safe_cd docker
 
 echo "Starting development environment from $FD2_DIR."
 echo "  Full path: $FD2_PATH"
 
-# (Re)create the .fd2 directory.
+# Create the .fd2 directory if it does not exist.
 # This directory is used for development environment configuration information.
-# It is recreated on each start.
-echo "Creating the ~/.fd2 configuration directory."
-rm -fr ~/.fd2 2> /dev/null
-mkdir ~/.fd2
-echo "  The ~/.fd2 configuration directory created."
+if [ ! -d ~/.fd2 ]; then
+  echo "Creating the ~/.fd2 configuration directory."
+  mkdir ~/.fd2
+  echo "  The ~/.fd2 configuration directory created."
+fi
 
 # Determine the host operating system.
 echo "Detecting host Operating System..."
@@ -93,6 +93,8 @@ docker rm fd2_farmos &> /dev/null
 docker rm fd2_dev &> /dev/null
 
 echo "Starting containers..."
+safe_cd "$FD2_PATH/docker"
+
 # Note: Any command line args are passed to the docker-compose up command
 docker compose up -d "$@"
 

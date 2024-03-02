@@ -1,62 +1,64 @@
 <template>
-  <BFormGroup
-    id="picker-group"
-    data-cy="picker-group"
-    label-for="picker-options"
-    label-cols="auto"
-    label-align="end"
-  >
-    <template v-slot:label>
-      <div class="d-grid d-md-flex">
-        <div>
-          <span
-            id="picker-label"
-            data-cy="picker-label"
-            >{{ label }}:</span
-          >
-          <sup
-            id="picker-required"
-            data-cy="picker-required"
-            class="text-danger"
-            v-if="required"
-            >*</sup
+  <div>
+    <BFormGroup
+      id="picker-group"
+      data-cy="picker-group"
+      label-for="picker-options"
+      label-cols="auto"
+      label-align="end"
+    >
+      <template v-slot:label>
+        <div class="d-grid d-md-flex">
+          <div>
+            <span
+              id="picker-label"
+              data-cy="picker-label"
+              >{{ label }}:</span
+            >
+            <sup
+              id="picker-required"
+              data-cy="picker-required"
+              class="text-danger"
+              v-if="required"
+              >*</sup
+            >
+          </div>
+          <BButton
+            v-if="showAllButton"
+            id="picker-all-button"
+            data-cy="picker-all-button"
+            size="sm"
+            variant="primary"
+            v-on:click="pickAll()"
+            >All</BButton
           >
         </div>
-        <BButton
-          v-if="showAllButton"
-          id="picker-all-button"
-          data-cy="picker-all-button"
-          size="sm"
-          variant="primary"
-          v-on:click="pickAll()"
-          >All</BButton
-        >
-      </div>
-    </template>
+      </template>
 
-    <BInputGroup
-      id="picker-input"
-      data-cy="picker-input"
-    >
-      <BFormCheckboxGroup
-        data-cy="picker-options"
-        id="picker-options"
-        name="picker-options"
-        v-model="checked"
-        v-bind:options="options"
-        v-bind:state="validationStyling"
-        v-on:change="updatePicked($event)"
-      />
-
-      <BFormInvalidFeedback
-        id="picker-invalid-feedback"
-        data-cy="picker-invalid-feedback"
-        v-bind:state="validationStyling"
+      <BInputGroup
+        id="picker-input"
+        data-cy="picker-input"
       >
-        {{ invalidFeedbackText }}
-      </BFormInvalidFeedback>
-    </BInputGroup>
-  </BFormGroup>
+        <BFormCheckboxGroup
+          data-cy="picker-options"
+          id="picker-options"
+          name="picker-options"
+          v-model="checked"
+          v-bind:options="options"
+          v-bind:state="validationStyling"
+          v-on:change="updatePicked($event)"
+        />
+
+        <BFormInvalidFeedback
+          id="picker-invalid-feedback"
+          data-cy="picker-invalid-feedback"
+          v-bind:state="validationStyling"
+        >
+          {{ invalidFeedbackText }}
+        </BFormInvalidFeedback>
+      </BInputGroup>
+    </BFormGroup>
+  </div>
 </template>
 
 <script>
@@ -65,21 +67,27 @@
  * This will typically be used as a base for building special purpose
  * "picker" components (e.g. `BedPicker`).
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/picker_base">The PickerBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picker_base/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <PickerBase
- *   v-if="bedList.length > 0"
  *   id="bed-picker"
  *   data-cy="bed-picker"
- *   invalidFeedbackText="At least one bed is required"
- *   label="Beds"
- *   v-bind:options="bedList"
- *   v-bind:picked="picked"
+ *   label="Options"
+ *   invalid-feedback-text="At least one choice is required"
  *   v-bind:required="required"
- *   v-bind:showValidityStyling="showValidityStyling"
- *   v-on:update:picked="handleUpdatePicked($event)"
- *   v-on:valid="handleValid($event)"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:showAllButton="showAllButton"
+ *   v-bind:options="options"
+ *   v-model:picked="form.picked"
+ *   v-on:valid="(valid) => (validity.picked = valid)"
+ *   v-on:ready="createdCount++"
  * />
  * ```
  *
@@ -205,6 +213,18 @@ export default {
     },
     picked() {
       this.checked = this.picked;
+    },
+    options: {
+      handler() {
+        if (this.checked.length > 0) {
+          this.checked = this.checked.filter((option) =>
+            this.options.includes(option)
+          );
+
+          this.updatePicked();
+        }
+      },
+      deep: true,
     },
   },
   created() {
