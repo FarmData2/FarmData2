@@ -4,60 +4,84 @@
   </p>
 
   <hr />
-
   <DateSelector
     id="date-selector"
     data-cy="date-selector"
     v-bind:required="required"
     v-model:date="form.date"
     v-bind:showValidityStyling="validity.showStyling"
-    v-on:valid="(valid) => (validity.date = valid)"
+    v-on:valid="
+      (valid) => {
+        validity.date = valid;
+      }
+    "
     v-on:ready="createdCount++"
   />
-
   <hr />
 
-  <strong>Component Props:</strong>
-  <ul>
-    <li>
-      <BFormCheckbox
-        id="required-checkbox"
-        data-cy="required-checkbox"
-        switch
-        v-model="required"
-      >
-        required
-      </BFormCheckbox>
-    </li>
-    <li>
-      <BFormCheckbox
-        id="styling-checkbox"
-        data-cy="styling-checkbox"
-        switch
-        v-model="validity.showStyling"
-      >
-        showValidityStyling
-      </BFormCheckbox>
-    </li>
-    <li>
-      <BButton
-        id="set-date-button"
-        data-cy="set-date-button"
-        variant="outline-primary"
-        size="sm"
-        v-on:click="nextDay"
-      >
-        Next
-      </BButton>
-      date
-    </li>
-  </ul>
+  <h5>Component Props:</h5>
+  <table>
+    <thead>
+      <th>Prop</th>
+      <th>Control</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>date</td>
+        <td>
+          <BButton
+            id="set-date-button"
+            data-cy="set-date-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="nextDay"
+          >
+            Next
+          </BButton>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-  <strong>Component State:</strong>
-  <ul>
-    <li>date: {{ form.date }}</li>
-    <li>valid: {{ validity.date }}</li>
-  </ul>
+  <h5>Component State:</h5>
+  <table>
+    <thead>
+      <th>Event</th>
+      <th>Payload</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>date</td>
+        <td>{{ form.date }}</td>
+      </tr>
+      <tr>
+        <td>valid</td>
+        <td>{{ validity.date }}</td>
+      </tr>
+    </tbody>
+  </table>
 
   <div
     data-cy="page-loaded"
@@ -105,3 +129,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@import url('@css/fd2-examples.css');
+</style>
