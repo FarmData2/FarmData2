@@ -43,25 +43,25 @@ import dayjs from 'dayjs';
  * The DateSelector component provides a UI element for selecting a date.
  *
  * ## Live Example
- * 
+ *
  * <a href="http://farmos/fd2_examples/date_selector">The DateSelector Example</a>
- * 
+ *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/date_selector/App.vue">App.vue</a>
- * 
+ *
  * ## Usage Example
- * 
+ *
  * ```html
-  <DateSelector
-    id="date-selector"
-    data-cy="date-selector"
-    v-bind:required="true"
-    v-model:date="form.date"
-    v-bind:showValidityStyling="validity.showStyling"
-    v-on:valid="(valid) => (validity.date = valid)"
-    v-on:ready="createdCount++"
-  />
+ * <DateSelector
+ *   id="date-selector"
+ *   data-cy="date-selector"
+ *   v-bind:required="required"
+ *   v-model:date="form.date"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-on:valid="(valid) => { validity.date = valid }"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
- * 
+ *
  * ## `data-cy` Attributes
  *
  * Attribute Name          | Description
