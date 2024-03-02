@@ -65,7 +65,7 @@
     </tbody>
   </table>
 
-  <h5>Component State:</h5>
+  <h5>Component Event Payloads</h5>
   <table>
     <thead>
       <th>Event</th>
