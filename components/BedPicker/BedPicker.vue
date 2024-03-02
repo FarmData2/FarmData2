@@ -25,18 +25,24 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * The BedPicker component will only be visible if the location specified
  * by the `location` prop contains at least one bed.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/bed_picker">The BedPicker Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/bed_picker/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <BedPicker
  *   id="location-bed-picker"
  *   data-cy="location-bed-picker"
- *   v-bind:location="selectedLocation"
- *   v-bind:picked="checkedBeds"
- *   v-bind:required="requireBedSelection"
- *   v-on:update:picked="handleUpdateBeds($event)"
- *   v-bind:showValidityStyling="showValidityStyling"
- *   v-on:valid="handleBedsValid($event)"
+ *   v-bind:location="location"
+ *   v-model:picked="form.beds"
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-on:valid="(valid) => { validity.beds = valid; }"
+ *   v-on:ready="createdCount++"
  * />
  * ```
  *
