@@ -25,7 +25,7 @@ displayHelp() {
     echo "  --body <body>                           Body of the commit message."
     echo "  --breaking-change <yes|no>              Specify if the commit introduces a breaking change."
     echo "  --breaking-change-description <desc>    Description of the breaking change."
-    echo "  --repo <GitHub repo URL>                GitHub repository URL. Supports HTTPS, SSH, and '.git' links (e.g., https://github.com/user/repo, git@github.com:user/repo.git)."
+    echo "  --repo <GitHub repo URL>                GitHub repository URL. Supports HTTPS, SSH, and '.git' links (e.g., https://github.com/FarmData2/FarmData2, git@github.com:FarmData2/FarmData2.git)."
     echo "  --pr-number <PR number>                 The number of the pull request to merge."
     echo "  --help                                  Display this help message and exit."
     echo ""
