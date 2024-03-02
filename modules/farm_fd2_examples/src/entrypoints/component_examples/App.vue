@@ -2,6 +2,9 @@
   <p>A set of examples illustrating the use of the FarmData2 components.</p>
   <ul>
     <li>
+      <a href="bed_picker">BedPicker</a>: A component for picking multiple beds.
+    </li>
+    <li>
       <a href="date_selector">DateSelector</a>: Component for selecting a date.
     </li>
     <li>
