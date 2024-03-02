@@ -22,7 +22,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
  * The BedPicker component is a UI element that allows the user to select beds from a within a location.
- * The BedPicker component will only be added to the DOM if the location specified
+ * The BedPicker component will only be visible if the location specified
  * by the `location` prop contains at least one bed.
  *
  * ## Usage Example

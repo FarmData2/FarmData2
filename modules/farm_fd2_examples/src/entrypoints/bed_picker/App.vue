@@ -57,10 +57,12 @@
             buttons
             button-variant="outline-primary"
             size="sm"
+            v-model="location"
           >
             <BFormRadio
               id="alf-button"
               data-cy="alf-button"
+              value="ALF"
               v-on:click="location = 'ALF'"
             >
               ALF
@@ -68,6 +70,7 @@
             <BFormRadio
               id="b-button"
               data-cy="b-button"
+              value="B"
               v-on:click="location = 'B'"
             >
               B
@@ -75,6 +78,7 @@
             <BFormRadio
               id="chuau-button"
               data-cy="chuau-button"
+              value="CHUAU"
               v-on:click="location = 'CHUAU'"
             >
               CHUAU
@@ -82,6 +86,7 @@
             <BFormRadio
               id="ghana-button"
               data-cy="ghana-button"
+              value="GHANA"
               v-on:click="location = 'GHANA'"
             >
               GHANA
@@ -89,6 +94,7 @@
             <BFormRadio
               id="jasmine-button"
               data-cy="jasmine-button"
+              value="JASMINE"
               v-on:click="location = 'JASMINE'"
             >
               JASMINE
@@ -122,7 +128,7 @@
     </tbody>
   </table>
 
-  <h5>Component State:</h5>
+  <h5>Component Event Payloads:</h5>
   <table>
     <thead>
       <th>Event</th>
