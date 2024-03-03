@@ -11,7 +11,7 @@ describe('Test the PickerBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" true on creation if not required.', () => {
+  it('Emits "valid" false on creation if not required.', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
