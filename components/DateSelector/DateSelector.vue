@@ -105,19 +105,29 @@ export default {
     };
   },
   computed: {
+    isEmpty() {
+      return (
+        this.chosenDate == '' ||
+        this.chosenDate == 'Invalid Date' ||
+        this.chosenDate === null
+      );
+    },
     isValid() {
       const validDate = dayjs(this.chosenDate).isValid();
-      return validDate;
+      if (this.required) {
+        return validDate;
+      } else {
+        if (this.isEmpty) {
+          return true;
+        } else {
+          return validDate;
+        }
+      }
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validityStyling() {
       if (this.showValidityStyling) {
-        if (
-          !this.required &&
-          (this.chosenDate == '' ||
-            this.chosenDate == 'Invalid Date' ||
-            this.chosenDate === null)
-        ) {
+        if (!this.required && this.isEmpty) {
           return null;
         } else {
           return this.isValid;

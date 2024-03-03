@@ -11,7 +11,17 @@ describe('Test the  DateSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" on creation', () => {
+  /**
+   * Does 4 checks on validity computation
+   *
+   * required   empty     test
+   * false      false     1. valid event: Not required, not empty
+   * false      true      2. valid event: Not required, empty
+   * true       false     3. valid event: Required, not empty
+   * true       true      4. valid event: Required, empty
+   */
+
+  it('1. valid event: Not required, not empty', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -19,6 +29,8 @@ describe('Test the  DateSelector component events', () => {
       props: {
         onReady: readySpy,
         onValid: validSpy,
+        required: false,
+        date: '1999-01-01',
       },
     });
 
@@ -27,6 +39,69 @@ describe('Test the  DateSelector component events', () => {
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('2. valid event: Not required, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: false,
+        date: null,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('3. valid event: Required, Not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+        date: '1999-01-02',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('4. valid event: Required, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+        date: null,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
       });
   });
 
