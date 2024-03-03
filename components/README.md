@@ -257,7 +257,8 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
   - check events (`*.events.comp.cy.js`)
 
     - check that all events listed in the component's `emits` property are emitted properly
-      - At least one test per event.
+      - If the component computes `isValid` for itself then the `valid` event should be tested exhaustively.
+      - At least one test per event for all other events:
         - Do something that should cause the event to be emitted.
           - e.g. change the selection, type some text, etc...
           - e.g. Use `cy.intercept` to generate network errors on the appropriate route.
