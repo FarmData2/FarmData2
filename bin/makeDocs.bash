@@ -3,118 +3,74 @@
 source colors.bash
 source lib.bash
 
-PWD="$(pwd)"
+# Setting Env Variables
+PWD="$(pwd)" # Current Working Dir
+SCRIPT_PATH=$(readlink -f "$0") # Script Path
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH") # Script Directory
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # Repository Root Directory
 
-# Get the path to the main repo directory.
-SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
-REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+TARGETS=()
 
-echo -e "${GREEN}Generating FarmData2 documentation.${NO_COLOR}."
+# Parsing all command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --target) TARGETS+=("$2"); shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
 
-echo "  Deleting old docs..."
-rm -rf docs/components 2 &> /dev/null
-mkdir docs/components
-rm -rf docs/library 2 &> /dev/null
-mkdir docs/library
-echo "  Deleted."
+INDEX_FILE="FarmData2.md" 
+INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE"
 
-echo "  Creating index file: $INDEX_FILE..."
-INDEX_FILE="FarmData2.md"
-INDEX_PATH="$REPO_ROOT_DIR/docs/$INDEX_FILE" # Absolute path.
+# Recreate the index file (Erases and rewrite into header upon regeneration)
 echo "# FarmData2 Documentation" > "$INDEX_PATH"
 echo "" >> "$INDEX_PATH"
-echo "  Created."
 
-echo "  Generating docs for all Components..."
-echo "    Adding Components section to $INDEX_FILE..."
+update_docs() {
+    local TYPE=$1 # components or library
+    local NAME=$2
+    local PATH="$REPO_ROOT_DIR/$TYPE/$NAME"
+    local DOC_PATH="docs/$TYPE/$NAME.md"
+
+    if [[ -d "$PATH" ]]; then
+        echo "    Generating docs for $NAME..."
+        # Use vue-docgen or jsdoc2md based on type
+        if [ "$TYPE" == "components" ]; then
+            npx vue-docgen "$PATH/$NAME.vue" -o "$REPO_ROOT_DIR/$DOC_PATH"
+        else
+            npx jsdoc2md "$PATH/$NAME.js" > "$REPO_ROOT_DIR/$DOC_PATH"
+        fi
+        echo "      Docs generated for $NAME."
+
+        # Print the component or library that was built
+        echo -e "${GREEN}Built $TYPE: $NAME${NO_COLOR}"
+
+        # Adds link to the index file
+        echo "- [$NAME]($DOC_PATH)" >> "$INDEX_PATH"
+    else
+        echo "      $TYPE $NAME not found."
+    fi
+}
+
 echo "## Components" >> "$INDEX_PATH"
 echo "" >> "$INDEX_PATH"
-echo "    Added."
 
-safe_cd "$REPO_ROOT_DIR/components"
-DIRS=$(ls -d -- */)
-safe_cd "$REPO_ROOT_DIR"
-
-for DIR in $DIRS; do                     # Names of the components with a trailing /
-  COMP_NAME=$(echo "$DIR" | cut -d/ -f1) # Only the name of the component
-  COMP_VUE_PATH="components/$COMP_NAME/$COMP_NAME.vue"
-  COMP_MD_FILE="$COMP_NAME.md"
-  DOCS_DIR="docs"
-
-  echo "    Generating docs for $COMP_NAME..."
-  echo "      Creating docs for $COMP_NAME..."
-  # vue-docgen expects paths relative to components directory.
-  npx vue-docgen "$COMP_VUE_PATH" "$DOCS_DIR"
-  # Get rid of the extra directory layer that we don't need.
-  mv "$DOCS_DIR/components/$COMP_NAME/$COMP_MD_FILE" "$DOCS_DIR/components/$COMP_MD_FILE"
-  rmdir "$DOCS_DIR/components/$COMP_NAME"
-  echo "      Created."
-
-  echo "      Adding link for $COMP_MD_FILE to $INDEX_FILE..."
-  DESC_TEXT=$(grep -m 1 -A 1 "/\*\*" "$COMP_VUE_PATH" | tail -1 | cut -d' ' -f3-)
-  COMP_MD_LINK="components/$COMP_MD_FILE" # Link is relative to docs.
-  echo "- [$COMP_NAME]($COMP_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
-  echo "      Added."
-
-  echo "      Adding back links from $COMP_MD_FILE to $INDEX_FILE..."
-  TMP_PATH="docs/components/$COMP_NAME.tmp"
-  echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-  # shellcheck disable=SC2129
-  echo "" >> "$TMP_PATH"
-  cat "docs/components/$COMP_MD_FILE" >> "$TMP_PATH"
-  echo "" >> "$TMP_PATH"
-  echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
-  mv -f "$TMP_PATH" "docs/components/$COMP_MD_FILE"
-  echo "      Added."
-  echo "    Generated."
+for COMPONENT in $(ls -d -- $REPO_ROOT_DIR/components/*/); do
+    COMPONENT_NAME=$(basename "$COMPONENT")
+    if [[ " ${TARGETS[@]} " =~ " ${COMPONENT_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
+        update_docs "components" "$COMPONENT_NAME"
+    fi
 done
-echo "  Generated."
 
-echo "  Generating docs for all libraries..."
-
-echo "    Adding Library section to $INDEX_FILE..."
 echo "## Library" >> "$INDEX_PATH"
 echo "" >> "$INDEX_PATH"
-echo "    Added."
 
-safe_cd "$REPO_ROOT_DIR/library"
-LIBS=$(ls -d -- */)
-safe_cd "$REPO_ROOT_DIR"
-
-for LIB in $LIBS; do                      # Names of the libraries with a trailing /
-  if [ "$LIB" != "cypress/" ]; then       # skip the cypress directory
-    LIB_NAME=$(echo "$LIB" | cut -d/ -f1) # Only the name of the library
-    LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
-    LIB_MD_FILE="$LIB_NAME.md"
-    LIB_MD_PATH="docs/library/$LIB_MD_FILE"
-    DOCS_DIR="docs"
-
-    echo "      Generating docs for $LIB_NAME..."
-    echo "        Creating docs for $LIB_NAME..."
-    npx jsdoc2md "$LIB_JS_PATH" > "$LIB_MD_PATH"
-    echo "        Created."
-
-    echo "      Adding link for $LIB_MD_FILE to $INDEX_FILE..."
-    DESC_TEXT=$(grep "@description" "$LIB_JS_PATH" | cut -d' ' -f4-)
-    LIB_MD_LINK="library/$LIB_MD_FILE" # Link is relative to docs.
-    echo "- [$LIB_NAME]($LIB_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
-    echo "      Added."
-
-    echo "      Adding back links from $LIB_MD_FILE to $INDEX_FILE..."
-    TMP_PATH="docs/library/$LIB_NAME.tmp"
-    echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-    # shellcheck disable=SC2129
-    echo "" >> "$TMP_PATH"
-    cat "docs/library/$LIB_MD_FILE" >> "$TMP_PATH"
-    echo "" >> "$TMP_PATH"
-    echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
-    mv -f "$TMP_PATH" "docs/library/$LIB_MD_FILE"
-    echo "      Added."
-
-    echo "    Generated."
-  fi
+for LIBRARY in $(ls -d -- $REPO_ROOT_DIR/library/*/); do
+    LIBRARY_NAME=$(basename "$LIBRARY")
+    if [[ " ${TARGETS[@]} " =~ " ${LIBRARY_NAME} " ]] || [[ " ${TARGETS[@]} " =~ " all " ]]; then
+        update_docs "library" "$LIBRARY_NAME"
+    fi
 done
-echo "  Generated."
 
-echo -e "${GREEN}Done.${NO_COLOR}"
+echo -e "${GREEN}Documentation generation complete.${NO_COLOR}"
