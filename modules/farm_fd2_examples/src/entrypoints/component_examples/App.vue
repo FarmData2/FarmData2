@@ -11,6 +11,10 @@
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>
+    <li>
+      <a href="selector_base">SelectorBase</a>: Base component for selecting an
+      item via a drop down list.
+    </li>
   </ul>
 
   <div

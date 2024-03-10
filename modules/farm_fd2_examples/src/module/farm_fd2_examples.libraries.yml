@@ -53,3 +53,14 @@ picker_base:
       picker_base/picker_base.css: {}
     component:
       shared/index.css: {}
+selector_base:
+  js:
+    selector_base/selector_base.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      selector_base/selector_base.css: {}
+    component:
+      shared/index.css: {}

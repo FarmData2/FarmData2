@@ -28,3 +28,9 @@ farm.fd2_examples_picker_base:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_picker_base.content
   weight: 100
+farm.fd2_examples_selector_base:
+  title: 'SelectorBase'
+  description: 'Example of the use of the SelectorBase component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_selector_base.content
+  weight: 100
