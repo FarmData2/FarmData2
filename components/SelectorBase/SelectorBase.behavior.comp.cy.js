@@ -11,7 +11,7 @@ describe('Test the SelectorBase behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check options property updates when the array reference changes', () => {
+  it.only('Check options property updates when the array reference changes', () => {
     const initOpts = ['One', 'Two', 'Three'];
     const newOpts = ['A', 'B', 'C', 'D'];
 
@@ -32,6 +32,29 @@ describe('Test the SelectorBase behaviors', () => {
           wrapper.setProps({ options: newOpts });
           cy.get('[data-cy="selector-option-1"]').should('have.value', 'A');
           cy.get('[data-cy="selector-option-4"]').should('have.value', 'D');
+        });
+    });
+  });
+
+  it.only('Check options property updates when the array content changes', () => {
+    const opts = ['One', 'Two', 'Three'];
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: opts,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+          opts.push('Four');
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+          cy.get('[data-cy="selector-option-4"]').should('have.value', 'Four');
         });
     });
   });

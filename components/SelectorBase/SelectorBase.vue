@@ -34,7 +34,7 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in options"
+            v-for="(option, i) in this.optionList"
             v-bind:key="option"
             v-bind:value="option"
             v-bind:data-cy="'selector-option-' + (i + 1)"
@@ -203,6 +203,7 @@ export default {
   },
   data() {
     return {
+      optionList: this.options,
       selectedOption: this.selected,
     };
   },
@@ -246,6 +247,19 @@ export default {
        * @property {String} option the name of the newly selected option.
        */
       this.$emit('update:selected', this.selectedOption);
+    },
+    options: {
+      handler() {
+        this.optionList = this.options;
+
+        console.log(this.options.length);
+        console.log(this.optionList.length);
+
+        if (!this.optionList.includes(this.selected)) {
+          this.selectedOption = '';
+        }
+      },
+      deep: true,
     },
   },
   created() {
