@@ -12,23 +12,27 @@ describe('Test the DateSelector styling', () => {
   });
 
   /*
-   * There are 4 possibilities for styling...
+   * There are 8 possibilities for styling...
    *
-   * showValidityStyling    isValid   Tested by Test
-   * false                  false     1. Not showing, not valid
-   * false                  true      2. Not showing, valid
-   * true                   false     3. Showing, not valid
-   * true                   true      4. Showing, valid
+   * required   showValidityStyling    empty     Tested by Test
+   * false      false                  false     1. Not Required, Not showing, not empty
+   * false      false                  true      2. Not Required, Not showing, empty
+   * false      true                   false     3. Not Required, Showing, not empty
+   * false      true                   true      4. Not Required, Showing, empty
+   * true       false                  false     5. Required, Not showing, not empty
+   * true       false                  true      6. Required, Not showing, empty
+   * true       true                   false     7. Required, Showing, not empty
+   * true       true                   true      8. Required, Showing, empty
    */
 
-  it('1. Not showing, not valid', () => {
+  it('1. Not Required, Not showing, not empty', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(DateSelector, {
       props: {
-        required: true,
-        date: null,
+        required: false,
         showValidityStyling: false,
+        date: '1999-01-02',
         onReady: readySpy,
       },
     });
@@ -42,14 +46,14 @@ describe('Test the DateSelector styling', () => {
       });
   });
 
-  it('2. Not showing, valid', () => {
+  it('2. Not Required, Not showing, empty', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(DateSelector, {
       props: {
-        required: true,
-        date: '1999-01-02',
+        required: false,
         showValidityStyling: false,
+        date: null,
         onReady: readySpy,
       },
     });
@@ -63,35 +67,14 @@ describe('Test the DateSelector styling', () => {
       });
   });
 
-  it('3. Showing, not valid', () => {
+  it('3. Not Required, Showing, not empty', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(DateSelector, {
       props: {
-        required: true,
-        date: null,
+        required: false,
         showValidityStyling: true,
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
-        cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');
-        cy.get('[data-cy="date-invalid-feedback"]').should('be.visible');
-      });
-  });
-
-  it('4. Showing, valid', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(DateSelector, {
-      props: {
-        required: true,
         date: '1999-01-02',
-        showValidityStyling: true,
         onReady: readySpy,
       },
     });
@@ -102,6 +85,111 @@ describe('Test the DateSelector styling', () => {
         cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
         cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
         cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+      });
+  });
+
+  it('4. Not Required, Showing, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: false,
+        showValidityStyling: true,
+        date: '',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+        cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+      });
+  });
+
+  it('5. Required, Not showing, not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        showValidityStyling: false,
+        date: '1999-01-02',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+        cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+      });
+  });
+
+  it('6. Required, Not showing, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        showValidityStyling: false,
+        date: '',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+        cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+      });
+  });
+
+  it('7. Required, Showing, not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        showValidityStyling: true,
+        date: '1999-01-02',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
+        cy.get('[data-cy="date-invalid-feedback"]').should('not.be.visible');
+      });
+  });
+
+  it('8. Required, Showing, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(DateSelector, {
+      props: {
+        required: true,
+        showValidityStyling: true,
+        date: '',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+        cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');
+        cy.get('[data-cy="date-invalid-feedback"]').should('be.visible');
       });
   });
 });

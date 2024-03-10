@@ -178,10 +178,14 @@ export default {
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validationStyling() {
-      if (!this.showValidityStyling) {
-        return null;
+      if (this.showValidityStyling) {
+        if (!this.required && this.checked.length == 0) {
+          return null;
+        } else {
+          return this.isValid;
+        }
       } else {
-        return this.isValid;
+        return null;
       }
     },
   },

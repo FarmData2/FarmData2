@@ -11,7 +11,16 @@ describe('Test the PickerBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" true on creation if not required.', () => {
+  /**
+   * Does 4 checks on validity computation
+   *
+   * required   empty     test
+   * false      false     1. valid event: Not required, not empty
+   * false      true      2. valid event: Not required, empty
+   * true       false     3. valid event: Required, not empty
+   * true       true      4. valid event: Required, empty
+   */
+  it('1. valid event: Not required, not empty', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -20,7 +29,9 @@ describe('Test the PickerBase component events', () => {
         onReady: readySpy,
         onValid: validSpy,
         label: 'Picker',
+        required: false,
         options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1'],
         invalidFeedbackText: 'Invalid feedback text.',
       },
     });
@@ -33,7 +44,55 @@ describe('Test the PickerBase component events', () => {
       });
   });
 
-  it('Emits "valid" false on creation if required.', () => {
+  it('2. valid event: Not required, empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        label: 'Picker',
+        requried: false,
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1'],
+        invalidFeedbackText: 'Invalid feedback text.',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('3. valid event: Required, not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(PickerBase, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+        label: 'Picker',
+        options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+        picked: ['Option 1'],
+        invalidFeedbackText: 'Invalid feedback text.',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('4. valid event: Required, empty', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
