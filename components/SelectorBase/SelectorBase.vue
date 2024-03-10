@@ -252,9 +252,6 @@ export default {
       handler() {
         this.optionList = this.options;
 
-        console.log(this.options.length);
-        console.log(this.optionList.length);
-
         if (!this.optionList.includes(this.selected)) {
           this.selectedOption = '';
         }
