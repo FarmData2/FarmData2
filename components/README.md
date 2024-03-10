@@ -94,12 +94,12 @@ Custom FarmData2 Vue Components.
       - If the component is required then blank/empty/no value/etc is not considered a valid value.
     - The submit function in the page will use this value to determine if the submit button should be enabled or disabled and whether or not to add non-required fields to the submission.
 
-  - The component indicates the type of styling to be used using its `invalidStyling` computed property.
+  - The component indicates the type of styling to be used using its `validityStyling` computed property.
 
     - This function returns:
       - `true` to apply valid styling (green check)
       - `false` to apply invalid styling (red x and invalidFeedbackText)
-      - `null` to not apply either styling. This should be applied when showValidityStyling is set false, and also non-required inputs that are blank.
+      - `null` to not apply either styling. This should be applied when showValidityStyling is set false, and also to non-required inputs that are blank/empty.
 
   - The `showValidityStyling` prop should be is set by the entry point to
     - `true` when "Submit" is clicked
@@ -257,7 +257,8 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
   - check events (`*.events.comp.cy.js`)
 
     - check that all events listed in the component's `emits` property are emitted properly
-      - At least one test per event.
+      - If the component computes `isValid` for itself then the `valid` event should be tested exhaustively.
+      - At least one test per event for all other events:
         - Do something that should cause the event to be emitted.
           - e.g. change the selection, type some text, etc...
           - e.g. Use `cy.intercept` to generate network errors on the appropriate route.

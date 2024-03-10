@@ -22,7 +22,7 @@
           id="selector-input"
           data-cy="selector-input"
           v-model="selectedOption"
-          v-bind:state="validationStyling"
+          v-bind:state="validityStyling"
           v-bind:required="required"
         >
           <template v-slot:first>
@@ -78,7 +78,7 @@
         <BFormInvalidFeedback
           id="selector-invalid-feedback"
           data-cy="selector-invalid-feedback"
-          v-bind:state="validationStyling"
+          v-bind:state="validityStyling"
         >
           {{ invalidFeedbackText }}
         </BFormInvalidFeedback>
@@ -208,17 +208,24 @@ export default {
     };
   },
   computed: {
+    isEmpty() {
+      return this.selectedOption == null || this.selectedOption == '';
+    },
     isValid() {
       if (this.required) {
-        return this.selectedOption != null && this.selectedOption != '';
+        return !this.isEmpty;
       } else {
         return true;
       }
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validationStyling() {
+    validityStyling() {
       if (this.showValidityStyling) {
-        return this.isValid;
+        if (!this.required && this.isEmpty) {
+          return null;
+        } else {
+          return this.isValid;
+        }
       } else {
         return null;
       }

@@ -11,7 +11,41 @@ describe('Test the SelectorBase component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" true on creation when not required', () => {
+  /**
+   * Does 4 checks on validity computation
+   *
+   * required   empty     test
+   * false      false     1. valid event: Not required, not empty
+   * false      true      2. valid event: Not required, empty
+   * true       false     3. valid event: Required, not empty
+   * true       true      4. valid event: Required, empty
+   */
+
+  it('1. valid event: Not required, not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        required: false,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: ['One'],
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('2. valid event: Not required, empty', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -34,7 +68,31 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Emits "valid" false on creation when required and no selection given', () => {
+  it('3. valid event: Required, Not empty', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        required: true,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: ['One'],
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
+      });
+  });
+
+  it('4. valid event: Required, empty', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -54,30 +112,6 @@ describe('Test the SelectorBase component events', () => {
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', false);
-      });
-  });
-
-  it('Emits "valid" true on creation when required and selection given', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(SelectorBase, {
-      props: {
-        invalidFeedbackText: 'Invalid feedback text.',
-        label: `TheLabel`,
-        required: true,
-        options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        selected: 'One',
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
