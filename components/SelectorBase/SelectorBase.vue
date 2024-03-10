@@ -105,21 +105,27 @@
  * See any of the `*Selector` components for examples of how this component
  * can be used.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/selector_base">The SelectorBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/selector_base/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <SelectorBase
- *   id="location-selector"
- *   data-cy="location-selector"
- *   label="Location"
- *   invalidFeedbackText="A location is required"
- *   v-bind:addOptionUrl="addLocationUrl"
- *   v-bind:options="locationList"
+ *   id="selector"
+ *   data-cy="selector"
+ *   label="Select"
+ *   invalid-feedback-text="Selection cannot be empty."
  *   v-bind:required="required"
- *   v-bind:selected="selected"
- *   v-bind:showValidityStyling="showValidityStyling"
- *   v-on:update:selected="handleUpdateSelected($event)"
- *   v-on:valid="handleValid($event)"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:options="options"
+ *   v-bind:addOptionUrl="addOptionUrl"
+ *   v-model:selected="form.selected"
+ *   v-on:valid="(valid) => (validity.selected = valid)"
+ *   v-on:ready="createdCount++"
  * />
  * ```
  *
