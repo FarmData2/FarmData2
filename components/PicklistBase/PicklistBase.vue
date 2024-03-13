@@ -82,7 +82,8 @@
             >
               <template #overlay>
                 <BCard
-                  bg-variant="light"
+                  bg-variant="success"
+                  text-variant="white"
                   id="picklist-info-card"
                   data-cy="picklist-info-card"
                   v-bind:style="{
@@ -371,5 +372,11 @@ tr,
 th,
 td {
   height: 24px !important;
+}
+</style>
+
+<style>
+.b-table {
+  margin: 0px;
 }
 </style>

@@ -176,6 +176,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import url('@css/fd2-examples.css');
 </style>
