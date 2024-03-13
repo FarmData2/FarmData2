@@ -34,3 +34,9 @@ farm.fd2_examples_selector_base:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_selector_base.content
   weight: 100
+farm.fd2_examples_picklist_base:
+  title: 'PicklistBase'
+  description: 'Example of the use of the PicklistBase component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_picklist_base.content
+  weight: 100

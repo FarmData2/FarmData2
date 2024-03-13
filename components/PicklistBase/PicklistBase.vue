@@ -1,15 +1,147 @@
 <template>
-  <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
-  >
-    <p data-cy="placeholder">Component content goes here.</p>
-  </BFormGroup>
+  <div>
+    <BTableSimple
+      id="picklist-table"
+      data-cy="picklist-table"
+      small
+      responsive
+      striped
+      bordered
+      stickyHeader
+      v-bind:aria-hidden="showOverlay ? 'true' : null"
+    >
+      <BThead>
+        <BTr>
+          <BTh
+            class="narrow-col"
+            stickyColumn
+          >
+            <BButton
+              id="picklist-all-button"
+              data-cy="picklist-all-button"
+              v-if="showAllButton"
+              v-bind:disabled="showOverlay != null"
+              size="sm"
+              variant="primary"
+              v-on:click="handleAllButton()"
+            >
+              All
+            </BButton>
+          </BTh>
+          <BTh
+            v-for="header in headers"
+            v-bind:id="'picklist-header-' + header"
+            v-bind:data-cy="'picklist-header-' + header"
+            v-bind:key="header"
+          >
+            {{ header }}</BTh
+          >
+          <BTh
+            v-if="showInfoIcons"
+            class="narrow-col"
+            stickyColumn
+          >
+          </BTh>
+        </BTr>
+      </BThead>
+      <BTbody>
+        <BTr
+          v-for="(row, i) in rows"
+          v-bind:key="i"
+        >
+          <BTh stickyColumn>
+            <BFormCheckbox
+              v-bind:id="'picklist-checkbox-' + i"
+              v-bind:data-cy="'picklist-checkbox-' + i"
+              v-bind:name="'picklist-checkbox-' + i"
+              v-bind:key="i"
+              v-bind:disabled="showOverlay != null"
+              v-model="pickedRows[i]"
+              size="lg"
+            />
+          </BTh>
+          <BTd
+            v-for="(cell, j) in row"
+            v-bind:id="'picklist-' + headers[j] + '-' + i"
+            v-bind:data-cy="'picklist-' + headers[j] + '-' + i"
+            v-bind:key="j"
+          >
+            {{ cell }}
+          </BTd>
+          <BTh
+            v-if="showInfoIcons"
+            stickyColumn
+          >
+            <BOverlay
+              id="picklist-info-overlay"
+              data-cy="picklist-info-overlay"
+              v-bind:show="showOverlay == i"
+              v-bind:aria-hidden="!showOverlay ? 'true' : null"
+              v-on:click="showOverlay = null"
+              z-index="100"
+            >
+              <template #overlay>
+                <BCard
+                  bg-variant="light"
+                  id="picklist-info-card"
+                  data-cy="picklist-info-card"
+                  v-bind:style="{
+                    width: overlayWidth + 'px',
+                    left: overlayLeft + 'px',
+                  }"
+                >
+                  <template #header>
+                    <strong>Details</strong>
+                  </template>
+                  <BCardBody
+                    id="picklist-info-card-body"
+                    data-cy="picklist-info-card-body"
+                  >
+                    <li
+                      v-for="(col, i) in headers"
+                      v-bind:id="'picklist-info-' + col"
+                      v-bind:data-cy="'picklist-info-' + col"
+                      v-bind:key="col"
+                    >
+                      {{ col }}: {{ rows[showOverlay][i] }}
+                    </li>
+                    <li
+                      v-for="(value, name) in infoToShow"
+                      v-bind:id="'picklist-info-' + name"
+                      v-bind:data-cy="'picklist-info-' + name"
+                      v-bind:key="name"
+                    >
+                      {{ name }}: {{ value }}
+                    </li>
+                  </BCardBody>
+                </BCard>
+              </template>
+              <svg
+                v-bind:id="'picklist-info-icon-' + i"
+                v-bind:data-cy="'picklist-info-icon-' + i"
+                v-on:click="showInfo(i)"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="green"
+                class="bi bi-info-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"
+                />
+              </svg>
+            </BOverlay>
+          </BTh>
+        </BTr>
+      </BTbody>
+    </BTableSimple>
+  </div>
 </template>
 
 <script>
 /**
- * A new component.
+ * The `PicklistBase` component allows the user to pick multiple items from a list displayed as a table.
  *
  * ## Usage Example
  *
@@ -20,62 +152,158 @@
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * Attribute Name            | Description
+ * --------------------------| -----------
+ * `picklist-checkbox-i`     | The checkbox in the leftmost column of the ith row (counting from 0).
+ * `picklist-header-*`       | The `<th>` element for the column with header `*`.
+ * `picklist-info-card`      | The `BCard` element that displays more detailed information about a row.
+ * `picklist-info-card-body` | The `BCardBody` element that contains the `li` elements in the `BCard`.
+ * `picklist-info-icon-i`    | The info icon in the rightmost column of the ith row (counting from 0).
+ * `picklist-info-overlay`   | The `BOverlay` element that is used to display more detailed information on the rows.
+ * `picklist-info-*`         | The `<li>` element in the info card that displays the attribute and value with name `*`.
+ * `picklist-table`          | The `BTableSimple` element containing the items that can be picked.
+ * `picklist-*-i`            | The `<td>` element in the column with header `*` in the ith row (counting from 0).
  */
 export default {
   name: 'PicklistBase',
   components: {},
-  emits: ['ready', 'valid'],
+  emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
-     * Whether a value for the input element is required or not.
+     * An array of strings giving the column headers.
      */
-    required: {
-      type: Boolean,
-      default: false,
+    headers: {
+      type: Array,
+      required: true,
     },
     /**
-     * Whether validity styling should appear on input elements.
+     * An array of integers indicating the indices of the rows in the table that are picked.
+     * The rows are indexed from 0.
+     * The length of this array must be equal to the length of the `rows` array.
      */
-    showValidityStyling: {
+    picked: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * An array of nested arrays of strings giving the data for each row.
+     * Each nested array must have the same length as the `headers` array.
+     */
+    rows: {
+      type: Array,
+      required: true,
+    },
+    /**
+     * An array of objects giving the detailed information that should be displayed for each row.
+     * The data already displayed in the columns, plus each attribute name and value in the row's object will be displayed when the rows details are shown.
+     * The length of this array must be equal to the length of the `rows` array.
+     */
+    rowsInfo: {
+      type: Array,
+      required: false,
+    },
+    /**
+     * Whether the select "All" button should be displayed in the first column header.
+     */
+    showAllButton: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   data() {
-    return {};
+    return {
+      showOverlay: null,
+      infoToShow: '',
+      overlayWidth: null,
+      overlayLeft: null,
+      pickedRows: this.picked,
+    };
   },
   computed: {
+    showInfoIcons() {
+      if (this.rowsInfo == null) {
+        return false;
+      } else {
+        if (this.rowsInfo.length != this.rows.length) {
+          console.error('PicklistBase: Warning rowsInfo.length != rows.length');
+        }
+        return true;
+      }
+    },
     isValid() {
-      /*
-       * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.  This should account for whether the value is
-       * required or not if necessary.
-       */
+      for (let i = 0; i < this.pickedRows.length; i++) {
+        if (this.pickedRows[i]) {
+          return true;
+        }
+      }
+
       return false;
     },
-    // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
-    validityStyling() {
-      /*
-       * Edit this computed property to indicted the type of styling that should be applied
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
-       * other criteria that is necessary.
-       *
-       * Bind this computed property to the `state` prop of the components to be styled.
-       */
-      return false;
+    allPicked() {
+      if (this.pickedRows.length < this.rows.length) {
+        return false;
+      }
+
+      for (let i = 0; i < this.pickedRows.length; i++) {
+        if (!this.pickedRows[i]) {
+          return false;
+        }
+      }
+
+      return true;
     },
   },
-  methods: {},
+  methods: {
+    showInfo(row) {
+      const table = document.getElementById('picklist-table');
+      if (table != null) {
+        this.overlayWidth = table.clientWidth - 64;
+        this.overlayLeft = -(table.clientWidth - 48);
+      }
+
+      this.infoToShow = this.rowsInfo[row];
+      this.showOverlay = row;
+    },
+    handleAllButton() {
+      if (this.allPicked) {
+        this.pickedRows = [];
+      } else {
+        this.pickedRows = new Array(this.rows.length).fill(true);
+      }
+    },
+  },
   watch: {
     isValid() {
       /**
-       * The validity of the component has changed.  Also emitted when the component is created.
+       * This component is valid if at least one row is selected.
        * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
+    },
+    picked: {
+      handler() {
+        this.pickedRows = this.picked;
+      },
+      deep: true,
+    },
+    pickedRows: {
+      handler() {
+        /**
+         * There has been a change to the picked rows.
+         *
+         * @property {Array} pickedRows If index `i` is `true` the row is picked. If row `i` is not picked index `i` will not be `true` (i.e. it may be `undefined`, `null` or `false`).
+         */
+        this.$emit('update:picked', this.pickedRows);
+      },
+      deep: true,
+    },
+    rows: {
+      handler() {
+        // No good way to really know what has changed so deselect everything.
+        // This should be an unusual event so hopefully it isn't an issue.
+        this.pickedRows = [];
+      },
+      deep: true,
     },
   },
   created() {
@@ -89,3 +317,59 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.narrow-col {
+  width: 24px !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  text-align: center;
+}
+
+.form-check {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.form-control-lg {
+  padding-left: 20px !important;
+  margin-left: 10px !important;
+  margin-right: -10px !important;
+  margin-top: -3px !important;
+}
+
+.card-header {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+#picklist-info-card-body {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin: 0px !important;
+}
+
+#picklist-info-card {
+  position: absolute !important;
+  top: -12px !important;
+  z-index: 100 !important;
+}
+
+#picklist-table {
+  padding-bottom: 0px !important;
+  padding-top: 0px !important;
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
+}
+
+#picklist-all-button {
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+}
+
+tr,
+th,
+td {
+  height: 24px !important;
+}
+</style>
