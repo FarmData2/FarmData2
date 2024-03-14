@@ -82,8 +82,6 @@
             >
               <template #overlay>
                 <BCard
-                  bg-variant="success"
-                  text-variant="white"
                   id="picklist-info-card"
                   data-cy="picklist-info-card"
                   v-bind:style="{
@@ -92,20 +90,13 @@
                   }"
                 >
                   <template #header>
-                    <strong>Details</strong>
+                    <p />
                   </template>
+
                   <BCardBody
                     id="picklist-info-card-body"
                     data-cy="picklist-info-card-body"
                   >
-                    <li
-                      v-for="(col, i) in headers"
-                      v-bind:id="'picklist-info-' + col"
-                      v-bind:data-cy="'picklist-info-' + col"
-                      v-bind:key="col"
-                    >
-                      {{ col }}: {{ rows[showOverlay][i] }}
-                    </li>
                     <li
                       v-for="(value, name) in infoToShow"
                       v-bind:id="'picklist-info-' + name"
@@ -258,8 +249,8 @@ export default {
     showInfo(row) {
       const table = document.getElementById('picklist-table');
       if (table != null) {
-        this.overlayWidth = table.clientWidth - 64;
-        this.overlayLeft = -(table.clientWidth - 48);
+        this.overlayWidth = table.clientWidth - 55;
+        this.overlayLeft = -(table.clientWidth - 43);
       }
 
       this.infoToShow = this.rowsInfo[row];
@@ -339,21 +330,12 @@ export default {
   margin-top: -3px !important;
 }
 
-.card-header {
-  padding: 0px !important;
-  margin: 0px !important;
-}
-
-#picklist-info-card-body {
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
-  margin: 0px !important;
-}
-
 #picklist-info-card {
   position: absolute !important;
-  top: -12px !important;
+  top: -16px !important;
   z-index: 100 !important;
+  border-width: 2px !important;
+  border-color: green !important;
 }
 
 #picklist-table {
@@ -376,6 +358,22 @@ td {
 </style>
 
 <style>
+div.card-header {
+  background-color: green !important;
+  opacity: 0.2 !important;
+}
+
+div.card-body {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  margin: 0px !important;
+  background-color: green !important;
+  color: white !important;
+  opacity: 1 !important;
+}
+
 .b-table {
   margin: 0px;
 }
