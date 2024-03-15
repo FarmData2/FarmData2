@@ -39,7 +39,6 @@
           <BTh
             v-if="showInfoIcons"
             class="narrow-col"
-            stickyColumn
           >
           </BTh>
         </BTr>
@@ -68,17 +67,13 @@
           >
             {{ cell }}
           </BTd>
-          <BTh
-            v-if="showInfoIcons"
-            stickyColumn
-          >
+          <BTd v-if="showInfoIcons">
             <BOverlay
               id="picklist-info-overlay"
               data-cy="picklist-info-overlay"
               v-bind:show="showOverlay == i"
               v-bind:aria-hidden="!showOverlay ? 'true' : null"
               v-on:click="showOverlay = null"
-              z-index="100"
             >
               <template #overlay>
                 <BCard
@@ -124,7 +119,7 @@
                 />
               </svg>
             </BOverlay>
-          </BTh>
+          </BTd>
         </BTr>
       </BTbody>
     </BTableSimple>
@@ -312,65 +307,69 @@ export default {
 
 <style scoped>
 .narrow-col {
-  width: 24px !important;
-  padding: 0px !important;
-  margin: 0px !important;
+  width: 24px;
+  padding: 0px;
+  margin: 0px;
   text-align: center;
 }
 
 .form-check {
-  padding: 0px !important;
-  margin: 0px !important;
+  padding: 0px;
+  margin: 0px;
 }
 
 .form-control-lg {
-  padding-left: 20px !important;
-  margin-left: 10px !important;
-  margin-right: -10px !important;
-  margin-top: -3px !important;
+  padding-left: 20px;
+  margin-left: 10px;
+  margin-right: -10px;
+  margin-top: -3px;
 }
 
 #picklist-info-card {
-  position: absolute !important;
-  top: -16px !important;
-  z-index: 100 !important;
-  border-width: 2px !important;
-  border-color: green !important;
+  position: absolute;
+  top: -16px;
+  z-index: 100;
+  background-color: transparent;
+  border-color: green;
+  border-width: 2px;
+  border-radius: 8px !important;
+  opacity: 1;
 }
 
 #picklist-table {
-  padding-bottom: 0px !important;
-  padding-top: 0px !important;
-  margin-bottom: 0px !important;
-  margin-top: 0px !important;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
 }
 
 #picklist-all-button {
-  padding-left: 3px !important;
-  padding-right: 3px !important;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 tr,
 th,
 td {
-  height: 24px !important;
+  height: 24px;
 }
 </style>
 
 <style>
-div.card-header {
-  background-color: green !important;
+.card-header {
+  background-color: green;
+  height: 32px;
   opacity: 0.2 !important;
 }
 
-div.card-body {
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  margin: 0px !important;
-  background-color: green !important;
-  color: white !important;
+.card-body {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  margin: 0px;
+  background-color: green;
+  color: white;
   opacity: 1 !important;
 }
 
