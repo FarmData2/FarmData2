@@ -60,17 +60,18 @@
             />
           </BTh>
           <BTd
-            v-for="(cell, j) in row"
+            v-for="(col, j) in headers"
             v-bind:id="'picklist-' + headers[j] + '-' + i"
             v-bind:data-cy="'picklist-' + headers[j] + '-' + i"
             v-bind:key="j"
           >
-            {{ cell }}
+            {{ row[col] }}
           </BTd>
           <BTd v-if="showInfoIcons">
             <BOverlay
               id="picklist-info-overlay"
               data-cy="picklist-info-overlay"
+              v-if="showInfoIcon(i)"
               v-bind:show="showOverlay == i"
               v-bind:aria-hidden="!showOverlay ? 'true' : null"
               v-on:click="showOverlay = null"
@@ -92,14 +93,19 @@
                     id="picklist-info-card-body"
                     data-cy="picklist-info-card-body"
                   >
-                    <li
-                      v-for="(value, name) in infoToShow"
-                      v-bind:id="'picklist-info-' + name"
-                      v-bind:data-cy="'picklist-info-' + name"
+                    <span
+                      v-for="(value, name) in rows[i]"
                       v-bind:key="name"
                     >
-                      {{ name }}: {{ value }}
-                    </li>
+                      <li
+                        v-if="!headers.includes(name)"
+                        v-bind:id="'picklist-info-' + name"
+                        v-bind:data-cy="'picklist-info-' + name"
+                        v-bind:key="name"
+                      >
+                        {{ name }}: {{ value }}
+                      </li>
+                    </span>
                   </BCardBody>
                 </BCard>
               </template>
@@ -158,36 +164,29 @@ export default {
   props: {
     /**
      * An array of strings giving the column headers.
+     * Each column header must match an attribute name in the objects in the array provided by the `rows` prop.
      */
     headers: {
       type: Array,
       required: true,
     },
     /**
-     * An array of integers indicating the indices of the rows in the table that are picked.
+     * An array of boolean values indicating the rows in the table that are picked.
      * The rows are indexed from 0.
-     * The length of this array must be equal to the length of the `rows` array.
+     * The length of this array must be equal to the length of the array provided by the `rows` prop.
      */
     picked: {
       type: Array,
       default: () => [],
     },
     /**
-     * An array of nested arrays of strings giving the data for each row.
-     * Each nested array must have the same length as the `headers` array.
+     * An array of objects giving the data for each row.
+     * Each object is expected to contain an attribute for each name listed in the array given by the `headers` prop.
+     * Attributes not listed in the `headers` prop and their values will be displayed in the additional info overlay.
      */
     rows: {
       type: Array,
       required: true,
-    },
-    /**
-     * An array of objects giving the detailed information that should be displayed for each row.
-     * The data already displayed in the columns, plus each attribute name and value in the row's object will be displayed when the rows details are shown.
-     * The length of this array must be equal to the length of the `rows` array.
-     */
-    rowsInfo: {
-      type: Array,
-      required: false,
     },
     /**
      * Whether the select "All" button should be displayed in the first column header.
@@ -196,27 +195,23 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * Whether the info icon should be displayed for any row that provides additional information.
+     */
+    showInfoIcons: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
       showOverlay: null,
-      infoToShow: '',
       overlayWidth: null,
       overlayLeft: null,
       pickedRows: this.picked,
     };
   },
   computed: {
-    showInfoIcons() {
-      if (this.rowsInfo == null) {
-        return false;
-      } else {
-        if (this.rowsInfo.length != this.rows.length) {
-          console.error('PicklistBase: Warning rowsInfo.length != rows.length');
-        }
-        return true;
-      }
-    },
     isValid() {
       for (let i = 0; i < this.pickedRows.length; i++) {
         if (this.pickedRows[i]) {
@@ -241,14 +236,15 @@ export default {
     },
   },
   methods: {
+    showInfoIcon(row) {
+      return Object.keys(this.rows[row]).length > this.headers.length;
+    },
     showInfo(row) {
       const table = document.getElementById('picklist-table');
       if (table != null) {
         this.overlayWidth = table.clientWidth - 55;
         this.overlayLeft = -(table.clientWidth - 43);
       }
-
-      this.infoToShow = this.rowsInfo[row];
       this.showOverlay = row;
     },
     handleAllButton() {

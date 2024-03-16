@@ -8,8 +8,8 @@
   <PicklistBase
     v-bind:headers="headers"
     v-bind:rows="rows"
-    v-bind:rowsInfo="rowsInfo"
     v-bind:showAllButton="showAllButton"
+    v-bind:showInfoIcons="showInfoIcons"
     v-bind:picked="form.picked"
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
@@ -38,6 +38,17 @@
         </td>
       </tr>
       <tr>
+        <td>showInfoIcons</td>
+        <td>
+          <BFormCheckbox
+            id="show-info-icons-checkbox"
+            data-cy="show-info-icons-checkbox"
+            switch
+            v-model="showInfoIcons"
+          />
+        </td>
+      </tr>
+      <tr>
         <td>picked</td>
         <td>
           <BButton
@@ -45,7 +56,7 @@
             data-cy="set-picked-button"
             variant="outline-primary"
             size="sm"
-            v-on:click="this.form.picked[0] = !this.form.picked[0]"
+            v-on:click="form.picked[0] = !form.picked[0]"
           >
             Toggle first row
           </BButton>
@@ -61,14 +72,16 @@
             size="sm"
             v-on:click="
               if (this.rows.length < 5) {
-                this.rows.push(['R4-C1', 'R4-C2', 'R4-C3']);
-                this.rowsInfo.push({
+                this.rows.push({
+                  Column1: 'R4-C1',
+                  Column2: 'R4-C2',
+                  Column3: 'R4-C3',
+                  More: 'Stuff here4',
                   name: 'name5',
                   value: 'info 5',
                 });
               } else {
                 this.rows.splice(4, 1);
-                this.rowsInfo.splice(4, 1);
               }
             "
           >
@@ -119,17 +132,28 @@ export default {
     return {
       headers: ['Column1', 'Column2', 'Column3'],
       rows: [
-        ['R0-C1', 'R0-C2', 'R0-C3'],
-        ['R1-C1', 'R1-C2', 'R1-C3'],
-        ['R2-C1', 'R2-C2', 'R2-C3'],
-        [
-          'R3-C1',
-          'R3-C2',
-          'R3-C3 - A longer value in this cell to show what happens.',
-        ],
-      ],
-      rowsInfo: [
         {
+          Column1: 'R0-C1',
+          Column2: 'R0-C2',
+          Column3: 'R0-C3',
+          More: 'Stuff here1',
+        },
+        {
+          Column1: 'R1-C1',
+          Column2: 'R1-C2',
+          Column3: 'R1-C3',
+          More: 'Stuff here2',
+        },
+        {
+          Column1: 'R2-C1',
+          Column2: 'R2-C2',
+          Column3: 'R2-C3',
+        },
+        {
+          Column1: 'R3-C1',
+          Column2: 'R3-C2',
+          Column3: 'R3-C3 - A longer value in this cell to show what happens.',
+          More: 'Stuff here4',
           name: 'name1',
           value: 'info 1',
           text: 'Lots of values here as an example.',
@@ -147,15 +171,9 @@ export default {
           text13: '13',
           text14: '14',
         },
-        {
-          name: 'name2',
-          value: 'info 2',
-          text: 'A longer text string to show what happens when the text is long.',
-        },
-        { name: 'name3', value: 'info 3' },
-        { name: 'name4', value: 'info 4' },
       ],
       showAllButton: true,
+      showInfoIcons: true,
       form: {
         picked: [],
       },
