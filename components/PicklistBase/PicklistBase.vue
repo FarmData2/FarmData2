@@ -332,7 +332,7 @@ export default {
   background-color: transparent;
   border-color: green;
   border-width: 2px;
-  border-radius: 8px !important;
+  border-radius: 8px;
   opacity: 1;
 }
 
@@ -348,10 +348,14 @@ export default {
   padding-right: 3px;
 }
 
+th {
+  font-weight: bold;
+}
+
 tr,
 th,
 td {
-  height: 24px;
+  height: 30px;
 }
 </style>
 
@@ -359,7 +363,7 @@ td {
 .card-header {
   background-color: green;
   height: 32px;
-  opacity: 0.2 !important;
+  opacity: 0.2;
 }
 
 .card-body {
@@ -370,7 +374,7 @@ td {
   margin: 0px;
   background-color: green;
   color: white;
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .b-table {
