@@ -136,11 +136,25 @@
 /**
  * The `PicklistBase` component allows the user to pick multiple items from a list displayed as a table.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/picklist_base">The PicklistBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picklist_base/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <PicklistBase
+ *   v-bind:headers="headers"
+ *   v-bind:rows="rows"
+ *   v-bind:showAllButton="showAllButton"
+ *   v-bind:showInfoIcons="showInfoIcons"
+ *   v-bind:picked="form.picked"
+ *   v-on:valid="(valid) => (validity.picked = valid)"
+ *   v-on:update:picked="form.picked = $event"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
@@ -285,6 +299,7 @@ export default {
         // No good way to really know what has changed so deselect everything.
         // This should be an unusual event so hopefully it isn't an issue.
         this.pickedRows = [];
+        this.showOverlay = null;
       },
       deep: true,
     },
