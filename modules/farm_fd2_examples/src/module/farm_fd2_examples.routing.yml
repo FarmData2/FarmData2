@@ -40,3 +40,10 @@ farm.fd2_examples_selector_base.content:
     _title: 'SelectorBase Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_picklist_base.content:
+  path: '/fd2_examples/picklist_base'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'PicklistBase Example'
+  requirements:
+    _permission: 'access content'

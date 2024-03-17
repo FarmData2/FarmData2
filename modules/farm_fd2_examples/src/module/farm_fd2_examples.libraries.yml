@@ -64,3 +64,14 @@ selector_base:
       selector_base/selector_base.css: {}
     component:
       shared/index.css: {}
+picklist_base:
+  js:
+    picklist_base/picklist_base.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      picklist_base/picklist_base.css: {}
+    component:
+      shared/index.css: {}
