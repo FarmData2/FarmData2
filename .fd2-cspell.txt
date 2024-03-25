@@ -46,6 +46,7 @@ setsid
 shellcheck
 shfmt
 toplevel
+transplantings
 unplugin
 usermod
 vite

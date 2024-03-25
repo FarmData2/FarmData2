@@ -44,3 +44,15 @@ direct_seeding:
       direct_seeding/direct_seeding.css: {}
     component:
       shared/index.css: {}
+
+transplanting:
+  js:
+    transplanting/transplanting.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      transplanting/transplanting.css: {}
+    component:
+      shared/index.css: {}
