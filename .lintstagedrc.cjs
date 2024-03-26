@@ -225,7 +225,7 @@ const getLibTestsUnitCyJs = (files) => {
 
 module.exports = {
   '*': [
-    'cspell --no-progress --no-summary --config .cspell.json',
+    'cspell --no-progress --no-summary --no-must-find-files --config .cspell.json',
     'prettier --ignore-unknown --write',
   ],
   '**/*.bash|.githooks/*': [
