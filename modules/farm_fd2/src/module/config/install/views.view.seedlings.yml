@@ -386,7 +386,7 @@ display:
           label: ''
           exclude: false
           alter:
-            alter_text: true
+            alter_text: false
             text: '{{ inventory__value }}'
             make_link: false
             path: ''
