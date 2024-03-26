@@ -1824,7 +1824,7 @@ export async function deleteSeedingLog(seedingLogId) {
  * @category Soil
  */
 export async function createSoilDisturbanceActivityLog(
-  distrubanceDate,
+  disturbanceDate,
   locationName,
   bedNames = [],
   logCategories,
@@ -1891,9 +1891,9 @@ export async function createSoilDisturbanceActivityLog(
     type: 'log--activity',
     attributes: {
       name: plantAsset.attributes.name,
-      timestamp: dayjs(distrubanceDate).format(),
+      timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
-      purchase_date: dayjs(distrubanceDate).format(),
+      purchase_date: dayjs(disturbanceDate).format(),
     },
     relationships: {
       location: locations,
@@ -1947,6 +1947,119 @@ export async function deleteSoilDisturbanceActivityLog(activityLogId) {
   } catch (error) {
     console.log('deleteSoilDisturbanceActivityLog:');
     console.log('  Unable to delete activity log with id: ' + activityLogId);
+    console.log(error.message);
+    console.log(error);
+    throw error;
+  }
+}
+
+/**
+ * Extract the value for a UNIT from a quantity string given by the farmOS API.
+ *
+ * These strings come in several formats:
+ * - `"25 TRAYS (Count)"`
+ * - `"2 TRAYS (Count), 102.5 FEET (Length/depth)"`
+ * - `"Trays ( Count ) 3 TRAYS (Increment 2019-02-19_ts_LETTUCE-ICEBERG inventory), Tray Size ( Ratio ) 72 CELLS/TRAY, Seeds ( Count ) 216 SEEDS"`
+ *
+ * This function assumes that:
+ * - there will be only one inventory value per `UNIT`
+ * - the `UNIT` (e.g. `TRAYS`) will be preceded by a space, which is preceded by the desired value.
+ *
+ * @param {string} quantityString the quantity string from which to extract the value.
+ * @param {string} unitName the name of the unit for which to extract the value.
+ *
+ * @returns {number} the value for the specified unit or `null` if no value is found for the unit.
+ *
+ * @category Utilities
+ */
+export function extractQuantity(quantityString, unitName) {
+  console.log(quantityString);
+  console.log(unitName);
+
+  const unitSplit = quantityString.split(unitName);
+  console.log(unitSplit);
+
+  if (unitSplit.length > 1) {
+    const spaceSplit = unitSplit[0].split(' ');
+    console.log(spaceSplit);
+
+    const valueStr = spaceSplit[spaceSplit.length - 2];
+    console.log(valueStr);
+
+    return Number(valueStr);
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get information about all of the seedlings that are candidates for transplanting.
+ * These seedlings are plant assets that were tray seeded and have a positive inventory of trays.
+ *
+ * This function returns an array of objects with the following content:
+ * ```json
+ * {
+ *    date: <date of tray seeding>,
+ *    user: <name of user that entered the seeding>,
+ *    crop: <name of crop that was seeded>,
+ *    trays_location: <name of location where trays are>,
+ *    asset_locations: <names of locations where crop has been transplanted thus far>,
+ *    total_trays: <total number of trays seeded>
+ *    available_trays: <number of trays available for transplanting>
+ *    tray_size: <size of trays that were seeded>,
+ *    seeds_per_cell: <number of seeds in each tray cell>,
+ *    total_seeds: <total number of seeds used>
+ *    log_notes: <notes attached to the tray seeding log>
+ *    asset_notes: <notes attached to the plant asset>
+ * }
+ * ```
+ *
+ * @param {string} cropName optional crop name to filter seedlings by.
+ *
+ * @category Transplanting
+ */
+export async function getSeedlings(cropName = null) {
+  const farm = await getFarmOSInstance();
+  try {
+    let url = '/api/fd2_seedlings';
+    if (cropName) {
+      url = url + '?crop=' + cropName;
+    }
+
+    const raw = await farm.remote.request(url);
+    let result = [];
+
+    for (const seedling of raw.data) {
+      const available_trays = extractQuantity(seedling.inventory, 'TRAYS');
+
+      if (available_trays > 0) {
+        // "quantities": "Trays ( Count ) 3 TRAYS (Increment 2019-02-19_ts_LETTUCE-ICEBERG inventory), Tray Size ( Ratio ) 72 CELLS/TRAY, Seeds ( Count ) 216 SEEDS",
+        const total_trays = extractQuantity(seedling.quantities, 'TRAYS');
+        const tray_size = extractQuantity(seedling.quantities, 'CELLS/TRAY');
+        const seeds_per_cell = extractQuantity(seedling.quantities, 'SEEDS');
+        let total_seeds = tray_size * seeds_per_cell;
+
+        result.push({
+          date: seedling.date,
+          user: seedling.user,
+          crop: seedling.crop,
+          trays_location: seedling.trays_location,
+          asset_locations: seedling.asset_locations,
+          total_trays: total_trays,
+          available_trays: available_trays,
+          tray_size: tray_size,
+          seeds_per_cell: seeds_per_cell,
+          total_seeds: total_seeds,
+          log_notes: seedling.log_notes,
+          asset_notes: seedling.asset_notes,
+        });
+      }
+    }
+
+    return result;
+  } catch (error) {
+    console.log('getSeedlings:');
+    console.log('  Unable to GET seedlings information.');
     console.log(error.message);
     console.log(error);
     throw error;
