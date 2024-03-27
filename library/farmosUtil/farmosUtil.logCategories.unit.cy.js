@@ -16,17 +16,17 @@ describe('Test the log categories utility functions', () => {
       expect(categories).to.not.be.null;
       expect(categories.length).to.equal(12);
 
-      expect(categories[0].attributes.name).to.equal('weed_control');
+      expect(categories[0].attributes.name).to.equal('amendment');
       expect(categories[0].attributes.description.value).to.equal(
-        'For logs related to weed control.'
+        'For logs where soil amendments are made.'
       );
       expect(categories[0].type).to.equal('taxonomy_term--log_category');
 
-      expect(categories[2].attributes.name).to.equal('transplanting');
-      expect(categories[2].attributes.description.value).to.equal(
-        'For logs representing transplantation of a plant.'
+      expect(categories[11].attributes.name).to.equal('weed_control');
+      expect(categories[11].attributes.description.value).to.equal(
+        'For logs related to weed control.'
       );
-      expect(categories[2].type).to.equal('taxonomy_term--log_category');
+      expect(categories[11].type).to.equal('taxonomy_term--log_category');
     });
   });
 

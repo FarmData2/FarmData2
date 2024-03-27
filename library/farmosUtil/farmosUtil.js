@@ -1225,6 +1225,10 @@ export async function getLogCategories() {
       throw new Error('Unable to fetch log categories.', categories.rejected);
     }
 
+    categories.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
     return categories.data;
   });
 }
@@ -1973,19 +1977,11 @@ export async function deleteSoilDisturbanceActivityLog(activityLogId) {
  * @category Utilities
  */
 export function extractQuantity(quantityString, unitName) {
-  console.log(quantityString);
-  console.log(unitName);
-
   const unitSplit = quantityString.split(unitName);
-  console.log(unitSplit);
 
   if (unitSplit.length > 1) {
     const spaceSplit = unitSplit[0].split(' ');
-    console.log(spaceSplit);
-
     const valueStr = spaceSplit[spaceSplit.length - 2];
-    console.log(valueStr);
-
     return Number(valueStr);
   } else {
     return null;
@@ -2033,11 +2029,10 @@ export async function getSeedlings(cropName = null) {
       const available_trays = extractQuantity(seedling.inventory, 'TRAYS');
 
       if (available_trays > 0) {
-        // "quantities": "Trays ( Count ) 3 TRAYS (Increment 2019-02-19_ts_LETTUCE-ICEBERG inventory), Tray Size ( Ratio ) 72 CELLS/TRAY, Seeds ( Count ) 216 SEEDS",
         const total_trays = extractQuantity(seedling.quantities, 'TRAYS');
         const tray_size = extractQuantity(seedling.quantities, 'CELLS/TRAY');
-        const seeds_per_cell = extractQuantity(seedling.quantities, 'SEEDS');
-        let total_seeds = tray_size * seeds_per_cell;
+        const total_seeds = extractQuantity(seedling.quantities, 'SEEDS');
+        const seeds_per_cell = total_seeds / (tray_size * total_trays);
 
         result.push({
           date: seedling.date,
