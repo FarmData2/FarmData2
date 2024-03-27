@@ -2025,8 +2025,6 @@ export async function getSeedlings(cropName = null) {
     const raw = await farm.remote.request(url);
     let result = [];
 
-    console.log(raw.data);
-
     for (const seedling of raw.data) {
       const available_trays = extractQuantity(seedling.inventory, 'TRAYS');
 
