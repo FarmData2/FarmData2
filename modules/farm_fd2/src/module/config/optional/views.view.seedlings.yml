@@ -7,7 +7,7 @@ dependencies:
     - taxonomy.vocabulary.plant_type
     - user.role.authenticated
   content:
-    - 'taxonomy_term:log_category:d62f7b25-936d-4f35-ace0-e622b6155412'
+    - 'taxonomy_term:log_category:faa0c4c1-8f49-4297-b22c-03a80d074bc5'
   module:
     - asset
     - entity_reference_revisions
@@ -21,7 +21,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: kNyu_nP3KTzaRUmWfmaHInLtGs9pRW-ygZU42_KA7EM
+  default_config_hash: 9pCNYztQMGjh4gqAdlyS4Viseu_7oiylh_CFAtF5mUY
 id: seedlings
 label: 'Farm Seedlings'
 module: views
@@ -941,7 +941,10 @@ display:
               alias: crop
               raw_output: false
             location_target_id:
-              alias: trays_loation
+              alias: trays_location
+              raw_output: false
+            location:
+              alias: asset_locations
               raw_output: false
             inventory:
               alias: inventory
@@ -954,9 +957,6 @@ display:
               raw_output: false
             notes__value_1:
               alias: asset_notes
-              raw_output: false
-            location:
-              alias: asset_locations
               raw_output: false
       display_description: ''
       display_extenders:
