@@ -2025,6 +2025,8 @@ export async function getSeedlings(cropName = null) {
     const raw = await farm.remote.request(url);
     let result = [];
 
+    console.log(raw.data);
+
     for (const seedling of raw.data) {
       const available_trays = extractQuantity(seedling.inventory, 'TRAYS');
 
@@ -2057,6 +2059,6 @@ export async function getSeedlings(cropName = null) {
     console.log('  Unable to GET seedlings information.');
     console.log(error.message);
     console.log(error);
-    throw error;
+    throw new Error('Unable to fetch seedlings.', error);
   }
 }
