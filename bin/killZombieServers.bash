@@ -1,5 +1,5 @@
 # shellcheck disable=SC2009
-PIDs=$(ps -aux | grep "vite.config.js build --watch$" | tr -s " " | cut -d " " -f 2)
+PIDs=$(pgrep -f "vite.config.js")
 
 for pid in $PIDs; do
   echo "Killing process: $pid"
