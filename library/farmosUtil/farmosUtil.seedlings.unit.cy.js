@@ -83,4 +83,33 @@ describe('Test the getSeedlings function', () => {
       }
     });
   });
+
+  it('Get crop names of active tray seeded crops with tray inventory > 0', () => {
+    cy.wrap(farmosUtil.getTraySeededCropNames()).then((crops) => {
+      expect(crops.length).to.equal(8);
+      expect(crops[0]).to.equal('BROCCOLI');
+      expect(crops[7]).to.equal('LETTUCE-ICEBERG');
+    });
+  });
+
+  it('Error getting crop names of active tray seeded crops with tray inventory > 0', () => {
+    cy.intercept('GET', '**/api/fd2_seedlings_crop_names', {
+      statusCode: 401,
+    });
+
+    cy.wrap(
+      farmosUtil
+        .getTraySeededCropNames()
+        .then(() => {
+          throw new Error(
+            'Fetching tray seeded crop names should have failed.'
+          );
+        })
+        .catch((error) => {
+          expect(error.message).to.equal(
+            'Unable to fetch tray seeded crop names.'
+          );
+        })
+    );
+  });
 });

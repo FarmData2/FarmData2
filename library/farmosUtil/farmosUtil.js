@@ -2011,6 +2011,7 @@ export function extractQuantity(quantityString, unitName) {
  * ```
  *
  * @param {string} cropName optional crop name to filter seedlings by.
+ * @returns {Array} the list of seedlings.
  *
  * @category Transplanting
  */
@@ -2058,5 +2059,48 @@ export async function getSeedlings(cropName = null) {
     console.log(error.message);
     console.log(error);
     throw new Error('Unable to fetch seedlings.', error);
+  }
+}
+
+/**
+ * Gets a list of the crop names of all crops that are eligible for
+ * transplanting.  These are the names of all crops associated with
+ * plant assets that were tray seeded and have a positive inventory of
+ * trays.
+ *
+ * @return {Array} the list of crop names.
+ *
+ * @category Transplanting
+ */
+export async function getTraySeededCropNames() {
+  const farm = await getFarmOSInstance();
+  try {
+    let url = '/api/fd2_seedlings_crop_names';
+    const raw = await farm.remote.request(url);
+
+    // Sum up trays for each crop listed and keep only the names
+    // of the crops with total trays > 0.
+
+    const cropMap = new Map();
+    for (const seeding of raw.data) {
+      const trays = extractQuantity(seeding.inventory, 'TRAYS');
+      if (cropMap.get(seeding.crop) == null) {
+        cropMap.set(seeding.crop, trays);
+      } else {
+        cropMap.set(seeding.crop, cropMap.get(seeding.crop) + trays);
+      }
+    }
+
+    const cropsWithTrays = Array.from(cropMap.keys()).filter(
+      (cropName) => cropMap.get(cropName) > 0
+    );
+
+    return cropsWithTrays;
+  } catch (error) {
+    console.log('getTraySeededCropNames:');
+    console.log('  Unable to GET tray seeded crop names.');
+    console.log(error.message);
+    console.log(error);
+    throw new Error('Unable to fetch tray seeded crop names.', error);
   }
 }
