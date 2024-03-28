@@ -1332,6 +1332,7 @@ export async function getPermissions() {
  * [`getPermissions`]{@link #module_farmosUtil.getPermissions}
  * and uses the returned `Object` to check the permission.
  *
+ * @param {String} permissionName the name of the permission to check.
  * @throws {Error} if unable to fetch the permissions.
  * @throws {Error} if the requested permission does not exist.
  * @return {boolean} true if the current user has the specified permission.
@@ -2010,8 +2011,9 @@ export function extractQuantity(quantityString, unitName) {
  * }
  * ```
  *
- * @param {string} cropName optional crop name to filter seedlings by.
- * @returns {Array} the list of seedlings.
+ * @param {string} cropName optional crop name to filter seedlings by. If omitted seedlings of all crops will be returned.
+ * @returns {Array<Object>} the list of seedlings.
+ * @throws {Error} if unable to fetch seedlings.
  *
  * @category Transplanting
  */
@@ -2068,7 +2070,8 @@ export async function getSeedlings(cropName = null) {
  * plant assets that were tray seeded and have a positive inventory of
  * trays.
  *
- * @return {Array} the list of crop names.
+ * @return {Array<string>} the list of crop names.
+ * @throws {Error} if unable to fetch the crop names.
  *
  * @category Transplanting
  */
