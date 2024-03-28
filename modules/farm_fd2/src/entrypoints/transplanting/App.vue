@@ -37,10 +37,21 @@
           v-bind:invalidFeedbackText="'Please select a crop.'"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.cropFilter = $event"
+          v-on:update:selected="cropFilterChanged($event)"
           v-on:ready="createdCount++"
         />
 
         <!-- Tray Seeding Picklist -->
+        <PicklistBase
+          v-bind:headers="headers"
+          v-bind:rows="seedlingList"
+          showAllButton
+          showInfoIcons
+          v-bind:picked="form.picked"
+          v-on:valid="(valid) => (validity.picked = valid)"
+          v-on:update:picked="form.picked = $event"
+          v-on:ready="createdCount++"
+        />
       </BForm>
     </BCard>
 
@@ -65,19 +76,25 @@ import dayjs from 'dayjs';
 import * as lib from './lib';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 
 export default {
   components: {
     SelectorBase,
+    PicklistBase,
   },
   data() {
     return {
       cropFilter: null,
       cropList: [],
+      headers: ['trays_location', 'crop', 'date', 'available_trays'],
       seedlingList: [],
-      form: {},
+      form: {
+        picked: [],
+      },
       validity: {
         show: false,
+        picked: false,
       },
       createdCount: 0,
     };
@@ -87,15 +104,40 @@ export default {
       return this.createdCount == 2;
     },
   },
+  methods: {
+    cropFilterChanged(cropName) {
+      let crop = null;
+      if (cropName) {
+        crop = cropName;
+      }
+
+      farmosUtil
+        .getSeedlings(cropName)
+        .then((seedlings) => {
+          this.seedlingList = seedlings;
+        })
+        .catch((error) => {
+          // TODO: Use toast here...
+          console.error('Transplanting: Error fetching seedlings.');
+        });
+    },
+  },
   created() {
     // Fetch list of seedlings that can be transplanted.
-    farmosUtil.getTraySeededCropNames().then((cropNames) => {
-      this.cropList = ['ALL', ...cropNames];
-      this.createdCount++;
-    })
-    .catch((error) => {
-      console.error('SeedlingSelector: Error fetching seedlings.');
-    });
+    farmosUtil
+      .getTraySeededCropNames()
+      .then((cropNames) => {
+        this.cropList = cropNames;
+        this.createdCount++;
+      })
+      .catch((error) => {
+        // TODO: Use toast here...
+        console.error('Transplanting: Error fetching seedlings crop names.');
+      });
   },
 };
 </script>
+
+<style>
+@import url('@css/fd2-mobile.css');
+</style>
