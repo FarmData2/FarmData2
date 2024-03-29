@@ -7,7 +7,8 @@
 
   <hr />
   <PicklistBase
-    v-bind:headers="headers"
+    v-bind:columns="columns"
+    v-bind:labels="labels"
     v-bind:rows="rows"
     v-bind:showAllButton="showAllButton"
     v-bind:showInfoIcons="showInfoIcons"
@@ -74,10 +75,10 @@
             v-on:click="
               if (this.rows.length < 5) {
                 this.rows.push({
-                  Column1: 'R4-C1',
-                  Column2: 'R4-C2',
-                  Column3: 'R4-C3',
-                  More: 'Stuff here4',
+                  c1: 'R4-C1',
+                  c2: 'R4-C2',
+                  c3: 'R4-C3',
+                  stuff: 'Stuff here4',
                   name: 'name5',
                   value: 'info 5',
                 });
@@ -94,7 +95,6 @@
   </table>
 
   <h5>Component Event Payloads:</h5>
-
   <table class="example-table">
     <thead>
       <tr>
@@ -131,32 +131,48 @@ export default {
   },
   data() {
     return {
-      headers: ['Column1', 'Column2', 'Column3'],
+      columns: ['c1', 'c2', 'c3'],
+      labels: {
+        c1: 'Column1',
+        c2: 'Column2',
+        c3: 'Column3',
+        stuff: 'More Info',
+        name: 'Name',
+        value: 'A Number',
+        text: 'Text',
+        text2: 'Text2',
+        text4: 'Text4',
+        text6: 'Text6',
+        text8: 'Text8',
+        text10: 'Text10',
+        text12: 'Text12',
+        text14: 'Text14',
+      },
       rows: [
         {
-          Column1: 'R0-C1',
-          Column2: 'R0-C2',
-          Column3: 'R0-C3',
-          More: 'Stuff here1',
+          c1: 'R0-C1',
+          c2: 'R0-C2',
+          c3: 'R0-C3',
+          stuff: 'Stuff here1',
         },
         {
-          Column1: 'R1-C1',
-          Column2: 'R1-C2',
-          Column3: 'R1-C3',
-          More: 'Stuff here2',
+          c1: 'R1-C1',
+          c2: 'R1-C2',
+          c3: 'R1-C3',
+          stuff: 'Stuff here2',
         },
         {
-          Column1: 'R2-C1',
-          Column2: 'R2-C2',
-          Column3: 'R2-C3',
+          c1: 'R2-C1',
+          c2: 'R2-C2',
+          c3: 'R2-C3',
         },
         {
-          Column1: 'R3-C1',
-          Column2: 'R3-C2',
-          Column3: 'R3-C3 - A longer value in this cell to show what happens.',
-          More: 'Stuff here4',
+          c1: 'R3-C1',
+          c2: 'R3-C2',
+          c3: 'R3-C3 - A longer value in this cell to show what happens.',
+          stuff: 'Stuff here4',
           name: 'name1',
-          value: 'info 1',
+          value: '8',
           text: 'Lots of values here as an example.',
           text2: '2',
           text3: '3',
