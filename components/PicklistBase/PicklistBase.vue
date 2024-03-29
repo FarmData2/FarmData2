@@ -393,7 +393,7 @@ export default {
 
 #picklist-info-card-header {
   position: relative;
-  left: -18px;
+  left: -16px;
   padding: 0px !important;
   margin: 0px !important;
   background-color: green;
@@ -402,7 +402,7 @@ export default {
 
 #picklist-info-card-body {
   position: relative;
-  left: -18px;
+  left: -16px;
   background-color: green;
   opacity: 1;
   color: white;
