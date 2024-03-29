@@ -29,12 +29,12 @@
             </BButton>
           </BTh>
           <BTh
-            v-for="header in headers"
-            v-bind:id="'picklist-header-' + header"
-            v-bind:data-cy="'picklist-header-' + header"
+            v-for="header in columns"
+            v-bind:id="'picklist-header-' + getLabel(header)"
+            v-bind:data-cy="'picklist-header-' + getLabel(header)"
             v-bind:key="header"
           >
-            {{ header }}</BTh
+            {{ getLabel(header) }}</BTh
           >
           <BTh
             v-if="showInfoIcons"
@@ -60,9 +60,9 @@
             />
           </BTh>
           <BTd
-            v-for="(col, j) in headers"
-            v-bind:id="'picklist-' + headers[j] + '-' + i"
-            v-bind:data-cy="'picklist-' + headers[j] + '-' + i"
+            v-for="(col, j) in columns"
+            v-bind:id="'picklist-' + getLabel(columns[j]) + '-' + i"
+            v-bind:data-cy="'picklist-' + getLabel(columns[j]) + '-' + i"
             v-bind:key="j"
           >
             {{ row[col] }}
@@ -113,12 +113,12 @@
                         v-bind:key="name"
                       >
                         <li
-                          v-if="!headers.includes(name)"
+                          v-if="includeAttributeInInfo(name)"
                           v-bind:id="'picklist-info-' + name"
                           v-bind:data-cy="'picklist-info-' + name"
                           v-bind:key="name"
                         >
-                          {{ name }}: {{ value }}
+                          {{ getLabel(name) }}: {{ value }}
                         </li>
                       </span>
                     </ul>
@@ -164,7 +164,7 @@ import { BCardHeader } from 'bootstrap-vue-next';
  *
  * ```html
  * <PicklistBase
- *   v-bind:headers="headers"
+ *   v-bind:columns="columns"
  *   v-bind:rows="rows"
  *   v-bind:showAllButton="showAllButton"
  *   v-bind:showInfoIcons="showInfoIcons"
@@ -196,11 +196,21 @@ export default {
   emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
-     * An array of strings giving the column headers.
-     * Each column header must match an attribute name in the objects in the array provided by the `rows` prop.
+     * An array of strings giving the attribute names of the values to appear in each column of the table.
+     * Each column name must match an attribute name in the objects in the array provided by the `rows` prop.
+     * The column header will be given by the mapping of the attribute name to its label as given by the `labels` prop.
      */
-    headers: {
+    columns: {
       type: Array,
+      required: true,
+    },
+    /**
+     * Gives a translation from attribute name to the label that will be used to display it.
+     * The label will be used as the column header if the attribute is listed in `columns` or in the info box if it is not.
+     * Attributes not listed in this prop will not be displayed in the info box.
+     */
+    labels: {
+      type: Object,
       required: true,
     },
     /**
@@ -214,8 +224,8 @@ export default {
     },
     /**
      * An array of objects giving the data for each row.
-     * Each object is expected to contain an attribute for each name listed in the array given by the `headers` prop.
-     * Attributes not listed in the `headers` prop and their values will be displayed in the additional info overlay.
+     * Each object is expected to contain an attribute for each name listed in the array given by the `labels` prop.
+     * Attributes not listed in the `columns` prop and their values will be displayed in the additional info overlay.
      */
     rows: {
       type: Array,
@@ -270,8 +280,16 @@ export default {
     },
   },
   methods: {
+    includeAttributeInInfo(attributeName) {
+      return (
+        !this.columns.includes(attributeName) && this.getLabel(attributeName)
+      );
+    },
+    getLabel(attributeName) {
+      return this.labels[attributeName];
+    },
     showInfoIcon(row) {
-      return Object.keys(this.rows[row]).length > this.headers.length;
+      return Object.keys(this.rows[row]).length > this.columns.length;
     },
     showInfo(row) {
       const table = document.getElementById('picklist-table');
@@ -399,6 +417,7 @@ export default {
 }
 
 #picklist-table {
+  max-height: 250px;
   padding-bottom: 0px;
   padding-top: 0px;
   margin-bottom: 0px;
