@@ -28,6 +28,7 @@ describe('Test the getSeedlings function', () => {
       expect(first.asset_locations).to.equal('CHUAU');
       expect(first.total_trays).to.equal(4);
       expect(first.available_trays).to.equal(4);
+      expect(first.tray_ratio).to.equal('4/4');
       expect(first.tray_size).to.equal(128);
       expect(first.seeds_per_cell).to.equal(1);
       expect(first.total_seeds).to.equal(4 * 128);
@@ -42,6 +43,7 @@ describe('Test the getSeedlings function', () => {
       expect(last.asset_locations).to.equal('CHUAU');
       expect(last.total_trays).to.equal(2);
       expect(last.available_trays).to.equal(2);
+      expect(last.tray_ratio).to.equal('2/2');
       expect(last.tray_size).to.equal(128);
       expect(last.seeds_per_cell).to.equal(1);
       expect(last.total_seeds).to.equal(2 * 128);

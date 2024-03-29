@@ -2003,6 +2003,7 @@ export function extractQuantity(quantityString, unitName) {
  *    asset_locations: <names of locations where crop has been transplanted thus far>,
  *    total_trays: <total number of trays seeded>
  *    available_trays: <number of trays available for transplanting>
+ *    tray_ratio: <available trays / total trays (e.g. "3/7")>,
  *    tray_size: <size of trays that were seeded>,
  *    seeds_per_cell: <number of seeds in each tray cell>,
  *    total_seeds: <total number of seeds used>
@@ -2045,6 +2046,7 @@ export async function getSeedlings(cropName = null) {
           asset_locations: seedling.asset_locations,
           total_trays: total_trays,
           available_trays: available_trays,
+          tray_ratio: total_trays + '/' + available_trays,
           tray_size: tray_size,
           seeds_per_cell: seeds_per_cell,
           total_seeds: total_seeds,
