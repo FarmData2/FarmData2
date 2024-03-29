@@ -1,4 +1,5 @@
 <template>
+  <h4>SelectorBase Example</h4>
   <p>
     SelectorBase is a component that allows the user to pick an item from a drop
     down list.
@@ -20,7 +21,7 @@
   />
   <hr />
   <h5>Component Props:</h5>
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Prop</th>
@@ -106,8 +107,7 @@
   </table>
 
   <h5>Component Event Payloads:</h5>
-
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Event</th>
@@ -170,6 +170,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('@css/fd2-examples.css');
+@import url('@css/fd2-mobile.css');
 </style>

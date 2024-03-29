@@ -1,4 +1,5 @@
 <template>
+  <h3>DateSelector Example</h3>
   <p data-cy="description">
     The DateSelector allows the user to select a date.
   </p>
@@ -20,7 +21,7 @@
   <hr />
 
   <h5>Component Props:</h5>
-  <table>
+  <table class="example-table">
     <thead>
       <th>Prop</th>
       <th>Control</th>
@@ -66,7 +67,7 @@
   </table>
 
   <h5>Component Event Payloads</h5>
-  <table>
+  <table class="example-table">
     <thead>
       <th>Event</th>
       <th>Payload</th>
@@ -130,6 +131,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('@css/fd2-examples.css');
+@import url('@css/fd2-mobile.css');
 </style>

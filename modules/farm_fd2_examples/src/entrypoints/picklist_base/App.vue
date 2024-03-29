@@ -1,4 +1,5 @@
 <template>
+  <h3>PicklistBase Example</h3>
   <p>
     The PicklistBase component allows the user to pick multiple items from a
     list displayed as a table.
@@ -18,7 +19,7 @@
   <hr />
 
   <h5>Component Props:</h5>
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Prop</th>
@@ -94,7 +95,7 @@
 
   <h5>Component Event Payloads:</h5>
 
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Event</th>
@@ -194,6 +195,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('@css/fd2-examples.css');
+@import url('@css/fd2-mobile.css');
 </style>

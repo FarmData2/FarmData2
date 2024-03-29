@@ -67,7 +67,11 @@
           >
             {{ row[col] }}
           </BTd>
-          <BTd v-if="showInfoIcons">
+          <BTd
+            v-if="showInfoIcons"
+            v-bind:id="'picklist-info-' + i"
+            v-bind:data-cy="'picklist-info-' + i"
+          >
             <BOverlay
               id="picklist-info-overlay"
               data-cy="picklist-info-overlay"
@@ -85,16 +89,22 @@
                     left: overlayLeft + 'px',
                   }"
                 >
-                  <template #header>
+                  <BCardHeader
+                    id="picklist-info-card-header"
+                    data-cy="picklist-info-card-header"
+                    v-bind:style="{
+                      width: overlayWidth + 'px',
+                      height: infoRowHeight + 'px',
+                    }"
+                  >
                     <p />
-                  </template>
+                  </BCardHeader>
 
                   <BCardBody
                     id="picklist-info-card-body"
                     data-cy="picklist-info-card-body"
                     v-bind:style="{
                       width: overlayWidth + 'px',
-                      left: overlayLeft + 'px',
                     }"
                   >
                     <ul>
@@ -139,6 +149,8 @@
 </template>
 
 <script>
+import { BCardHeader } from 'bootstrap-vue-next';
+
 /**
  * The `PicklistBase` component allows the user to pick multiple items from a list displayed as a table.
  *
@@ -165,21 +177,22 @@
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name            | Description
- * --------------------------| -----------
- * `picklist-checkbox-i`     | The checkbox in the leftmost column of the ith row (counting from 0).
- * `picklist-header-*`       | The `<th>` element for the column with header `*`.
- * `picklist-info-card`      | The `BCard` element that displays more detailed information about a row.
- * `picklist-info-card-body` | The `BCardBody` element that contains the `li` elements in the `BCard`.
- * `picklist-info-icon-i`    | The info icon in the rightmost column of the ith row (counting from 0).
- * `picklist-info-overlay`   | The `BOverlay` element that is used to display more detailed information on the rows.
- * `picklist-info-*`         | The `<li>` element in the info card that displays the attribute and value with name `*`.
- * `picklist-table`          | The `BTableSimple` element containing the items that can be picked.
- * `picklist-*-i`            | The `<td>` element in the column with header `*` in the ith row (counting from 0).
+ * Attribute Name              | Description
+ * ----------------------------| -----------
+ * `picklist-checkbox-i`       | The checkbox in the leftmost column of the ith row (counting from 0).
+ * `picklist-header-*`         | The `<th>` element for the column with header `*`.
+ * `picklist-info-card`        | The `BCard` element that displays more detailed information about a row.
+ * `picklist-info-card-header` | The `BCardHeader` element that is the transparent area of the info table.
+ * `picklist-info-card-body`   | The `BCardBody` element that contains the `li` elements in the `BCard`.
+ * `picklist-info-icon-i`      | The info icon in the rightmost column of the ith row (counting from 0).
+ * `picklist-info-overlay`     | The `BOverlay` element that is used to display more detailed information on the rows.
+ * `picklist-info-*`           | The `<li>` element in the info card that displays the attribute and value with name `*`.
+ * `picklist-table`            | The `BTableSimple` element containing the items that can be picked.
+ * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0).
  */
 export default {
   name: 'PicklistBase',
-  components: {},
+  components: { BCardHeader },
   emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
@@ -228,6 +241,7 @@ export default {
       showOverlay: null,
       overlayWidth: null,
       overlayLeft: null,
+      infoRowHeight: null,
       pickedRows: this.picked,
     };
   },
@@ -265,6 +279,12 @@ export default {
         this.overlayWidth = table.clientWidth - 55;
         this.overlayLeft = -(table.clientWidth - 43);
       }
+
+      const tableCell = document.getElementById('picklist-info-' + row);
+      if (tableCell != null) {
+        this.infoRowHeight = tableCell.offsetHeight;
+      }
+
       this.showOverlay = row;
     },
     handleAllButton() {
@@ -344,22 +364,32 @@ export default {
 
 #picklist-info-card {
   position: absolute;
-  top: -16px;
+  top: -36px;
+  padding: 0px !important;
+  margin: 0px !important;
   background-color: transparent;
-  border-color: green;
-  border-width: 2px;
-  border-radius: 8px !important;
-  border-radius: 8px !important;
+  border-style: none;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+#picklist-info-card-header {
+  position: relative;
+  left: -18px;
+  padding: 0px !important;
+  margin: 0px !important;
+  background-color: green;
+  opacity: 0.2;
 }
 
 #picklist-info-card-body {
+  position: relative;
+  left: -18px;
   background-color: green;
-  color: white;
   opacity: 1;
-  margin: -18px;
-  margin-top: 8px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  color: white;
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
 }
 
 #picklist-info-card ul {

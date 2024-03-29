@@ -13,6 +13,10 @@
   display: none !important;
 }
 
+.sticky-shadow {
+  display: none !important;
+}
+
 header.region {
   display: none !important;
 }
