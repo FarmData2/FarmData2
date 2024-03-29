@@ -1,5 +1,5 @@
 <template>
-  <h4>SelectorBase Example</h4>
+  <h3>SelectorBase Example</h3>
   <p>
     SelectorBase is a component that allows the user to pick an item from a drop
     down list.
