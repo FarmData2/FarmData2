@@ -294,7 +294,7 @@ export default {
     showInfo(row) {
       const table = document.getElementById('picklist-table');
       if (table != null) {
-        this.overlayWidth = table.clientWidth - 55;
+        this.overlayWidth = table.clientWidth - 56;
         this.overlayLeft = -(table.clientWidth - 43);
       }
 
@@ -382,7 +382,7 @@ export default {
 
 #picklist-info-card {
   position: absolute;
-  top: -36px;
+  top: -37px;
   padding: 0px !important;
   margin: 0px !important;
   background-color: transparent;
