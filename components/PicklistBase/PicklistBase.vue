@@ -19,7 +19,7 @@
             <BButton
               id="picklist-all-button"
               data-cy="picklist-all-button"
-              v-if="showAllButton"
+              v-if="allButtonVisible"
               v-bind:disabled="showOverlay != null"
               size="sm"
               variant="primary"
@@ -277,6 +277,9 @@ export default {
       }
 
       return true;
+    },
+    allButtonVisible() {
+      return this.showAllButton && this.rows && this.rows.length > 1;
     },
   },
   methods: {
