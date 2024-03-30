@@ -32,6 +32,7 @@
           id="transplanting-crop-filter"
           data-cy="transplanting-crop-filter"
           label="Crop"
+          required
           v-model:selected="cropFilter"
           v-bind:options="cropList"
           v-bind:invalidFeedbackText="'Please select a crop.'"
@@ -43,7 +44,10 @@
 
         <!-- Tray Seeding Picklist -->
         <PicklistBase
-          v-bind:headers="headers"
+          id="transplanting-picklist"
+          data-cy="transplanting-picklist"
+          v-bind:columns="columns"
+          v-bind:labels="labels"
           v-bind:rows="seedlingList"
           showAllButton
           showInfoIcons
@@ -87,7 +91,19 @@ export default {
     return {
       cropFilter: null,
       cropList: [],
-      headers: ['trays_location', 'crop', 'date', 'available_trays'],
+      columns: ['trays_location', 'date', 'tray_ratio'],
+      labels: {
+        date: 'Date',
+        user: 'User',
+        trays_location: 'Location',
+        asset_location: 'Transplanted Location',
+        tray_ratio: 'Trays',
+        tray_size: 'Tray Size',
+        seeds_per_cell: 'Seeds per Cell',
+        total_seeds: 'Total Seeds',
+        log_notes: 'Seeding Notes',
+        asset_notes: 'Plant Notes',
+      },
       seedlingList: [],
       form: {
         picked: [],
@@ -106,20 +122,19 @@ export default {
   },
   methods: {
     cropFilterChanged(cropName) {
-      let crop = null;
       if (cropName) {
-        crop = cropName;
+        farmosUtil
+          .getSeedlings(cropName)
+          .then((seedlings) => {
+            this.seedlingList = seedlings;
+          })
+          .catch((error) => {
+            // TODO: Use toast here...
+            console.error('Transplanting: Error fetching seedlings.');
+          });
+      } else {
+        this.seedlingList = [];
       }
-
-      farmosUtil
-        .getSeedlings(cropName)
-        .then((seedlings) => {
-          this.seedlingList = seedlings;
-        })
-        .catch((error) => {
-          // TODO: Use toast here...
-          console.error('Transplanting: Error fetching seedlings.');
-        });
     },
   },
   created() {
@@ -140,4 +155,14 @@ export default {
 
 <style>
 @import url('@css/fd2-mobile.css');
+
+#transplanting-crop-filter {
+  padding-top: 3px;
+  padding-bottom: 8px;
+}
+
+#transplanting-picklist {
+  padding: 2px;
+  border: 1px solid black;
+}
 </style>
