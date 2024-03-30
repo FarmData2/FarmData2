@@ -7,6 +7,10 @@
 
   <hr />
   <PicklistBase
+    id="picklist"
+    data-cy="picklist"
+    v-bind:required="required"
+    v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
     v-bind:rows="rows"
@@ -28,6 +32,28 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+      </tr>
       <tr>
         <td>showAllButton</td>
         <td>
@@ -189,12 +215,14 @@ export default {
           text14: '14',
         },
       ],
+      required: true,
       showAllButton: true,
       showInfoIcons: true,
       form: {
         picked: [],
       },
       validity: {
+        showStyling: false,
         picked: false,
       },
       createdCount: 0,
