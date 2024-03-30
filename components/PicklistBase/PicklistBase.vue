@@ -1,150 +1,171 @@
 <template>
-  <div>
-    <BTableSimple
-      id="picklist-table"
-      data-cy="picklist-table"
-      small
-      responsive
-      striped
-      bordered
-      stickyHeader
-      v-bind:aria-hidden="showOverlay ? 'true' : null"
-    >
-      <BThead>
-        <BTr>
-          <BTh
-            class="narrow-col"
-            stickyColumn
-          >
-            <BButton
-              id="picklist-all-button"
-              data-cy="picklist-all-button"
-              v-if="allButtonVisible"
-              v-bind:disabled="showOverlay != null"
-              size="sm"
-              variant="primary"
-              v-on:click="handleAllButton()"
+  <div
+    id="picklist-div"
+    data-cy="picklist-div"
+    v-bind:style="{ padding: '2px', border: '1px solid ' + borderColor }"
+  >
+    <BForm>
+      <BTableSimple
+        id="picklist-table"
+        data-cy="picklist-table"
+        small
+        responsive
+        striped
+        stickyHeader
+        v-bind:aria-hidden="showOverlay ? 'true' : null"
+      >
+        <BThead>
+          <BTr>
+            <BTh
+              class="narrow-col"
+              stickyColumn
             >
-              All
-            </BButton>
-          </BTh>
-          <BTh
-            v-for="header in columns"
-            v-bind:id="'picklist-header-' + getLabel(header)"
-            v-bind:data-cy="'picklist-header-' + getLabel(header)"
-            v-bind:key="header"
-          >
-            {{ getLabel(header) }}</BTh
-          >
-          <BTh
-            v-if="showInfoIcons"
-            class="narrow-col"
-          >
-          </BTh>
-        </BTr>
-      </BThead>
-      <BTbody>
-        <BTr
-          v-for="(row, i) in rows"
-          v-bind:key="i"
-        >
-          <BTh stickyColumn>
-            <BFormCheckbox
-              v-bind:id="'picklist-checkbox-' + i"
-              v-bind:data-cy="'picklist-checkbox-' + i"
-              v-bind:name="'picklist-checkbox-' + i"
-              v-bind:key="i"
-              v-bind:disabled="showOverlay != null"
-              v-model="pickedRows[i]"
-              size="lg"
-            />
-          </BTh>
-          <BTd
-            v-for="(col, j) in columns"
-            v-bind:id="'picklist-' + getLabel(columns[j]) + '-' + i"
-            v-bind:data-cy="'picklist-' + getLabel(columns[j]) + '-' + i"
-            v-bind:key="j"
-          >
-            {{ row[col] }}
-          </BTd>
-          <BTd
-            v-if="showInfoIcons"
-            v-bind:id="'picklist-info-' + i"
-            v-bind:data-cy="'picklist-info-' + i"
-          >
-            <BOverlay
-              id="picklist-info-overlay"
-              data-cy="picklist-info-overlay"
-              v-if="showInfoIcon(i)"
-              v-bind:show="showOverlay == i"
-              v-bind:aria-hidden="!showOverlay ? 'true' : null"
-              v-on:click="showOverlay = null"
+              <BButton
+                id="picklist-all-button"
+                data-cy="picklist-all-button"
+                v-if="allButtonVisible"
+                v-bind:disabled="showOverlay != null"
+                size="sm"
+                variant="primary"
+                v-on:click="handleAllButton()"
+              >
+                All
+              </BButton>
+            </BTh>
+            <BTh
+              v-for="header in columns"
+              v-bind:id="'picklist-header-' + getLabel(header)"
+              v-bind:data-cy="'picklist-header-' + getLabel(header)"
+              v-bind:key="header"
             >
-              <template #overlay>
-                <BCard
-                  id="picklist-info-card"
-                  data-cy="picklist-info-card"
-                  v-bind:style="{
-                    width: overlayWidth + 'px',
-                    left: overlayLeft + 'px',
-                  }"
-                >
-                  <BCardHeader
-                    id="picklist-info-card-header"
-                    data-cy="picklist-info-card-header"
-                    v-bind:style="{
-                      width: overlayWidth + 'px',
-                      height: infoRowHeight + 'px',
-                    }"
-                  >
-                    <p />
-                  </BCardHeader>
+              {{ getLabel(header) }}</BTh
+            >
+            <BTh
+              v-if="showInfoIcons"
+              class="narrow-col"
+            >
+            </BTh>
+          </BTr>
+          <BTr v-if="validityStyling === false">
+            <Bth></Bth>
+            <BTh
+              colspan="100"
+              style="font-weight: normal"
+            >
+              <BFormInvalidFeedback
+                id="picklist-invalid-feedback"
+                data-cy="picklist-invalid-feedback"
+                v-bind:state="validityStyling"
+              >
+                At least one row must be selected
+              </BFormInvalidFeedback>
+            </BTh>
+          </BTr>
+        </BThead>
 
-                  <BCardBody
-                    id="picklist-info-card-body"
-                    data-cy="picklist-info-card-body"
+        <BTbody>
+          <BTr
+            v-for="(row, i) in rows"
+            v-bind:key="i"
+          >
+            <BTh stickyColumn>
+              <BFormCheckbox
+                v-bind:id="'picklist-checkbox-' + i"
+                v-bind:data-cy="'picklist-checkbox-' + i"
+                v-bind:name="'picklist-checkbox-' + i"
+                v-bind:key="i"
+                v-bind:disabled="showOverlay != null"
+                v-model="pickedRows[i]"
+                size="lg"
+              />
+            </BTh>
+            <BTd
+              v-for="(col, j) in columns"
+              v-bind:id="'picklist-' + getLabel(columns[j]) + '-' + i"
+              v-bind:data-cy="'picklist-' + getLabel(columns[j]) + '-' + i"
+              v-bind:key="j"
+            >
+              {{ row[col] }}
+            </BTd>
+            <BTd
+              v-if="showInfoIcons"
+              v-bind:id="'picklist-info-' + i"
+              v-bind:data-cy="'picklist-info-' + i"
+            >
+              <BOverlay
+                id="picklist-info-overlay"
+                data-cy="picklist-info-overlay"
+                v-if="showInfoIcon(i)"
+                v-bind:show="showOverlay == i"
+                v-bind:aria-hidden="!showOverlay ? 'true' : null"
+                v-on:click="showOverlay = null"
+              >
+                <template #overlay>
+                  <BCard
+                    id="picklist-info-card"
+                    data-cy="picklist-info-card"
                     v-bind:style="{
                       width: overlayWidth + 'px',
+                      left: overlayLeft + 'px',
                     }"
                   >
-                    <ul>
-                      <span
-                        v-for="(value, name) in rows[i]"
-                        v-bind:key="name"
-                      >
-                        <li
-                          v-if="includeAttributeInInfo(name)"
-                          v-bind:id="'picklist-info-' + name"
-                          v-bind:data-cy="'picklist-info-' + name"
+                    <BCardHeader
+                      id="picklist-info-card-header"
+                      data-cy="picklist-info-card-header"
+                      v-bind:style="{
+                        width: overlayWidth + 'px',
+                        height: infoRowHeight + 'px',
+                      }"
+                    >
+                      <p />
+                    </BCardHeader>
+
+                    <BCardBody
+                      id="picklist-info-card-body"
+                      data-cy="picklist-info-card-body"
+                      v-bind:style="{
+                        width: overlayWidth + 'px',
+                      }"
+                    >
+                      <ul>
+                        <span
+                          v-for="(value, name) in rows[i]"
                           v-bind:key="name"
                         >
-                          {{ getLabel(name) }}: {{ value }}
-                        </li>
-                      </span>
-                    </ul>
-                  </BCardBody>
-                </BCard>
-              </template>
-              <svg
-                v-bind:id="'picklist-info-icon-' + i"
-                v-bind:data-cy="'picklist-info-icon-' + i"
-                v-on:click="showInfo(i)"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="green"
-                class="bi bi-info-circle-fill"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"
-                />
-              </svg>
-            </BOverlay>
-          </BTd>
-        </BTr>
-      </BTbody>
-    </BTableSimple>
+                          <li
+                            v-if="includeAttributeInInfo(name)"
+                            v-bind:id="'picklist-info-' + name"
+                            v-bind:data-cy="'picklist-info-' + name"
+                            v-bind:key="name"
+                          >
+                            {{ getLabel(name) }}: {{ value }}
+                          </li>
+                        </span>
+                      </ul>
+                    </BCardBody>
+                  </BCard>
+                </template>
+                <svg
+                  v-bind:id="'picklist-info-icon-' + i"
+                  v-bind:data-cy="'picklist-info-icon-' + i"
+                  v-on:click="showInfo(i)"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="green"
+                  class="bi bi-info-circle-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"
+                  />
+                </svg>
+              </BOverlay>
+            </BTd>
+          </BTr>
+        </BTbody>
+      </BTableSimple>
+    </BForm>
   </div>
 </template>
 
@@ -164,7 +185,12 @@ import { BCardHeader } from 'bootstrap-vue-next';
  *
  * ```html
  * <PicklistBase
+ *   id="picklist"
+ *   data-cy="picklist"
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.showStyling"
  *   v-bind:columns="columns"
+ *   v-bind:labels="labels"
  *   v-bind:rows="rows"
  *   v-bind:showAllButton="showAllButton"
  *   v-bind:showInfoIcons="showInfoIcons"
@@ -187,6 +213,7 @@ import { BCardHeader } from 'bootstrap-vue-next';
  * `picklist-info-icon-i`      | The info icon in the rightmost column of the ith row (counting from 0).
  * `picklist-info-overlay`     | The `BOverlay` element that is used to display more detailed information on the rows.
  * `picklist-info-*`           | The `<li>` element in the info card that displays the attribute and value with name `*`.
+ * `picklist-invalid-feedback` | The `BFormInvalidFeedback` element that displays help when the picklist value is invalid.
  * `picklist-table`            | The `BTableSimple` element containing the items that can be picked.
  * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0).
  */
@@ -223,6 +250,13 @@ export default {
       default: () => [],
     },
     /**
+     * Whether at least one row must be picked or not.
+     */
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * An array of objects giving the data for each row.
      * Each object is expected to contain an attribute for each name listed in the array given by the `labels` prop.
      * Attributes not listed in the `columns` prop and their values will be displayed in the additional info overlay.
@@ -245,6 +279,13 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * Whether validity styling should appear on input elements.
+     */
+    showValidityStyling: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -257,13 +298,28 @@ export default {
   },
   computed: {
     isValid() {
-      for (let i = 0; i < this.pickedRows.length; i++) {
-        if (this.pickedRows[i]) {
-          return true;
+      if (this.required) {
+        for (let i = 0; i < this.pickedRows.length; i++) {
+          if (this.pickedRows[i]) {
+            return true;
+          }
         }
-      }
 
-      return false;
+        return false;
+      } else {
+        return true;
+      }
+    },
+    validityStyling() {
+      if (this.showValidityStyling) {
+        if (!this.required && this.picked.length === 0) {
+          return null;
+        } else {
+          return this.isValid;
+        }
+      } else {
+        return null;
+      }
     },
     allPicked() {
       if (this.pickedRows.length < this.rows.length) {
@@ -280,6 +336,15 @@ export default {
     },
     allButtonVisible() {
       return this.showAllButton && this.rows && this.rows.length > 1;
+    },
+    borderColor() {
+      if (this.validityStyling) {
+        return 'green';
+      } else if (this.validityStyling === false) {
+        return 'red';
+      } else {
+        return '#dee2e6';
+      }
     },
   },
   methods: {

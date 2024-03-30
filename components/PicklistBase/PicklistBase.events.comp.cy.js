@@ -31,7 +31,7 @@ describe('Test the PicklistBase component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', false);
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 });
