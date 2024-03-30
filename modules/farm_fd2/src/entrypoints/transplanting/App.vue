@@ -48,7 +48,7 @@
           data-cy="transplanting-picklist"
           v-bind:columns="columns"
           v-bind:labels="labels"
-          v-bind:rows="seedlingList"
+          v-bind:rows="sortedRows"
           showAllButton
           showInfoIcons
           v-bind:picked="form.picked"
@@ -91,7 +91,7 @@ export default {
     return {
       cropFilter: null,
       cropList: [],
-      columns: ['trays_location', 'date', 'tray_ratio'],
+      columns: ['date', 'trays_location', 'tray_ratio'],
       labels: {
         date: 'Date',
         user: 'User',
@@ -119,6 +119,11 @@ export default {
     pageDoneLoading() {
       return this.createdCount == 2;
     },
+    sortedRows() {
+      return this.seedlingList.sort((a, b) => {
+        return dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1;
+      })
+    }
   },
   methods: {
     cropFilterChanged(cropName) {
@@ -159,10 +164,5 @@ export default {
 #transplanting-crop-filter {
   padding-top: 3px;
   padding-bottom: 8px;
-}
-
-#transplanting-picklist {
-  padding: 2px;
-  border: 1px solid black;
 }
 </style>
