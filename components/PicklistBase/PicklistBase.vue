@@ -16,14 +16,11 @@
       >
         <BThead>
           <BTr>
-            <BTh
-              class="narrow-col"
-              stickyColumn
-            >
+            <BTh stickyColumn>
               <BButton
                 id="picklist-all-button"
                 data-cy="picklist-all-button"
-                v-if="allButtonVisible"
+                v-if="allButtonVisible && !units"
                 v-bind:disabled="showOverlay != null"
                 size="sm"
                 variant="primary"
@@ -31,11 +28,22 @@
               >
                 All
               </BButton>
+              <BButton
+                id="picklist-units-button"
+                data-cy="picklist-units-button"
+                v-if="allButtonVisible && units"
+                v-bind:disabled="showOverlay != null"
+                size="sm"
+                variant="primary"
+                v-on:click="handleUnitsButton()"
+              >
+                {{ units }}
+              </BButton>
             </BTh>
             <BTh
               v-for="header in columns"
-              v-bind:id="'picklist-header-' + getLabel(header)"
-              v-bind:data-cy="'picklist-header-' + getLabel(header)"
+              v-bind:id="'picklist-header-' + getLabelId(header)"
+              v-bind:data-cy="'picklist-header-' + getLabelId(header)"
               v-bind:key="header"
             >
               {{ getLabel(header) }}</BTh
@@ -72,17 +80,40 @@
               <BFormCheckbox
                 v-bind:id="'picklist-checkbox-' + i"
                 v-bind:data-cy="'picklist-checkbox-' + i"
+                v-if="!units"
                 v-bind:name="'picklist-checkbox-' + i"
-                v-bind:key="i"
+                v-bind:key="'checkbox' + i"
+                value="1"
+                unchecked-value="0"
                 v-bind:disabled="showOverlay != null"
                 v-model="pickedRows[i]"
                 size="lg"
               />
+              <BFormSelect
+                v-bind:id="'picklist-quantity-' + i"
+                v-bind:data-cy="'picklist-quantity-' + i"
+                v-if="units"
+                v-bind:key="'select ' + i"
+                v-bind:name="'picklist-quantity-' + i"
+                v-bind:disabled="showOverlay != null"
+                v-model="pickedRows[i]"
+                size="sm"
+                style="width: auto"
+              >
+                <BFormSelectOption
+                  v-for="(option, j) in quantityOptions(i)"
+                  v-bind:key="option"
+                  v-bind:value="option"
+                  v-bind:data-cy="'picklist-quantity-option-' + i + '-' + j"
+                >
+                  {{ option }}
+                </BFormSelectOption>
+              </BFormSelect>
             </BTh>
             <BTd
               v-for="(col, j) in columns"
-              v-bind:id="'picklist-' + getLabel(columns[j]) + '-' + i"
-              v-bind:data-cy="'picklist-' + getLabel(columns[j]) + '-' + i"
+              v-bind:id="'picklist-' + getLabelId(columns[j]) + '-' + i"
+              v-bind:data-cy="'picklist-' + getLabelId(columns[j]) + '-' + i"
               v-bind:key="j"
             >
               {{ row[col] }}
@@ -134,8 +165,10 @@
                         >
                           <li
                             v-if="includeAttributeInInfo(name)"
-                            v-bind:id="'picklist-info-' + name"
-                            v-bind:data-cy="'picklist-info-' + name"
+                            v-bind:id="
+                              'picklist-info-' + getLabelId(name) + '-' + i
+                            "
+                            v-bind:data-cy="'picklist-info-' + getLabelId(name)"
                             v-bind:key="name"
                           >
                             {{ getLabel(name) }}: {{ value }}
@@ -205,16 +238,19 @@ import { BCardHeader } from 'bootstrap-vue-next';
  *
  * Attribute Name              | Description
  * ----------------------------| -----------
+ * `picklist-all-button`       | The "All" `BButton` element in the leftmost column header..
  * `picklist-checkbox-i`       | The checkbox in the leftmost column of the ith row (counting from 0).
- * `picklist-header-*`         | The `<th>` element for the column with header `*`.
+ * `picklist-header-*`         | The `<th>` element for the column with header `*`.  Column headings are lowercased and ' ' are replaced with `-`.
  * `picklist-info-card`        | The `BCard` element that displays more detailed information about a row.
  * `picklist-info-card-header` | The `BCardHeader` element that is the transparent area of the info table.
  * `picklist-info-card-body`   | The `BCardBody` element that contains the `li` elements in the `BCard`.
  * `picklist-info-icon-i`      | The info icon in the rightmost column of the ith row (counting from 0).
  * `picklist-info-overlay`     | The `BOverlay` element that is used to display more detailed information on the rows.
- * `picklist-info-*`           | The `<li>` element in the info card that displays the attribute and value with name `*`.
+ * `picklist-info-*`           | The `<li>` element in the info card that displays the attribute and value with label `*`. Labels are lowercased and ' ' are replaced with `-`.
  * `picklist-invalid-feedback` | The `BFormInvalidFeedback` element that displays help when the picklist value is invalid.
+ * `picklist-quantity-i`       | The select list in the leftmost column of the ith row (counting from 0).
  * `picklist-table`            | The `BTableSimple` element containing the items that can be picked.
+ * `picklist-units-button'`    | The "Units" `BButton` element in the leftmost column header.
  * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0).
  */
 export default {
@@ -223,9 +259,9 @@ export default {
   emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
-     * An array of strings giving the attribute names of the values to appear in each column of the table.
-     * Each column name must match an attribute name in the objects in the array provided by the `rows` prop.
-     * The column header will be given by the mapping of the attribute name to its label as given by the `labels` prop.
+     * An array of strings giving the attribute names of the `rows` values to appear in each column of the table.
+     * Each column name must match an attribute name in the objects in the `rows` prop.
+     * The column header that is displayed is given by the mapping of the attribute name to its label using the `labels` prop.
      */
     columns: {
       type: Array,
@@ -241,13 +277,23 @@ export default {
       required: true,
     },
     /**
-     * An array of boolean values indicating the rows in the table that are picked.
+     * An array of values indicating the rows/quantities that have been picked in the table.
      * The rows are indexed from 0.
+     * A non-zero value indicates that the row is picked and the quantity if `units` prop is set.
+     * A zero value indicates that the row is not picked.
      * The length of this array must be equal to the length of the array provided by the `rows` prop.
      */
     picked: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * The name of the attribute that will be used to generate the list of selectable quantities in the leftmost column if the `units` prop is not null.
+     * The selectable quantities will be 0...rows[i][quantityAttribute]
+     */
+    quantityAttribute: {
+      type: String,
+      default: null,
     },
     /**
      * Whether at least one row must be picked or not.
@@ -259,14 +305,15 @@ export default {
     /**
      * An array of objects giving the data for each row.
      * Each object is expected to contain an attribute for each name listed in the array given by the `labels` prop.
-     * Attributes not listed in the `columns` prop and their values will be displayed in the additional info overlay.
+     * Attributes not listed in the `columns` prop and their values will be displayed in the info box.
      */
     rows: {
       type: Array,
       required: true,
     },
     /**
-     * Whether the select "All" button should be displayed in the first column header.
+     * Whether the leftmost column header should be displayed.
+     * This header is rendered as a button that acts as a select/deselect all button.
      */
     showAllButton: {
       type: Boolean,
@@ -280,11 +327,20 @@ export default {
       default: true,
     },
     /**
-     * Whether validity styling should appear on input elements.
+     * Whether validity styling should appear on the element.
      */
     showValidityStyling: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * The units for the leftmost column of the picklist.
+     * If this prop is `null` no units are used, the button in the leftmost column heading will be "All", and the column renders as checkboxes.
+     * If this prop is not `null`, the prop value will be used in the button in the leftmost column heading, the column will render as a select element with values from 0...row[i][quantityAttribute].
+     */
+    units: {
+      type: String,
+      default: null,
     },
   },
   data() {
@@ -304,7 +360,6 @@ export default {
             return true;
           }
         }
-
         return false;
       } else {
         return true;
@@ -348,6 +403,17 @@ export default {
     },
   },
   methods: {
+    quantityOptions(row) {
+      if (this.quantityAttribute) {
+        const quantities = Array.from(
+          { length: this.rows[row][this.quantityAttribute] + 1 },
+          (_, index) => index
+        );
+        return quantities;
+      } else {
+        return null;
+      }
+    },
     includeAttributeInInfo(attributeName) {
       return (
         !this.columns.includes(attributeName) && this.getLabel(attributeName)
@@ -355,6 +421,10 @@ export default {
     },
     getLabel(attributeName) {
       return this.labels[attributeName];
+    },
+    getLabelId(attributeName) {
+      const label = this.labels[attributeName];
+      return label.toLowerCase().replace(/ /g, '-');
     },
     showInfoIcon(row) {
       return Object.keys(this.rows[row]).length > this.columns.length;
@@ -374,17 +444,13 @@ export default {
       this.showOverlay = row;
     },
     handleAllButton() {
-      if (this.allPicked) {
-        this.pickedRows = [];
-      } else {
-        this.pickedRows = new Array(this.rows.length).fill(true);
-      }
+      this.pickedRows.fill(!this.allPicked);
     },
   },
   watch: {
     isValid() {
       /**
-       * This component is valid if at least one row is selected.
+       * Indicates if this component's value is valid or not.
        * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
@@ -400,7 +466,7 @@ export default {
         /**
          * There has been a change to the picked rows.
          *
-         * @property {Array} pickedRows If index `i` is `true` the row is picked. If row `i` is not picked index `i` will not be `true` (i.e. it may be `undefined`, `null` or `false`).
+         * @property {Array} pickedRows Index `i` indicates the state of row `i`. Row `i` will be `1` or a non-zero number (if using a `quantityAttribute`) if selected.  Row `i` will be `0` if not selected.
          */
         this.$emit('update:picked', this.pickedRows);
       },
@@ -410,15 +476,22 @@ export default {
       handler() {
         // No good way to really know what has changed so deselect everything.
         // This should be an unusual event so hopefully it isn't an issue.
-        this.pickedRows = [];
+        this.pickedRows = new Array(this.rows.length).fill(0);
         this.showOverlay = null;
       },
       deep: true,
+    },
+    units() {
+      this.pickedRows = new Array(this.rows.length).fill(0);
     },
   },
   created() {
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
+
+    if (this.pickedRows.length === 0) {
+      this.pickedRows = new Array(this.rows.length).fill(0);
+    }
 
     /**
      * The component is ready for use.
@@ -446,6 +519,14 @@ export default {
   margin-left: 10px;
   margin-right: -10px;
   margin-top: -3px;
+}
+
+#picklist-units-button,
+#picklist-all-button {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 #picklist-info-card {

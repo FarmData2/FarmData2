@@ -13,6 +13,8 @@
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
+    v-bind:units="useUnits ? 'Count' : null"
+    v-bind:quantityAttribute="useUnits ? 'quantity' : null"
     v-bind:rows="rows"
     v-bind:showAllButton="showAllButton"
     v-bind:showInfoIcons="showInfoIcons"
@@ -76,6 +78,18 @@
           />
         </td>
       </tr>
+
+      <tr>
+        <td>useUnits</td>
+        <td>
+          <BFormCheckbox
+            id="use-units-checkbox"
+            data-cy="use-units-checkbox"
+            switch
+            v-model="useUnits"
+          />
+        </td>
+      </tr>
       <tr>
         <td>picked</td>
         <td>
@@ -84,7 +98,17 @@
             data-cy="set-picked-button"
             variant="outline-primary"
             size="sm"
-            v-on:click="form.picked[0] = !form.picked[0]"
+            v-on:click="
+              if (useQuantities) {
+                if (form.picked[0] === 1) {
+                  form.picked[0] = 0;
+                } else {
+                  form.picked[0] = 1;
+                }
+              } else {
+                form.picked[0] = !form.picked[0];
+              }
+            "
           >
             Toggle first row
           </BButton>
@@ -107,6 +131,7 @@
                   stuff: 'Stuff here4',
                   name: 'name5',
                   value: 'info 5',
+                  quantity: 5000,
                 });
               } else {
                 this.rows.splice(4, 1);
@@ -180,17 +205,20 @@ export default {
           c2: 'R0-C2',
           c3: 'R0-C3',
           stuff: 'Stuff here1',
+          quantity: 1,
         },
         {
           c1: 'R1-C1',
           c2: 'R1-C2',
           c3: 'R1-C3',
           stuff: 'Stuff here2',
+          quantity: 2,
         },
         {
           c1: 'R2-C1',
           c2: 'R2-C2',
           c3: 'R2-C3',
+          quantity: 3,
         },
         {
           c1: 'R3-C1',
@@ -213,9 +241,11 @@ export default {
           text12: '12',
           text13: '13',
           text14: '14',
+          quantity: 4,
         },
       ],
       required: true,
+      useUnits: false,
       showAllButton: true,
       showInfoIcons: true,
       form: {
