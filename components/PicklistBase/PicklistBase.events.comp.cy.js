@@ -24,6 +24,7 @@ describe('Test the PicklistBase component events', () => {
       props: {
         onReady: readySpy,
         onValid: validSpy,
+        rows: [],
       },
     });
 

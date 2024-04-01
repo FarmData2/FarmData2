@@ -10,6 +10,7 @@
     id="picklist"
     data-cy="picklist"
     v-bind:required="required"
+    invalidFeedbackText="At least one row must be selected."
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
@@ -99,18 +100,14 @@
             variant="outline-primary"
             size="sm"
             v-on:click="
-              if (useQuantities) {
-                if (form.picked[0] === 1) {
-                  form.picked[0] = 0;
-                } else {
-                  form.picked[0] = 1;
-                }
+              if (form.picked[0] === 1) {
+                form.picked[0] = 0;
               } else {
-                form.picked[0] = !form.picked[0];
+                form.picked[0] = 1;
               }
             "
           >
-            Toggle first row
+            Pick first row
           </BButton>
         </td>
       </tr>
@@ -218,6 +215,7 @@ export default {
           c1: 'R2-C1',
           c2: 'R2-C2',
           c3: 'R2-C3',
+          stuff: 'Stuff here3',
           quantity: 3,
         },
         {

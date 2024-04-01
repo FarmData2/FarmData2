@@ -55,7 +55,7 @@
             </BTh>
           </BTr>
           <BTr v-if="validityStyling === false">
-            <Bth></Bth>
+            <th style="height: 0px" />
             <BTh
               colspan="100"
               style="font-weight: normal"
@@ -65,7 +65,7 @@
                 data-cy="picklist-invalid-feedback"
                 v-bind:state="validityStyling"
               >
-                At least one row must be selected
+                {{ invalidFeedbackText }}
               </BFormInvalidFeedback>
             </BTh>
           </BTr>
@@ -83,10 +83,9 @@
                 v-if="!units"
                 v-bind:name="'picklist-checkbox-' + i"
                 v-bind:key="'checkbox' + i"
-                value="1"
-                unchecked-value="0"
                 v-bind:disabled="showOverlay != null"
-                v-model="pickedRows[i]"
+                v-bind:checked="pickedRows[i]"
+                v-on:change="(state) => handleCheckboxChange(i, state)"
                 size="lg"
               />
               <BFormSelect
@@ -102,9 +101,10 @@
               >
                 <BFormSelectOption
                   v-for="(option, j) in quantityOptions(i)"
+                  v-bind:id="'picklist-quantity-' + i + '-' + j"
+                  v-bind:data-cy="'picklist-quantity-' + i + '-' + j"
                   v-bind:key="option"
                   v-bind:value="option"
-                  v-bind:data-cy="'picklist-quantity-option-' + i + '-' + j"
                 >
                   {{ option }}
                 </BFormSelectOption>
@@ -126,7 +126,6 @@
               <BOverlay
                 id="picklist-info-overlay"
                 data-cy="picklist-info-overlay"
-                v-if="showInfoIcon(i)"
                 v-bind:show="showOverlay == i"
                 v-bind:aria-hidden="!showOverlay ? 'true' : null"
                 v-on:click="showOverlay = null"
@@ -249,9 +248,10 @@ import { BCardHeader } from 'bootstrap-vue-next';
  * `picklist-info-*`           | The `<li>` element in the info card that displays the attribute and value with label `*`. Labels are lowercased and ' ' are replaced with `-`.
  * `picklist-invalid-feedback` | The `BFormInvalidFeedback` element that displays help when the picklist value is invalid.
  * `picklist-quantity-i`       | The select list in the leftmost column of the ith row (counting from 0).
+ * `picklist-quantity-i-j`     | The jth item in the select list in the ith row (counting from 0).
  * `picklist-table`            | The `BTableSimple` element containing the items that can be picked.
  * `picklist-units-button'`    | The "Units" `BButton` element in the leftmost column header.
- * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0).
+ * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0). Column headings are lowercased and ' ' are replaced with `-`.
  */
 export default {
   name: 'PicklistBase',
@@ -265,6 +265,13 @@ export default {
      */
     columns: {
       type: Array,
+      required: true,
+    },
+    /**
+     * The text to display if the input is invalid.
+     */
+    invalidFeedbackText: {
+      type: String,
       required: true,
     },
     /**
@@ -426,14 +433,15 @@ export default {
       const label = this.labels[attributeName];
       return label.toLowerCase().replace(/ /g, '-');
     },
-    showInfoIcon(row) {
-      return Object.keys(this.rows[row]).length > this.columns.length;
-    },
     showInfo(row) {
       const table = document.getElementById('picklist-table');
+      const col1 = document.getElementById(
+        'picklist-' + this.getLabelId(this.columns[0]) + '-' + row
+      );
+      const infoCol = document.getElementById('picklist-info-' + row);
       if (table != null) {
-        this.overlayWidth = table.clientWidth - 56;
-        this.overlayLeft = -(table.clientWidth - 43);
+        this.overlayWidth = infoCol.offsetLeft - col1.offsetLeft;
+        this.overlayLeft = -(table.clientWidth - col1.offsetLeft);
       }
 
       const tableCell = document.getElementById('picklist-info-' + row);
@@ -443,8 +451,28 @@ export default {
 
       this.showOverlay = row;
     },
+    handleCheckboxChange(row, state) {
+      if (state) {
+        this.pickedRows[row] = 1;
+      } else {
+        this.pickedRows[row] = 0;
+      }
+    },
     handleAllButton() {
-      this.pickedRows.fill(!this.allPicked);
+      if (this.allPicked) {
+        this.pickedRows.fill(0);
+      } else {
+        this.pickedRows.fill(1);
+      }
+    },
+    handleUnitsButton() {
+      if (this.allPicked) {
+        this.pickedRows.fill(0);
+      } else {
+        for (let i = 0; i < this.rows.length; i++) {
+          this.pickedRows[i] = this.rows[i][this.quantityAttribute];
+        }
+      }
     },
   },
   watch: {
