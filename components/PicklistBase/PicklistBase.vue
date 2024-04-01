@@ -97,7 +97,12 @@
                 v-bind:disabled="showOverlay != null"
                 v-model="pickedRows[i]"
                 size="sm"
-                style="width: auto"
+                style="
+                  width: auto;
+                  margin: 0px;
+                  padding: 0px;
+                  padding-right: 30px;
+                "
               >
                 <BFormSelectOption
                   v-for="(option, j) in quantityOptions(i)"
@@ -441,7 +446,7 @@ export default {
       const infoCol = document.getElementById('picklist-info-' + row);
       if (table != null) {
         this.overlayWidth = infoCol.offsetLeft - col1.offsetLeft;
-        this.overlayLeft = -(table.clientWidth - col1.offsetLeft);
+        this.overlayLeft = -(table.clientWidth - col1.offsetLeft - 10);
       }
 
       const tableCell = document.getElementById('picklist-info-' + row);
