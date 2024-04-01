@@ -47,3 +47,10 @@ farm.fd2_examples_picklist_base.content:
     _title: 'PicklistBase Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_transplanting_picklist.content:
+  path: '/fd2_examples/transplanting_picklist'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'Transplanting Picklist example'
+  requirements:
+    _permission: 'access content'
