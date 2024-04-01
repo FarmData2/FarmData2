@@ -222,19 +222,22 @@ import { BCardHeader } from 'bootstrap-vue-next';
  *
  * ```html
  * <PicklistBase
- *   id="picklist"
- *   data-cy="picklist"
- *   v-bind:required="required"
- *   v-bind:showValidityStyling="validity.showStyling"
- *   v-bind:columns="columns"
- *   v-bind:labels="labels"
- *   v-bind:rows="rows"
- *   v-bind:showAllButton="showAllButton"
- *   v-bind:showInfoIcons="showInfoIcons"
- *   v-bind:picked="form.picked"
- *   v-on:valid="(valid) => (validity.picked = valid)"
- *   v-on:update:picked="form.picked = $event"
- *   v-on:ready="createdCount++"
+ *  id="picklist"
+ *  data-cy="picklist"
+ *  v-bind:required="required"
+ *  v-bind:invalidFeedbackText="At least one row must be selected."
+ *  v-bind:showValidityStyling="validity.showStyling"
+ *  v-bind:columns="columns"
+ *  v-bind:labels="labels"
+ *  v-bind:units="useUnits ? 'Count' : null"
+ *  v-bind:quantityAttribute="useUnits ? 'quantity' : null"
+ *  v-bind:rows="rows"
+ *  v-bind:showAllButton="showAllButton"
+ *  v-bind:showInfoIcons="showInfoIcons"
+ *  v-bind:picked="form.picked"
+ *  v-on:valid="(valid) => (validity.picked = valid)"
+ *  v-on:update:picked="form.picked = $event"
+ *  v-on:ready="createdCount++"
  * />
  * ```
  *
