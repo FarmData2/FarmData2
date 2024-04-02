@@ -405,7 +405,7 @@ export default {
       return true;
     },
     allButtonVisible() {
-      return this.showAllButton && this.rows && this.rows.length > 1;
+      return this.showAllButton && this.rows && this.rows.length > 0;
     },
     borderColor() {
       if (this.validityStyling) {
