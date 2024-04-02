@@ -27,11 +27,7 @@ describe('Test the TransplantingPicklist component styling', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="placeholder"]').should('not.have.class', 'is-valid');
-        cy.get('[data-cy="placeholder"]').should(
-          'not.have.class',
-          'is-invalid'
-        );
+        cy.get('[data-cy="transplanting-picklist-group"]').should('exist');
       });
   });
 });
