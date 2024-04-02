@@ -52,11 +52,32 @@ import dayjs from 'dayjs';
  * A Transplanting Picklist allows the user to select a crop from a list
  * of all crops that currently have tray seedings (i.e. can be transplanted).
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/picklist_base">The PicklistBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picklist_base/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <TransplantingPicklist
+ *   id="transplanting-picklist"
+ *   data-cy="transplanting-picklist"
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.show"
+ *   v-on:update:picked="
+ *     (picked) => {
+ *       form.picked = picked;
+ *     }
+ *   "
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.picked = valid;
+ *     }
+ *   "
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes

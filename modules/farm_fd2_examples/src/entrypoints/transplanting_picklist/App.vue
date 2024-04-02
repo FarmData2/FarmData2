@@ -10,7 +10,7 @@
     id="transplanting-picklist"
     data-cy="transplanting-picklist"
     v-bind:required="required"
-    v-bind:showValidityStyling="validity.showStyling"
+    v-bind:showValidityStyling="validity.show"
     v-on:update:picked="
       (picked) => {
         form.picked = picked;
@@ -52,7 +52,7 @@
             id="styling-checkbox"
             data-cy="styling-checkbox"
             switch
-            v-model="validity.showStyling"
+            v-model="validity.show"
           />
         </td>
       </tr>
@@ -103,7 +103,7 @@ export default {
         picked: [],
       },
       validity: {
-        showStyling: false,
+        show: false,
         picked: false,
       },
     };
