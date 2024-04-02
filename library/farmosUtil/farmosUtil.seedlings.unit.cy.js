@@ -21,6 +21,8 @@ describe('Test the getSeedlings function', () => {
       expect(seedlings.length).to.equal(25);
 
       const first = seedlings[0];
+      expect(first.log_id).to.not.be.undefined;
+      expect(first.asset_id).to.not.be.undefined;
       expect(first.date).to.equal('2019-03-11');
       expect(first.user).to.equal('admin');
       expect(first.crop).to.equal('BROCCOLI');
@@ -28,14 +30,14 @@ describe('Test the getSeedlings function', () => {
       expect(first.asset_locations).to.equal('CHUAU');
       expect(first.total_trays).to.equal(4);
       expect(first.available_trays).to.equal(4);
-      expect(first.tray_ratio).to.equal('4/4');
       expect(first.tray_size).to.equal(128);
       expect(first.seeds_per_cell).to.equal(1);
       expect(first.total_seeds).to.equal(4 * 128);
-      expect(first.log_notes).to.equal('');
-      expect(first.asset_notes).to.equal('First broccoli tray seeding.');
+      expect(first.notes).to.equal('First broccoli tray seeding.');
 
       const last = seedlings[24];
+      expect(last.log_id).to.not.be.undefined;
+      expect(last.asset_id).to.not.be.undefined;
       expect(last.date).to.equal('2019-08-29');
       expect(last.user).to.equal('admin');
       expect(last.crop).to.equal('LETTUCE-ICEBERG');
@@ -43,12 +45,10 @@ describe('Test the getSeedlings function', () => {
       expect(last.asset_locations).to.equal('CHUAU');
       expect(last.total_trays).to.equal(2);
       expect(last.available_trays).to.equal(2);
-      expect(last.tray_ratio).to.equal('2/2');
       expect(last.tray_size).to.equal(128);
       expect(last.seeds_per_cell).to.equal(1);
       expect(last.total_seeds).to.equal(2 * 128);
-      expect(last.log_notes).to.equal('');
-      expect(last.asset_notes).to.equal('Last lettuce tray seeding.');
+      expect(last.notes).to.equal('Last lettuce tray seeding.');
     });
   });
 

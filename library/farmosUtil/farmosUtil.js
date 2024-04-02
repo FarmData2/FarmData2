@@ -1996,6 +1996,8 @@ export function extractQuantity(quantityString, unitName) {
  * This function returns an array of objects with the following content:
  * ```json
  * {
+ *    log_id: <id of seeding log created by the seeding>,
+ *    asset_id: <id of plant asset created by the seeding>,
  *    date: <date of tray seeding>,
  *    user: <name of user that entered the seeding>,
  *    crop: <name of crop that was seeded>,
@@ -2003,12 +2005,10 @@ export function extractQuantity(quantityString, unitName) {
  *    asset_locations: <names of locations where crop has been transplanted thus far>,
  *    total_trays: <total number of trays seeded>
  *    available_trays: <number of trays available for transplanting>
- *    tray_ratio: <available trays / total trays (e.g. "3/7")>,
  *    tray_size: <size of trays that were seeded>,
  *    seeds_per_cell: <number of seeds in each tray cell>,
  *    total_seeds: <total number of seeds used>
- *    log_notes: <notes attached to the tray seeding log>
- *    asset_notes: <notes attached to the plant asset>
+ *    notes: <notes attached to the seeding log and the plant asset>
  * }
  * ```
  *
@@ -2037,8 +2037,11 @@ export async function getSeedlings(cropName = null) {
         const tray_size = extractQuantity(seedling.quantities, 'CELLS/TRAY');
         const total_seeds = extractQuantity(seedling.quantities, 'SEEDS');
         const seeds_per_cell = total_seeds / (tray_size * total_trays);
+        const notes = (seedling.log_notes + ' ' + seedling.asset_notes).trim();
 
         result.push({
+          log_id: seedling.log_id,
+          asset_id: seedling.asset_id,
           date: seedling.date,
           user: seedling.user,
           crop: seedling.crop,
@@ -2046,12 +2049,10 @@ export async function getSeedlings(cropName = null) {
           asset_locations: seedling.asset_locations,
           total_trays: total_trays,
           available_trays: available_trays,
-          tray_ratio: total_trays + '/' + available_trays,
           tray_size: tray_size,
           seeds_per_cell: seeds_per_cell,
           total_seeds: total_seeds,
-          log_notes: seedling.log_notes,
-          asset_notes: seedling.asset_notes,
+          notes: notes,
         });
       }
     }
