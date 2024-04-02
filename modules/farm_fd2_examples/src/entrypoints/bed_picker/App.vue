@@ -200,4 +200,13 @@ export default {
 <style>
 @import url('@css/fd2-examples.css');
 @import url('@css/fd2-mobile.css');
+
+/**
+ * This ensures that the css for this file is picked up by the builder.
+ * Not sure why this is necessary, but without it the css imports
+ * above are not processed.
+ */
+bed-picker-hack {
+  display: none;
+}
 </style>
