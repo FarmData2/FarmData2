@@ -35,7 +35,7 @@
           required
           v-model:selected="cropFilter"
           v-bind:options="cropList"
-          v-bind:invalidFeedbackText="'Please select a crop.'"
+          v-bind:invalidFeedbackText="'A crop must be selected.'"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.cropFilter = $event"
           v-on:update:selected="cropFilterChanged($event)"

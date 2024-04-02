@@ -236,7 +236,7 @@ import { BCardHeader } from 'bootstrap-vue-next';
  *  v-bind:showInfoIcons="showInfoIcons"
  *  v-bind:picked="form.picked"
  *  v-on:valid="(valid) => (validity.picked = valid)"
- *  v-on:update:picked="form.picked = $event"
+ *  v-on:update:picked="(picked) => (form.picked = picked)"
  *  v-on:ready="createdCount++"
  * />
  * ```
