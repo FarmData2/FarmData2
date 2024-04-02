@@ -15,7 +15,6 @@
       v-bind:options="cropList"
       v-on:valid="validity.cropFilter = $event"
       v-on:update:selected="cropFilterChanged($event)"
-      v-on:ready="createdCount++"
     />
 
     <!-- Trays Picklist -->
@@ -29,8 +28,16 @@
       showInfoIcons
       v-bind:columns="columns"
       v-bind:labels="labels"
-      v-bind:rows="sortedRows()"
-      v-on:ready="createdCount++"
+      v-bind:rows="seedlingList"
+      v-bind:units="units"
+      v-bind:quantityAttribute="quantityAttribute"
+      v-model:picked="form.pickedRows"
+      v-on:update:picked="(picked) => handlePickedUpdate(picked)"
+      v-on:valid="
+        (valid) => {
+          validity.picked = valid;
+        }
+      "
     />
   </div>
 </template>
@@ -63,7 +70,7 @@ export default {
     SelectorBase,
     PicklistBase,
   },
-  emits: ['error', 'ready', 'valid'],
+  emits: ['error', 'ready', 'update:picked', 'valid'],
   props: {
     /**
      * Whether a value for the input element is required or not.
@@ -82,25 +89,26 @@ export default {
   },
   data() {
     return {
-      cropFilter: null,
       cropList: [],
       seedlingList: [],
-      columns: ['date', 'trays_location', 'tray_ratio'],
+      columns: ['date', 'trays_location'],
+      units: 'Trays',
+      quantityAttribute: 'available_trays',
       labels: {
         date: 'Date',
         user: 'User',
         trays_location: 'Location',
-        asset_location: 'Transplanted Location',
-        tray_ratio: 'Trays',
+        asset_location: 'Transplanted Locations',
+        tray_ratio: 'Trays (available/total)',
         tray_size: 'Tray Size',
         seeds_per_cell: 'Seeds/Cell',
         total_seeds: 'Total Seeds',
         log_notes: 'Seeding Notes',
-        asset_notes: 'Plant Notes',
+        asset_notes: 'Planting Notes',
       },
       form: {
-        cropFilter: null,
-        pickedRows: null,
+        cropFilter: '',
+        pickedRows: [],
       },
       validity: {
         cropFilter: false,
@@ -115,26 +123,24 @@ export default {
     picklistValidityStyling() {
       if (this.validity.cropFilter) {
         return this.showValidityStyling;
-      }
-      else {
+      } else {
         return false;
-      } 
-    }
+      }
+    },
   },
   methods: {
-    sortedRows() {
-      return this.seedlingList.sort((a, b) => {
+    sortSeedlings() {
+      this.seedlingList.sort((a, b) => {
         return dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1;
       });
     },
     cropFilterChanged(cropName) {
       if (cropName) {
-        console.log('cropName: ' + cropName);
-
         farmosUtil
           .getSeedlings(cropName)
           .then((seedlings) => {
             this.seedlingList = seedlings;
+            this.sortSeedlings();
           })
           .catch((error) => {
             console.error(
@@ -153,6 +159,24 @@ export default {
       } else {
         this.seedlingList = [];
       }
+    },
+    handlePickedUpdate(picked) {
+      const emittedRows = [];
+      for (let i = 0; i < picked.length; i++) {
+        if (picked[i] != 0) {
+          const row = {
+            count: picked[i],
+            data: { ...this.seedlingList[i] },
+          };
+          emittedRows.push(row);
+        }
+      }
+
+      /**
+       * There has been a change to the picked rows.
+       * @property {Array} rows one object for each picked row. `{count: number of trays picked, data: data about the tray seeding`). The format of the data is as given by [`farmosUtil.getSeedlings()`](http://localhost:8082/docs/library/farmosUtil.md#module_farmosUtil.getSeedlings).
+       */
+      this.$emit('update:picked', emittedRows);
     },
   },
   watch: {

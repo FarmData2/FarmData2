@@ -11,6 +11,16 @@
     data-cy="transplanting-picklist"
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
+    v-on:update:picked="
+      (picked) => {
+        form.picked = picked;
+      }
+    "
+    v-on:valid="
+      (valid) => {
+        validity.picked = valid;
+      }
+    "
     v-on:ready="createdCount++"
   />
   <hr />
@@ -49,6 +59,26 @@
     </tbody>
   </table>
 
+  <h5>Component Event Payloads:</h5>
+  <table class="example-table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Payload</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>update:picked</td>
+        <td>{{ form.picked }}</td>
+      </tr>
+      <tr>
+        <td>valid</td>
+        <td>{{ validity.picked }}</td>
+      </tr>
+    </tbody>
+  </table>
+
   <div
     data-cy="page-loaded"
     v-show="false"
@@ -69,8 +99,12 @@ export default {
     return {
       createdCount: 0,
       required: true,
+      form: {
+        picked: [],
+      },
       validity: {
         showStyling: false,
+        picked: false,
       },
     };
   },
