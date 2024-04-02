@@ -70,7 +70,7 @@ export default {
       createdCount: 0,
       required: true,
       validity: {
-        showStyling: true,
+        showStyling: false,
       },
     };
   },

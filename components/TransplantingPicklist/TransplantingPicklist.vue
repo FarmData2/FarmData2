@@ -10,7 +10,7 @@
       label="Crop"
       v-bind:required="required"
       v-bind:invalidFeedbackText="'A crop must be selected.'"
-      v-bind:showValidityStyling="validity.show"
+      v-bind:showValidityStyling="showValidityStyling"
       v-model:selected="form.cropFilter"
       v-bind:options="cropList"
       v-on:valid="validity.cropFilter = $event"
@@ -24,12 +24,12 @@
       data-cy="transplanting-picklist"
       v-bind:required="required"
       invalidFeedbackText="Select at least one tray to transplant."
-      v-bind:showValidityStyling="validity.show"
+      v-bind:showValidityStyling="picklistValidityStyling"
       showAllButton
       showInfoIcons
       v-bind:columns="columns"
       v-bind:labels="labels"
-      v-bind:rows="sortedRows"
+      v-bind:rows="sortedRows()"
       v-on:ready="createdCount++"
     />
   </div>
@@ -103,7 +103,6 @@ export default {
         pickedRows: null,
       },
       validity: {
-        show: false,
         cropFilter: false,
         picked: false,
       },
@@ -111,15 +110,23 @@ export default {
   },
   computed: {
     isValid() {
-      return true; // this.validity.cropFilter && this.validity.picked;
+      return this.validity.cropFilter && this.validity.picked;
     },
+    picklistValidityStyling() {
+      if (this.validity.cropFilter) {
+        return this.showValidityStyling;
+      }
+      else {
+        return false;
+      } 
+    }
+  },
+  methods: {
     sortedRows() {
       return this.seedlingList.sort((a, b) => {
         return dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1;
       });
     },
-  },
-  methods: {
     cropFilterChanged(cropName) {
       if (cropName) {
         console.log('cropName: ' + cropName);
