@@ -602,7 +602,7 @@ export default {
 }
 
 #picklist-table {
-  max-height: 250px;
+  max-height: 300px;
   padding-bottom: 0px;
   padding-top: 0px;
   margin-bottom: 0px;
