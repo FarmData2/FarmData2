@@ -120,12 +120,10 @@ export default {
         user: 'User',
         trays_location: 'Location',
         asset_location: 'Transplanted Locations',
-        tray_ratio: 'Trays (available/total)',
         tray_size: 'Tray Size',
         seeds_per_cell: 'Seeds/Cell',
         total_seeds: 'Total Seeds',
-        log_notes: 'Seeding Notes',
-        asset_notes: 'Planting Notes',
+        notes: 'Notes',
       },
       form: {
         cropFilter: '',
@@ -214,7 +212,7 @@ export default {
     farmosUtil
       .getTraySeededCropNames()
       .then((cropNames) => {
-        this.cropList = cropNames;
+        this.cropList = cropNames.sort();
         this.createdCount++;
 
         //Emit the initial valid state of the component's value.

@@ -11,12 +11,7 @@ describe('Test the TransplantingPicklist component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" when component has been created', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
+  it('Emits "valid" when created', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -24,6 +19,7 @@ describe('Test the TransplantingPicklist component events', () => {
       props: {
         onReady: readySpy,
         onValid: validSpy,
+        required: true,
       },
     });
 
@@ -32,6 +28,175 @@ describe('Test the TransplantingPicklist component events', () => {
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('Emits "valid" true when crop and trays are selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', false);
+
+        cy.get('[data-cy="picklist-quantity-0"]').select('1');
+        cy.get('@validSpy').should('have.been.calledTwice');
+        // First call, first argument.
+        cy.get('@validSpy').its('args[0][0]').should('equal', false);
+        // Second call, first argument.
+        cy.get('@validSpy').its('args[1][0]').should('equal', true);
+      });
+  });
+
+  it('Emits "valid" false when trays are deselected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('[data-cy="picklist-quantity-0"]').select('1');
+        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').its('args[0][0]').should('equal', false);
+        cy.get('@validSpy').its('args[1][0]').should('equal', true);
+
+        cy.get('[data-cy="picklist-quantity-0"]').select('0');
+        cy.get('@validSpy').should('have.been.calledThrice');
+        cy.get('@validSpy').its('args[2][0]').should('equal', false);
+      });
+  });
+
+  it('Emits "update:picked" when created', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
+      });
+  });
+
+  it('Emits "update:picked" when trays are selected.', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('@updateSpy').should('have.been.calledTwice');
+
+        cy.get('[data-cy="picklist-quantity-0"]').select('1');
+        cy.get('@updateSpy').should('have.been.calledThrice');
+
+        cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[2][0]').should('have.length', 1);
+
+        cy.get('@updateSpy')
+          .its('args[2][0][0]')
+          .its('count')
+          .should('equal', 1);
+        cy.get('@updateSpy')
+          .its('args[2][0][0]')
+          .its('data.crop')
+          .should('equal', 'BROCCOLI');
+      });
+  });
+
+  it('Emits "update:picked" with multiple rows.', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('[data-cy="picklist-quantity-0"]').select('1');
+        cy.get('[data-cy="picklist-quantity-1"]').select('2');
+
+        cy.get('@updateSpy').its('callCount').should('equal', 4);
+
+        cy.get('@updateSpy').its('args[3][0]').should('have.length', 2);
+        cy.get('@updateSpy')
+          .its('args[3][0][1]')
+          .its('count')
+          .should('equal', 2);
+        cy.get('@updateSpy')
+          .its('args[3][0][1]')
+          .its('data.crop')
+          .should('equal', 'BROCCOLI');
+      });
+  });
+
+  it('Emits "update:picked" when trays are deselected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': updateSpy,
+        required: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('[data-cy="picklist-quantity-0"]').select('1');
+        cy.get('@updateSpy').should('have.been.calledThrice');
+
+        cy.get('[data-cy="picklist-quantity-0"]').select('0');
+        cy.get('@updateSpy').its('callCount').should('equal', 4);
+        cy.get('@updateSpy').its('args[3][0]').should('have.length', 0);
       });
   });
 });

@@ -1,8 +1,6 @@
 <template>
   <div
-    id="picklist-div"
-    data-cy="picklist-div"
-    v-bind:style="{ padding: '2px', border: '1px solid ' + borderColor }"
+    v-bind:style="{ padding: '2px', border: '1px solid ' + tableBorderColor }"
   >
     <BForm>
       <BTableSimple
@@ -13,6 +11,7 @@
         striped
         stickyHeader
         v-bind:aria-hidden="showOverlay ? 'true' : null"
+        v-bind:class="tableStyling"
       >
         <BThead>
           <BTr>
@@ -75,6 +74,8 @@
           <BTr
             v-for="(row, i) in rows"
             v-bind:key="i"
+            v-bind:id="'picklist-row-' + i"
+            v-bind:data-cy="'picklist-row-' + i"
           >
             <BTh stickyColumn>
               <BFormCheckbox
@@ -172,7 +173,9 @@
                             v-bind:id="
                               'picklist-info-' + getLabelId(name) + '-' + i
                             "
-                            v-bind:data-cy="'picklist-info-' + getLabelId(name)"
+                            v-bind:data-cy="
+                              'picklist-info-' + getLabelId(name) + '-' + i
+                            "
                             v-bind:key="name"
                           >
                             {{ getLabel(name) }}: {{ value }}
@@ -257,6 +260,7 @@ import { BCardHeader } from 'bootstrap-vue-next';
  * `picklist-invalid-feedback` | The `BFormInvalidFeedback` element that displays help when the picklist value is invalid.
  * `picklist-quantity-i`       | The select list in the leftmost column of the ith row (counting from 0).
  * `picklist-quantity-i-j`     | The jth item in the select list in the ith row (counting from 0).
+ * `picklist-row-i`            | The `BTr` element for the ith row (counting from 0).
  * `picklist-table`            | The `BTableSimple` element containing the items that can be picked.
  * `picklist-units-button'`    | The "Units" `BButton` element in the leftmost column header.
  * `picklist-*-i`              | The `<td>` element in the column with header `*` in the ith row (counting from 0). Column headings are lowercased and ' ' are replaced with `-`.
@@ -407,13 +411,22 @@ export default {
     allButtonVisible() {
       return this.showAllButton && this.rows && this.rows.length > 0;
     },
-    borderColor() {
+    tableBorderColor() {
       if (this.validityStyling) {
         return 'green';
       } else if (this.validityStyling === false) {
         return 'red';
       } else {
         return '#dee2e6';
+      }
+    },
+    tableStyling() {
+      if (this.validityStyling) {
+        return '{ is-valid }';
+      } else if (this.validityStyling === false) {
+        return '{ is-invalid }';
+      } else {
+        return '{}';
       }
     },
   },

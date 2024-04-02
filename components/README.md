@@ -229,6 +229,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
     - Check required props and default prop values
       - Set only required props in the test.
+      - Check static content not controlled by props.
       - check effect of all required props
         - e.g. `label`, `invalidFeedback`, etc.
       - Check default values of all optional props.
