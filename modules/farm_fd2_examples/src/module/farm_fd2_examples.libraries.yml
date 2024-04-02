@@ -75,7 +75,7 @@ picklist_base:
       picklist_base/picklist_base.css: {}
     component:
       shared/index.css: {}
-
+      PicklistBase/PicklistBase.css: {}
 transplanting_picklist:
   js:
     transplanting_picklist/transplanting_picklist.js:
@@ -87,3 +87,4 @@ transplanting_picklist:
       transplanting_picklist/transplanting_picklist.css: {}
     component:
       shared/index.css: {}
+      PicklistBase/PicklistBase.css: {}
