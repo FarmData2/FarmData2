@@ -184,7 +184,7 @@ export default {
       for (let i = 0; i < picked.length; i++) {
         if (picked[i] != 0) {
           const row = {
-            count: picked[i],
+            trays: picked[i],
             data: { ...this.seedlingList[i] },
           };
           emittedRows.push(row);
@@ -193,7 +193,7 @@ export default {
 
       /**
        * There has been a change to the picked rows.
-       * @property {Array} rows one object for each picked row. `{count: number of trays picked, data: data about the tray seeding`). The format of the data is as given by [`farmosUtil.getSeedlings()`](http://localhost:8082/docs/library/farmosUtil.md#module_farmosUtil.getSeedlings).
+       * @property {Array} rows one object for each picked row. `{trays: number of trays picked, data: data about the tray seeding`). The format of the data is as given by [`farmosUtil.getSeedlings()`](http://localhost:8082/docs/library/farmosUtil.md#module_farmosUtil.getSeedlings).
        */
       this.$emit('update:picked', emittedRows);
     },

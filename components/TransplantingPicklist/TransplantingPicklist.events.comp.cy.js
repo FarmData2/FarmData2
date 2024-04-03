@@ -133,7 +133,7 @@ describe('Test the TransplantingPicklist component events', () => {
 
         cy.get('@updateSpy')
           .its('args[2][0][0]')
-          .its('count')
+          .its('trays')
           .should('equal', 1);
         cy.get('@updateSpy')
           .its('args[2][0][0]')
@@ -166,7 +166,7 @@ describe('Test the TransplantingPicklist component events', () => {
         cy.get('@updateSpy').its('args[3][0]').should('have.length', 2);
         cy.get('@updateSpy')
           .its('args[3][0][1]')
-          .its('count')
+          .its('trays')
           .should('equal', 2);
         cy.get('@updateSpy')
           .its('args[3][0][1]')
