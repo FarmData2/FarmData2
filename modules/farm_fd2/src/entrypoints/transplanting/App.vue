@@ -48,6 +48,21 @@
 
         <hr />
 
+        <!-- Transplanting Date -->
+        <DateSelector
+          id="transplanting-date"
+          data-cy="transplanting-date"
+          required
+          v-model:date="form.transplantingDate"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="
+            (valid) => {
+              validity.transplantingDate = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
         <!-- Location Selection -->
         <LocationSelector
           id="transplanting-location"
@@ -75,6 +90,8 @@
           "
           v-on:ready="createdCount++"
         />
+
+        <hr />
 
         <!-- Bed Feet transplanted -->
         <NumericInput
@@ -245,10 +262,11 @@
 </template>
 
 <script>
-//import dayjs from 'dayjs';
+//import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 //import * as lib from './lib';
-//import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
+import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import NumericInput from '@comps/NumericInput/NumericInput.vue';
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
@@ -259,6 +277,7 @@ import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue
 export default {
   components: {
     TransplantingPicklist,
+    DateSelector,
     LocationSelector,
     NumericInput,
     SelectorBase,
@@ -272,6 +291,7 @@ export default {
       enableReset: false,
       form: {
         picked: [],
+        transplantingDate: dayjs().format('YYYY-MM-DD'),
         locationName: '',
         beds: [],
         bedFeet: 100,
@@ -286,6 +306,7 @@ export default {
       validity: {
         show: false,
         picked: false,
+        transplantingDate: false,
         location: false,
         bedFeet: false,
         bedWidth: false,
@@ -301,7 +322,7 @@ export default {
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 4;
+      return this.createdCount == 10;
     },
   },
   methods: {
@@ -328,6 +349,7 @@ export default {
   margin-top: 2px;
 }
 
+#transplanting-date,
 #transplanting-location,
 #transplanting-bed-feet,
 #transplanting-bed-width,
