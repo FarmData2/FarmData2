@@ -32,6 +32,7 @@
           id="transplanting-picklist"
           data-cy="transplanting-picklist"
           required="true"
+          v-model:crop="cropFilter"
           v-bind:showValidityStyling="validity.show"
           v-on:update:picked="
             (picked) => {
@@ -70,7 +71,7 @@
           required
           includeFields
           includeGreenhousesWithBeds
-          v-model:selected="form.locationName"
+          v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="
@@ -199,12 +200,12 @@
               "
               v-on:update:speed="
                 (speed) => {
-                  form.speed = $event;
+                  form.speed = speed;
                 }
               "
               v-on:update:area="
                 (area) => {
-                  form.area = $event;
+                  form.area = area;
                 }
               "
               v-on:error="
@@ -262,7 +263,7 @@
 </template>
 
 <script>
-//import * as uiUtil from '@libs/uiUtil/uiUtil.js';
+import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 //import * as lib from './lib';
 import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
@@ -287,12 +288,14 @@ export default {
   },
   data() {
     return {
-      enableSubmit: false,
-      enableReset: false,
+      cropFilter: null,
+      enableSubmit: true,
+      enableReset: true,
+      rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
       form: {
         picked: [],
         transplantingDate: dayjs().format('YYYY-MM-DD'),
-        locationName: '',
+        location: '',
         beds: [],
         bedFeet: 100,
         bedWidth: 60,
@@ -311,16 +314,25 @@ export default {
         bedFeet: false,
         bedWidth: false,
         rowsPerBed: false,
-        equipment: false,
-        depth: false,
-        speed: false,
-        area: false,
+        soilDisturbance: false,
         comment: false,
       },
       createdCount: 0,
     };
   },
   computed: {
+    canSubmit() {
+      const required =
+        this.validity.picked &&
+        this.validity.transplantingDate &&
+        this.validity.location &&
+        this.validity.bedFeet &&
+        this.validity.bedWidth &&
+        this.validity.rowsPerBed &&
+        this.validity.soilDisturbance;
+
+      return required;
+    },
     pageDoneLoading() {
       return this.createdCount == 10;
     },
@@ -334,6 +346,84 @@ export default {
       } else {
         this.form.area = (checkedBeds.length / totalBeds) * 100;
       }
+    },
+    submit() {
+      this.validity.show = true;
+
+      if (this.canSubmit) {
+        this.disableSubmit = true;
+        this.disableReset = true;
+
+        uiUtil.showToast(
+          'Submitting transplanting...',
+          '',
+          'top-center',
+          'success'
+        );
+
+        // lib
+        //   .submitForm(this.form)
+        //   .then(() => {
+        //     uiUtil.hideToast();
+        //     this.reset(true); // keep sticky parts.
+        //     uiUtil.showToast(
+        //       'Direct seeding created.',
+        //       '',
+        //       'top-center',
+        //       'success',
+        //       2
+        //     );
+        //   })
+        //   .catch(() => {
+        //     uiUtil.hideToast();
+        //     this.showErrorToast(
+        //       'Error creating direct seeding.',
+        //       'Check your network connection and try again.'
+        //     );
+        //     this.enableSubmit = true;
+        //   });
+      } else {
+        this.enableSubmit = false;
+      }
+    },
+    reset(sticky=false) {
+      this.validity.show = false;
+
+      if (!sticky) {
+        this.form.transplantingDate = dayjs().format('YYYY-MM-DD');
+        this.form.location = null;
+        this.form.beds = [];
+        this.form.bedFeet = 100;
+        this.form.bedWidth = 60;
+        this.form.rowsPerBed = '1';
+        this.form.equipment = [];
+        this.form.depth = 0;
+        this.form.speed = 0;
+        this.form.area = 100;
+      }
+
+      this.cropFilter = null;
+      this.form.comment = null;
+      this.enableSubmit = true;
+    },
+    showErrorToast(title, message) {
+      if (!this.errorShown) {
+        this.errorShown = true;
+        this.enableSubmit = false;
+        this.enableReset = false;
+
+        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
+      }
+    },
+  },
+  watch: {
+    validity: {
+      handler() {
+        if (this.canSubmit) {
+          this.enableSubmit = true;
+        }
+      },
+      deep: true,
     },
   },
   created() {
