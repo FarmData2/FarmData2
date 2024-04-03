@@ -28,8 +28,203 @@
         data-cy="transplanting-form"
       >
         <!-- Transplanting Picklist -->
+        <TransplantingPicklist
+          id="transplanting-picklist"
+          data-cy="transplanting-picklist"
+          required="true"
+          v-bind:showValidityStyling="validity.show"
+          v-on:update:picked="
+            (picked) => {
+              form.picked = picked;
+            }
+          "
+          v-on:valid="
+            (valid) => {
+              validity.picked = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
 
-          
+        <hr />
+
+        <!-- Location Selection -->
+        <LocationSelector
+          id="transplanting-location"
+          data-cy="transplanting-location"
+          required
+          includeFields
+          includeGreenhousesWithBeds
+          v-model:selected="form.locationName"
+          v-bind:pickedBeds="form.beds"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="
+            (valid) => {
+              validity.location = valid;
+            }
+          "
+          v-on:update:beds="
+            (checkedBeds, totalBeds) => {
+              handleBedsUpdate(checkedBeds, totalBeds);
+            }
+          "
+          v-on:error="
+            (msg) => {
+              showErrorToast('Network Error', msg);
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
+        <!-- Bed Feet transplanted -->
+        <NumericInput
+          id="transplanting-bed-feet"
+          data-cy="transplanting-bed-feet"
+          required
+          label="Bed Feet"
+          invalidFeedbackText="Bed Feet must be positive."
+          v-model:value="form.bedFeet"
+          v-bind:showValidityStyling="validity.show"
+          v-bind:decimalPlaces="0"
+          v-bind:incDecValues="[1, 10, 100]"
+          v-bind:minValue="1"
+          v-on:valid="
+            (valid) => {
+              validity.bedFeet = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
+        <!-- Bed Width -->
+        <NumericInput
+          id="transplanting-bed-width"
+          data-cy="transplanting-bed-width"
+          required
+          label="Bed Width (in)"
+          invalidFeedbackText="Bed width must be positive."
+          v-model:value="form.bedWidth"
+          v-bind:showValidityStyling="validity.show"
+          v-bind:decimalPlaces="0"
+          v-bind:incDecValues="[1, 10]"
+          v-bind:minValue="1"
+          v-on:valid="
+            (valid) => {
+              validity.bedWidth = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
+        <!-- Rows/Bed -->
+        <SelectorBase
+          id="transplanting-rows-per-bed"
+          data-cy="transplanting-rows-per-bed"
+          label="Rows/Bed"
+          invalidFeedbackText="A number of rows is required"
+          v-model:selected="form.rowsPerBed"
+          v-bind:options="rowValues"
+          v-bind:required="true"
+          v-bind:showValidityStyling="validity.show"
+          v-on:valid="
+            (valid) => {
+              validity.rowsPerBed = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
+        <hr />
+
+        <!-- Equipment & Soil Disturbance-->
+        <BAccordion
+          flush
+          id="transplanting-soil-disturbance-accordion"
+          data-cy="transplanting-soil-disturbance-accordion"
+        >
+          <BAccordionItem
+            id="transplanting-soil-disturbance-accordion-item"
+            data-cy="transplanting-soil-disturbance-accordion-item"
+          >
+            <template #title>
+              <span
+                id="transplanting-soil-disturbance-accordion-title"
+                data-cy="transplanting-soil-disturbance-accordion-title"
+                class="w-100 text-center"
+              >
+                Equipment & Soil Disturbance
+              </span>
+            </template>
+
+            <!-- Soil Disturbance -->
+            <SoilDisturbance
+              id="transplanting-soil-disturbance"
+              data-cy="transplanting-soil-disturbance"
+              v-bind:showValidityStyling="validity.show"
+              v-bind:equipment="form.equipment"
+              v-bind:depth="form.depth"
+              v-bind:speed="form.speed"
+              v-bind:area="form.area"
+              v-on:valid="
+                (valid) => {
+                  validity.soilDisturbance = valid;
+                }
+              "
+              v-on:update:equipment="
+                (equipment) => {
+                  form.equipment = equipment;
+                }
+              "
+              v-on:update:depth="
+                (depth) => {
+                  form.depth = depth;
+                }
+              "
+              v-on:update:speed="
+                (speed) => {
+                  form.speed = $event;
+                }
+              "
+              v-on:update:area="
+                (area) => {
+                  form.area = $event;
+                }
+              "
+              v-on:error="
+                (msg) => {
+                  showErrorToast('Network Error', msg);
+                }
+              "
+              v-on:ready="createdCount++"
+            />
+          </BAccordionItem>
+        </BAccordion>
+
+        <hr />
+
+        <!-- Comment Box -->
+        <CommentBox
+          id="transplanting-comment"
+          data-cy="transplanting-comment"
+          v-model:comment="form.comment"
+          v-on:valid="
+            (valid) => {
+              validity.comment = valid;
+            }
+          "
+          v-on:ready="createdCount++"
+        />
+
+        <!-- Submit and Reset Buttons -->
+        <SubmitResetButtons
+          id="transplanting-submit-reset"
+          data-cy="transplanting-submit-reset"
+          v-bind:enableSubmit="enableSubmit"
+          v-bind:enableReset="enableReset"
+          v-on:submit="submit()"
+          v-on:reset="reset()"
+          v-on:ready="createdCount++"
+        />
       </BForm>
     </BCard>
 
@@ -50,34 +245,75 @@
 </template>
 
 <script>
-import dayjs from 'dayjs';
-import * as lib from './lib';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+//import dayjs from 'dayjs';
+//import * as lib from './lib';
+//import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
+import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import NumericInput from '@comps/NumericInput/NumericInput.vue';
+import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
+import CommentBox from '@comps/CommentBox/CommentBox.vue';
+import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 
 export default {
   components: {
     TransplantingPicklist,
+    LocationSelector,
+    NumericInput,
+    SelectorBase,
+    SoilDisturbance,
+    CommentBox,
+    SubmitResetButtons,
   },
   data() {
     return {
+      enableSubmit: false,
+      enableReset: false,
       form: {
         picked: [],
+        locationName: '',
+        beds: [],
+        bedFeet: 100,
+        bedWidth: 60,
+        rowsPerBed: '1',
+        equipment: '',
+        depth: 0,
+        speed: 0,
+        area: 100,
+        comment: '',
       },
       validity: {
         show: false,
         picked: false,
+        location: false,
+        bedFeet: false,
+        bedWidth: false,
+        rowsPerBed: false,
+        equipment: false,
+        depth: false,
+        speed: false,
+        area: false,
+        comment: false,
       },
       createdCount: 0,
     };
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 2;
+      return this.createdCount == 4;
     },
   },
   methods: {
-    
+    handleBedsUpdate(checkedBeds, totalBeds) {
+      this.form.beds = checkedBeds;
+
+      if (checkedBeds.length == 0) {
+        this.form.area = 100;
+      } else {
+        this.form.area = (checkedBeds.length / totalBeds) * 100;
+      }
+    },
   },
   created() {
     this.createdCount++;
@@ -87,4 +323,19 @@ export default {
 
 <style>
 @import url('@css/fd2-mobile.css');
+
+#transplanting-picklist {
+  margin-top: 2px;
+}
+
+#transplanting-location,
+#transplanting-bed-feet,
+#transplanting-bed-width,
+#transplanting-equipment-selector {
+  margin-bottom: 8px;
+}
+
+#transplanting-comment {
+  margin-bottom: 15px;
+}
 </style>
