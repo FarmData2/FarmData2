@@ -38,7 +38,7 @@ services:
     depends_on:
       - db
       - farmos
-    image: farmdata2/fd2dev:fd2.7
+    image: farmdata2/fd2dev:fd2.8
     container_name: fd2_dev
     init: true
     volumes:
