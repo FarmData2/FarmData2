@@ -277,7 +277,7 @@ export default {
         bedFeet: 100,
         bedWidth: 60,
         rowsPerBed: '1',
-        equipment: '',
+        equipment: [],
         depth: 0,
         speed: 0,
         area: 100,

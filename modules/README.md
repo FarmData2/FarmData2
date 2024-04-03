@@ -459,6 +459,10 @@ describe('Sample test.', () => {
 </style>
 ```
 
+## Drupal module and CSS
+
+If an entry point uses a component that contains its own `<style scoped>` element, and that component is used in more than one entry point, then the `.css` file for the component must be included in the entry point's `css` section in the `farm_fd2.libraries.yml` file.  See the `direct_seeding` entry point section of `farm_fd2.libraries.yml` for an example.
+
 ## Technical Build Details
 
 - both an entry_point.html and an index.html
