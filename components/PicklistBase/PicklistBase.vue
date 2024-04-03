@@ -617,7 +617,7 @@ export default {
 }
 
 #picklist-table {
-  max-height: 300px;
+  max-height: 193px;
   padding-bottom: 0px;
   padding-top: 0px;
   margin-bottom: 0px;
