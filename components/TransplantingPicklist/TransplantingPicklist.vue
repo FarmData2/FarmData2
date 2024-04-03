@@ -1,7 +1,7 @@
 <template>
   <div
-    id="transplanting-picklist-group"
-    data-cy="transplanting-picklist-group"
+    id="transplanting-picklist-div"
+    data-cy="transplanting-picklist-div"
   >
     <!-- Crop Filter -->
     <SelectorBase
@@ -11,10 +11,18 @@
       v-bind:required="required"
       v-bind:invalidFeedbackText="'A crop must be selected.'"
       v-bind:showValidityStyling="showValidityStyling"
-      v-model:selected="form.cropFilter"
+      v-bind:selected="form.cropFilter"
       v-bind:options="cropList"
-      v-on:valid="validity.cropFilter = $event"
-      v-on:update:selected="cropFilterChanged($event)"
+      v-on:valid="
+        (valid) => {
+          validity.cropFilter = valid;
+        }
+      "
+      v-on:update:selected="
+        (crop) => {
+          cropFilterChanged(crop);
+        }
+      "
     />
 
     <!-- Trays Picklist -->
@@ -32,7 +40,11 @@
       v-bind:units="units"
       v-bind:quantityAttribute="quantityAttribute"
       v-model:picked="form.pickedRows"
-      v-on:update:picked="(picked) => handlePickedUpdate(picked)"
+      v-on:update:picked="
+        (picked) => {
+          handlePickedUpdate(picked);
+        }
+      "
       v-on:valid="
         (valid) => {
           validity.picked = valid;
@@ -82,17 +94,26 @@ import dayjs from 'dayjs';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name           | Description
- * -------------------------| -----------
- * `transplanting-picklist` | The `BFormGroup` element containing all of the sub-components.
+ * Attribute Name                       | Description
+ * -------------------------------------| -----------
+ * `transplanting-picklist`             | The `PicklistBase` element showing the crops that can be picked for transplanting.
+ * `transplanting-picklist-div`         | The `div` element containing all of the sub-components.
+ * `transplanting-picklist-crop-filter` | the `SelectorBase` component used to pick a crop.
  */
 export default {
   components: {
     SelectorBase,
     PicklistBase,
   },
-  emits: ['error', 'ready', 'update:picked', 'valid'],
+  emits: ['error', 'ready', 'update:crop', 'update:picked', 'valid'],
   props: {
+    /**
+     * The name of the selected crop.
+     */
+    crop: {
+      type: String,
+      default: null,
+    },
     /**
      * Whether a value for the input element is required or not.
      */
@@ -126,7 +147,7 @@ export default {
         notes: 'Notes',
       },
       form: {
-        cropFilter: '',
+        cropFilter: this.crop,
         pickedRows: [],
       },
       validity: {
@@ -154,6 +175,7 @@ export default {
       });
     },
     cropFilterChanged(cropName) {
+      this.form.cropFilter = cropName;
       if (cropName) {
         farmosUtil
           .getSeedlings(cropName)
@@ -178,6 +200,12 @@ export default {
       } else {
         this.seedlingList = [];
       }
+
+      /**
+       * The selected crop has changed.
+       * @property {string} cropName the name of the newly selected crop.
+       */
+      this.$emit('update:crop', cropName);
     },
     handlePickedUpdate(picked) {
       const emittedRows = [];
@@ -205,6 +233,9 @@ export default {
        * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
+    },
+    crop() {
+      this.cropFilterChanged(this.crop);
     },
   },
   created() {

@@ -481,18 +481,20 @@ export default {
     },
     handleAllButton() {
       if (this.allPicked) {
-        this.pickedRows.fill(0);
+        this.pickedRows = new Array(this.pickedRows.length).fill(0);
       } else {
-        this.pickedRows.fill(1);
+        this.pickedRows = new Array(this.pickedRows.length).fill(1);
       }
     },
     handleUnitsButton() {
       if (this.allPicked) {
-        this.pickedRows.fill(0);
+        this.pickedRows = new Array(this.pickedRows.length).fill(0);
       } else {
+        const newPickedRows = new Array(this.pickedRows.length).fill(1);
         for (let i = 0; i < this.rows.length; i++) {
-          this.pickedRows[i] = this.rows[i][this.quantityAttribute];
+          newPickedRows[i] = this.rows[i][this.quantityAttribute];
         }
+        this.pickedRows = newPickedRows;
       }
     },
   },

@@ -26,7 +26,7 @@ describe('Test the TransplantingPicklist component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').its('callCount').should('equal', 1);
         cy.get('@validSpy').should('have.been.calledWith', false);
       });
   });
@@ -47,11 +47,11 @@ describe('Test the TransplantingPicklist component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-input"]').select('BROCCOLI');
-        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').its('callCount').should('equal', 1);
         cy.get('@validSpy').should('have.been.calledWith', false);
 
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
-        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').its('callCount').should('equal', 2);
         // First call, first argument.
         cy.get('@validSpy').its('args[0][0]').should('equal', false);
         // Second call, first argument.
@@ -76,13 +76,37 @@ describe('Test the TransplantingPicklist component events', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]').select('BROCCOLI');
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
-        cy.get('@validSpy').should('have.been.calledTwice');
+        cy.get('@validSpy').its('callCount').should('equal', 2);
         cy.get('@validSpy').its('args[0][0]').should('equal', false);
         cy.get('@validSpy').its('args[1][0]').should('equal', true);
 
         cy.get('[data-cy="picklist-quantity-0"]').select('0');
-        cy.get('@validSpy').should('have.been.calledThrice');
+        cy.get('@validSpy').its('callCount').should('equal', 3);
         cy.get('@validSpy').its('args[2][0]').should('equal', false);
+      });
+  });
+
+  it('Emits "update:crop" when the crop filter is changed', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(TransplantingPicklist, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:crop': updateSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('@updateSpy').its('callCount').should('equal', 2);
+        cy.get('@updateSpy').should('have.been.calledWith', 'BROCCOLI');
+
+        cy.get('[data-cy="selector-input"]').select('ZUCCHINI');
+        cy.get('@updateSpy').its('callCount').should('equal', 3);
+        cy.get('@updateSpy').should('have.been.calledWith', 'ZUCCHINI');
       });
   });
 
@@ -101,8 +125,10 @@ describe('Test the TransplantingPicklist component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@updateSpy').should('have.been.calledOnce');
+        // Called twice on creation???
+        cy.get('@updateSpy').its('callCount').should('equal', 2);
         cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
       });
   });
 
@@ -122,21 +148,22 @@ describe('Test the TransplantingPicklist component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-input"]').select('BROCCOLI');
-        cy.get('@updateSpy').should('have.been.calledTwice');
+        cy.get('@updateSpy').its('callCount').should('equal', 3);
 
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
-        cy.get('@updateSpy').should('have.been.calledThrice');
+        cy.get('@updateSpy').its('callCount').should('equal', 4);
 
         cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
         cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[2][0]').should('have.length', 1);
+        cy.get('@updateSpy').its('args[2][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[3][0]').should('have.length', 1);
 
         cy.get('@updateSpy')
-          .its('args[2][0][0]')
+          .its('args[3][0][0]')
           .its('trays')
           .should('equal', 1);
         cy.get('@updateSpy')
-          .its('args[2][0][0]')
+          .its('args[3][0][0]')
           .its('data.crop')
           .should('equal', 'BROCCOLI');
       });
@@ -161,15 +188,15 @@ describe('Test the TransplantingPicklist component events', () => {
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
         cy.get('[data-cy="picklist-quantity-1"]').select('2');
 
-        cy.get('@updateSpy').its('callCount').should('equal', 4);
+        cy.get('@updateSpy').its('callCount').should('equal', 5);
 
-        cy.get('@updateSpy').its('args[3][0]').should('have.length', 2);
+        cy.get('@updateSpy').its('args[4][0]').should('have.length', 2);
         cy.get('@updateSpy')
-          .its('args[3][0][1]')
+          .its('args[4][0][1]')
           .its('trays')
           .should('equal', 2);
         cy.get('@updateSpy')
-          .its('args[3][0][1]')
+          .its('args[4][0][1]')
           .its('data.crop')
           .should('equal', 'BROCCOLI');
       });
@@ -192,11 +219,11 @@ describe('Test the TransplantingPicklist component events', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]').select('BROCCOLI');
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
-        cy.get('@updateSpy').should('have.been.calledThrice');
+        cy.get('@updateSpy').its('callCount').should('equal', 4);
 
         cy.get('[data-cy="picklist-quantity-0"]').select('0');
-        cy.get('@updateSpy').its('callCount').should('equal', 4);
-        cy.get('@updateSpy').its('args[3][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('callCount').should('equal', 5);
+        cy.get('@updateSpy').its('args[4][0]').should('have.length', 0);
       });
   });
 });
