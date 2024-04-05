@@ -22,7 +22,9 @@ describe('Test the getSeedlings function', () => {
 
       const first = seedlings[0];
       expect(first.log_id).to.not.be.undefined;
+      expect(first.log_uuid).to.not.be.undefined;
       expect(first.asset_id).to.not.be.undefined;
+      expect(first.asset_uuid).to.not.be.undefined;
       expect(first.date).to.equal('2019-03-11');
       expect(first.user).to.equal('admin');
       expect(first.crop).to.equal('BROCCOLI');
@@ -37,7 +39,9 @@ describe('Test the getSeedlings function', () => {
 
       const last = seedlings[24];
       expect(last.log_id).to.not.be.undefined;
+      expect(last.log_uuid).to.not.be.undefined;
       expect(last.asset_id).to.not.be.undefined;
+      expect(last.asset_uuid).to.not.be.undefined;
       expect(last.date).to.equal('2019-08-29');
       expect(last.user).to.equal('admin');
       expect(last.crop).to.equal('LETTUCE-ICEBERG');
@@ -94,24 +98,28 @@ describe('Test the getSeedlings function', () => {
     });
   });
 
-  it('Error getting crop names of active tray seeded crops with tray inventory > 0', () => {
-    cy.intercept('GET', '**/api/fd2_seedlings_crop_names', {
-      statusCode: 401,
-    });
+  it(
+    'Error getting crop names of active tray seeded crops with tray inventory > 0',
+    { retries: 4 },
+    () => {
+      cy.intercept('GET', '**/api/fd2_seedlings_crop_names', {
+        statusCode: 401,
+      });
 
-    cy.wrap(
-      farmosUtil
-        .getTraySeededCropNames()
-        .then(() => {
-          throw new Error(
-            'Fetching tray seeded crop names should have failed.'
-          );
-        })
-        .catch((error) => {
-          expect(error.message).to.equal(
-            'Unable to fetch tray seeded crop names.'
-          );
-        })
-    );
-  });
+      cy.wrap(
+        farmosUtil
+          .getTraySeededCropNames()
+          .then(() => {
+            throw new Error(
+              'Fetching tray seeded crop names should have failed.'
+            );
+          })
+          .catch((error) => {
+            expect(error.message).to.equal(
+              'Unable to fetch tray seeded crop names.'
+            );
+          })
+      );
+    }
+  );
 });

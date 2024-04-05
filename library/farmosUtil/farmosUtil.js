@@ -1497,7 +1497,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *
  * @param {string} assetName the name of the plant asset to create.
  * @param {string} cropName the name of the crop to associate with the plant asset.
- * @param {string} [comment = ''] a comment the comment to associate with this plant asset.
+ * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
  * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
  * @return {Object} the new plant asset.
  * @throws {Error} if unable to create the plant asset.
@@ -1825,7 +1825,7 @@ export async function createSeedingLog(
     locationName,
     ...bedNames,
   ]);
-  const quantitiesArray = await getQuantityObjects(quantities);
+  const quantitiesArray = getQuantityObjects(quantities);
   const logCategoriesArray = await getLogCategoryObjects(logCategories);
 
   const seedingLogData = {
@@ -2042,7 +2042,9 @@ export function extractQuantity(quantityString, unitName) {
  * ```json
  * {
  *    log_id: <id of seeding log created by the seeding>,
+ *    log_uuid: <uuid of seeding log created by the seeding>,
  *    asset_id: <id of plant asset created by the seeding>,
+ *    asset_uuid: <uuid of plant asset created by the seeding>,
  *    date: <date of tray seeding>,
  *    user: <name of user that entered the seeding>,
  *    crop: <name of crop that was seeded>,
@@ -2086,7 +2088,9 @@ export async function getSeedlings(cropName = null) {
 
         result.push({
           log_id: seedling.log_id,
+          log_uuid: seedling.log_uuid,
           asset_id: seedling.asset_id,
+          asset_uuid: seedling.asset_uuid,
           date: seedling.date,
           user: seedling.user,
           crop: seedling.crop,
@@ -2179,7 +2183,7 @@ export async function createTransplantingActivityLog(
     ...bedNames,
   ]);
   const quantitiesArray = getQuantityObjects(quantities);
-  const logCategoriesArray = getLogCategoryObjects(['transplanting']);
+  const logCategoriesArray = await getLogCategoryObjects(['transplanting']);
 
   const activityLogData = {
     type: 'log--activity',
