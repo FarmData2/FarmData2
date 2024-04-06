@@ -32,7 +32,7 @@
           id="transplanting-picklist"
           data-cy="transplanting-picklist"
           required="true"
-          v-model:crop="cropFilter"
+          v-model:crop="form.cropName"
           v-bind:showValidityStyling="validity.show"
           v-on:update:picked="
             (picked) => {
@@ -264,7 +264,7 @@
 
 <script>
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-//import * as lib from './lib';
+import * as lib from './lib';
 import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
@@ -288,11 +288,11 @@ export default {
   },
   data() {
     return {
-      cropFilter: null,
       enableSubmit: true,
       enableReset: true,
       rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
       form: {
+        cropName: null,
         picked: [],
         transplantingDate: dayjs().format('YYYY-MM-DD'),
         location: '',
@@ -361,27 +361,27 @@ export default {
           'success'
         );
 
-        // lib
-        //   .submitForm(this.form)
-        //   .then(() => {
-        //     uiUtil.hideToast();
-        //     this.reset(true); // keep sticky parts.
-        //     uiUtil.showToast(
-        //       'Direct seeding created.',
-        //       '',
-        //       'top-center',
-        //       'success',
-        //       2
-        //     );
-        //   })
-        //   .catch(() => {
-        //     uiUtil.hideToast();
-        //     this.showErrorToast(
-        //       'Error creating direct seeding.',
-        //       'Check your network connection and try again.'
-        //     );
-        //     this.enableSubmit = true;
-        //   });
+        lib
+          .submitForm(this.form)
+          .then(() => {
+            uiUtil.hideToast();
+            this.reset(true); // keep sticky parts.
+            uiUtil.showToast(
+              'Transplanting created.',
+              '',
+              'top-center',
+              'success',
+              2
+            );
+          })
+          .catch(() => {
+            uiUtil.hideToast();
+            this.showErrorToast(
+              'Error creating transplanting.',
+              'Check your network connection and try again.'
+            );
+            this.enableSubmit = true;
+          });
       } else {
         this.enableSubmit = false;
       }
@@ -402,7 +402,7 @@ export default {
         this.form.area = 100;
       }
 
-      this.cropFilter = null;
+      this.form.cropName = null;
       this.form.comment = null;
       this.enableSubmit = true;
     },
