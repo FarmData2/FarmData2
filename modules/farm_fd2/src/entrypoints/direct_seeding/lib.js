@@ -26,210 +26,229 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
 export async function submitForm(formData) {
-  let plantAsset = null;
-  let bedFeetQuantity = null;
-  let rowsPerBedQuantity = null;
-  let rowFeetQuantity = null;
-  let bedWidthQuantity = null;
-  let seedingLog = null;
-  let equipmentAssets = [];
-  let depthQuantity = null;
-  let speedQuantity = null;
-  let areaQuantity = null;
-  let activityLog = null;
-
   try {
     const assetName = formData.seedingDate + '_ds_' + formData.cropName;
+    const ops = [];
+    const equipmentAssets = [];
 
-    plantAsset = await farmosUtil.createPlantAsset(
-      assetName,
-      formData.cropName,
-      formData.comment
-    );
+    const plantAsset = {
+      name: 'plantAsset',
+      create: async () => {
+        return await farmosUtil.createPlantAsset(
+          assetName,
+          formData.cropName,
+          formData.comment
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deletePlantAsset(uuid);
+      },
+    };
+    ops.push(plantAsset);
 
-    bedFeetQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedFeet,
-      'Bed Feet',
-      'FEET'
-    );
+    const bedFeetQuantity = {
+      name: 'bedFeetQuantity',
+      create: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedFeet,
+          'Bed Feet',
+          'FEET'
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deleteStandardQuantity(uuid);
+      },
+    };
+    ops.push(bedFeetQuantity);
 
-    rowsPerBedQuantity = await farmosUtil.createStandardQuantity(
-      'ratio',
-      formData.rowsPerBed,
-      'Rows/Bed',
-      'ROWS/BED'
-    );
+    const rowsPerBedQuantity = {
+      name: 'rowsPerBedQuantity',
+      create: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'ratio',
+          formData.rowsPerBed,
+          'Rows/Bed',
+          'ROWS/BED'
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deleteStandardQuantity(uuid);
+      },
+    };
+    ops.push(rowsPerBedQuantity);
 
-    rowFeetQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedFeet * formData.rowsPerBed,
-      'Row Feet',
-      'FEET',
-      plantAsset,
-      'increment'
-    );
+    const rowFeetQuantity = {
+      name: 'rowFeetQuantity',
+      create: async (results) => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedFeet * formData.rowsPerBed,
+          'Row Feet',
+          'FEET',
+          results.plantAsset,
+          'increment'
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deleteStandardQuantity(uuid);
+      },
+    };
+    ops.push(rowFeetQuantity);
 
-    bedWidthQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedWidth,
-      'Bed Width',
-      'INCHES'
-    );
+    const bedWidthQuantity = {
+      name: 'bedWidthQuantity',
+      create: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedWidth,
+          'Bed Width',
+          'INCHES'
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deleteStandardQuantity(uuid);
+      },
+    };
+    ops.push(bedWidthQuantity);
 
-    seedingLog = await farmosUtil.createSeedingLog(
-      formData.seedingDate,
-      formData.locationName,
-      formData.beds,
-      ['seeding', 'seeding_direct'],
-      plantAsset,
-      [bedFeetQuantity, rowsPerBedQuantity, rowFeetQuantity, bedWidthQuantity]
-    );
+    const seedingLog = {
+      name: 'seedingLog',
+      create: async (results) => {
+        return await farmosUtil.createSeedingLog(
+          formData.seedingDate,
+          formData.locationName,
+          formData.beds,
+          ['seeding', 'seeding_direct'],
+          results.plantAsset,
+          [
+            results.bedFeetQuantity,
+            results.rowsPerBedQuantity,
+            results.rowFeetQuantity,
+            results.bedWidthQuantity,
+          ]
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deleteSeedingLog(uuid);
+      },
+    };
+    ops.push(seedingLog);
 
     if (formData.equipment.length > 0) {
-      depthQuantity = await farmosUtil.createStandardQuantity(
-        'length',
-        formData.depth,
-        'Depth',
-        'INCHES'
-      );
+      const depthQuantity = {
+        name: 'depthQuantity',
+        create: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'length',
+            formData.depth,
+            'Depth',
+            'INCHES'
+          );
+        },
+        delete: async (uuid) => {
+          await farmosUtil.deleteStandardQuantity(uuid);
+        },
+      };
+      ops.push(depthQuantity);
 
-      speedQuantity = await farmosUtil.createStandardQuantity(
-        'rate',
-        formData.speed,
-        'Speed',
-        'MPH'
-      );
+      const speedQuantity = {
+        name: 'speedQuantity',
+        create: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'rate',
+            formData.speed,
+            'Speed',
+            'MPH'
+          );
+        },
+        delete: async (uuid) => {
+          await farmosUtil.deleteStandardQuantity(uuid);
+        },
+      };
+      ops.push(speedQuantity);
 
-      areaQuantity = await farmosUtil.createStandardQuantity(
-        'ratio',
-        formData.area,
-        'Area',
-        'PERCENT'
-      );
+      const areaQuantity = {
+        name: 'areaQuantity',
+        create: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'ratio',
+            formData.area,
+            'Area',
+            'PERCENT'
+          );
+        },
+        delete: async (uuid) => {
+          await farmosUtil.deleteStandardQuantity(uuid);
+        },
+      };
+      ops.push(areaQuantity);
 
       const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
       for (const equipmentName of formData.equipment) {
         equipmentAssets.push(equipmentMap.get(equipmentName));
       }
 
-      activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
-        formData.seedingDate,
-        formData.locationName,
-        formData.beds,
-        ['tillage', 'seeding_direct'],
-        plantAsset,
-        [depthQuantity, speedQuantity, areaQuantity],
-        equipmentAssets
-      );
+      const activityLog = {
+        name: 'activityLog',
+        create: async (results) => {
+          return await farmosUtil.createSoilDisturbanceActivityLog(
+            formData.seedingDate,
+            formData.locationName,
+            formData.beds,
+            ['tillage', 'seeding_direct'],
+            results.plantAsset,
+            [
+              results.depthQuantity,
+              results.speedQuantity,
+              results.areaQuantity,
+            ],
+            equipmentAssets
+          );
+        },
+        delete: async (uuid) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(uuid);
+        },
+      };
+      ops.push(activityLog);
     }
 
-    return {
-      plantAsset: plantAsset,
-      bedFeetQuantity: bedFeetQuantity,
-      rowsPerBedQuantity: rowsPerBedQuantity,
-      rowFeetQuantity: rowFeetQuantity,
-      bedWidthQuantity: bedWidthQuantity,
-      seedingLog: seedingLog,
-      depthQuantity: depthQuantity,
-      speedQuantity: speedQuantity,
-      areaQuantity: areaQuantity,
-      equipment: equipmentAssets,
-      activityLog: activityLog,
-    };
+    const result = await farmosUtil.runTransaction(ops);
+    if (equipmentAssets.length > 0) {
+      result['equipment'] = equipmentAssets;
+    } else {
+      result['equipment'] = null;
+      result['depthQuantity'] = null;
+      result['speedQuantity'] = null;
+      result['areaQuantity'] = null;
+      result['activityLog'] = null;
+    }
+
+    return result;
   } catch (error) {
-    console.log('DirectSeeding: \n' + error.message);
-    console.log(error);
+    console.error('DirectSeeding: \n' + error.message);
+    console.error(error);
 
-    /*
-     * Attempt to delete any of the records that were created.  It is likely
-     * that if there was an error creating the records then there will
-     * be errors deleting them too.  So we try/catch those and swallow
-     * the exceptions and just emit a new error at the end.
-     */
+    let errorMsg = 'Error creating direct seeding.';
 
-    if (seedingLog) {
-      try {
-        await farmosUtil.deleteSeedingLog(seedingLog.id);
-      } catch (error) {
-        console.log('Unable to delete seeding log: ' + seedingLog.id);
+    for (const key of Object.keys(error.results)) {
+      if (error.results[key]) {
+        errorMsg +=
+          '\n  Result of operation ' + key + ' could not be cleaned up.';
+        if (
+          error.results[key].attributes &&
+          error.results[key].attributes.name
+        ) {
+          errorMsg += '\n   Manually delete log or asset with:';
+          errorMsg += '\n     name: ' + error.results[key].attributes.name;
+          //errorMsg += '\n     uuid: ' + error.results[key].id;
+        } else {
+          errorMsg += '\n   May be safely ignored';
+          //errorMsg += '\n     uuid: ' + error.results[key].id;
+        }
       }
     }
 
-    if (rowFeetQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(rowFeetQuantity.id);
-      } catch (error) {
-        console.log('Unable to delete rowFeetQuantity: ' + rowFeetQuantity.id);
-      }
-    }
-
-    if (rowsPerBedQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(rowsPerBedQuantity.id);
-      } catch (error) {
-        console.log(
-          'Unable to delete rowsPerBedQuantity: ' + rowsPerBedQuantity.id
-        );
-      }
-    }
-
-    if (bedWidthQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(bedWidthQuantity.id);
-      } catch (error) {
-        console.log(
-          'Unable to delete bedWidthQuantity: ' + bedWidthQuantity.id
-        );
-      }
-    }
-
-    if (bedFeetQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(bedFeetQuantity.id);
-      } catch (error) {
-        console.log('Unable to delete bedFeetQuantity: ' + bedFeetQuantity.id);
-      }
-    }
-
-    /*
-     * Don't need to do the activity log, because if it didn't work
-     * it wouldn't have been created and if it did work then everything
-     * worked.
-     */
-
-    if (depthQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(depthQuantity.id);
-      } catch (error) {
-        console.log('Unable to delete depthQuantity: ' + depthQuantity.id);
-      }
-    }
-
-    if (speedQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(speedQuantity.id);
-      } catch (error) {
-        console.log('Unable to delete speedQuantity: ' + speedQuantity.id);
-      }
-    }
-
-    if (areaQuantity) {
-      try {
-        await farmosUtil.deleteStandardQuantity(areaQuantity.id);
-      } catch (error) {
-        console.log('Unable to delete areaQuantity: ' + areaQuantity.id);
-      }
-    }
-
-    if (plantAsset) {
-      try {
-        await farmosUtil.deletePlantAsset(plantAsset.id);
-      } catch (error) {
-        console.log('Unable to delete plantAsset: ' + plantAsset.id);
-      }
-    }
-
-    throw Error('Error creating direct seeding.', error);
+    throw Error(errorMsg, error);
   }
 }
