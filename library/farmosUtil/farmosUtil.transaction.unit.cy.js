@@ -70,7 +70,7 @@ describe('Test the plant asset functions', () => {
           throw new Error('Transaction should have failed.');
         })
         .catch((error) => {
-          expect(error.message).to.contain('Error running transaction.');
+          expect(error.message).to.equal('Error running transaction.');
         })
     );
   });
@@ -92,5 +92,68 @@ describe('Test the plant asset functions', () => {
           expect(error.message).to.contain('badDelete');
         })
     );
+  });
+
+  it('Successful transaction in farmOS', () => {
+    const formData = {
+      cropName: 'ARUGULA',
+      comment: 'test comment',
+    };
+    const assetName = 'test asset';
+
+    const createPlantAsset = {
+      name: 'createPlantAsset',
+      create: async () => {
+        return await farmosUtil.createPlantAsset(
+          assetName,
+          formData.cropName,
+          formData.comment
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deletePlantAsset(uuid);
+      },
+    };
+
+    const ops = [op1, createPlantAsset, op2];
+
+    cy.wrap(farmosUtil.runTransaction(ops)).as('result');
+
+    cy.get('@result').then((result) => {
+      expect(result.createPlantAsset.attributes.name).to.equal(assetName);
+    });
+  });
+
+  it('Failed transaction in farmOS', () => {
+    const formData = {
+      cropName: 'WATERMELON',
+      comment: 'test comment',
+    };
+    const assetName = 'test asset';
+
+    const createPlantAsset = {
+      name: 'createPlantAsset',
+      create: async () => {
+        return await farmosUtil.createPlantAsset(
+          assetName,
+          formData.cropName,
+          formData.comment
+        );
+      },
+      delete: async (uuid) => {
+        await farmosUtil.deletePlantAsset(uuid);
+      },
+    };
+
+    const ops = [op1, createPlantAsset, badOp];
+
+    farmosUtil
+      .runTransaction(ops)
+      .then(() => {
+        throw new Error('Transaction should have failed.');
+      })
+      .catch((error) => {
+        expect(error.message).to.equal('Error running transaction.');
+      });
   });
 });
