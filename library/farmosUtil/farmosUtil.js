@@ -1493,6 +1493,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *
  * @param {Array<Object>} operations the operations to execute as a transaction.
  * Each operation must have the following structure:
+ * 
  * ```
  * {
  *   name: string,
@@ -1500,10 +1501,17 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *   delete: (uuid) => async function that deletes a log, asset or quantity with the given id.
  * }
  * ```
+ * 
  * @return {Object} an object with an attribute for each operation.
  * The attribute name is the operation name and its value is the result of the operation.
  * The value of the attribute for an operation will be null if the operation was not successful.
- * @throws {Error} if unable to execute the complete transaction.
+ *
+ * @throws {Error} if unable to execute the complete all operations in the transaction.
+ * The `cause` of the error will include a `result` attribute with the same format as the returned object.
+ * If an operation was successfully undone the attribute for that operation will have the value `null`.
+ * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
+ * 
+ * @category Utilities
  */
 export async function runTransaction(operations) {
   const created = {};
@@ -1512,6 +1520,7 @@ export async function runTransaction(operations) {
 
   try {
     for (const operation of operations) {
+      created[operation.name] = null;
       const result = await operation.create();
       created[operation.name] = result;
       undo.push(operation);
@@ -1522,24 +1531,22 @@ export async function runTransaction(operations) {
     for (const operation of undo.reverse()) {
       try {
         await operation.delete(created[operation.name].id);
+        created[operation.name] = null;
         console.error('    deleted ' + operation.name);
       } catch (error) {
         console.error('    failed to delete ' + operation.name);
         console.error('      uuid: ' + created[operation.name].id);
         if (created[operation.name].attributes.name) {
           console.error('      name: ' + created[operation.name].attributes.name);
-          errorNames += '\n\t' + created[operation.name].attributes.name;
         }
       }
     }
 
-    let errorMessage = 'Error running transaction.'
-    if (errorNames.length > 0) {
-      errorMessage += '\nDelete the following logs or assets:';
-      errorMessage += errorNames;
-    }
+    const errorObj = new Error('Error running transaction.');
+    errorObj.cause = error;
+    errorObj.result = created;
 
-    throw new Error(errorMessage, error);
+    throw errorObj;
   }
 
   return created;

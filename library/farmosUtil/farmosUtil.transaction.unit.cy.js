@@ -71,6 +71,8 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.equal('Error running transaction.');
+          expect(error.result.op1).to.be.null;
+          expect(error.result.op2).to.be.null;
         })
     );
   });
@@ -86,10 +88,11 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.contain('Error running transaction.');
-          expect(error.message).to.contain(
-            'Delete the following logs or assets:'
-          );
-          expect(error.message).to.contain('badDelete');
+          expect(error.result.op1).to.be.null;
+          expect(error.result.badDelete).not.to.be.null;
+          expect(error.result.badDelete.attributes.name).to.equal('badDelete');
+          expect(error.result.op2).to.be.null;
+          expect(error.result.badOp).to.be.null;
         })
     );
   });
@@ -154,6 +157,9 @@ describe('Test the plant asset functions', () => {
       })
       .catch((error) => {
         expect(error.message).to.equal('Error running transaction.');
+        expect(error.result.op1).to.be.null;
+        expect(error.result.createPlantAsset).to.be.null;
+        expect(error.result.badOp).to.be.null;
       });
   });
 });
