@@ -81,7 +81,7 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="submit-button"]').click();
   }
 
-  it.only('Test successful submission', () => {
+  it('Test successful submission', () => {
     /*
      * Create a spy to watch for the activity log created by the
      * lib.submitForm function that is called when the "Submit"

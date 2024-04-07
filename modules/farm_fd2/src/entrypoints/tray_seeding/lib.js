@@ -25,21 +25,21 @@ export async function submitForm(formData) {
 
     const plantAsset = {
       name: 'plantAsset',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createPlantAsset(
           assetName,
           formData.cropName,
           formData.comment
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deletePlantAsset(uuid);
+      undo: async (results) => {
+        await farmosUtil.deletePlantAsset(results['plantAsset'].id);
       },
     };
 
     const traysQuantity = {
       name: 'traysQuantity',
-      create: async (results) => {
+      do: async (results) => {
         return await farmosUtil.createStandardQuantity(
           'count',
           formData.trays,
@@ -49,14 +49,14 @@ export async function submitForm(formData) {
           'increment'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['traysQuantity'].id);
       },
     };
 
     const traySizeQuantity = {
       name: 'traySizeQuantity',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createStandardQuantity(
           'ratio',
           formData.traySize,
@@ -64,14 +64,14 @@ export async function submitForm(formData) {
           'CELLS/TRAY'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['traySizeQuantity'].id);
       },
     };
 
     const seedsQuantity = {
       name: 'seedsQuantity',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createStandardQuantity(
           'count',
           formData.seedsPerCell * formData.trays * formData.traySize,
@@ -79,14 +79,14 @@ export async function submitForm(formData) {
           'SEEDS'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['seedsQuantity'].id);
       },
     };
 
     const seedingLog = {
       name: 'seedingLog',
-      create: async (results) => {
+      do: async (results) => {
         return await farmosUtil.createSeedingLog(
           formData.seedingDate,
           formData.locationName,
@@ -100,8 +100,8 @@ export async function submitForm(formData) {
           ]
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteSeedingLog(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteSeedingLog(results['seedingLog'].id);
       },
     };
 
