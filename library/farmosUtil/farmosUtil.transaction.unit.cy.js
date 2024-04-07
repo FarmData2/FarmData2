@@ -21,8 +21,8 @@ describe('Test the plant asset functions', () => {
 
   const op2 = {
     name: 'op2',
-    create: async () => {
-      return { status: 'op2 success', id: '2', attributes: { name: 'op2' } };
+    create: async (results) => {
+      return { status: 'op2 success', id: '2', attributes: { name: 'op2' }, prior: results.op1.attributes.name };
     },
     delete: async () => {},
   };
@@ -57,6 +57,7 @@ describe('Test the plant asset functions', () => {
     cy.get('@result').then((result) => {
       expect(result.op1.status).to.equal('op1 success');
       expect(result.op2.status).to.equal('op2 success');
+      expect(result.op2.prior).to.equal('op1');
     });
   });
 
@@ -71,8 +72,8 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.equal('Error running transaction.');
-          expect(error.result.op1).to.be.null;
-          expect(error.result.op2).to.be.null;
+          expect(error.results.op1).to.be.null;
+          expect(error.results.op2).to.be.null;
         })
     );
   });
@@ -88,11 +89,11 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.contain('Error running transaction.');
-          expect(error.result.op1).to.be.null;
-          expect(error.result.badDelete).not.to.be.null;
-          expect(error.result.badDelete.attributes.name).to.equal('badDelete');
-          expect(error.result.op2).to.be.null;
-          expect(error.result.badOp).to.be.null;
+          expect(error.results.op1).to.be.null;
+          expect(error.results.badDelete).not.to.be.null;
+          expect(error.results.badDelete.attributes.name).to.equal('badDelete');
+          expect(error.results.op2).to.be.null;
+          expect(error.results.badOp).to.be.null;
         })
     );
   });
@@ -157,9 +158,9 @@ describe('Test the plant asset functions', () => {
       })
       .catch((error) => {
         expect(error.message).to.equal('Error running transaction.');
-        expect(error.result.op1).to.be.null;
-        expect(error.result.createPlantAsset).to.be.null;
-        expect(error.result.badOp).to.be.null;
+        expect(error.results.op1).to.be.null;
+        expect(error.results.createPlantAsset).to.be.null;
+        expect(error.results.badOp).to.be.null;
       });
   });
 });
