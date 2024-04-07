@@ -13,38 +13,43 @@ describe('Test the plant asset functions', () => {
 
   const op1 = {
     name: 'op1',
-    create: async () => {
+    do: async () => {
       return { status: 'op1 success', id: '1', attributes: { name: 'op1' } };
     },
-    delete: async () => {},
+    undo: async () => {},
   };
 
   const op2 = {
     name: 'op2',
-    create: async (results) => {
-      return { status: 'op2 success', id: '2', attributes: { name: 'op2' }, prior: results.op1.attributes.name };
+    do: async (results) => {
+      return {
+        status: 'op2 success',
+        id: '2',
+        attributes: { name: 'op2' },
+        prior: results.op1.attributes.name,
+      };
     },
-    delete: async () => {},
+    undo: async () => {},
   };
 
   const badOp = {
     name: 'badOp',
-    create: async () => {
+    do: async () => {
       throw new Error('badOp error');
     },
-    delete: async () => {},
+    undo: async () => {},
   };
 
   const badDelete = {
     name: 'badDelete',
-    create: async () => {
+    do: async () => {
       return {
         status: 'badDelete success',
         id: '3',
         attributes: { name: 'badDelete' },
       };
     },
-    delete: async () => {
+    undo: async () => {
       throw new Error('badDelete error');
     },
   };
@@ -107,14 +112,14 @@ describe('Test the plant asset functions', () => {
 
     const createPlantAsset = {
       name: 'createPlantAsset',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createPlantAsset(
           assetName,
           formData.cropName,
           formData.comment
         );
       },
-      delete: async (uuid) => {
+      undo: async (uuid) => {
         await farmosUtil.deletePlantAsset(uuid);
       },
     };
@@ -137,14 +142,14 @@ describe('Test the plant asset functions', () => {
 
     const createPlantAsset = {
       name: 'createPlantAsset',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createPlantAsset(
           assetName,
           formData.cropName,
           formData.comment
         );
       },
-      delete: async (uuid) => {
+      undo: async (uuid) => {
         await farmosUtil.deletePlantAsset(uuid);
       },
     };
