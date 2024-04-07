@@ -1488,6 +1488,64 @@ export async function getEquipmentIdToAssetMap(categories = []) {
 }
 
 /**
+ * Execute a series of log, asset, or quantity creation operations as a transaction.
+ * If one of the operations fails, then an attempt will be made to undo all of the completed operations.
+ *
+ * @param {Array<Object>} operations the operations to execute as a transaction.
+ * Each operation must have the following structure:
+ * ```
+ * {
+ *   name: string,
+ *   create: () => async function that creates a log, asset or quantity.
+ *   delete: (uuid) => async function that deletes a log, asset or quantity with the given id.
+ * }
+ * ```
+ * @return {Object} an object with an attribute for each operation.
+ * The attribute name is the operation name and its value is the result of the operation.
+ * The value of the attribute for an operation will be null if the operation was not successful.
+ * @throws {Error} if unable to execute the complete transaction.
+ */
+export async function runTransaction(operations) {
+  const created = {};
+  const undo = [];
+  let errorNames = '';
+
+  try {
+    for (const operation of operations) {
+      const result = await operation.create();
+      created[operation.name] = result;
+      undo.push(operation);
+    }
+  } catch (error) {
+    console.error('runTransaction: Error running transaction.');
+    console.error('  Attempting to undo completed operations.');
+    for (const operation of undo.reverse()) {
+      try {
+        await operation.delete(created[operation.name].id);
+        console.error('    deleted ' + operation.name);
+      } catch (error) {
+        console.error('    failed to delete ' + operation.name);
+        console.error('      uuid: ' + created[operation.name].id);
+        if (created[operation.name].attributes.name) {
+          console.error('      name: ' + created[operation.name].attributes.name);
+          errorNames += '\n\t' + created[operation.name].attributes.name;
+        }
+      }
+    }
+
+    let errorMessage = 'Error running transaction.'
+    if (errorNames.length > 0) {
+      errorMessage += '\nDelete the following logs or assets:';
+      errorMessage += errorNames;
+    }
+
+    throw new Error(errorMessage, error);
+  }
+
+  return created;
+}
+
+/**
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
  * @param {string} assetName the name of the plant asset to create.
