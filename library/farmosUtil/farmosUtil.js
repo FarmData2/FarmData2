@@ -1488,6 +1488,70 @@ export async function getEquipmentIdToAssetMap(categories = []) {
 }
 
 /**
+ * Execute a series of log, asset, or quantity creation operations as a transaction.
+ * If one of the operations fails, then an attempt will be made to undo all of the completed operations.
+ *
+ * @param {Array<Object>} operations the operations to execute as a transaction.
+ * Each operation must have the following structure:
+ * 
+ * ```
+ * {
+ *   name: string,
+ *   create: (Object) => async function that creates a log, asset or quantity.  The argument has the same format as the return value. It contains the result of all prior operations, allowing them to be used by future operations.
+ *   delete: (uuid) => async function that deletes a log, asset or quantity with the given id.
+ * }
+ * ```
+ * 
+ * @return {Object} an object with an attribute for each operation.
+ * The attribute name is the operation name and its value is the result of the operation.
+ * The value of the attribute for an operation will be null if the operation was not successful.
+ *
+ * @throws {Error} if unable to execute the complete all operations in the transaction.
+ * The `cause` of the error will include a `results` attribute with the same format as the returned object.
+ * If an operation was successfully undone the attribute for that operation will have the value `null`.
+ * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
+ * 
+ * @category Utilities
+ */
+export async function runTransaction(operations) {
+  const created = {};
+  const undo = [];
+
+  try {
+    for (const operation of operations) {
+      created[operation.name] = null;
+      const result = await operation.create(created);
+      created[operation.name] = result;
+      undo.push(operation);
+    }
+  } catch (error) {
+    console.error('runTransaction: Error running transaction.');
+    console.error('  Attempting to undo completed operations.');
+    for (const operation of undo.reverse()) {
+      try {
+        await operation.delete(created[operation.name].id);
+        created[operation.name] = null;
+        console.error('    deleted ' + operation.name);
+      } catch (error) {
+        console.error('    failed to delete ' + operation.name);
+        console.error('      uuid: ' + created[operation.name].id);
+        if (created[operation.name].attributes && created[operation.name].attributes.name) {
+          console.error('      name: ' + created[operation.name].attributes.name);
+        }
+      }
+    }
+
+    const errorObj = new Error('Error running transaction.');
+    errorObj.cause = error;
+    errorObj.results = created;
+
+    throw errorObj;
+  }
+
+  return created;
+}
+
+/**
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
  * @param {string} assetName the name of the plant asset to create.

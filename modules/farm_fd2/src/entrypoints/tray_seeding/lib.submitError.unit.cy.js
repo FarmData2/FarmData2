@@ -65,7 +65,19 @@ describe('Test error when submitting tray seeding lib', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            expect(error.message).to.equal('Error creating tray seeding.');
+            expect(error.message).to.contain('Error creating tray seeding.');
+            expect(error.message).to.contain(
+              'Result of operation plantAsset could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation traysQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation traySizeQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedsQuantity could not be cleaned up.'
+            );
             expect(standardQuantityDeletes).to.equal(3);
             expect(plantAssetDeletes).to.equal(1);
           }),

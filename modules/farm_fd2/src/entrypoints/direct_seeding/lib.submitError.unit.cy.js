@@ -82,7 +82,35 @@ describe('Error when submitting using the direct_seeding lib.', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            expect(error.message).to.equal('Error creating direct seeding.');
+            expect(error.message).to.contain('Error creating direct seeding.');
+            expect(error.message).to.contain(
+              'Result of operation plantAsset could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation bedFeetQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation rowsPerBedQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation rowFeetQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation bedWidthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedingLog could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation depthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation speedQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation areaQuantity could not be cleaned up.'
+            );
+
             expect(standardQuantityDeletes).to.equal(7);
             expect(seedingLogDeletes).to.equal(1);
             expect(plantAssetDeletes).to.equal(1);
