@@ -33,22 +33,22 @@ export async function submitForm(formData) {
 
     const plantAsset = {
       name: 'plantAsset',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createPlantAsset(
           assetName,
           formData.cropName,
           formData.comment
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deletePlantAsset(uuid);
+      undo: async (results) => {
+        await farmosUtil.deletePlantAsset(results['plantAsset'].id);
       },
     };
     ops.push(plantAsset);
 
     const bedFeetQuantity = {
       name: 'bedFeetQuantity',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createStandardQuantity(
           'length',
           formData.bedFeet,
@@ -56,15 +56,15 @@ export async function submitForm(formData) {
           'FEET'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['bedFeetQuantity'].id);
       },
     };
     ops.push(bedFeetQuantity);
 
     const rowsPerBedQuantity = {
       name: 'rowsPerBedQuantity',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createStandardQuantity(
           'ratio',
           formData.rowsPerBed,
@@ -72,15 +72,17 @@ export async function submitForm(formData) {
           'ROWS/BED'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(
+          results['rowsPerBedQuantity'].id
+        );
       },
     };
     ops.push(rowsPerBedQuantity);
 
     const rowFeetQuantity = {
       name: 'rowFeetQuantity',
-      create: async (results) => {
+      do: async (results) => {
         return await farmosUtil.createStandardQuantity(
           'length',
           formData.bedFeet * formData.rowsPerBed,
@@ -90,15 +92,15 @@ export async function submitForm(formData) {
           'increment'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['rowFeetQuantity'].id);
       },
     };
     ops.push(rowFeetQuantity);
 
     const bedWidthQuantity = {
       name: 'bedWidthQuantity',
-      create: async () => {
+      do: async () => {
         return await farmosUtil.createStandardQuantity(
           'length',
           formData.bedWidth,
@@ -106,15 +108,15 @@ export async function submitForm(formData) {
           'INCHES'
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteStandardQuantity(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['bedWidthQuantity'].id);
       },
     };
     ops.push(bedWidthQuantity);
 
     const seedingLog = {
       name: 'seedingLog',
-      create: async (results) => {
+      do: async (results) => {
         return await farmosUtil.createSeedingLog(
           formData.seedingDate,
           formData.locationName,
@@ -129,8 +131,8 @@ export async function submitForm(formData) {
           ]
         );
       },
-      delete: async (uuid) => {
-        await farmosUtil.deleteSeedingLog(uuid);
+      undo: async (results) => {
+        await farmosUtil.deleteSeedingLog(results['seedingLog'].id);
       },
     };
     ops.push(seedingLog);
@@ -138,7 +140,7 @@ export async function submitForm(formData) {
     if (formData.equipment.length > 0) {
       const depthQuantity = {
         name: 'depthQuantity',
-        create: async () => {
+        do: async () => {
           return await farmosUtil.createStandardQuantity(
             'length',
             formData.depth,
@@ -146,15 +148,15 @@ export async function submitForm(formData) {
             'INCHES'
           );
         },
-        delete: async (uuid) => {
-          await farmosUtil.deleteStandardQuantity(uuid);
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['depthQuantity'].id);
         },
       };
       ops.push(depthQuantity);
 
       const speedQuantity = {
         name: 'speedQuantity',
-        create: async () => {
+        do: async () => {
           return await farmosUtil.createStandardQuantity(
             'rate',
             formData.speed,
@@ -162,15 +164,15 @@ export async function submitForm(formData) {
             'MPH'
           );
         },
-        delete: async (uuid) => {
-          await farmosUtil.deleteStandardQuantity(uuid);
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['speedQuantity'].id);
         },
       };
       ops.push(speedQuantity);
 
       const areaQuantity = {
         name: 'areaQuantity',
-        create: async () => {
+        do: async () => {
           return await farmosUtil.createStandardQuantity(
             'ratio',
             formData.area,
@@ -178,8 +180,8 @@ export async function submitForm(formData) {
             'PERCENT'
           );
         },
-        delete: async (uuid) => {
-          await farmosUtil.deleteStandardQuantity(uuid);
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
         },
       };
       ops.push(areaQuantity);
@@ -191,7 +193,7 @@ export async function submitForm(formData) {
 
       const activityLog = {
         name: 'activityLog',
-        create: async (results) => {
+        do: async (results) => {
           return await farmosUtil.createSoilDisturbanceActivityLog(
             formData.seedingDate,
             formData.locationName,
@@ -206,8 +208,10 @@ export async function submitForm(formData) {
             equipmentAssets
           );
         },
-        delete: async (uuid) => {
-          await farmosUtil.deleteSoilDisturbanceActivityLog(uuid);
+        undo: async (results) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(
+            results['activityLog'].id
+          );
         },
       };
       ops.push(activityLog);
