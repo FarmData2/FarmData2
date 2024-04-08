@@ -1624,10 +1624,10 @@ export async function deletePlantAsset(plantAssetId) {
     const result = await farm.asset.delete('plant', plantAssetId);
     return result;
   } catch (error) {
-    console.log('deletePlantAsset:');
-    console.log('  Unable to delete plant asset with id: ' + plantAssetId);
-    console.log(error.message);
-    console.log(error);
+    console.error('deletePlantAsset:');
+    console.error('  Unable to delete plant asset with id: ' + plantAssetId);
+    console.error(error.message);
+    console.error(error);
     throw error;
   }
 }
@@ -1722,10 +1722,10 @@ export async function deleteStandardQuantity(quantityId) {
     const result = await farm.quantity.delete('standard', quantityId);
     return result;
   } catch (error) {
-    console.log('deleteStandardQuantity:');
-    console.log('  Unable to delete standard quantity with id: ' + quantityId);
-    console.log(error.message);
-    console.log(error);
+    console.error('deleteStandardQuantity:');
+    console.error('  Unable to delete standard quantity with id: ' + quantityId);
+    console.error(error.message);
+    console.error(error);
     throw error;
   }
 }
@@ -1862,10 +1862,10 @@ export async function deleteSeedingLog(seedingLogId) {
     const result = await farm.log.delete('seeding', seedingLogId);
     return result;
   } catch (error) {
-    console.log('deleteSeedingLog:');
-    console.log('  Unable to delete seeding log with id: ' + seedingLogId);
-    console.log(error.message);
-    console.log(error);
+    console.error('deleteSeedingLog:');
+    console.error('  Unable to delete seeding log with id: ' + seedingLogId);
+    console.error(error.message);
+    console.error(error);
     throw error;
   }
 }
@@ -2009,10 +2009,10 @@ export async function deleteSoilDisturbanceActivityLog(activityLogId) {
     const result = await farm.log.delete('activity', activityLogId);
     return result;
   } catch (error) {
-    console.log('deleteSoilDisturbanceActivityLog:');
-    console.log('  Unable to delete activity log with id: ' + activityLogId);
-    console.log(error.message);
-    console.log(error);
+    console.error('deleteSoilDisturbanceActivityLog:');
+    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error(error.message);
+    console.error(error);
     throw error;
   }
 }
