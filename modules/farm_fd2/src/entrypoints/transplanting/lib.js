@@ -10,6 +10,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * were sent to the server.  This object has the following properties:
  * ```Javascript
  * {
+ *
  *   transplantingAsset: {asset--plant},
  *   trayInventoryQuantities: [ {quantity--standard}, ... ],
  *   bedFeetQuantity: {quantity--standard},
@@ -20,174 +21,310 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   depthQuantity: {quantity--standard},
  *   speedQuantity: {quantity--standard},
  *   areaQuantity: {quantity--standard},
- *   equipment: [ {asset--equipment}, ... ],
+ *   equipmentAssets: [ {asset--equipment}, ... ],
  *   soilDisturbanceLog: {log--activity},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
 export async function submitForm(formData) {
-  let newPlantAsset = null;
-  let trayInventoryQuantities = [];
-  let transplantingBedFeetQuantity = null;
-  let transplantingBedWidthQuantity = null;
-  let transplantingRowsPerBedQuantity = null;
-  let transplantingRowFeetQuantity = null;
-  let transplantingLog = null;
-  let equipmentAssets = [];
-  let depthQuantity = null;
-  let speedQuantity = null;
-  let areaQuantity = null;
-  let activityLog = null;
-
-  // Build the per picked trays data needed to record the transplanting.
+  // Find the plant asset for each picked tray seeding,
   try {
-    const parents = [];
-    for (const row of formData.picked) {
-      // Find the plant asset for each picked tray seeding,
-      // These will be the parent(s) of the new plant asset for the transplanted trays.
-      const parent = await farmosUtil.getPlantAsset(row.data.asset_uuid);
-      parents.push(parent);
+    const ops = [];
+    const parentsArray = [];
 
-      // One quantity for each picked tray seeding as inventory decrement on original asset.
-      const trayQuantity = await farmosUtil.createStandardQuantity(
-        'count',
-        row.trays,
-        'Trays',
-        'TRAYS',
-        parent,
-        'decrement'
-      );
-      trayInventoryQuantities.push(trayQuantity);
+    const parents = {
+      name: 'parents',
+      do: async () => {
+        for (const row of formData.picked) {
+          const parent = await farmosUtil.getPlantAsset(row.data.asset_uuid);
+          parentsArray.push(parent);
+        }
 
-      // TODO: archive the original plant asset if inventory == 0 ?????
-    }
+        return parentsArray;
+      },
+      undo: () => {},
+    };
+    ops.push(parents);
+
+    // One quantity for each picked tray seeding as trays inventory decrement
+    // on original tray seeding plant asset.
+    const trayInventoryQuantities = {
+      name: 'trayInventoryQuantities',
+      do: async (results) => {
+        const trayInventoryQuantitiesArray = [];
+        for (let i = 0; i < results.parents.length; i++) {
+          const trayQuantity = await farmosUtil.createStandardQuantity(
+            'count',
+            formData.picked[i].trays,
+            'Trays',
+            'TRAYS',
+            results.parents[i],
+            'decrement'
+          );
+
+          trayInventoryQuantitiesArray.push(trayQuantity);
+
+          // TODO: archive the original plant asset if inventory == 0 ????
+        }
+
+        return trayInventoryQuantitiesArray;
+      },
+      undo: async (results) => {
+        for (const trayQuantity of results.trayInventoryQuantities) {
+          await farmosUtil.deleteStandardQuantity(trayQuantity.id);
+
+          // TODO: unarchive the original plant asset if inventory > 0 ????
+        }
+      },
+    };
+    ops.push(trayInventoryQuantities);
 
     // Create the plant asset representing the transplanted crop.
     // Include the original tray seeded plant assets as parents.
     const assetName = formData.transplantingDate + '_' + formData.cropName;
 
-    newPlantAsset = await farmosUtil.createPlantAsset(
-      assetName,
-      formData.cropName,
-      formData.comment,
-      parents
-    );
+    const transplantingAsset = {
+      name: 'transplantingAsset',
+      do: async (results) => {
+        return await farmosUtil.createPlantAsset(
+          assetName,
+          formData.cropName,
+          formData.comment,
+          results.parents
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deletePlantAsset(results['transplantingAsset'].id);
+      },
+    };
+    ops.push(transplantingAsset);
 
-    // Create the transplanting activity log.
-    // Quantities from the form with Row Feet as inventory increment on new asset.
-    transplantingBedFeetQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedFeet,
-      'Bed Feet',
-      'FEET'
-    );
-    transplantingBedWidthQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedWidth,
-      'Bed Width',
-      'INCHES'
-    );
-    transplantingRowsPerBedQuantity = await farmosUtil.createStandardQuantity(
-      'ratio',
-      formData.rowsPerBed,
-      'Rows/Bed',
-      'ROWS/BED'
-    );
-    transplantingRowFeetQuantity = await farmosUtil.createStandardQuantity(
-      'length',
-      formData.bedFeet * formData.rowsPerBed,
-      'Row Feet',
-      'FEET',
-      newPlantAsset,
-      'increment'
-    );
+    const transplantingBedFeetQuantity = {
+      name: 'transplantingBedFeetQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedFeet,
+          'Bed Feet',
+          'FEET'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(
+          results['transplantingBedFeetQuantity'].id
+        );
+      },
+    };
+    ops.push(transplantingBedFeetQuantity);
 
-    transplantingLog = await farmosUtil.createTransplantingActivityLog(
-      formData.transplantingDate,
-      formData.location,
-      formData.beds,
-      newPlantAsset,
-      [
-        transplantingBedFeetQuantity,
-        transplantingBedWidthQuantity,
-        transplantingRowsPerBedQuantity,
-        transplantingRowFeetQuantity,
-        ...trayInventoryQuantities,
-      ]
-    );
+    const transplantingBedWidthQuantity = {
+      name: 'transplantingBedWidthQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedWidth,
+          'Bed Width',
+          'INCHES'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(
+          results['transplantingBedWidthQuantity'].id
+        );
+      },
+    };
+    ops.push(transplantingBedWidthQuantity);
+
+    const transplantingRowsPerBedQuantity = {
+      name: 'transplantingRowsPerBedQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'ratio',
+          formData.rowsPerBed,
+          'Rows/Bed',
+          'ROWS/BED'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(
+          results['transplantingRowsPerBedQuantity'].id
+        );
+      },
+    };
+    ops.push(transplantingRowsPerBedQuantity);
+
+    const transplantingRowFeetQuantity = {
+      name: 'transplantingRowFeetQuantity',
+      do: async (results) => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.bedFeet * formData.rowsPerBed,
+          'Row Feet',
+          'FEET',
+          results.transplantingAsset,
+          'increment'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(
+          results['transplantingRowFeetQuantity'].id
+        );
+      },
+    };
+    ops.push(transplantingRowFeetQuantity);
+
+    const transplantingLog = {
+      name: 'transplantingLog',
+      do: async (results) => {
+        return await farmosUtil.createTransplantingActivityLog(
+          formData.transplantingDate,
+          formData.location,
+          formData.beds,
+          results.transplantingAsset,
+          [
+            results.transplantingBedFeetQuantity,
+            results.transplantingBedWidthQuantity,
+            results.transplantingRowsPerBedQuantity,
+            results.transplantingRowFeetQuantity,
+            ...results.trayInventoryQuantities,
+          ]
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteTransplantingActivityLog(
+          results['transplantingLog'].id
+        );
+      },
+    };
+    ops.push(transplantingLog);
 
     // Create the soil disturbance log if equipment is selected
     if (formData.equipment.length > 0) {
-      depthQuantity = await farmosUtil.createStandardQuantity(
-        'length',
-        formData.depth,
-        'Depth',
-        'INCHES'
-      );
+      const depthQuantity = {
+        name: 'depthQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'length',
+            formData.depth,
+            'Depth',
+            'INCHES'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['depthQuantity'].id);
+        },
+      };
+      ops.push(depthQuantity);
 
-      speedQuantity = await farmosUtil.createStandardQuantity(
-        'rate',
-        formData.speed,
-        'Speed',
-        'MPH'
-      );
+      const speedQuantity = {
+        name: 'speedQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'rate',
+            formData.speed,
+            'Speed',
+            'MPH'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['speedQuantity'].id);
+        },
+      };
+      ops.push(speedQuantity);
 
-      areaQuantity = await farmosUtil.createStandardQuantity(
-        'ratio',
-        formData.area,
-        'Area',
-        'PERCENT'
-      );
+      const areaQuantity = {
+        name: 'areaQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'ratio',
+            formData.area,
+            'Area',
+            'PERCENT'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
+        },
+      };
+      ops.push(areaQuantity);
 
-      const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
-      for (const equipmentName of formData.equipment) {
-        equipmentAssets.push(equipmentMap.get(equipmentName));
-      }
+      // Get the asset--equipment objects for the chosen equipment
+      const equipmentAssets = {
+        name: 'equipmentAssets',
+        do: async () => {
+          const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
+          const equipmentAssetsArray = [];
+          for (const equipmentName of formData.equipment) {
+            equipmentAssetsArray.push(equipmentMap.get(equipmentName));
+          }
+          return equipmentAssetsArray;
+        },
+        undo: async () => {},
+      };
+      ops.push(equipmentAssets);
 
-      activityLog = await farmosUtil.createSoilDisturbanceActivityLog(
-        formData.transplantingDate,
-        formData.location,
-        formData.beds,
-        ['tillage', 'seeding_direct'],
-        newPlantAsset,
-        [depthQuantity, speedQuantity, areaQuantity],
-        equipmentAssets
-      );
+      const activityLog = {
+        name: 'activityLog',
+        do: async (results) => {
+          return await farmosUtil.createSoilDisturbanceActivityLog(
+            formData.transplantingDate,
+            formData.location,
+            formData.beds,
+            ['tillage', 'transplanting'],
+            results.transplantingAsset,
+            [
+              results.depthQuantity,
+              results.speedQuantity,
+              results.areaQuantity,
+            ],
+            results.equipmentAssets
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(
+            results['activityLog'].id
+          );
+        },
+      };
+      ops.push(activityLog);
     }
 
-    return {
-      transplantingAsset: newPlantAsset,
-      trayInventoryQuantities: trayInventoryQuantities,
-      bedFeetQuantity: transplantingBedFeetQuantity,
-      bedWidthQuantity: transplantingBedWidthQuantity,
-      rowsPerBedQuantity: transplantingRowsPerBedQuantity,
-      rowFeetQuantity: transplantingRowFeetQuantity,
-      transplantingLog: transplantingLog,
-      depthQuantity: depthQuantity,
-      speedQuantity: speedQuantity,
-      areaQuantity: areaQuantity,
-      equipment: equipmentAssets,
-      soilDisturbanceLog: activityLog,
-    };
+    const results = await farmosUtil.runTransaction(ops);
+
+    if (formData.equipment.length == 0) {
+      results['equipmentAssets'] = null;
+      results['depthQuantity'] = null;
+      results['speedQuantity'] = null;
+      results['areaQuantity'] = null;
+      results['activityLog'] = null;
+    }
+
+    return results;
   } catch (error) {
     console.error('Transplanting: \n' + error.message);
     console.error(error);
 
-    /*
-     * Attempt to delete any of the records that were created.  It is likely
-     * that if there was an error creating the records then there will
-     * be errors deleting them too.  So we try/catch those and swallow
-     * the exceptions and just emit a new error at the end.
-     */
+    let errorMsg = 'Error creating direct seeding.';
 
+    for (const key of Object.keys(error.results)) {
+      if (error.results[key]) {
+        errorMsg +=
+          '\n  Result of operation ' + key + ' could not be cleaned up.';
+        if (
+          error.results[key].attributes &&
+          error.results[key].attributes.name
+        ) {
+          errorMsg += '\n   Manually delete log or asset with:';
+          errorMsg += '\n     name: ' + error.results[key].attributes.name;
+          //errorMsg += '\n     uuid: ' + error.results[key].id;
+        } else {
+          errorMsg += '\n   May be safely ignored';
+          //errorMsg += '\n     uuid: ' + error.results[key].id;
+        }
+      }
+    }
 
-
-    // TODO: BUILD A CLEANUP FUNCTION in farmosUtil.
-    // - push delete functions to an array as quantities, logs, assets
-    // are created, then function runs those functions in reverse order.
-
-
-    throw Error('Error creating transplanting.', error);
+    throw Error(errorMsg, error);
   }
 }

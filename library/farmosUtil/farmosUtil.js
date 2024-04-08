@@ -1498,7 +1498,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *
  * @param {Array<Object>} operations the operations to execute as a transaction.
  * Each operation must have the following structure:
- * 
+ *
  * ```
  * {
  *   name: string,
@@ -1506,7 +1506,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *   undo: (Object) => async function that undoes the action performed by `do` (e.g. deletes a log, asset or quantity).  The argument has the same format as the return value and contains the result of all successfully completed operations.
  * }
  * ```
- * 
+ *
  * @return {Object} an object with an attribute for each operation.
  * The attribute name is the operation name and its value is the result of the operation (i.e. the value returned from the `do` function).
  * The value of the attribute for an operation will be null if the operation was not successful (i.e. the `do` function throws an error).
@@ -1515,7 +1515,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  * The `cause` of the error will include a `results` attribute with the same format as the returned object.
  * If an operation was successfully undone the attribute for that operation will have the value `null`.
  * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
- * 
+ *
  * @category Utilities
  */
 export async function runTransaction(operations) {
@@ -1540,7 +1540,10 @@ export async function runTransaction(operations) {
       } catch (error) {
         console.error('    failed to delete ' + operation.name);
         console.error('      uuid: ' + done[operation.name].id);
-        if (done[operation.name].attributes && done[operation.name].attributes.name) {
+        if (
+          done[operation.name].attributes &&
+          done[operation.name].attributes.name
+        ) {
           console.error('      name: ' + done[operation.name].attributes.name);
         }
       }
