@@ -17,6 +17,7 @@ describe('Test the PicklistBase component behavior', () => {
     cy.mount(PicklistBase, {
       props: {
         onReady: readySpy,
+        rows: [],
       },
     });
 

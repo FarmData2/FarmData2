@@ -229,6 +229,7 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
 
     - Check required props and default prop values
       - Set only required props in the test.
+      - Check static content not controlled by props.
       - check effect of all required props
         - e.g. `label`, `invalidFeedback`, etc.
       - Check default values of all optional props.
@@ -289,6 +290,14 @@ Use: `cy.task('logObject', obj)` to log an object to the console.
         - Check that the UI elements / behaviors that should not be present are not present.
       - Note: `worker#` and `manager#` have appropriate permissions when logging into farmOS, but when running via API they need to request a scope, which is not currently implemented in `farmosUtil.js`.
     - If there is no user permission based content then this test is not required.
+
+## Testing Idioms
+
+- NOT ALL OF THESE ARE FOLLOWED UNIVERSALLY AT THIS POINT. SHOULD HAVE ISSUES CREATED FOR THEM.
+
+- use `cy.get(@spy).its('callCount').should('equal', 1);` instead of `should('be.called.once')` etc. because `'called'` passes if the spy was called at least the specified number of times (`once`, `twice`, etc). [ This may not be true since calls may not have registered before the check unless it is in a then. ]
+
+- `wrapper.setProps` - should always be first thing in a `then` because it does not wait for `cy` calls before it and can mess things up.
 
 ## Documenting components
 

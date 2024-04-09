@@ -1,15 +1,16 @@
-table {
+.example-table {
   border: 1px solid black;
   margin-top: 2px;
   margin-bottom: 2px;
   width: auto;
 }
 
-.b-table {
-  margin: 0px;
+.example-table {
+  border-collapse: collapse;
+  border: 1px solid black;
 }
 
-th {
+.example-table thead th {
   border: 1px solid black;
   background: rgb(228 240 245);
   padding-left: 10px;
@@ -20,12 +21,13 @@ th {
   font-weight: bold;
 }
 
-td {
+.example-table tr td {
   border: 1px solid black;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding: 2px;
   padding-left: 10px;
   padding-right: 10px;
+  margin: 0px;
+  height: 30px;
 }
 
 hr {
@@ -37,12 +39,4 @@ hr {
 p {
   margin-top: 0px;
   margin-bottom: 0px;
-}
-
-#block-farm-powered {
-  margin-top: 0px !important;
-  padding-top: 0px !important;
-  margin-left: 0px !important;
-  padding-bottom: 0px !important;
-  border-top: 0px !important;
 }

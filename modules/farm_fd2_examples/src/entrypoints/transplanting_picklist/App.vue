@@ -1,19 +1,24 @@
 <template>
-  <h3>DateSelector Example</h3>
-  <p data-cy="description">
-    The DateSelector allows the user to select a date.
+  <h3>TransplantingPicklist Example</h3>
+  <p>
+    A Transplanting Picklist allows the user to select a crop from a list of all
+    crops that currently have tray seedings (i.e. can be transplanted).
   </p>
 
   <hr />
-  <DateSelector
-    id="date-selector"
-    data-cy="date-selector"
+  <TransplantingPicklist
+    id="transplanting-picklist"
+    data-cy="transplanting-picklist"
     v-bind:required="required"
-    v-model:date="form.date"
-    v-bind:showValidityStyling="validity.showStyling"
+    v-bind:showValidityStyling="validity.show"
+    v-on:update:picked="
+      (picked) => {
+        form.picked = picked;
+      }
+    "
     v-on:valid="
       (valid) => {
-        validity.date = valid;
+        validity.picked = valid;
       }
     "
     v-on:ready="createdCount++"
@@ -23,8 +28,10 @@
   <h5>Component Props:</h5>
   <table class="example-table">
     <thead>
-      <th>Prop</th>
-      <th>Control</th>
+      <tr>
+        <th>Prop</th>
+        <th>Control</th>
+      </tr>
     </thead>
     <tbody>
       <tr>
@@ -45,41 +52,29 @@
             id="styling-checkbox"
             data-cy="styling-checkbox"
             switch
-            v-model="validity.showStyling"
+            v-model="validity.show"
           />
-        </td>
-      </tr>
-      <tr>
-        <td>date</td>
-        <td>
-          <BButton
-            id="set-date-button"
-            data-cy="set-date-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="nextDay"
-          >
-            Next
-          </BButton>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <h5>Component Event Payloads</h5>
+  <h5>Component Event Payloads:</h5>
   <table class="example-table">
     <thead>
-      <th>Event</th>
-      <th>Payload</th>
+      <tr>
+        <th>Event</th>
+        <th>Payload</th>
+      </tr>
     </thead>
     <tbody>
       <tr>
-        <td>date</td>
-        <td>{{ form.date }}</td>
+        <td>update:picked</td>
+        <td>{{ form.picked }}</td>
       </tr>
       <tr>
         <td>valid</td>
-        <td>{{ validity.date }}</td>
+        <td>{{ validity.picked }}</td>
       </tr>
     </tbody>
   </table>
@@ -93,32 +88,25 @@
 </template>
 
 <script>
-import DateSelector from '@comps/DateSelector/DateSelector.vue';
-import { BButton } from 'bootstrap-vue-next';
-import dayjs from 'dayjs';
+import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
 
 export default {
+  name: 'TransplantingPicklistExample',
   components: {
-    DateSelector,
-    BButton,
+    TransplantingPicklist,
   },
   data() {
     return {
+      createdCount: 0,
       required: true,
       form: {
-        date: dayjs().format('YYYY-MM-DD'),
+        picked: [],
       },
       validity: {
-        showStyling: false,
-        date: true,
+        show: false,
+        picked: false,
       },
-      createdCount: 0,
     };
-  },
-  methods: {
-    nextDay() {
-      this.form.date = dayjs(this.form.date).add(1, 'day').format('YYYY-MM-DD');
-    },
   },
   computed: {
     pageDoneLoading() {
@@ -140,7 +128,7 @@ export default {
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
-date-selector-hack {
+transplanting-picklist-base-hack {
   display: none;
 }
 </style>

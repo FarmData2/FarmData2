@@ -85,7 +85,7 @@ export default {
       default: dayjs().format('YYYY-MM-DD'), // default to today.
     },
     /**
-     * Whether a crop selection is required or not.
+     * Whether a date selection is required or not.
      */
     required: {
       type: Boolean,

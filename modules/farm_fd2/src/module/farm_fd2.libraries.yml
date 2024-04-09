@@ -5,10 +5,10 @@ main:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      main/main.css: {}
     component:
+      main/main.css: {}
       shared/index.css: {}
+      
 tray_seeding:
   js:
     tray_seeding/tray_seeding.js:
@@ -16,10 +16,10 @@ tray_seeding:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      tray_seeding/tray_seeding.css: {}
     component:
+      tray_seeding/tray_seeding.css: {}
       shared/index.css: {}
+      SubmitResetButtons/SubmitResetButtons.css: {}
 
 seeding:
   js:
@@ -28,9 +28,8 @@ seeding:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      seeding/seeding.css: {}
     component:
+      seeding/seeding.css: {}
       shared/index.css: {}
 
 direct_seeding:
@@ -40,7 +39,21 @@ direct_seeding:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      direct_seeding/direct_seeding.css: {}
     component:
+      direct_seeding/direct_seeding.css: {}
       shared/index.css: {}
+      SoilDisturbance/SoilDisturbance.css: {}
+      SubmitResetButtons/SubmitResetButtons.css: {}
+
+transplanting:
+  js:
+    transplanting/transplanting.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      transplanting/transplanting.css: {}
+      shared/index.css: {}
+      SoilDisturbance/SoilDisturbance.css: {}
+      SubmitResetButtons/SubmitResetButtons.css: {}

@@ -1225,6 +1225,10 @@ export async function getLogCategories() {
       throw new Error('Unable to fetch log categories.', categories.rejected);
     }
 
+    categories.data.sort((o1, o2) =>
+      o1.attributes.name.localeCompare(o2.attributes.name)
+    );
+
     return categories.data;
   });
 }
@@ -1328,6 +1332,7 @@ export async function getPermissions() {
  * [`getPermissions`]{@link #module_farmosUtil.getPermissions}
  * and uses the returned `Object` to check the permission.
  *
+ * @param {String} permissionName the name of the permission to check.
  * @throws {Error} if unable to fetch the permissions.
  * @throws {Error} if the requested permission does not exist.
  * @return {boolean} true if the current user has the specified permission.
@@ -1493,7 +1498,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *
  * @param {Array<Object>} operations the operations to execute as a transaction.
  * Each operation must have the following structure:
- * 
+ *
  * ```
  * {
  *   name: string,
@@ -1501,7 +1506,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *   undo: (Object) => async function that undoes the action performed by `do` (e.g. deletes a log, asset or quantity).  The argument has the same format as the return value and contains the result of all successfully completed operations.
  * }
  * ```
- * 
+ *
  * @return {Object} an object with an attribute for each operation.
  * The attribute name is the operation name and its value is the result of the operation (i.e. the value returned from the `do` function).
  * The value of the attribute for an operation will be null if the operation was not successful (i.e. the `do` function throws an error).
@@ -1510,7 +1515,7 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  * The `cause` of the error will include a `results` attribute with the same format as the returned object.
  * If an operation was successfully undone the attribute for that operation will have the value `null`.
  * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
- * 
+ *
  * @category Utilities
  */
 export async function runTransaction(operations) {
@@ -1535,7 +1540,10 @@ export async function runTransaction(operations) {
       } catch (error) {
         console.error('    failed to delete ' + operation.name);
         console.error('      uuid: ' + done[operation.name].id);
-        if (done[operation.name].attributes && done[operation.name].attributes.name) {
+        if (
+          done[operation.name].attributes &&
+          done[operation.name].attributes.name
+        ) {
           console.error('      name: ' + done[operation.name].attributes.name);
         }
       }
@@ -1556,15 +1564,26 @@ export async function runTransaction(operations) {
  *
  * @param {string} assetName the name of the plant asset to create.
  * @param {string} cropName the name of the crop to associate with the plant asset.
- * @param {string} comment the comment to associate with this plant asset.
+ * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
+ * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
  * @return {Object} the new plant asset.
  * @throws {Error} if unable to create the plant asset.
  *
  * @category Plant
  */
-export async function createPlantAsset(assetName, cropName, comment) {
+export async function createPlantAsset(
+  assetName,
+  cropName,
+  comment = '',
+  parents = []
+) {
   const farm = await getFarmOSInstance();
   const cropMap = await getCropNameToTermMap();
+
+  const parentArray = [];
+  for (const parent of parents) {
+    parentArray.push({ type: 'asset--plant', id: parent.id });
+  }
 
   // create an asset--plant
   const plantAsset = farm.asset.create({
@@ -1581,6 +1600,7 @@ export async function createPlantAsset(assetName, cropName, comment) {
           id: cropMap.get(cropName).id,
         },
       ],
+      parent: parentArray,
     },
   });
 
@@ -1723,11 +1743,123 @@ export async function deleteStandardQuantity(quantityId) {
     return result;
   } catch (error) {
     console.error('deleteStandardQuantity:');
-    console.error('  Unable to delete standard quantity with id: ' + quantityId);
+    console.error(
+      '  Unable to delete standard quantity with id: ' + quantityId
+    );
     console.error(error.message);
     console.error(error);
     throw error;
   }
+}
+
+/**
+ * Get an array of location objects for each of the locations specified.
+ *
+ * @param {Array<string>} locationNames an array of field, bed and/or greenhouse names.
+ * @returns {Array<Object>} an array of location objects with the format:
+ * ```Javascript
+ * { type: asset_type,
+ *   id: asset_id
+ * }
+ * ```
+ * @throws {Error} if unable to get the location id for one or more of the listed locations.
+ * @category Utilities
+ */
+export async function getPlantingLocationObjects(locationNames) {
+  let locationsArray = [];
+  const fieldMap = await getFieldNameToAssetMap();
+  for (const locationName of locationNames) {
+    let location = fieldMap.get(locationName);
+    if (location) {
+      // location is a field.
+      locationsArray.push({
+        type: 'asset--land',
+        id: location.id,
+      });
+    } else {
+      const greenhouseMap = await getGreenhouseNameToAssetMap();
+      location = greenhouseMap.get(locationName);
+      if (location) {
+        // location is a greenhouse.
+        locationsArray.push({
+          type: 'asset--structure',
+          id: location.id,
+        });
+      } else {
+        const bedMap = await getBedNameToAssetMap();
+        location = bedMap.get(locationName);
+        if (location) {
+          // location is a bed.
+          locationsArray.push({
+            type: 'asset--land',
+            id: location.id,
+          });
+        } else {
+          console.error(
+            'getPlantingLocationObjects: Invalid location name: ' + locationName
+          );
+          throw new Error('Invalid location name: ' + locationName);
+        }
+      }
+    }
+  }
+  return locationsArray;
+}
+
+/**
+ * Get an array of log category objects for each of the log categories specified.
+ *
+ * @param {Array<string>} logCategories an array of log category names.
+ * @returns {Array<Object>} an array of log category objects with the format:
+ * ```Javascript
+ * { type: taxonomy_term--log_category,
+ *   id: log_category_id
+ * }
+ * ```
+ * @Throws {Error} if unable to get the log category id for one or more of the listed categories.
+ *
+ * @category Utilities
+ */
+export async function getLogCategoryObjects(logCategories) {
+  const categoryMap = await getLogCategoryToTermMap();
+  let logCategoriesArray = [];
+
+  for (const cat of logCategories) {
+    logCategoriesArray.push({
+      type: 'taxonomy_term--log_category',
+      id: categoryMap.get(cat).id,
+    });
+  }
+
+  return logCategoriesArray;
+}
+
+/**
+ * Get an array of quantity objects for each of the quantities given.
+ *
+ * @param {Array<Object>} quantities an array of complete quantity objects.
+ * @returns {Array<Object>} an array of simplified quantity objects with the format:
+ * ```Javascript
+ * { type: quantity_type,
+ *   id: quantity_id
+ * }
+ * ```
+ *
+ * @category Utilities
+ */
+export function getQuantityObjects(quantities) {
+  const quantitiesArray = [];
+
+  if (quantities) {
+    for (const quant of quantities) {
+      quantitiesArray.push({
+        type: quant.type,
+        id: quant.id,
+      });
+    }
+  }
+
+  return quantitiesArray;
 }
 
 /**
@@ -1741,7 +1873,7 @@ export async function deleteStandardQuantity(quantityId) {
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `seeding` and one of `seeding_tray` or `seeding_direct` or `seeding_cover_crop`.
  * @param {Object} plantAsset the plant asset created by the seeding.
- * @param {Array<Object>} [quantities=[]] an array of quantity objects
+ * @param {Array<Object>} [quantities] an array of quantity objects
  * (e.g. `quantity--standard`) associated with the seeding.
  * @returns {Object} the new seeding log.
  * @throws {Error} if unable to create the seeding log.
@@ -1754,54 +1886,14 @@ export async function createSeedingLog(
   bedNames,
   logCategories,
   plantAsset,
-  quantities = []
+  quantities
 ) {
-  let locations = [];
-  const fieldMap = await getFieldNameToAssetMap();
-  let location = fieldMap.get(locationName);
-  if (location) {
-    // location is a field.
-    locations.push({
-      type: 'asset--land',
-      id: location.id,
-    });
-  } else {
-    // location is a greenhouse.
-    const greenhouseMap = await getGreenhouseNameToAssetMap();
-    const locationID = greenhouseMap.get(locationName).id;
-    locations.push({
-      type: 'asset--structure',
-      id: locationID,
-    });
-  }
-
-  if (bedNames.length > 0) {
-    const bedMap = await getBedNameToAssetMap();
-    for (const bed of bedNames) {
-      const bedID = bedMap.get(bed).id;
-      locations.push({
-        type: 'asset--land',
-        id: bedID,
-      });
-    }
-  }
-
-  let quantitiesArray = [];
-  for (const quant of quantities) {
-    quantitiesArray.push({
-      type: quant.type,
-      id: quant.id,
-    });
-  }
-
-  const categoryMap = await getLogCategoryToTermMap();
-  let logCategoriesArray = [];
-  for (const cat of logCategories) {
-    logCategoriesArray.push({
-      type: 'taxonomy_term--log_category',
-      id: categoryMap.get(cat).id,
-    });
-  }
+  const locationsArray = await getPlantingLocationObjects([
+    locationName,
+    ...bedNames,
+  ]);
+  const quantitiesArray = getQuantityObjects(quantities);
+  const logCategoriesArray = await getLogCategoryObjects(logCategories);
 
   const seedingLogData = {
     type: 'log--seeding',
@@ -1813,7 +1905,7 @@ export async function createSeedingLog(
       purchase_date: dayjs(seedingDate).format(),
     },
     relationships: {
-      location: locations,
+      location: locationsArray,
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
       category: logCategoriesArray,
       quantity: quantitiesArray,
@@ -1884,11 +1976,12 @@ export async function deleteSeedingLog(seedingLogId) {
  * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
  * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
  * @returns {Object} the new activity log.
+ * @throws {Error} if unable to create the activity log.
  *
  * @category Soil
  */
 export async function createSoilDisturbanceActivityLog(
-  distrubanceDate,
+  disturbanceDate,
   locationName,
   bedNames = [],
   logCategories,
@@ -1896,43 +1989,12 @@ export async function createSoilDisturbanceActivityLog(
   quantities = [],
   equipment = []
 ) {
-  let locations = [];
-  const fieldMap = await getFieldNameToAssetMap();
-  let location = fieldMap.get(locationName);
-  if (location) {
-    // location is a field.
-    locations.push({
-      type: 'asset--land',
-      id: location.id,
-    });
-  } else {
-    // location is a greenhouse.
-    const greenhouseMap = await getGreenhouseNameToAssetMap();
-    const locationID = greenhouseMap.get(locationName).id;
-    locations.push({
-      type: 'asset--structure',
-      id: locationID,
-    });
-  }
-
-  if (bedNames.length > 0) {
-    const bedMap = await getBedNameToAssetMap();
-    for (const bed of bedNames) {
-      const bedID = bedMap.get(bed).id;
-      locations.push({
-        type: 'asset--land',
-        id: bedID,
-      });
-    }
-  }
-
-  let quantitiesArray = [];
-  for (const quant of quantities) {
-    quantitiesArray.push({
-      type: quant.type,
-      id: quant.id,
-    });
-  }
+  const locationArray = await getPlantingLocationObjects([
+    locationName,
+    ...bedNames,
+  ]);
+  const quantitiesArray = await getQuantityObjects(quantities);
+  const logCategoriesArray = await getLogCategoryObjects(logCategories);
 
   let equipmentArray = [];
   for (const equip of equipment) {
@@ -1942,25 +2004,16 @@ export async function createSoilDisturbanceActivityLog(
     });
   }
 
-  const categoryMap = await getLogCategoryToTermMap();
-  let logCategoriesArray = [];
-  for (const cat of logCategories) {
-    logCategoriesArray.push({
-      type: 'taxonomy_term--log_category',
-      id: categoryMap.get(cat).id,
-    });
-  }
-
   const activityLogData = {
     type: 'log--activity',
     attributes: {
       name: plantAsset.attributes.name,
-      timestamp: dayjs(distrubanceDate).format(),
+      timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
-      purchase_date: dayjs(distrubanceDate).format(),
+      purchase_date: dayjs(disturbanceDate).format(),
     },
     relationships: {
-      location: locations,
+      location: locationArray,
       asset: [{ type: 'asset--plant', id: plantAsset.id }],
       category: logCategoriesArray,
       quantity: quantitiesArray,
@@ -2010,6 +2063,254 @@ export async function deleteSoilDisturbanceActivityLog(activityLogId) {
     return result;
   } catch (error) {
     console.error('deleteSoilDisturbanceActivityLog:');
+    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error(error.message);
+    console.error(error);
+    throw error;
+  }
+}
+
+/**
+ * Extract the value for a UNIT from a quantity string given by the farmOS API.
+ *
+ * These strings come in several formats:
+ * - `"25 TRAYS (Count)"`
+ * - `"2 TRAYS (Count), 102.5 FEET (Length/depth)"`
+ * - `"Trays ( Count ) 3 TRAYS (Increment 2019-02-19_ts_LETTUCE-ICEBERG inventory), Tray Size ( Ratio ) 72 CELLS/TRAY, Seeds ( Count ) 216 SEEDS"`
+ *
+ * This function assumes that:
+ * - there will be only one inventory value per `UNIT`.  Note that farmOS allows one inventory value per (unit, label) pair but this function currently does not support that usage.
+ * - the `UNIT` (e.g. `TRAYS`) will be preceded by a space, which is preceded by the desired value.
+ *
+ * @param {string} quantityString the quantity string from which to extract the value.
+ * @param {string} unitName the name of the unit for which to extract the value.
+ *
+ * @returns {number} the value for the specified unit or `null` if no value is found for the unit.
+ *
+ * @category Utilities
+ */
+export function extractQuantity(quantityString, unitName) {
+  const unitSplit = quantityString.split(unitName);
+
+  if (unitSplit.length > 1) {
+    const spaceSplit = unitSplit[0].split(' ');
+    const valueStr = spaceSplit[spaceSplit.length - 2];
+    return Number(valueStr);
+  } else {
+    return null;
+  }
+}
+
+/**
+ * Get information about all of the seedlings that are candidates for transplanting.
+ * These seedlings are plant assets that were tray seeded and have a positive inventory of trays.
+ *
+ * This function returns an array of objects with the following content:
+ * ```json
+ * {
+ *    log_id: <id of seeding log created by the seeding>,
+ *    log_uuid: <uuid of seeding log created by the seeding>,
+ *    asset_id: <id of plant asset created by the seeding>,
+ *    asset_uuid: <uuid of plant asset created by the seeding>,
+ *    date: <date of tray seeding>,
+ *    user: <name of user that entered the seeding>,
+ *    crop: <name of crop that was seeded>,
+ *    trays_location: <name of location where trays are>,
+ *    asset_locations: <names of locations where crop has been transplanted thus far>,
+ *    total_trays: <total number of trays seeded>
+ *    available_trays: <number of trays available for transplanting>
+ *    tray_size: <size of trays that were seeded>,
+ *    seeds_per_cell: <number of seeds in each tray cell>,
+ *    total_seeds: <total number of seeds used>
+ *    notes: <notes attached to the seeding log and the plant asset>
+ * }
+ * ```
+ *
+ * @param {string} cropName optional crop name to filter seedlings by. If omitted seedlings of all crops will be returned.
+ * @returns {Array<Object>} the list of seedlings.
+ * @throws {Error} if unable to fetch seedlings.
+ *
+ * @category Transplanting
+ */
+export async function getSeedlings(cropName = null) {
+  const farm = await getFarmOSInstance();
+  try {
+    let url = '/api/fd2_seedlings';
+    if (cropName) {
+      url = url + '?crop=' + cropName;
+    }
+
+    const raw = await farm.remote.request(url);
+    let result = [];
+
+    for (const seedling of raw.data) {
+      const available_trays = extractQuantity(seedling.inventory, 'TRAYS');
+
+      if (available_trays > 0) {
+        const total_trays = extractQuantity(seedling.quantities, 'TRAYS');
+        const tray_size = extractQuantity(seedling.quantities, 'CELLS/TRAY');
+        const total_seeds = extractQuantity(seedling.quantities, 'SEEDS');
+        const seeds_per_cell = total_seeds / (tray_size * total_trays);
+        const notes = (seedling.log_notes + ' ' + seedling.asset_notes).trim();
+
+        result.push({
+          log_id: seedling.log_id,
+          log_uuid: seedling.log_uuid,
+          asset_id: seedling.asset_id,
+          asset_uuid: seedling.asset_uuid,
+          date: seedling.date,
+          user: seedling.user,
+          crop: seedling.crop,
+          trays_location: seedling.trays_location,
+          asset_locations: seedling.asset_locations,
+          total_trays: total_trays,
+          available_trays: available_trays,
+          tray_size: tray_size,
+          seeds_per_cell: seeds_per_cell,
+          total_seeds: total_seeds,
+          notes: notes,
+        });
+      }
+    }
+
+    return result;
+  } catch (error) {
+    console.error('getSeedlings:');
+    console.error('  Unable to GET seedlings information.');
+    console.error(error.message);
+    console.error(error);
+    throw new Error('Unable to fetch seedlings.', error);
+  }
+}
+
+/**
+ * Gets a list of the crop names of all crops that are eligible for
+ * transplanting.  These are the names of all crops associated with
+ * plant assets that were tray seeded and have a positive inventory of
+ * trays.
+ *
+ * @return {Array<string>} the list of crop names.
+ * @throws {Error} if unable to fetch the crop names.
+ *
+ * @category Transplanting
+ */
+export async function getTraySeededCropNames() {
+  const farm = await getFarmOSInstance();
+  try {
+    let url = '/api/fd2_seedlings_crop_names';
+    const raw = await farm.remote.request(url);
+
+    const cropMap = new Map();
+    for (const seeding of raw.data) {
+      const trays = extractQuantity(seeding.inventory, 'TRAYS');
+      if (cropMap.get(seeding.crop) == null) {
+        cropMap.set(seeding.crop, trays);
+      } else {
+        cropMap.set(seeding.crop, cropMap.get(seeding.crop) + trays);
+      }
+    }
+
+    const cropsWithTrays = Array.from(cropMap.keys()).filter(
+      (cropName) => cropMap.get(cropName) > 0
+    );
+
+    return cropsWithTrays;
+  } catch (error) {
+    console.error('getTraySeededCropNames:');
+    console.error('  Unable to GET tray seeded crop names.');
+    console.error(error.message);
+    console.error(error);
+    throw new Error('Unable to fetch tray seeded crop names.', error);
+  }
+}
+
+/**
+ * Create a new activity log (`log--activity`) for a transplanting.
+ *
+ * @param {string} transplantingDate the date the transplanting took place.
+ * @param {string} locationName the location to which the trays were transplanted.
+ * This must be the name of a field or greenhouse with beds.
+ * @param {Array<string>} bedNames the names of the bed(s) to which the plant was transplanted.
+ * Can be empty if location does not contain beds or no beds were selected.
+ * @param {Object} plantAsset the plant asset representing the transplanted trays.
+ * @param {Array<Object>} [quantities] an array of quantity (e.g. `quantity--standard`) objects associated with the transplanting.
+ * @returns {Object} the new activity log.
+ *
+ * @category Transplanting
+ */
+export async function createTransplantingActivityLog(
+  transplantingDate,
+  locationName,
+  bedNames = [],
+  plantAsset,
+  quantities
+) {
+  const locationsArray = await getPlantingLocationObjects([
+    locationName,
+    ...bedNames,
+  ]);
+  const quantitiesArray = getQuantityObjects(quantities);
+  const logCategoriesArray = await getLogCategoryObjects(['transplanting']);
+
+  const activityLogData = {
+    type: 'log--activity',
+    attributes: {
+      name: plantAsset.attributes.name,
+      timestamp: dayjs(transplantingDate).format(),
+      status: 'done',
+      is_movement: true,
+      purchase_date: dayjs(transplantingDate).format(),
+    },
+    relationships: {
+      location: locationsArray,
+      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      category: logCategoriesArray,
+      quantity: quantitiesArray,
+    },
+  };
+
+  const farm = await getFarmOSInstance();
+  const activityLog = farm.log.create(activityLogData);
+  await farm.log.send(activityLog);
+
+  return activityLog;
+}
+
+/**
+ * Get the transplanting activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the transplanting activity log to get.
+ * @returns the transplanting activity log with the specified id.
+ *
+ * @category Transplanting
+ */
+export async function getTransplantingActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.log.fetch({
+    filter: { type: 'log--activity', id: activityLogId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the transplanting activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the transplanting activity log.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the transplanting activity log.
+ *
+ * @category Transplanting
+ */
+export async function deleteTransplantingActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.log.delete('activity', activityLogId);
+    return result;
+  } catch (error) {
+    console.error('deleteTransplantingActivityLog:');
     console.error('  Unable to delete activity log with id: ' + activityLogId);
     console.error(error.message);
     console.error(error);

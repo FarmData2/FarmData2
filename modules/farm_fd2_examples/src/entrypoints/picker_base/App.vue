@@ -1,4 +1,5 @@
 <template>
+  <h3>PickerBase Example</h3>
   <p>
     PickerBase is a component that allows the user to pick multiple items using
     checkboxes.
@@ -20,7 +21,7 @@
   />
   <hr />
   <h5>Component Props:</h5>
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Prop</th>
@@ -107,8 +108,7 @@
   </table>
 
   <h5>Component Event Payloads:</h5>
-
-  <table>
+  <table class="example-table">
     <thead>
       <tr>
         <th>Event</th>
@@ -172,6 +172,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('@css/fd2-examples.css');
+@import url('@css/fd2-mobile.css');
+
+/**
+ * This ensures that the css for this file is picked up by the builder.
+ * Not sure why this is necessary, but without it the css imports
+ * above are not processed.
+ */
+picker-base-hack {
+  display: none;
+}
 </style>

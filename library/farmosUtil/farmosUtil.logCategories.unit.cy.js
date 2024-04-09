@@ -22,11 +22,11 @@ describe('Test the log categories utility functions', () => {
       );
       expect(categories[0].type).to.equal('taxonomy_term--log_category');
 
-      expect(categories[2].attributes.name).to.equal('irrigation');
-      expect(categories[2].attributes.description.value).to.equal(
-        'For logs associated with field irrigation.'
+      expect(categories[11].attributes.name).to.equal('weed_control');
+      expect(categories[11].attributes.description.value).to.equal(
+        'For logs related to weed control.'
       );
-      expect(categories[2].type).to.equal('taxonomy_term--log_category');
+      expect(categories[11].type).to.equal('taxonomy_term--log_category');
     });
   });
 

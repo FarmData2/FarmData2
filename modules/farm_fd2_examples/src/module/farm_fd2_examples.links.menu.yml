@@ -40,3 +40,9 @@ farm.fd2_examples_picklist_base:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_picklist_base.content
   weight: 100
+farm.fd2_examples_transplanting_picklist:
+  title: 'TransplantingPicklist'
+  description: 'Example of the use of the Transplanting Picklist component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_transplanting_picklist.content
+  weight: 100

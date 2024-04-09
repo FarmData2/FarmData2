@@ -75,3 +75,16 @@ picklist_base:
       picklist_base/picklist_base.css: {}
     component:
       shared/index.css: {}
+      PicklistBase/PicklistBase.css: {}
+transplanting_picklist:
+  js:
+    transplanting_picklist/transplanting_picklist.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    theme:
+      transplanting_picklist/transplanting_picklist.css: {}
+    component:
+      shared/index.css: {}
+      PicklistBase/PicklistBase.css: {}

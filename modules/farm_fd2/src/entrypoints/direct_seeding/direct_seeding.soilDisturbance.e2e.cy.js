@@ -39,14 +39,14 @@ describe('Direct Seeding: Soil Disturbance Component', () => {
     cy.get('[data-cy="direct-seeding-soil-disturbance"]').should('be.visible');
   });
 
-  it('Validity styling shown in soil disturbance component', () => {
+  it('Validity styling not shown in soil disturbance component', () => {
     cy.get(
       '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
     ).click();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
-      .should('have.class', 'is-valid')
+      .should('not.have.class', 'is-valid')
       .should('not.have.class', 'is-invalid');
   });
 
