@@ -10,7 +10,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * were sent to the server.  This object has the following properties:
  * ```Javascript
  * {
- *
+ *   parents: [ {asset--plant}, ... ],
  *   transplantingAsset: {asset--plant},
  *   trayInventoryQuantities: [ {quantity--standard}, ... ],
  *   bedFeetQuantity: {quantity--standard},
