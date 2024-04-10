@@ -118,19 +118,6 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="direct-seeding-location"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'ALF');
-    cy.get('[data-cy="direct-seeding-location"]')
-      .find('[data-cy="picker-options"]')
-      .find('input')
-      .eq(0)
-      .should('be.checked');
-    cy.get('[data-cy="direct-seeding-location"]')
-      .find('[data-cy="picker-options"]')
-      .find('input')
-      .eq(3)
-      .should('be.checked');
-    cy.get('[data-cy="direct-seeding-bed-feet"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '200');
     cy.get('[data-cy="direct-seeding-bed-width"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '30');
@@ -150,14 +137,27 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '5.0');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '50');
 
     // Check that the other parts of the form are reset.
     cy.get('[data-cy="direct-seeding-crop"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .should('not.be.checked');
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .should('not.be.checked');
+    cy.get('[data-cy="direct-seeding-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '100');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '');
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
     // Finally check that the toast is hidden.

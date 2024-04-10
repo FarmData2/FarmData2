@@ -230,7 +230,7 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: 100,
+        area: '',
         comment: null,
       },
       validity: {
@@ -255,7 +255,7 @@ export default {
       this.form.beds = checkedBeds;
 
       if (checkedBeds.length == 0) {
-        this.form.area = 100;
+        this.form.area = '';
       } else {
         this.form.area = (checkedBeds.length / totalBeds) * 100;
       }
@@ -305,17 +305,17 @@ export default {
       if (!sticky) {
         this.form.seedingDate = dayjs().format('YYYY-MM-DD');
         this.form.locationName = null;
-        this.form.beds = [];
-        this.form.bedFeet = 100;
         this.form.rowsPerBed = '1';
         this.form.bedWidth = 60;
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
-        this.form.area = 100;
       }
 
       this.form.cropName = null;
+      this.form.beds = [];
+      this.form.bedFeet = 100;
+      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
