@@ -83,4 +83,35 @@ describe('Test the NumericInput component behavior', () => {
         });
     });
   });
+
+  it('Check change to empty value.', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 50,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="numeric-input"]').should('have.value', '50');
+        })
+        .then(() => {
+          wrapper.setProps({ value: '' });
+          cy.get('[data-cy="numeric-input"]').should('have.value', '');
+        })
+        .then(() => {
+          wrapper.setProps({ value: NaN });
+          cy.get('[data-cy="numeric-input"]').should('have.value', '');
+        })
+        .then(() => {
+          wrapper.setProps({ value: null });
+          cy.get('[data-cy="numeric-input"]').should('have.value', '');
+        });
+    });
+  });
 });
