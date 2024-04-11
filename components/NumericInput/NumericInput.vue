@@ -312,7 +312,9 @@ export default {
       this.$emit('valid', this.isValid);
     },
     value() {
-      this.valueAsString = this.formatter(this.value);
+      if (!isNaN(this.value)) {
+        this.valueAsString = this.formatter(this.value);
+      }
     },
     valueAsString() {
       /**

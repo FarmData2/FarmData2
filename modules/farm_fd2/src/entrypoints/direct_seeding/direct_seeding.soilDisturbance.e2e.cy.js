@@ -63,4 +63,57 @@ describe('Direct Seeding: Soil Disturbance Component', () => {
     cy.get('[data-cy="soil-disturbance-area"]').should('be.visible');
     cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
   });
+
+  it('Check area computation with no beds', () => {
+    cy.get(
+      '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '');
+
+    cy.get('[data-cy="location-selector"]')
+      .find('[data-cy="selector-input"]')
+      .select('A');
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '');
+  });
+
+  it('Check area computation with beds', () => {
+    cy.get(
+      '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '');
+
+    cy.get('[data-cy="location-selector"]')
+      .find('[data-cy="selector-input"]')
+      .select('CHUAU');
+
+    // Pick CHUAU-1
+    cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '20');
+
+    cy.get('[data-cy="location-selector"]')
+      .find('[data-cy="selector-input"]')
+      .select('A');
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '');
+  });
 });

@@ -251,6 +251,6 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
       .should('have.value', '0.0');
     cy.get('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
-      .should('have.value', '100');
+      .should('have.value', '');
   });
 });
