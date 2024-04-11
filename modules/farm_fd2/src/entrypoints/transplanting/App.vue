@@ -254,12 +254,6 @@
       {{ pageDoneLoading }}
     </div>
   </div>
-  <div
-    data-cy="page-loaded"
-    v-show="false"
-  >
-    {{ pageDoneLoading }}
-  </div>
 </template>
 
 <script>
@@ -303,7 +297,7 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: 100,
+        area: '',
         comment: '',
       },
       validity: {
@@ -342,7 +336,7 @@ export default {
       this.form.beds = checkedBeds;
 
       if (checkedBeds.length == 0) {
-        this.form.area = 100;
+        this.form.area = '';
       } else {
         this.form.area = (checkedBeds.length / totalBeds) * 100;
       }
@@ -386,23 +380,23 @@ export default {
         this.enableSubmit = false;
       }
     },
-    reset(sticky=false) {
+    reset(sticky = false) {
       this.validity.show = false;
 
       if (!sticky) {
         this.form.transplantingDate = dayjs().format('YYYY-MM-DD');
         this.form.location = null;
-        this.form.beds = [];
-        this.form.bedFeet = 100;
         this.form.bedWidth = 60;
         this.form.rowsPerBed = '1';
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
-        this.form.area = 100;
       }
 
+      this.form.beds = [];
       this.form.cropName = null;
+      this.form.bedFeet = 100;
+      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
