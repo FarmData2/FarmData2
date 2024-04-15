@@ -235,7 +235,39 @@ export default {
       this.$emit('valid', this.isValid);
     },
     crop() {
-      this.cropFilterChanged(this.crop);
+      // Prevent double updates.
+      if (
+        this.form.cropFilter != this.crop &&
+        !(this.form.cropFilter === '' && this.crop == null)
+      ) {
+        this.cropFilterChanged(this.crop);
+
+        /*
+         * If crop has been set to '' the form cleared it.  This will
+         * usually happen when a transplanting has been successful. In that
+         * case, it is possible that the crop is no longer available for
+         * transplanting, so we need to check by re-fetching the list.
+         *
+         * Note: this will also happen on a "Reset" of the form if a crop was selected.
+         * Technically, a new fetch isn't necessary here, but there is no good way
+         * to prevent that and its pretty low overhead so just letting it go for now.
+         */
+        if (this.crop === '' || this.crop == null) {
+          farmosUtil
+            .getTraySeededCropNames()
+            .then((cropNames) => {
+              this.cropList = cropNames.sort();
+            })
+            .catch((error) => {
+              console.error(
+                'TransplantingPicklist: Error fetching seedlings crop names.'
+              );
+              console.error(error);
+
+              this.$emit('error', 'Unable to fetch crop names.');
+            });
+        }
+      }
     },
   },
   created() {
@@ -244,7 +276,6 @@ export default {
       .getTraySeededCropNames()
       .then((cropNames) => {
         this.cropList = cropNames.sort();
-        this.createdCount++;
 
         //Emit the initial valid state of the component's value.
         this.$emit('valid', this.isValid);
