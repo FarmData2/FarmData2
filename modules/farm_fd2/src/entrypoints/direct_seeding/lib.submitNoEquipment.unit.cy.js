@@ -236,7 +236,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     );
   });
 
-  it('Check activity log not created', () => {
+  it('Check soil disturbance activity log not created', () => {
     expect(result.depthQuantity).to.be.null;
     expect(result.speedQuantity).to.be.null;
     expect(result.activityLog).to.be.null;
