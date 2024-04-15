@@ -1653,6 +1653,25 @@ export async function deletePlantAsset(plantAssetId) {
 }
 
 /**
+ * Archive or unarchive the plant asset with the specified id.
+ *
+ * @param {string} plantAssetId the id of the plant asset.
+ * @param {boolean} archived `true` to archive or unarchive the plant asset, or `false` to unarchive it.
+ */
+export async function archivePlantAsset(plantAssetId, archived) {
+  const farm = await getFarmOSInstance();
+
+  const plantAsset = await getPlantAsset(plantAssetId);
+  if (archived) {
+    plantAsset.attributes.status = 'archived';
+  } else {
+    plantAsset.attributes.status = 'active';
+  }
+
+  return await farm.asset.send(plantAsset);
+}
+
+/**
  * Create a standard quantity (i.e. a quantity of type `quantity--standard`).
  *
  * @param {string} measure the measure type of the quantity (e.g. 'count', 'weight', 'volume')
