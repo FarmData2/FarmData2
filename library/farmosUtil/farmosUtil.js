@@ -1510,11 +1510,13 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  * @return {Object} an object with an attribute for each operation.
  * The attribute name is the operation name and its value is the result of the operation (i.e. the value returned from the `do` function).
  * The value of the attribute for an operation will be null if the operation was not successful (i.e. the `do` function throws an error).
+ * The value of the attribute for an operation will be `undefined` if the operation was not attempted.
  *
  * @throws {Error} if unable to execute the `do` function one of the operations or if unable to execute the `undo` of all operations in the transaction.
  * The `cause` of the error will include a `results` attribute with the same format as the returned object.
- * If an operation was successfully undone the attribute for that operation will have the value `null`.
+ * If an operation was successfully undone the attribute for that operation will have the value `undone`.
  * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
+ * If an operation was not attempted the attribute for that operation will be `undefined`.
  *
  * @category Utilities
  */
@@ -1535,15 +1537,17 @@ export async function runTransaction(operations) {
     for (const operation of undo.reverse()) {
       try {
         await operation.undo(done);
-        done[operation.name] = null;
-        console.error('    deleted ' + operation.name);
+        done[operation.name] = 'undone';
+        console.error('    ' + operation.name + ' undone.');
       } catch (error) {
-        console.error('    failed to delete ' + operation.name);
-        console.error('      uuid: ' + done[operation.name].id);
+        console.error('    failed to undo ' + operation.name);
+
         if (
+          done[operation.name].id &&
           done[operation.name].attributes &&
           done[operation.name].attributes.name
         ) {
+          console.error('      uuid: ' + done[operation.name].id);
           console.error('      name: ' + done[operation.name].attributes.name);
         }
       }
