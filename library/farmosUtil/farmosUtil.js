@@ -1653,6 +1653,25 @@ export async function deletePlantAsset(plantAssetId) {
 }
 
 /**
+ * Archive or unarchive the plant asset with the specified id.
+ *
+ * @param {string} plantAssetId the id of the plant asset.
+ * @param {boolean} archived `true` to archive or unarchive the plant asset, or `false` to unarchive it.
+ */
+export async function archivePlantAsset(plantAssetId, archived) {
+  const farm = await getFarmOSInstance();
+
+  const plantAsset = await getPlantAsset(plantAssetId);
+  if (archived) {
+    plantAsset.attributes.status = 'archived';
+  } else {
+    plantAsset.attributes.status = 'active';
+  }
+
+  return await farm.asset.send(plantAsset);
+}
+
+/**
  * Create a standard quantity (i.e. a quantity of type `quantity--standard`).
  *
  * @param {string} measure the measure type of the quantity (e.g. 'count', 'weight', 'volume')
@@ -2099,6 +2118,25 @@ export function extractQuantity(quantityString, unitName) {
   } else {
     return null;
   }
+}
+
+/**
+ * Get an inventory value from an asset.
+ *
+ * @param {Object} asset the asset to search.
+ * @param {string} measure the measure of the inventory value.
+ * @param {string} units the units of the inventory value.
+ * @return the inventory value or `null` if not found.
+ *
+ * @category Utilities
+ */
+export function getAssetInventory(asset, measure, units) {
+  for (const inventory of asset.attributes.inventory) {
+    if (inventory.measure === measure && inventory.units === units) {
+      return inventory.value;
+    }
+  }
+  return null;
 }
 
 /**

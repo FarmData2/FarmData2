@@ -100,4 +100,37 @@ describe('Test the plant asset functions', () => {
         })
     );
   });
+
+  it('Archive/Unarchive a plant asset', () => {
+    cy.wrap(farmosUtil.createPlantAsset('p1', 'ARUGULA', 'p1')).as('p1');
+
+    cy.get('@p1').then((p1) => {
+      expect(p1.attributes.name).to.equal('p1');
+      expect(p1.attributes.status).to.equal('active');
+
+      cy.wrap(farmosUtil.archivePlantAsset(p1.id, true)).as('archived');
+    });
+
+    cy.get('@archived').then((archived) => {
+      cy.wrap(farmosUtil.getPlantAsset(archived.id)).as('p1-archived');
+    });
+
+    cy.get('@p1-archived').then((p1Archived) => {
+      expect(p1Archived.attributes.name).to.equal('p1');
+      expect(p1Archived.attributes.status).to.equal('archived');
+
+      cy.wrap(farmosUtil.archivePlantAsset(p1Archived.id), false).as(
+        'unArchived'
+      );
+    });
+
+    cy.get('@unArchived').then((unArchived) => {
+      cy.wrap(farmosUtil.getPlantAsset(unArchived.id)).as('p1-unArchived');
+    });
+
+    cy.get('@p1-unArchived').then((p1unArchived) => {
+      expect(p1unArchived.attributes.name).to.equal('p1');
+      expect(p1unArchived.attributes.status).to.equal('active');
+    });
+  });
 });
