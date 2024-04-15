@@ -91,7 +91,7 @@ export async function submitForm(formData) {
 
           // The inventory decrement was deleted so make sure the asset
           // is not archived.
-          await farmosUtil.unarchivePlantAsset(trayQuantity.parent.id, false);
+          await farmosUtil.archivePlantAsset(trayQuantity.parent.id, false);
         }
       },
     };
