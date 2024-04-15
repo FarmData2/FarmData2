@@ -155,7 +155,7 @@ describe('Error when submitting using the direct_seeding lib.', () => {
     );
   });
 
-  it.only('Check quantities not deleted explicitly if seeding log created and deleted', () => {
+  it('Check quantities not deleted explicitly if seeding log created and deleted', () => {
     cy.intercept('POST', '**/api/log/activity', {
       statusCode: 401,
     });
