@@ -65,16 +65,32 @@ export async function submitForm(formData) {
 
           trayInventoryQuantitiesArray.push(trayQuantity);
 
-          // TODO: archive the original plant asset if inventory == 0 ????
+          const trayInvenotry = farmosUtil.getAssetInventory(
+            results.parents[i],
+            'count',
+            'TRAYS'
+          );
+          const traysPicked = formData.picked[i].trays;
+
+          console.log('Tray quantity: ' + trayInvenotry);
+          console.log('Trays picked: ' + traysPicked);
+
+          // All of the trays in the planting have been transplanted.
+          if (traysPicked == trayInvenotry) {
+            await farmosUtil.archivePlantAsset(results.parents[i].id, true);
+          }
         }
 
         return trayInventoryQuantitiesArray;
       },
       undo: async (results) => {
         for (const trayQuantity of results.trayInventoryQuantities) {
+          const parent = trayQuantity.parent;
           await farmosUtil.deleteStandardQuantity(trayQuantity.id);
 
-          // TODO: unarchive the original plant asset if inventory > 0 ????
+          // The inventory decrement was deleted so make sure the asset
+          // is not archived.
+          await farmosUtil.unarchivePlantAsset(parent.id, false);
         }
       },
     };
