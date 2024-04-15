@@ -1509,14 +1509,13 @@ export async function getEquipmentIdToAssetMap(categories = []) {
  *
  * @return {Object} an object with an attribute for each operation.
  * The attribute name is the operation name and its value is the result of the operation (i.e. the value returned from the `do` function).
- * The value of the attribute for an operation will be null if the operation was not successful (i.e. the `do` function throws an error).
- * The value of the attribute for an operation will be `undefined` if the operation was not attempted.
  *
  * @throws {Error} if unable to execute the `do` function one of the operations or if unable to execute the `undo` of all operations in the transaction.
  * The `cause` of the error will include a `results` attribute with the same format as the returned object.
- * If an operation was successfully undone the attribute for that operation will have the value `undone`.
- * If an operation was not successfully undone the attribute for that operation will be the result of the operation.
- * If an operation was not attempted the attribute for that operation will be `undefined`.
+ * If an operation was completed and has been undone the attribute for that operation will have the value `undone`.
+ * If an operation was completed but has not been undone the attribute for that operation will be the result of the operation.
+ * If an operation was attempted but failed (and thus was not undone) the attribute for that operation will be `null`.
+ * If an operation was never attempted (and thus also not undone) the attribute for that operation will be `undefined`.
  *
  * @category Utilities
  */
