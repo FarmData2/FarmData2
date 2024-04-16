@@ -40,17 +40,25 @@ describe('Test the plant asset functions', () => {
     undo: async () => {},
   };
 
-  const badDelete = {
-    name: 'badDelete',
+  const op3 = {
+    name: 'op3',
+    do: async () => {
+      return { status: 'op3 success', id: '3', attributes: { name: 'op3' } };
+    },
+    undo: async () => {},
+  };
+
+  const badUndo = {
+    name: 'badUndo',
     do: async () => {
       return {
-        status: 'badDelete success',
+        status: 'badUndo success',
         id: '3',
-        attributes: { name: 'badDelete' },
+        attributes: { name: 'badUndo' },
       };
     },
     undo: async () => {
-      throw new Error('badDelete error');
+      throw new Error('badUndo error');
     },
   };
 
@@ -67,7 +75,7 @@ describe('Test the plant asset functions', () => {
   });
 
   it('Failed transaction with successful deletes', () => {
-    const ops = [op1, op2, badOp];
+    const ops = [op1, op2, badOp, op3];
 
     cy.wrap(
       farmosUtil
@@ -77,14 +85,15 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.equal('Error running transaction.');
-          expect(error.results.op1).to.be.null;
-          expect(error.results.op2).to.be.null;
+          expect(error.results.op1).to.equal('undone');
+          expect(error.results.op2).to.equal('undone');
+          expect(error.results.op3).to.be.undefined;
         })
     );
   });
 
-  it('Failed transaction with failed deletes', () => {
-    const ops = [op1, badDelete, op2, badOp];
+  it('Failed transaction with failed undo', () => {
+    const ops = [op1, badUndo, op2, badOp, op3];
 
     cy.wrap(
       farmosUtil
@@ -94,11 +103,12 @@ describe('Test the plant asset functions', () => {
         })
         .catch((error) => {
           expect(error.message).to.contain('Error running transaction.');
-          expect(error.results.op1).to.be.null;
-          expect(error.results.badDelete).not.to.be.null;
-          expect(error.results.badDelete.attributes.name).to.equal('badDelete');
-          expect(error.results.op2).to.be.null;
+          expect(error.results.op1).to.equal('undone');
+          expect(error.results.badUndo).not.to.be.null;
+          expect(error.results.badUndo.attributes.name).to.equal('badUndo');
+          expect(error.results.op2).to.equal('undone');
           expect(error.results.badOp).to.be.null;
+          expect(error.results.op3).to.be.undefined;
         })
     );
   });
@@ -163,8 +173,8 @@ describe('Test the plant asset functions', () => {
       })
       .catch((error) => {
         expect(error.message).to.equal('Error running transaction.');
-        expect(error.results.op1).to.be.null;
-        expect(error.results.createPlantAsset).to.be.null;
+        expect(error.results.op1).to.equal('undone');
+        expect(error.results.createPlantAsset).to.equal('undone');
         expect(error.results.badOp).to.be.null;
       });
   });

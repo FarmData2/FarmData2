@@ -85,12 +85,13 @@ export async function submitForm(formData) {
       },
       undo: async (results) => {
         for (const trayQuantity of results.trayInventoryQuantities) {
-          const parent = trayQuantity.parent;
-          await farmosUtil.deleteStandardQuantity(trayQuantity.id);
+          if (results['transplantingLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(trayQuantity.id);
+          }
 
           // The inventory decrement was deleted so make sure the asset
           // is not archived.
-          await farmosUtil.unarchivePlantAsset(parent.id, false);
+          await farmosUtil.archivePlantAsset(trayQuantity.parent.id, false);
         }
       },
     };
@@ -111,7 +112,9 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deletePlantAsset(results['transplantingAsset'].id);
+        if (results['transplantingLog'] != 'undone') {
+          await farmosUtil.deletePlantAsset(results['transplantingAsset'].id);
+        }
       },
     };
     ops.push(transplantingAsset);
@@ -127,9 +130,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(
-          results['transplantingBedFeetQuantity'].id
-        );
+        if (results['transplantingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['transplantingBedFeetQuantity'].id
+          );
+        }
       },
     };
     ops.push(transplantingBedFeetQuantity);
@@ -145,9 +150,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(
-          results['transplantingBedWidthQuantity'].id
-        );
+        if (results['transplantingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['transplantingBedWidthQuantity'].id
+          );
+        }
       },
     };
     ops.push(transplantingBedWidthQuantity);
@@ -163,9 +170,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(
-          results['transplantingRowsPerBedQuantity'].id
-        );
+        if (results['transplantingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['transplantingRowsPerBedQuantity'].id
+          );
+        }
       },
     };
     ops.push(transplantingRowsPerBedQuantity);
@@ -183,9 +192,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(
-          results['transplantingRowFeetQuantity'].id
-        );
+        if (results['transplantingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['transplantingRowFeetQuantity'].id
+          );
+        }
       },
     };
     ops.push(transplantingRowFeetQuantity);

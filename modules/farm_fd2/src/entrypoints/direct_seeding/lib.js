@@ -57,7 +57,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['bedFeetQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['bedFeetQuantity'].id
+          );
+        }
       },
     };
     ops.push(bedFeetQuantity);
@@ -73,9 +77,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(
-          results['rowsPerBedQuantity'].id
-        );
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['rowsPerBedQuantity'].id
+          );
+        }
       },
     };
     ops.push(rowsPerBedQuantity);
@@ -93,7 +99,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['rowFeetQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['rowFeetQuantity'].id
+          );
+        }
       },
     };
     ops.push(rowFeetQuantity);
@@ -109,7 +119,11 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['bedWidthQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['bedWidthQuantity'].id
+          );
+        }
       },
     };
     ops.push(bedWidthQuantity);
@@ -236,7 +250,7 @@ export async function submitForm(formData) {
     let errorMsg = 'Error creating direct seeding.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (
