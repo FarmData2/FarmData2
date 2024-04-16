@@ -72,9 +72,6 @@ export async function submitForm(formData) {
           );
           const traysPicked = formData.picked[i].trays;
 
-          console.log('Tray quantity: ' + trayInvenotry);
-          console.log('Trays picked: ' + traysPicked);
-
           // All of the trays in the planting have been transplanted.
           if (traysPicked == trayInvenotry) {
             await farmosUtil.archivePlantAsset(results.parents[i].id, true);
