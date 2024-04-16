@@ -2041,10 +2041,13 @@ export async function createSoilDisturbanceActivityLog(
     });
   }
 
+  let assetName =
+    dayjs(disturbanceDate).format('YYYY-MM-DD') + '_sd_' + locationName;
+
   const activityLogData = {
     type: 'log--activity',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: assetName,
       timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
       purchase_date: dayjs(disturbanceDate).format(),

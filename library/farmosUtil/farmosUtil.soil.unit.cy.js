@@ -80,7 +80,7 @@ describe('Test the soil disturbance activity log functions', () => {
       cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
         (result) => {
           expect(result.type).to.equal('log--activity');
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_sd_A');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(false);
@@ -157,7 +157,7 @@ describe('Test the soil disturbance activity log functions', () => {
       cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
         (result) => {
           expect(result.type).to.equal('log--activity');
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_sd_CHUAU');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(false);
