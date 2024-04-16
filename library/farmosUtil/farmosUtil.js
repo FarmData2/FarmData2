@@ -1565,7 +1565,7 @@ export async function runTransaction(operations) {
 /**
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
- * @param {string} assetName the name of the plant asset to create.
+ * @param {string} date the date on which the plant asset was created.
  * @param {string} cropName the name of the crop to associate with the plant asset.
  * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
  * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
@@ -1575,7 +1575,7 @@ export async function runTransaction(operations) {
  * @category Plant
  */
 export async function createPlantAsset(
-  assetName,
+  date, 
   cropName,
   comment = '',
   parents = []
@@ -1588,6 +1588,8 @@ export async function createPlantAsset(
     parentArray.push({ type: 'asset--plant', id: parent.id });
   }
 
+  const assetName = date + '_' + cropName;
+  
   // create an asset--plant
   const plantAsset = farm.asset.create({
     type: 'asset--plant',
