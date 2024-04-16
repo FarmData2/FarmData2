@@ -1575,7 +1575,7 @@ export async function runTransaction(operations) {
  * @category Plant
  */
 export async function createPlantAsset(
-  date, 
+  date,
   cropName,
   comment = '',
   parents = []
@@ -1589,7 +1589,7 @@ export async function createPlantAsset(
   }
 
   const assetName = date + '_' + cropName;
-  
+
   // create an asset--plant
   const plantAsset = farm.asset.create({
     type: 'asset--plant',
@@ -1919,10 +1919,23 @@ export async function createSeedingLog(
   const quantitiesArray = getQuantityObjects(quantities);
   const logCategoriesArray = await getLogCategoryObjects(logCategories);
 
+  // Generate log name based on conventions in docs/DataModel.md.
+  const cropIdToNameMap = await getCropIdToTermMap();
+  let logName = dayjs(seedingDate).format('YYYY-MM-DD');
+  if (logCategories.includes('seeding_tray')) {
+    logName += '_ts_';
+  } else if (logCategories.includes('seeding_direct')) {
+    logName += '_ds_';
+  } else if (logCategories.includes('seeding_cover_crop')) {
+    logName += '_cs_';
+  }
+  logName += cropIdToNameMap.get(plantAsset.relationships.plant_type[0].id)
+    .attributes.name;
+
   const seedingLogData = {
     type: 'log--seeding',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: logName,
       timestamp: dayjs(seedingDate).format(),
       status: 'done',
       is_movement: true,

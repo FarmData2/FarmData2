@@ -60,7 +60,7 @@ describe('Test the seeding log functions', () => {
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.purchase_date).to.contain('1999-01-02');
 
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_ts_ARUGULA');
 
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(true);
@@ -116,7 +116,7 @@ describe('Test the seeding log functions', () => {
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.purchase_date).to.contain('1999-01-02');
 
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_ds_ARUGULA');
 
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(true);
@@ -149,6 +149,38 @@ describe('Test the seeding log functions', () => {
         });
       }
     );
+  });
+
+  it('Create a cover crop seeding log', () => {
+    cy.wrap(
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
+    ).as('plantAsset');
+
+    cy.wrap(
+      farmosUtil.createStandardQuantity('count', 7, 'testLabel', 'TRAYS')
+    ).as('quantity');
+
+    cy.getAll(['@plantAsset', '@quantity']).then(([plantAsset, quantity]) => {
+      cy.wrap(
+        farmosUtil.createSeedingLog(
+          '01/02/1999',
+          'CHUAU',
+          [],
+          ['seeding', 'seeding_cover_crop'],
+          plantAsset,
+          [quantity]
+        )
+      ).as('seedingLog');
+    });
+
+    cy.get('@seedingLog').then((seedingLog) => {
+      cy.wrap(farmosUtil.getSeedingLog(seedingLog.id)).then((result) => {
+        expect(result.attributes.timestamp).to.contain('1999-01-02');
+        expect(result.attributes.purchase_date).to.contain('1999-01-02');
+
+        expect(result.attributes.name).to.equal('1999-01-02_cs_ARUGULA');
+      });
+    });
   });
 
   it('Error creating seeding log', { retries: 4 }, () => {
