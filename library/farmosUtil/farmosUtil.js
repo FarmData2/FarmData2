@@ -2042,7 +2042,7 @@ export async function createSoilDisturbanceActivityLog(
   }
 
   let assetName =
-    dayjs(disturbanceDate).format('YYYY-MM-DD') + '_ds_' + locationName;
+    dayjs(disturbanceDate).format('YYYY-MM-DD') + '_sd_' + locationName;
 
   const activityLogData = {
     type: 'log--activity',
