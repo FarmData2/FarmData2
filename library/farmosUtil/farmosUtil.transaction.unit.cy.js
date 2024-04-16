@@ -118,13 +118,12 @@ describe('Test the plant asset functions', () => {
       cropName: 'ARUGULA',
       comment: 'test comment',
     };
-    const assetName = 'test asset';
 
     const createPlantAsset = {
       name: 'createPlantAsset',
       do: async () => {
         return await farmosUtil.createPlantAsset(
-          assetName,
+          '1999-01-02',
           formData.cropName,
           formData.comment
         );
@@ -139,7 +138,9 @@ describe('Test the plant asset functions', () => {
     cy.wrap(farmosUtil.runTransaction(ops)).as('result');
 
     cy.get('@result').then((result) => {
-      expect(result.createPlantAsset.attributes.name).to.equal(assetName);
+      expect(result.createPlantAsset.attributes.name).to.equal(
+        '1999-01-02_ARUGULA'
+      );
     });
   });
 
