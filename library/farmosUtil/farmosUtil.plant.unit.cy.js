@@ -33,13 +33,23 @@ describe('Test the plant asset functions', () => {
   });
 
   it('Create a plant asset with parents', () => {
-    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'p1')).as('p1');
-    cy.wrap(farmosUtil.createPlantAsset('1999-01-03', 'ARUGULA', 'p2')).as('p2');
-    cy.wrap(farmosUtil.createPlantAsset('1999-01-04', 'ARUGULA', 'p3')).as('p3');
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'p1')).as(
+      'p1'
+    );
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-03', 'ARUGULA', 'p2')).as(
+      'p2'
+    );
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-04', 'ARUGULA', 'p3')).as(
+      'p3'
+    );
 
     cy.getAll(['@p1', '@p2', '@p3']).then(([p1, p2, p3]) => {
       cy.wrap(
-        farmosUtil.createPlantAsset('1999-01-05', 'ARUGULA', 'child', [p1, p2, p3])
+        farmosUtil.createPlantAsset('1999-01-05', 'ARUGULA', 'child', [
+          p1,
+          p2,
+          p3,
+        ])
       ).as('plant');
     });
 
@@ -64,7 +74,7 @@ describe('Test the plant asset functions', () => {
 
     cy.wrap(
       farmosUtil
-        .createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+        .createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
         .then(() => {
           throw new Error('Creating plant asset should have failed.');
         })
@@ -76,7 +86,7 @@ describe('Test the plant asset functions', () => {
 
   it('Delete a plant asset', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).then((plantAsset) => {
       cy.wrap(farmosUtil.deletePlantAsset(plantAsset.id)).then((result) => {
         expect(result.status).to.equal(204);
@@ -102,7 +112,9 @@ describe('Test the plant asset functions', () => {
   });
 
   it('Archive/Unarchive a plant asset', () => {
-    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'p1')).as('p1');
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'p1')).as(
+      'p1'
+    );
 
     cy.get('@p1').then((p1) => {
       expect(p1.attributes.name).to.equal('1999-01-02_ARUGULA');

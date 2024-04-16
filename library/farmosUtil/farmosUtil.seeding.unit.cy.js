@@ -34,7 +34,7 @@ describe('Test the seeding log functions', () => {
 
   it('Create a tray seeding log', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -90,7 +90,7 @@ describe('Test the seeding log functions', () => {
 
   it('Create a direct seeding log w/ beds', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -157,7 +157,7 @@ describe('Test the seeding log functions', () => {
     });
 
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {
@@ -184,7 +184,7 @@ describe('Test the seeding log functions', () => {
 
   it('Delete a seeding log', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(

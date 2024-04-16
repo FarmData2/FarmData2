@@ -39,7 +39,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Create a soil disturbance activity log for a field', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -119,7 +119,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Create a soil disturbance activity log for a Greenhouse w/ beds', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -209,7 +209,7 @@ describe('Test the soil disturbance activity log functions', () => {
     });
 
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {
@@ -238,7 +238,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Delete a soil disturbance activity log', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {

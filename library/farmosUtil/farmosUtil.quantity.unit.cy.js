@@ -78,7 +78,7 @@ describe('Test the quantity functions', () => {
 
   it('Create a quantity with an inventory adjustment', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {

@@ -149,13 +149,12 @@ describe('Test the plant asset functions', () => {
       cropName: 'WATERMELON',
       comment: 'test comment',
     };
-    const assetName = 'test asset';
 
     const createPlantAsset = {
       name: 'createPlantAsset',
       do: async () => {
         return await farmosUtil.createPlantAsset(
-          assetName,
+          '1999-01-02',
           formData.cropName,
           formData.comment
         );
