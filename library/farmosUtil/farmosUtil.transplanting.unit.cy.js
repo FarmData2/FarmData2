@@ -108,7 +108,7 @@ describe('Test the transplanting activity log functions', () => {
     ]).then(
       ([transplantingLog, bedFeetQuantity, traysQuantity, transplantAsset]) => {
         expect(transplantingLog.attributes.name).to.equal(
-          '1999-01-02_BROCCOLI'
+          '1999-01-02_xp_BROCCOLI'
         );
         expect(transplantingLog.attributes.timestamp).to.contain('1999-01-02');
         expect(transplantingLog.type).to.equal('log--activity');

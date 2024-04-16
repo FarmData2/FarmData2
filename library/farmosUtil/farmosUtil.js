@@ -2311,10 +2311,17 @@ export async function createTransplantingActivityLog(
   const quantitiesArray = getQuantityObjects(quantities);
   const logCategoriesArray = await getLogCategoryObjects(['transplanting']);
 
+  const cropIdToTermMap = await getCropIdToTermMap();
+  const logName =
+    dayjs(transplantingDate).format('YYYY-MM-DD') +
+    '_xp_' +
+    cropIdToTermMap.get(plantAsset.relationships.plant_type[0].id).attributes
+      .name;
+
   const activityLogData = {
     type: 'log--activity',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: logName,
       timestamp: dayjs(transplantingDate).format(),
       status: 'done',
       is_movement: true,
