@@ -97,15 +97,11 @@ export async function submitForm(formData) {
     };
     ops.push(trayInventoryQuantities);
 
-    // Create the plant asset representing the transplanted crop.
-    // Include the original tray seeded plant assets as parents.
-    const assetName = formData.transplantingDate + '_' + formData.cropName;
-
     const transplantingAsset = {
       name: 'transplantingAsset',
       do: async (results) => {
         return await farmosUtil.createPlantAsset(
-          assetName,
+          formData.transplantingDate,
           formData.cropName,
           formData.comment,
           results.parents
