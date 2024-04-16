@@ -59,9 +59,7 @@ describe('Submission using the direct_seeding lib.', () => {
     cy.wrap(farmosUtil.getPlantAsset(result.plantAsset.id)).then(
       (plantAsset) => {
         expect(plantAsset.type).to.equal('asset--plant');
-        expect(plantAsset.attributes.name).to.equal(
-          result.plantAsset.attributes.name
-        );
+        expect(plantAsset.attributes.name).to.equal('1950-01-02_BROCCOLI');
         expect(plantAsset.attributes.status).to.equal('active');
         expect(plantAsset.attributes.notes.value).to.equal(form.comment);
 
@@ -193,9 +191,7 @@ describe('Submission using the direct_seeding lib.', () => {
     cy.wrap(farmosUtil.getSeedingLog(result.seedingLog.id)).then(
       (seedingLog) => {
         expect(seedingLog.type).to.equal('log--seeding');
-        expect(seedingLog.attributes.name).to.equal(
-          result.seedingLog.attributes.name
-        );
+        expect(seedingLog.attributes.name).to.equal('1950-01-02_ds_BROCCOLI');
         expect(seedingLog.attributes.timestamp).to.contain('1950-01-02');
         expect(seedingLog.attributes.status).to.equal('done');
         expect(seedingLog.attributes.is_movement).to.be.true;
@@ -324,9 +320,7 @@ describe('Submission using the direct_seeding lib.', () => {
       farmosUtil.getSoilDisturbanceActivityLog(result.activityLog.id)
     ).then((activityLog) => {
       expect(activityLog.type).to.equal('log--activity');
-      expect(activityLog.attributes.name).to.equal(
-        result.plantAsset.attributes.name
-      );
+      expect(activityLog.attributes.name).to.equal('1950-01-02_sd_ALF');
       expect(activityLog.attributes.timestamp).to.contain('1950-01-02');
       expect(activityLog.attributes.status).to.equal('done');
       expect(activityLog.attributes.is_movement).to.equal(false);

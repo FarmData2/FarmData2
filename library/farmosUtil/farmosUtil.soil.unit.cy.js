@@ -39,7 +39,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Create a soil disturbance activity log for a field', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -80,7 +80,7 @@ describe('Test the soil disturbance activity log functions', () => {
       cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
         (result) => {
           expect(result.type).to.equal('log--activity');
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_sd_A');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(false);
@@ -119,7 +119,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Create a soil disturbance activity log for a Greenhouse w/ beds', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.wrap(
@@ -157,7 +157,7 @@ describe('Test the soil disturbance activity log functions', () => {
       cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
         (result) => {
           expect(result.type).to.equal('log--activity');
-          expect(result.attributes.name).to.equal(plantAsset.attributes.name);
+          expect(result.attributes.name).to.equal('1999-01-02_sd_CHUAU');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
           expect(result.attributes.is_movement).to.equal(false);
@@ -209,7 +209,7 @@ describe('Test the soil disturbance activity log functions', () => {
     });
 
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {
@@ -238,7 +238,7 @@ describe('Test the soil disturbance activity log functions', () => {
 
   it('Delete a soil disturbance activity log', () => {
     cy.wrap(
-      farmosUtil.createPlantAsset('testPlant', 'ARUGULA', 'testComment')
+      farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
     ).as('plantAsset');
 
     cy.get('@plantAsset').then((plantAsset) => {

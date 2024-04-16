@@ -27,7 +27,6 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  */
 export async function submitForm(formData) {
   try {
-    const assetName = formData.seedingDate + '_ds_' + formData.cropName;
     const ops = [];
     const equipmentAssets = [];
 
@@ -35,7 +34,7 @@ export async function submitForm(formData) {
       name: 'plantAsset',
       do: async () => {
         return await farmosUtil.createPlantAsset(
-          assetName,
+          formData.seedingDate,
           formData.cropName,
           formData.comment
         );

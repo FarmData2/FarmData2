@@ -98,9 +98,15 @@ Every operation in FarmData2 has one or more logs associated with it.
 
 #### Seeding Logs
 
+`yyyy-mm-dd_<type>_<crop>` - where `<type>` is `ts`, `ds`, or `cs` as defined above.
+
 #### Transplanting Logs
 
+`yyyy-mm-dd_xp_<crop>`
+
 #### Tillage Logs
+
+`yyyy-mm-dd_sd_<location>`
 
 #### Amendment Logs
 

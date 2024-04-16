@@ -1565,7 +1565,7 @@ export async function runTransaction(operations) {
 /**
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
- * @param {string} assetName the name of the plant asset to create.
+ * @param {string} date the date on which the plant asset was created.
  * @param {string} cropName the name of the crop to associate with the plant asset.
  * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
  * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
@@ -1575,7 +1575,7 @@ export async function runTransaction(operations) {
  * @category Plant
  */
 export async function createPlantAsset(
-  assetName,
+  date,
   cropName,
   comment = '',
   parents = []
@@ -1587,6 +1587,8 @@ export async function createPlantAsset(
   for (const parent of parents) {
     parentArray.push({ type: 'asset--plant', id: parent.id });
   }
+
+  const assetName = date + '_' + cropName;
 
   // create an asset--plant
   const plantAsset = farm.asset.create({
@@ -1917,10 +1919,23 @@ export async function createSeedingLog(
   const quantitiesArray = getQuantityObjects(quantities);
   const logCategoriesArray = await getLogCategoryObjects(logCategories);
 
+  // Generate log name based on conventions in docs/DataModel.md.
+  const cropIdToNameMap = await getCropIdToTermMap();
+  let logName = dayjs(seedingDate).format('YYYY-MM-DD');
+  if (logCategories.includes('seeding_tray')) {
+    logName += '_ts_';
+  } else if (logCategories.includes('seeding_direct')) {
+    logName += '_ds_';
+  } else if (logCategories.includes('seeding_cover_crop')) {
+    logName += '_cs_';
+  }
+  logName += cropIdToNameMap.get(plantAsset.relationships.plant_type[0].id)
+    .attributes.name;
+
   const seedingLogData = {
     type: 'log--seeding',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: logName,
       timestamp: dayjs(seedingDate).format(),
       status: 'done',
       is_movement: true,
@@ -2026,10 +2041,13 @@ export async function createSoilDisturbanceActivityLog(
     });
   }
 
+  let assetName =
+    dayjs(disturbanceDate).format('YYYY-MM-DD') + '_sd_' + locationName;
+
   const activityLogData = {
     type: 'log--activity',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: assetName,
       timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
       purchase_date: dayjs(disturbanceDate).format(),
@@ -2293,10 +2311,17 @@ export async function createTransplantingActivityLog(
   const quantitiesArray = getQuantityObjects(quantities);
   const logCategoriesArray = await getLogCategoryObjects(['transplanting']);
 
+  const cropIdToTermMap = await getCropIdToTermMap();
+  const logName =
+    dayjs(transplantingDate).format('YYYY-MM-DD') +
+    '_xp_' +
+    cropIdToTermMap.get(plantAsset.relationships.plant_type[0].id).attributes
+      .name;
+
   const activityLogData = {
     type: 'log--activity',
     attributes: {
-      name: plantAsset.attributes.name,
+      name: logName,
       timestamp: dayjs(transplantingDate).format(),
       status: 'done',
       is_movement: true,

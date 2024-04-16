@@ -72,9 +72,6 @@ export async function submitForm(formData) {
           );
           const traysPicked = formData.picked[i].trays;
 
-          console.log('Tray quantity: ' + trayInvenotry);
-          console.log('Trays picked: ' + traysPicked);
-
           // All of the trays in the planting have been transplanted.
           if (traysPicked == trayInvenotry) {
             await farmosUtil.archivePlantAsset(results.parents[i].id, true);
@@ -97,15 +94,11 @@ export async function submitForm(formData) {
     };
     ops.push(trayInventoryQuantities);
 
-    // Create the plant asset representing the transplanted crop.
-    // Include the original tray seeded plant assets as parents.
-    const assetName = formData.transplantingDate + '_' + formData.cropName;
-
     const transplantingAsset = {
       name: 'transplantingAsset',
       do: async (results) => {
         return await farmosUtil.createPlantAsset(
-          assetName,
+          formData.transplantingDate,
           formData.cropName,
           formData.comment,
           results.parents

@@ -39,18 +39,16 @@ describe('Test the transplanting activity log functions', () => {
     });
 
     // Create a new plant asset for the transplanted crop
-    cy.getAll(['@seedlings', '@seedlingAsset']).then(
-      ([seedlings, seedlingAsset]) => {
-        cy.wrap(
-          farmosUtil.createPlantAsset(
-            'transplantTest',
-            seedlings[0].crop,
-            'testing transplanting',
-            [seedlingAsset]
-          )
-        ).as('transplantAsset');
-      }
-    );
+    cy.get('@seedlingAsset').then((seedlingAsset) => {
+      cy.wrap(
+        farmosUtil.createPlantAsset(
+          '1999-01-02',
+          'BROCCOLI',
+          'testing transplanting',
+          [seedlingAsset]
+        )
+      ).as('transplantAsset');
+    });
 
     // Create quantities for the transplanting log
     cy.getAll(['@transplantAsset', '@seedlingAsset', '@seedlings']).then(
@@ -109,7 +107,9 @@ describe('Test the transplanting activity log functions', () => {
       '@transplantAsset',
     ]).then(
       ([transplantingLog, bedFeetQuantity, traysQuantity, transplantAsset]) => {
-        expect(transplantingLog.attributes.name).to.equal('transplantTest');
+        expect(transplantingLog.attributes.name).to.equal(
+          '1999-01-02_xp_BROCCOLI'
+        );
         expect(transplantingLog.attributes.timestamp).to.contain('1999-01-02');
         expect(transplantingLog.type).to.equal('log--activity');
         expect(transplantingLog.attributes.status).to.equal('done');
@@ -157,7 +157,7 @@ describe('Test the transplanting activity log functions', () => {
     cy.get('@readTransplantAsset').then((transplantAsset) => {
       expect(transplantAsset.type).to.equal('asset--plant');
 
-      expect(transplantAsset.attributes.name).to.equal('transplantTest');
+      expect(transplantAsset.attributes.name).to.equal('1999-01-02_BROCCOLI');
       expect(transplantAsset.attributes.status).to.equal('active');
 
       expect(transplantAsset.attributes.inventory).to.have.length(1);
@@ -204,7 +204,7 @@ describe('Test the transplanting activity log functions', () => {
     // Create a new plant asset for the transplanted crop
     cy.wrap(
       farmosUtil.createPlantAsset(
-        'transplantTest',
+        '1999-01-02',
         'BROCCOLI',
         'testing transplanting'
       )
@@ -236,7 +236,7 @@ describe('Test the transplanting activity log functions', () => {
   it('Delete a transplanting log', () => {
     cy.wrap(
       farmosUtil.createPlantAsset(
-        'transplantTest',
+        '1999-01-02',
         'BROCCOLI',
         'testing transplanting'
       )
