@@ -1,0 +1,82 @@
+#!/bin/bash
+# shellcheck disable=SC1091  # Make sources okay.
+
+# Script that does much of the initial setup for the FD2 dev environment
+# This script should only be run once when the dev environment is first setup.
+
+# Define some useful variables, import libraries
+source colors.bash
+source lib.bash
+
+SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
+REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+safe_cd "$REPO_ROOT_DIR"
+
+echo "Setting up FarmData2 dev environment..."
+safe_cd "$REPO_ROOT_DIR"
+
+echo "  Installing npm dependencies..."
+npm install > /dev/null
+echo "  Installed."
+
+echo ""
+
+echo "  Setting up git hooks..."
+rm -rf .git/hooks
+ln -s .githooks .git/hooks
+echo "  Set up."
+
+echo ""
+
+echo "  Configuring git information..."
+echo "    The following information will be associated with GitHub commits"
+echo "    that you make from the FarmData2 development environment."
+echo ""
+read -rp "    Name: " GIT_USER
+git config --global user.name "$GIT_USER"
+read -rp "    Email: " GIT_EMAIL
+git config --global user.email "$GIT_EMAIL"
+echo "  Configured."
+
+echo ""
+
+echo "  Authenticating with GitHub..."
+echo "    The following will authenticate the FarmData2 development environment"
+echo "    with your GitHub account.  If you are not familiar with the options shown"
+echo "    the following are recommended as the easiest approach:"
+echo "      - What is your preferred protocol for Git operations on this host?"
+echo "        - HTTPS"
+echo "      - Authenticate Git with your GitHub credentials? (Y/n)"
+echo "        - Y"
+echo "      - How would you like to authenticate GitHub CLI?"
+echo "        - Login with a web browser"
+echo "          - Use your GitHub username and password to log in."
+gh auth login --hostname GitHub.com
+echo "  Authenticated."
+
+echo ""
+
+# Redirect both stdout and stderr to /dev/null because
+# the sample database is not yet installed so these will
+# generate errors, but they will still work as expected
+# once the sample database is installed.
+echo "  Building FarmData2 Drupal modules..."
+echo "    Building farm_fd2..."
+npm run build:fd2 &> /dev/null
+echo "    Built."
+echo "    Building farm_fd2_examples..."
+npm run build:examples &> /dev/null
+echo "    Built."
+echo "    Building farm_fd2_school..."
+npm run build:school &> /dev/null
+echo "    Built."
+echo "  Built."
+
+echo ""
+
+echo "  Installing the sample database..."
+bin/installDB.bash > /dev/null
+echo "  Installed."
+
+echo "Done."

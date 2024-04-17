@@ -112,3 +112,11 @@ fi
 echo "  fd2dev container configured and ready."
 
 echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
+
+echo ""
+
+# If we are running in GitPod, then show the connection information.
+GP="$(which gp)"
+if [ "$GP" != "" ]; then
+  "$SCRIPT_DIR"/bin/showGitPodInfo.bash
+fi
