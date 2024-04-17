@@ -3,8 +3,6 @@ services:
   db:
     image: farmdata2/postgres:fd2.2
     container_name: fd2_postgres
-    profiles:
-      - farmos
     volumes:
       # Use docker volume for performance.
       # Bump version here and in volumes if new image requires new db.
@@ -19,8 +17,6 @@ services:
   farmos:
     depends_on:
       - db
-    profiles:
-      - farmos
     image: farmdata2/farmos3:fd2.1
     container_name: fd2_farmos
     volumes:
@@ -39,8 +35,6 @@ services:
       XDEBUG_CONFIG: discover_client_host=yes
 
   fd2dev:
-    profiles:
-      - dev
     image: farmdata2/fd2dev:fd2.8
     container_name: fd2_dev
     init: true
