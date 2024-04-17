@@ -118,5 +118,5 @@ echo ""
 # If we are running in GitPod, then show the connection information.
 GP="$(which gp)"
 if [ "$GP" != "" ]; then
-  "$SCRIPT_DIR"/bin/showGitPodInfo.bash
+  "$SCRIPT_DIR"/showGitPodInfo.bash
 fi
