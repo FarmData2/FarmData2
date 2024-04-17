@@ -100,7 +100,7 @@ docker compose up -d "$@"
 
 echo "Rebuilding the drupal cache..."
 sleep 3 # give site time to come up before clearing the cache.
-docker exec -it fd2_farmos drush cr
+docker exec -it fd2_farmos drush cr 2> /dev/null
 
 echo "Waiting for fd2dev container configuration and startup..."
 NO_VNC_RESP=$(curl -Is localhost:6901 | grep "HTTP/1.1 200 OK")
