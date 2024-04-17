@@ -23,8 +23,10 @@ echo "  Installed."
 echo ""
 
 echo "  Setting up git hooks..."
-rm -rf .git/hooks
-ln -s .githooks .git/hooks
+safe_cd .git
+rm -rf hooks
+ln -s ../.githooks hooks
+safe_cd ..
 echo "  Set up."
 
 echo ""
