@@ -1,12 +1,15 @@
 echo "Starting FarmData2 dev environment container"
 
+rm -r -f ~/.fd2
 mkdir ~/.fd2
 mkdir ~/.fd2/gids
 id -u > ~/.fd2/gids/docker.gid
 id -g > ~/.fd2/gids/fd2grp.gid
+chown -g 33333 ~/.fd2
+chmod -R g+rw ~/.fd2
 
 cd docker
-docker compose --profile dev --detach up 
+docker compose --profile dev up --detach
 
 gp ports await 5901 > /dev/null
 gp ports await 6901 > /dev/null

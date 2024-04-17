@@ -41,9 +41,6 @@ services:
   fd2dev:
     profiles:
       - dev
-    depends_on:
-      - db
-      - farmos
     image: farmdata2/fd2dev:fd2.8
     container_name: fd2_dev
     init: true
