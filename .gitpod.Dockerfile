@@ -1,5 +1,4 @@
 FROM gitpod/workspace-base
 
-RUN DIR=$(basename $(ls /workspace)) &&\
-  echo "exec /workspace/$DIR/bin/fd2-up.bash" >> /home/gitpod/.bashrc
+RUN echo "FD2_DIR=$(basename $(ls /workspace)); exec /workspace/$FD2_DIR/bin/fd2-up.bash" >> /home/gitpod/.bashrc
 
