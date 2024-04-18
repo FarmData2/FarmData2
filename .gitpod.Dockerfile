@@ -1,4 +1,4 @@
 FROM gitpod/workspace-base
 
-RUN DIR=FarmData2 &&\
+RUN DIR=$(basename $(ls /workspace)) &&\
   echo "exec /workspace/$DIR/bin/fd2-up.bash" >> /home/gitpod/.bashrc
