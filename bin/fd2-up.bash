@@ -56,6 +56,23 @@ if [ ! -d ~/.fd2 ]; then
   echo "  The ~/.fd2 configuration directory created."
 fi
 
+# Create the dist directories if they do not exist
+if [ ! -d "$FD2_PATH/modules/farm_fd2/dist" ]; then
+  echo "Creating the modules/farm_fd2/dist directory."
+  mkdir "$FD2_PATH/modules/farm_fd2/dist"
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH/modules/farm_fd2_examples/dist" ]; then
+  echo "Creating the modules/farm_fd2_examples/dist directory."
+  mkdir "$FD2_PATH/modules/farm_fd_examples/dist"
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH/modules/farm_fd2_school/dist" ]; then
+  echo "Creating the modules/farm_fd2_school/dist directory."
+  mkdir "$FD2_PATH/modules/farm_fd_school/dist"
+  echo "  Created."
+fi
+
 # Determine the host operating system.
 echo "Detecting host Operating System..."
 GP="$(which gp)" # Check for GitPod which will have gp command.
