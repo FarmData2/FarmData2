@@ -64,12 +64,12 @@ if [ ! -d "$FD2_PATH"/modules/farm_fd2/dist ]; then
 fi
 if [ ! -d "$FD2_PATH"/modules/farm_fd2_examples/dist ]; then
   echo "Creating the modules/farm_fd2_examples/dist directory."
-  mkdir "$FD2_PATH"/modules/farm_fd_examples/dist
+  mkdir "$FD2_PATH"/modules/farm_fd2_examples/dist
   echo "  Created."
 fi
 if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
   echo "Creating the modules/farm_fd2_school/dist directory."
-  mkdir "$FD2_PATH"/modules/farm_fd_school/dist
+  mkdir "$FD2_PATH"/modules/farm_fd2_school/dist
   echo "  Created."
 fi
 
