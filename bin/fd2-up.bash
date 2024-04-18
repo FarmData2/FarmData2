@@ -73,8 +73,8 @@ if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
   echo "  Created."
 fi
 
-# Determine the host operating system.
-echo "Detecting host Operating System..."
+# Determine the host on which we are running.
+echo "Detecting host..."
 GP="$(which gp)" # Check for GitPod which will have gp command.
 OS=$(uname -a)   # Check for other OS's
 PROFILE=
