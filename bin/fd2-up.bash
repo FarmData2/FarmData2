@@ -26,8 +26,7 @@ if [ "$HOST" == "/fd2_dev" ]; then
   exit 255
 fi
 
-# Check that /var/run/docker.sock exists and then symlink it as
-# ~/.contconf/docker.sock so that it can be mounted the same in WSL.
+# Check that /var/run/docker.sock exists
 echo "Checking for docker.sock..."
 SYS_DOCKER_SOCK=$(ls /var/run/docker.sock 2> /dev/null)
 if [ -z "$SYS_DOCKER_SOCK" ]; then
@@ -59,9 +58,12 @@ fi
 
 # Determine the host operating system.
 echo "Detecting host Operating System..."
-OS=$(uname -a)
+GP="$(which gp)" # Check for GitPod which will have gp command.
+OS=$(uname -a)   # Check for other OS's
 PROFILE=
-if [[ "$OS" == *"Darwin"* ]]; then
+if [ "$GP" != "" ]; then
+  PROFILE=gitpod
+elif [[ "$OS" == *"Darwin"* ]]; then
   PROFILE=macos
 elif [[ "$OS" == *"microsoft"* ]] || [[ "$OS" == *"Microsoft"* ]]; then
   # Note that this is before Linux because if running in WSL
@@ -76,7 +78,11 @@ else
 fi
 echo "  Running on a $PROFILE host."
 
-if [[ "$PROFILE" == "macos" ]]; then
+if [[ "$PROFILE" == "gitpod" ]]; then
+  echo "Running fd2-up.gitpod.bash..."
+  source "$SCRIPT_DIR/fd2-up.gitpod.bash"
+  echo "fd2-up.gitpod.bash done."
+elif [[ "$PROFILE" == "macos" ]]; then
   echo "Running fd2-up.macos.bash..."
   source "$SCRIPT_DIR/fd2-up.macos.bash"
   echo "fd2-up.macos.bash done."
@@ -100,7 +106,7 @@ docker compose up -d "$@"
 
 echo "Rebuilding the drupal cache..."
 sleep 3 # give site time to come up before clearing the cache.
-docker exec -it fd2_farmos drush cr 2> /dev/null
+docker exec -it fd2_farmos drush cr &> /dev/null
 
 echo "Waiting for fd2dev container configuration and startup..."
 NO_VNC_RESP=$(curl -Is localhost:6901 | grep "HTTP/1.1 200 OK")
@@ -116,7 +122,6 @@ echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
 echo ""
 
 # If we are running in GitPod, then show the connection information.
-GP="$(which gp)"
 if [ "$GP" != "" ]; then
-  "$SCRIPT_DIR"/showGitPodInfo.bash
+  source "$SCRIPT_DIR"/showGitPodInfo.bash
 fi
