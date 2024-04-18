@@ -57,19 +57,19 @@ if [ ! -d ~/.fd2 ]; then
 fi
 
 # Create the dist directories if they do not exist
-if [ ! -d "$FD2_PATH/modules/farm_fd2/dist" ]; then
+if [ ! -d "./modules/farm_fd2/dist" ]; then
   echo "Creating the modules/farm_fd2/dist directory."
-  mkdir "$FD2_PATH/modules/farm_fd2/dist"
+  mkdir "./modules/farm_fd2/dist"
   echo "  Created."
 fi
-if [ ! -d "$FD2_PATH/modules/farm_fd2_examples/dist" ]; then
+if [ ! -d "./modules/farm_fd2_examples/dist" ]; then
   echo "Creating the modules/farm_fd2_examples/dist directory."
-  mkdir "$FD2_PATH/modules/farm_fd_examples/dist"
+  mkdir "./modules/farm_fd_examples/dist"
   echo "  Created."
 fi
-if [ ! -d "$FD2_PATH/modules/farm_fd2_school/dist" ]; then
+if [ ! -d "./modules/farm_fd2_school/dist" ]; then
   echo "Creating the modules/farm_fd2_school/dist directory."
-  mkdir "$FD2_PATH/modules/farm_fd_school/dist"
+  mkdir "./modules/farm_fd_school/dist"
   echo "  Created."
 fi
 
