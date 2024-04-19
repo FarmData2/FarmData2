@@ -139,6 +139,6 @@ echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
 echo ""
 
 # If we are running in GitPod, then show the connection information.
-if [ "$GP" != "" ]; then
-  "$SCRIPT_DIR"/showGitPodInfo.bash
-fi
+#if [ "$GP" != "" ]; then
+#  "$SCRIPT_DIR"/showGitPodInfo.bash
+#fi
