@@ -10,6 +10,8 @@ source "$SCRIPT_DIR/colors.bash"
 
 safe_cd "$REPO_ROOT_DIR"
 
+echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
+
 # Ensuring this script is not being run as root.
 RUNNING_AS_ROOT=$(id -un | grep "root")
 if [ -n "$RUNNING_AS_ROOT" ]; then
@@ -36,8 +38,7 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
   echo "  setting in Docker Desktop -> Settings -> Advanced is enabled."
   exit 255
 fi
-
-echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
+echo "  Found it."
 
 # Get the name of the directory containing the FarmData2 repo.
 # This is the FarmData2 directory by default, but may have been
