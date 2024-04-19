@@ -35,10 +35,19 @@ echo "  Configuring git information..."
 echo "    The following information will be associated with GitHub commits"
 echo "    that you make from the FarmData2 development environment."
 echo ""
-read -rp "    Name: " GIT_USER
+
+CONFIRM="N"
+while [ "${CONFIRM,,}" != "y" ]; do
+  read -rp "    Name (user.name): " GIT_USER
+  read -rp "    Email (user.email): " GIT_EMAIL
+  read -rp "    Is this information correct? (Y/n) " CONFIRM
+done
 git config --global user.name "$GIT_USER"
-read -rp "    Email: " GIT_EMAIL
 git config --global user.email "$GIT_EMAIL"
+echo ""
+echo "    Setting the upstream remote..."
+git remote add upstream https://github.com/FarmData/FarmData2.git
+echo "    Set."
 echo "  Configured."
 
 echo ""
