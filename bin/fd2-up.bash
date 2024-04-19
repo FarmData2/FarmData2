@@ -98,15 +98,15 @@ echo "  Running on a $PROFILE host."
 if [[ "$PROFILE" == "gitpod" ]]; then
   echo "Running fd2-up.gitpod.bash..."
   source "$SCRIPT_DIR/fd2-up.gitpod.bash"
-  echo "fd2-up.gitpod.bash done."
+  echo "  Done."
 elif [[ "$PROFILE" == "macos" ]]; then
   echo "Running fd2-up.macos.bash..."
   source "$SCRIPT_DIR/fd2-up.macos.bash"
-  echo "fd2-up.macos.bash done."
+  echo " Done."
 else
   echo "Running fd2-up.linux.bash..."
   source "$SCRIPT_DIR/fd2-up.linux.bash"
-  echo "fd2-up.linux.bash done."
+  echo " Done."
 fi
 
 # Delete any of the existing containers.
@@ -137,8 +137,3 @@ echo "  fd2dev container configured and ready."
 echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
 
 echo ""
-
-# If we are running in GitPod, then show the connection information.
-#if [ "$GP" != "" ]; then
-#  "$SCRIPT_DIR"/showGitPodInfo.bash
-#fi
