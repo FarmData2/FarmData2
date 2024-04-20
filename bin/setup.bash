@@ -64,6 +64,7 @@ echo "        - Y"
 echo "      - How would you like to authenticate GitHub CLI?"
 echo "        - Login with a web browser"
 echo "          - Use your GitHub username and password to log in."
+echo ""
 gh auth login --hostname GitHub.com
 echo "  Authenticated."
 
