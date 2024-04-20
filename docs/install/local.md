@@ -4,7 +4,7 @@ The FarmData2 Development Environment can be run locally on your machine. This a
 
 ## Dependencies
 
-Running the FarmData2 Development Environment locally requires that you install the following dependencies:
+Running a FarmData2 Development Environment locally requires that you install the following dependencies:
 
 1. [Docker Desktop](https://docs.docker.com/desktop/)
    - If you are using Windows be sure not to miss the step of [turning on the WSL 2 feature on Windows](https://learn.microsoft.com/en-us/windows/wsl/install).
@@ -15,9 +15,9 @@ Running the FarmData2 Development Environment locally requires that you install 
    - If git is not installed, visit [git Downloads](https://git-scm.com/downloads) to install git.
      - For Windows, you will need to install the Linux version of git within WSL rather than the Windows version of git.
 
-## Creating the FarmData2 Development Environment
+## Creating a FarmData2 Development Environment Locally
 
-Use the following steps to create the FarmData2 Development Environment on your local machine:
+Use the following steps to create a FarmData2 Development Environment on your local machine:
 
 1. Ensure that Docker Desktop is running.
 1. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
@@ -43,14 +43,14 @@ Use the following steps to create the FarmData2 Development Environment on your 
 
 ## Stopping a FarmData2 Development Environment Locally
 
-To stop a running instance of the FarmData2 Development Environment on your local machine:
+To stop a running FarmData2 Development Environment on your local machine:
 
 1. In a terminal on your local machine (use a WSL terminal if on Windows):
    1. `cd` into your FarmData2 repository directory.
    1. Run the command:
       - `bin/fd2-down.bash`
 
-## Restarting the FarmData2 Development Environment Locally
+## Restarting a FarmData2 Development Environment Locally
 
 After you have created a FarmData2 Development Environment on your local machine, it is much faster and easier to restart it.
 
@@ -67,7 +67,4 @@ After you have created a FarmData2 Development Environment on your local machine
      - `localhost:5901`
 1. When you are done working:
    1. Push the branch you are working on to your GitHub as a backup.
-   1. Stop the FarmData2 Development Environment:
-      1. `cd` into your FarmData2 repository directory.
-      1. Run the command:
-         - `bin/fd2-down.bash`
+   1. [Stop the FarmData2 Development Environment](#stopping-a-farmdata2-development-environment-locally)

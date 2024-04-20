@@ -4,9 +4,9 @@ There are two ways to connect to the linux-based FarmData2 Development Environme
 
 ## Connect Using Your Web Browser
 
-Connecting with your web browser is the easiest way to connect to the FarmData2 Development Environment. There are no additional dependencies to install and the linux desktop will appear inside your browser window.
+Connecting with your web browser is the easiest way to connect to a FarmData2 Development Environment. There are no additional dependencies to install and the linux desktop will appear inside your browser window.
 
-There are a few things to know about connecting to the FarmData2 Development Environment in your browser.
+There are a few things to know about connecting to a FarmData2 Development Environment in your browser.
 
 - There is a "noVNC Menu" that can be opened at the left edge of the desktop.
 
@@ -18,7 +18,7 @@ There are a few things to know about connecting to the FarmData2 Development Env
 
 ## Connect Using a VNC Client
 
-You can also connect to the FarmData2 Development Environment using a VNC Client. To do so, you will need to install a VNC client such as the [Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/) on your local machine.
+You can also connect to a FarmData2 Development Environment using a VNC Client. To do so, you will need to install a VNC client such as the [Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/) on your local machine.
 
 The main advantage of using a VNC client as opposed to connecting in your browser, is that you will be able to copy and paste between your host machine and the FarmData2 Development Environment more easily.
 

@@ -1,10 +1,10 @@
 # Running the FarmData2 Development Environment in GitPod
 
-When the FarmData2 Development Environment is run in GitPod you will use your browser to connect to the linux-based desktop using your browser.
+When a FarmData2 Development Environment is run in GitPod you will use your browser to connect to the linux-based desktop using your browser.
 
-## Creating the GitPod Workspace
+## Creating a FarmData2 Development Environment Workspace
 
-Use the following steps to create a _GitPod workspace_ for the FarmData2 Development Environment:
+Use the following steps to create a FarmData2 Development Environment in a _GitPod workspace_:
 
 1. Sign up for a free [GitPod account](https://gitpod.io/login/).
    - Use your GitHub credentials to log in.
@@ -31,7 +31,7 @@ Use the following steps to create a _GitPod workspace_ for the FarmData2 Develop
 1. Click the _three vertical dots_ again.
 1. Select "Stop" - this will shutdown your workspace and close the FarmData2 Development Environment as well.
 
-## Restarting the FarmData2 Development Environment Workspace
+## Restarting a FarmData2 Development Environment Workspace
 
 After you have created a GitPod workspace for the FarmData2 Development Environment, it is much faster and easier to restart it.
 
