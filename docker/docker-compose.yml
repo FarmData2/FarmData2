@@ -35,9 +35,6 @@ services:
       XDEBUG_CONFIG: discover_client_host=yes
 
   fd2dev:
-    depends_on:
-      - db
-      - farmos
     image: farmdata2/fd2dev:fd2.8
     container_name: fd2_dev
     init: true

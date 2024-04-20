@@ -10,6 +10,8 @@ source "$SCRIPT_DIR/colors.bash"
 
 safe_cd "$REPO_ROOT_DIR"
 
+echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
+
 # Ensuring this script is not being run as root.
 RUNNING_AS_ROOT=$(id -un | grep "root")
 if [ -n "$RUNNING_AS_ROOT" ]; then
@@ -26,8 +28,7 @@ if [ "$HOST" == "/fd2_dev" ]; then
   exit 255
 fi
 
-# Check that /var/run/docker.sock exists and then symlink it as
-# ~/.contconf/docker.sock so that it can be mounted the same in WSL.
+# Check that /var/run/docker.sock exists
 echo "Checking for docker.sock..."
 SYS_DOCKER_SOCK=$(ls /var/run/docker.sock 2> /dev/null)
 if [ -z "$SYS_DOCKER_SOCK" ]; then
@@ -37,8 +38,7 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
   echo "  setting in Docker Desktop -> Settings -> Advanced is enabled."
   exit 255
 fi
-
-echo -e "${UNDERLINE_BLUE}Starting FarmData2 development environment...${NO_COLOR}"
+echo "  Found it."
 
 # Get the name of the directory containing the FarmData2 repo.
 # This is the FarmData2 directory by default, but may have been
@@ -57,11 +57,31 @@ if [ ! -d ~/.fd2 ]; then
   echo "  The ~/.fd2 configuration directory created."
 fi
 
-# Determine the host operating system.
-echo "Detecting host Operating System..."
-OS=$(uname -a)
+# Create the dist directories if they do not exist
+if [ ! -d "$FD2_PATH"/modules/farm_fd2/dist ]; then
+  echo "Creating the modules/farm_fd2/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2/dist
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH"/modules/farm_fd2_examples/dist ]; then
+  echo "Creating the modules/farm_fd2_examples/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2_examples/dist
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
+  echo "Creating the modules/farm_fd2_school/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2_school/dist
+  echo "  Created."
+fi
+
+# Determine the host on which we are running.
+echo "Detecting host..."
+GP="$(which gp)" # Check for GitPod which will have gp command.
+OS=$(uname -a)   # Check for other OS's
 PROFILE=
-if [[ "$OS" == *"Darwin"* ]]; then
+if [ "$GP" != "" ]; then
+  PROFILE=gitpod
+elif [[ "$OS" == *"Darwin"* ]]; then
   PROFILE=macos
 elif [[ "$OS" == *"microsoft"* ]] || [[ "$OS" == *"Microsoft"* ]]; then
   # Note that this is before Linux because if running in WSL
@@ -76,14 +96,18 @@ else
 fi
 echo "  Running on a $PROFILE host."
 
-if [[ "$PROFILE" == "macos" ]]; then
+if [[ "$PROFILE" == "gitpod" ]]; then
+  echo "Running fd2-up.gitpod.bash..."
+  source "$SCRIPT_DIR/fd2-up.gitpod.bash"
+  echo "  Done."
+elif [[ "$PROFILE" == "macos" ]]; then
   echo "Running fd2-up.macos.bash..."
   source "$SCRIPT_DIR/fd2-up.macos.bash"
-  echo "fd2-up.macos.bash done."
+  echo " Done."
 else
   echo "Running fd2-up.linux.bash..."
   source "$SCRIPT_DIR/fd2-up.linux.bash"
-  echo "fd2-up.linux.bash done."
+  echo " Done."
 fi
 
 # Delete any of the existing containers.
@@ -100,7 +124,7 @@ docker compose up -d "$@"
 
 echo "Rebuilding the drupal cache..."
 sleep 3 # give site time to come up before clearing the cache.
-docker exec -it fd2_farmos drush cr
+docker exec -it fd2_farmos drush cr &> /dev/null
 
 echo "Waiting for fd2dev container configuration and startup..."
 NO_VNC_RESP=$(curl -Is localhost:6901 | grep "HTTP/1.1 200 OK")
@@ -111,4 +135,6 @@ if [ "$NO_VNC_RESP" == "" ]; then
 fi
 echo "  fd2dev container configured and ready."
 
-echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
+echo -e "${UNDERLINE_BLUE}FarmData2 Development Environment started${NO_COLOR}"
+
+echo ""
