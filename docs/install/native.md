@@ -4,6 +4,4 @@ Use of the FarmData2 Development Environment, either via GitPod or a local insta
 
 This approach is not currently supported by the project maintainers.
 
-However, a community forum has been created on the [FarmData2 Zulip](https://farmdata2.zulipchat.com/) for those pursuing this approach to collaborate and share information and tips.
-
-- [developer native install stream](https://farmdata2.zulipchat.com/#narrow/stream/434384-developer-native-install)
+However, the [developer native install stream](https://farmdata2.zulipchat.com/#narrow/stream/434384-developer-native-install) has been create as a community forum on the [FarmData2 Zulip](https://farmdata2.zulipchat.com/) for those pursuing this approach to collaborate and share information and tips.

@@ -18,15 +18,11 @@ Use the following steps to create a _GitPod workspace_ for the FarmData2 Develop
 1. Visit the [new GitPod workspace page](https://gitpod.io/new) and paste the URL of your FarmData2 fork into the "Select a repository" search box and click the search result.
 1. Click "Continue".
 1. After a few minutes a terminal window will open in your browser. This document will refer to this terminal as the _GitPod Terminal_.
-
    1. The GitPod Terminal will display information about starting the FarmData2 Development Environment, including about "Starting containers...".
    1. After another few minutes the containers will have started and the GitPod Terminal will display information about how to connect to the FarmData2 Development Environment.
-
       There are two ways that you can connect to the FarmData2 Development Environment:
-
       - Connect using your web browser by clicking the `https` link given in the output and then clicking the "Connect" button on the page that appears. See the [Connect Using Your Web Browser](connecting.md#connect-using-your-web-browser) section for additional information.
       - Connect using a VNC client by following the instructions in the output. See the [Connect Using a VNC Client](connecting.md#connect-using-a-vnc-client) section for additional information.
-
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md)
 1. Visit [your GitPod workspaces](https://gitpod.io/workspaces/)
    - Your "farmdata2" workspace will appear here with a green dot to its left, indicating that it is running.
