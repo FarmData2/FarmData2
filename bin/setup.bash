@@ -13,7 +13,7 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containi
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 safe_cd "$REPO_ROOT_DIR"
 
-echo "Setting up FarmData2 dev environment..."
+echo "Setting up the FarmData2 Development Environment..."
 safe_cd "$REPO_ROOT_DIR"
 
 echo "  Installing npm dependencies..."
@@ -40,7 +40,8 @@ CONFIRM="N"
 while [ "${CONFIRM,,}" != "y" ]; do
   read -rp "    Name (user.name): " GIT_USER
   read -rp "    Email (user.email): " GIT_EMAIL
-  read -rp "    Is this information correct? (Y/n) " CONFIRM
+  echo ""
+  read -rp "    Is the above information correct? (Y/n) " CONFIRM
 done
 git config --global user.name "$GIT_USER"
 git config --global user.email "$GIT_EMAIL"

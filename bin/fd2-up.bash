@@ -135,6 +135,6 @@ if [ "$NO_VNC_RESP" == "" ]; then
 fi
 echo "  fd2dev container configured and ready."
 
-echo -e "${UNDERLINE_BLUE}FarmData2 development environment started${NO_COLOR}"
+echo -e "${UNDERLINE_BLUE}FarmData2 Development Environment started${NO_COLOR}"
 
 echo ""
