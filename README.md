@@ -54,4 +54,4 @@ FarmData2 is thankful to the following organizations for their in-kind and finan
 
 ![GPL V3 or Later](https://www.gnu.org/graphics/gplv3-or-later-sm.png 'GPL V3 or later') All executable code in the FarmData2 project are licensed under the [GNU General Public License Version 3 or later](https://www.gnu.org/licenses/gpl.txt)
 
-More complete information about the licenses that apply to the contents of the FarmData2 repository and the agreement which governs contributions to the FarmData2 repository can be found in the [LICENSE.md](LICENSE.md) file.
+More complete information about the licenses and agreements that apply to the FarmData2 repository can be found in the [LICENSE.md](LICENSE.md) file.
