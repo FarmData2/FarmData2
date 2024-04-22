@@ -30,7 +30,7 @@ For those preferring a managed approach [Farmier](https://farmier.com/) offers a
 
 The FarmData2 community communicates on the [FarmData2 Zulip Chat](https://farmdata2.zulipchat.com). Feel free to get in touch there with questions, comments and suggestions.
 
-Feature requests and Bug Reports related to the operation of FarmData module can be discussed in the [FarmData2 Zulip Chat](https://farmdata2.zulipchat.com) or reported in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) on GitHub.
+Feature requests and bug reports related to the operation of the FarmData module can be discussed in the [FarmData2 Zulip Chat](https://farmdata2.zulipchat.com) or reported in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) on GitHub.
 
 ## Contributing to FarmData2
 
