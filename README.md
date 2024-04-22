@@ -1,6 +1,6 @@
 # FarmData2
 
-FarmData2 aims to support the day-to-day operation of diversified vegetable farms while facilitating the record keeping necessary for organic certification and for the study of sustainable farming practices. For example, forms like those shown below provide quick data entry for operations at the time they occur:
+Welcome to FarmData2! We aim to support the day-to-day operation of diversified vegetable farms while facilitating the record keeping necessary for organic certification and for the study of sustainable farming practices. For example, FarmData2 forms like those shown below enable farm workers to quickly and reliably enter data about common operations at the time they occur:
 
 <table border=0>
   <tr>
