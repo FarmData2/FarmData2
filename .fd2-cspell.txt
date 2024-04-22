@@ -14,6 +14,7 @@ dockerlint
 drupalcode
 drush
 entrypoints
+Farhan
 farmadata
 farmdata
 farmos
@@ -46,6 +47,8 @@ saithodev
 setsid
 shellcheck
 shfmt
+Siddiqui
+Steiman
 toplevel
 transplantings
 unplugin
