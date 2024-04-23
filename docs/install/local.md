@@ -2,6 +2,10 @@
 
 The FarmData2 Development Environment can be run locally on your machine. This approach will require that you install some dependencies on your machine.
 
+## Install Help
+
+If you run into problems during the install visit the dedicated [install stream](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and hopefully solved the problem you are experiencing. If you don't find a solution, post a summary of your problem and the community will help.
+
 ## Dependencies
 
 Running a FarmData2 Development Environment locally requires that you install the following dependencies:

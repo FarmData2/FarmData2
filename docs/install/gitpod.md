@@ -2,6 +2,10 @@
 
 When a FarmData2 Development Environment is run in GitPod you will use your browser to connect to the linux-based desktop using your browser.
 
+## Install Help
+
+If you run into problems during the install visit the dedicated [install stream](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and hopefully solved the problem you are experiencing. If you don't find a solution, post a summary of your problem and the community will help.
+
 ## Creating a FarmData2 Development Environment Workspace
 
 Use the following steps to create a FarmData2 Development Environment in a _GitPod workspace_:
