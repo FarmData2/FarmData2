@@ -37,7 +37,7 @@ Feature requests and bug reports related to the operation of the FarmData module
 If you are interested in contributing to the development of FarmData2, please read the [Contributing Guide](CONTRIBUTING.md), which:
 
 - describes some of the ways to contribute.
-- explains how to get started, including how to install the FarmData2 Development Environment.
+- explains how to get started, including [how to install the FarmData2 Development Environment](INSTALL.md).
 - outlines the workflow that FarmData2 uses for creating, reviewing and merging pull requests.
 
 ## Support for FarmData2
