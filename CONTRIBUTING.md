@@ -151,30 +151,59 @@ Depending upon what you are working on, one of the following guides may be helpf
 - [Working on Infrastructure](docs/contributing/infrastructure.md)
 - [Working on a Library](docs/contributing/libraries.md)
 
-### 6. Commit your Changes
+### 6. Commit your Changes to your Feature Branch
 
-- Use a commit message that has some meaning to you.
+Each time you complete a _nameable unit of work_ (e.g. a function, a test, adding a form element, etc.) commit the changes to your feature branch using a commit message that will help you identify the commit if you need to roll back to that commit later.
 
-  - Will help you go back if you need to later.
+```bash
+git stage <files>
+git commit -m "message that describes the changes"
+```
 
-- pre-commit checks
-  - resolve, re-stage, try commit again
-- running individual checks by hand
+When you make your commit, a _pre-commit git hook_ in the FarmData2 Development Environment will run and perform a set of checks _on the files that you are committing_.
 
-Consider pushing and creating a draft Pull Request including
+These checks include things like:
+
+- Checking code for:
+  - Proper formatting
+  - Spelling errors
+  - Linting issues (i.e. common coding or stylistic mistakes)
+  - Correctness (by running both new and existing tests)
+- Checking documentation for:
+  - Spelling errors
+    -Broken links
+  - Use of inclusive language
+
+If any of the pre-commit checks fail, the reasons for the failure will be displayed and the commit will not be made.
+
+If a commit fails you will need to:
+
+- Address the reason for the failure.
+- Stage any files that you modified in addressing the failure.
+- Try the commit again.
+
+### 7. Push
+
+### 8. Create a Draft Pull Request
 
 - Description
 - Closes #123 footers
 - co-author footers
   Repeat
+
   Mark your draft pull request ready for review
   Maintainer will review and take one of three actions
+
 - merge into development with a conventional commit or
 - provide feedback and mark as draft again or
 - close
+
   Respond to comments, suggestions, requests for changes
+
   Update Pull Request with additional changes
+
   Return to prior step... mark as ready for review
+
   Eventually maintainer will merge development into production
 
 ===
