@@ -20,7 +20,11 @@ The `fd2dev` user belongs to the following groups::
 
 ## farmOS Credentials
 
-You can log into the farmOS instance running in the FarmData2 Development Environment using the following credentials:
+You can log into the farmOS instance running in the FarmData2 Development Environment by connecting the browser to:
+
+- [http://farmos](http://farmos)
+
+and using any of the following credentials:
 
 - The Drupal Admin User:
   - User: `admin`
