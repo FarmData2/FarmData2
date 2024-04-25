@@ -1,5 +1,7 @@
 # Installing the FarmData2 Development Environment
 
+This document describes the installation of the FarmData2 Development Environment. If you are interested in installing FarmData2 as a user, please see the [Using FarmData2](README.md#using-farmdata2) section in the [README.md](README.md) document.
+
 FarmData2 provides a fully containerized Linux-based development environment for working on the FarmData2 project. Using this FarmData2 Development Environment ensures that you have the correct versions of all of the tools, libraries and other dependencies needed to do FarmData2 development.
 
 <center>
