@@ -130,6 +130,7 @@ All of the changes that you would like to contribute must be contained in a _fea
 Use the following commands to create and switch to a feature branch. Be sure to replace the text `MyFeatureBranch` with a descriptive name based on the issue you are working on.
 
 ```bash
+git switch development
 git branch MyFeatureBranch
 git switch MyFeatureBranch
 git status
@@ -160,7 +161,9 @@ git stage <files>
 git commit -m "message that describes the changes"
 ```
 
-When you make your commit, a _pre-commit git hook_ in the FarmData2 Development Environment will run and perform a set of checks _on the files that you are committing_.
+#### Pre-Commit Checks
+
+When you make your commit, a _pre-commit git hook_ in the FarmData2 Development Environment will run and perform a set of checks _on the files that you are committing_. Only the files that you have staged for the commit will be checked.
 
 These checks include things like:
 
@@ -168,10 +171,10 @@ These checks include things like:
   - Proper formatting
   - Spelling errors
   - Linting issues (i.e. common coding or stylistic mistakes)
-  - Correctness (by running both new and existing tests)
+  - Correctness (both new and existing tests for staged files are run)
 - Checking documentation for:
   - Spelling errors
-    -Broken links
+  - Broken links
   - Use of inclusive language
 
 If any of the pre-commit checks fail, the reasons for the failure will be displayed and the commit will not be made.
@@ -182,153 +185,78 @@ If a commit fails you will need to:
 - Stage any files that you modified in addressing the failure.
 - Try the commit again.
 
-### 7. Push
+### 7. Push Your Feature Branch
+
+Push your feature branch to your `origin` repository on GitHub. Be sure to replace the text `MyFeatureBranch` with the name of your feature branch.
+
+```bash
+git push origin MyFeatureBranch
+```
+
+At this point you may:
+
+- go back to [Step #5](#5-make-and-test-your-changes) and add more changes to your feature branch.
+- continue to the next step and create a draft pull request to let the maintainers know what you are working on and get some early feedback.
+- go to step [Step #10](#10-merge-development-branch-into-your-feature-branch) and then step [Step #11](#11-mark-your-pull-request-as-ready-for-review) to let the maintainers know your pull request is ready for them to review and consider merging it.
 
 ### 8. Create a Draft Pull Request
 
-- Description
-- Closes #123 footers
-- co-author footers
-  Repeat
+As you are working on your change you can create a [_draft pull request_](https://github.blog/2019-02-14-introducing-draft-pull-requests/). Creating a draft pull request lets the maintainers know you are working and allows them to see your code, while also making it clear that your pull request is still a work in progress and not ready for a full review. Draft pull requests are a great way get some early discussion and feedback on your work.
 
-  Mark your draft pull request ready for review
-  Maintainer will review and take one of three actions
+To create a draft pull request:
 
-- merge into development with a conventional commit or
-- provide feedback and mark as draft again or
-- close
+- Visit your fork of FarmData2 (i.e. your `origin`) on GitHub
+- [Create the draft pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) for your feature branch.
+  - Following the above directions be sure to use:
+    - the `upstream` FarmData2 repository as the "base repository"
+    - `development` as the "base branch"
+    - your `origin` as the "head repository"
+    - your feature branch as the "compare branch"
 
-  Respond to comments, suggestions, requests for changes
+When you create a pull request for FarmData2 you will need to include:
 
-  Update Pull Request with additional changes
+- Title - a concise summary of the pull request.
+- Description - a longer description of the changes you made. This should include:
+  - why you made the changes.
+  - your approach to implementation.
+  - any possible complications caused by your changes.
+  - additional thoughts or questions you have for the maintainers.
+  - steps that a reviewer should take to review your changes.
+- Closes tags - if your pull request closes any issues, list them here by including one line like the following for each issue that is closed. Include a blank line before your first `Closes` tag, and no blank lines between multiple `Closes` tags.
+  - `Closes #123`
+- Co-author footers - if you have any co-authors, list them here by including one line like the following for each co-author. Include a blank line before your first co-author footer, and no blank lines between multiple co-author footers. You can use this nifty little tool to [generate your co-author footers](https://coauthoredby.netlify.app/).
+  - `Co-authored-by: Awesome Contributor <12345678+awesomec@users.noreply.github.com>`
 
-  Return to prior step... mark as ready for review
+### 9. Discuss & Repeat
 
-  Eventually maintainer will merge development into production
+If your pull request is ready for review, go to step [Step #11](#11-mark-your-pull-request-as-ready-for-review).
 
-===
+Otherwise, go back to [Step #5](#5-make-and-test-your-changes) and continue working on your changes. But, be sure to monitor your draft pull request for comments, feedback or questions from the maintainers and respond to them in a timely manner.
 
-TODO: NEED TO EXPAND, DIVIDE, REVISE AND CLEAN THIS UP!
+### 10. Merge `development` Branch into your Feature Branch
 
-## Connecting
+It is possible that the `development` branch has had new commits added to it since you began your work. These changes may conflict with your changes. So you should merge the current `development` branch into your feature branch and resolve any merge conflicts.
 
-- Dev server
+```bash
+git switch development
+git pull --ff-only upstream development
+git push origin development
+git switch MyFeatureBranch
+git merge development
+<Resolve Any Merge Conflicts>
+git push origin MyFeatureBranch
+```
 
-  - npm run dev:fd2 (or examples, or school)
-  - localhost:5173/fd2/main/ (or fd2_examples/main/ or fd2_school/main/)
-    - note: trailing / is important!
-    - changes are live
+### 11. Mark Your Pull Request as Ready for Review
 
-- Preview server
+When you think you have finished your changes and are ready to have the maintainers review them [mark your pull request as ready for review](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request#marking-a-pull-request-as-ready-for-review)
 
-  - npm run preview:fd2 (or examples, or school)
-  - localhost:4173/fd2/main/ (or fd2_examples/main/ or fd2_school/main/)
-    - note: trailing / is important!
-    - changes are not live (tests bundling)
-      - use npm run watch:fd2 (or examples, or school) to see changes live
+Maintainer will review (or assign reviewers) and then take one of three actions
 
-- Live server
+- If everything looks good, they will merge your changes into the `development` branch.
+- If they have questions or would like to see additional changes they will comment on the pull request and mark it as a draft pull request again. In this case you will want to review the feedback and respond to it in the comments and/or by making additional changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and pushing them ([Step #7](#7-push-your-feature-branch)) to update your pull request.
+- If the maintainers determine that your pull request is not suitable for merging into development (even with changes), they will close the pull request with a comment explaining their decision.
 
-  - npm run build:fd2 (or examples, or school)
-  - farmos
-  - changes are not live (running from build)
-    - use npm run watch:fd2 (or examples, or school) to see changes live
+### 12. Respond to comments, suggestions, requests for changes
 
-## Pre-commit checks
-
-- npm run check:staged
-- If tests do not complete... fd2-down.bash, fd2-up.bash
-
-  - usually a zombie dev server out there.
-
-- cspell runs on all files
-  - use a known word or add to .fd2-cspell.txt if unavoidable.
-- prettier runs on all files that it knows how to format.
-  - formatting is automatically applied.
-- shellcheck runs on all bash scripts
-- shfmt runs on all bash scripts
-  - formatting is automatically applied.
-- markdown-link-check on all md files
-- eslint on all .vue .js .jsx .cjs .mjs .json .md
-- e2e tests (in modules)
-  - all cy.js tests in entrypoint directory for a staged .vue
-  - all .cy.js files that are staged.
-- unit tests (in modules)
-  - all lib.\*.unit.cy.js tests in entrypoint directory if lib.js is staged.
-  - all lib.\*.unit.cy.js tests in entrypoint directory that are staged
-- component tests (in components)
-  - all comp.cy.js tests in component directory for a staged .vue
-  - all comp.cy.js files that are staged.
-- unit tests (in library)
-  - all unit.cy.js tests in library directory for a staged .js
-  - all unit.cy.js tests that are staged.
-
-### Development Workflow
-
-To change, modify, update, add to FarmData2
-
-- Prerequisites:
-  - Install Docker Desktop and TigerVNC Viewer
-  - Fork the `FarmData2` upstream repository to your local machine
-  - cd FarmData2/docker
-  - ./fd2-up.bash
-  - connect to localhost:5901 with Tiger VNC viewer
-
-1. Ensure that your `development` branch is synchronized with the `upstream`
-2. Create a new feature branch from the `development` branch
-3. Make and test changes in your feature branch
-4. Commit to your feature branch.
-   - Identify and resolve any issues raised by the pre-commit checks.
-   - Try your commit again as necessary.
-5. Pull and merge any new changes to the `development` branch into your feature branch
-6. Create a pull request to the `development` branch in the upstream
-
-A maintainer will:
-
-1. Review your pull request and provide feedback
-2. If/when appropriate squash merge your pull request into the `development` branch
-   - The maintainer will use a squash merge commit message with a conventional commit message.
-     - valid types are: build, chore, ci, docs, feat, fix, perf, refactor, style, test
-     - valid scopes are: (dev), (comp), (lib), (fd2), (examples), (school)
-     - If a change to farm_fd2 modifies the module it must have type fix or feat.
-       - If the commit message has a scope of (fd2) and a type of fix or feat then:
-         - The merge will create a pre-release `vX.Y.Z-development.n`
-           - X.Y.Z is the semantic version of the next release if it were created at the moment.
-           - n is a sequence number for pre-releases with the same semantic version number.
-         - fix -> patch bump
-         - feat -> minor bump
-         - BREAKING CHANGE -> major bump
-     - Add examples of conventional commits here for reference.
-       - link to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-
-## Creating a GitHub Release of the farm_fd2 Module
-
-When changes warranting a new release have been added to the `development` branch a maintainer will create a new release by:
-
-1. Updating the `production` and `development` branches from the upstream.
-2. Fast-forward merging the latest `development` branch into the `production` branch
-3. Pushing the `production` branch to the upstream
-   - This will create a new release `vX.Y.Z` in GitHub
-     - X.Y.Z is the semantic version of the release
-     - All but the most recent `development` pre-release will be deleted
-     - The `CHANGELOG.md` file in the `production` branch is updated with the changes added
-     - The `production` branch is _backmerged_ into the `development` branch
-   - A release for the farm_fd2 module will be setup in git.drupalcode.org
-     - Code changes to farm_fd2 module will be pushed to the release branch
-     - A tag will be created with the current sem ver number.
-   - The local production and development branches will be updated.
-4. Manually create the drupal release by visiting: <https://www.drupal.org/node/add/project-release/3396323> and selecting the "Release branch or tag" for the new release.
-   - See <https://www.drupal.org/docs/develop/git/git-for-drupal-project-maintainers/creating-a-project-release> for detailed instructions about creating the release.
-
-## Development Utilities
-
-### Getting Log / Asset Type Details
-
-Need to figure out how to use the `library/farmosUtil/printFarmOSLogs.js` script.
-
-## Terminology
-
-- Entry Points
-- Components
-- Libraries
-- etc...
+Monitor your pull request for comments, feedback or questions from the maintainers and respond to them in a timely manner. This may require you to make additional changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and to push them ([Step #7](#7-push-your-feature-branch)) to update your pull request. When you think your pull request has addressed all of the changes requested by the maintainers, you should merge the `development` branch again ([Step #10](#10-merge-development-branch-into-your-feature-branch)) and mark it as ready for review again ([Step #11](#11-mark-your-pull-request-as-ready-for-review))
