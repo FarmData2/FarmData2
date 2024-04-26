@@ -229,7 +229,7 @@ When you create a pull request for FarmData2 you will need to include:
 
 ### 9. Discuss & Repeat
 
-If your pull request is ready for review, go to step [Step #11](#11-mark-your-pull-request-as-ready-for-review).
+If your pull request is ready for review, go to the next step.
 
 Otherwise, go back to [Step #5](#5-make-and-test-your-changes) and continue working on your changes. But, be sure to monitor your draft pull request for comments, feedback or questions from the maintainers and respond to them in a timely manner.
 
@@ -259,4 +259,4 @@ Maintainer will review (or assign reviewers) and then take one of three actions
 
 ### 12. Respond to comments, suggestions, requests for changes
 
-Monitor your pull request for comments, feedback or questions from the maintainers and respond to them in a timely manner. This may require you to make additional changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and to push them ([Step #7](#7-push-your-feature-branch)) to update your pull request. When you think your pull request has addressed all of the changes requested by the maintainers, you should merge the `development` branch again ([Step #10](#10-merge-development-branch-into-your-feature-branch)) and mark it as ready for review again ([Step #11](#11-mark-your-pull-request-as-ready-for-review))
+Monitor your pull request for comments, feedback or questions from the maintainers and respond to them in a timely manner. This may require you to make additional changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and to push them ([Step #7](#7-push-your-feature-branch)) to update your pull request. When you think your pull request has addressed all of the changes requested by the maintainers, you should merge the `development` branch again ([Step #10](#10-merge-development-branch-into-your-feature-branch)) and mark your pull request as ready for review again ([Step #11](#11-mark-your-pull-request-as-ready-for-review))
