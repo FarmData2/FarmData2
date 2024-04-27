@@ -31,6 +31,14 @@ echo "  Set up."
 
 echo ""
 
+echo "  Installing VSCodium extensions..."
+npx json5 .vscode/extensions.json |
+  npx json-cli-tool --path=recommendations --output=newline |
+  xargs -L 1 codium --force --install-extension
+echo "  Installed."
+
+echo ""
+
 echo "  Configuring git information..."
 echo "    The following information will be associated with GitHub commits"
 echo "    that you make from the FarmData2 development environment."

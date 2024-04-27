@@ -7,6 +7,6 @@
     "bierner.markdown-preview-github-styles",
     "timonwong.shellcheck",
     "mkhl.shfmt",
-    "errata-ai.vale-server"
+    "chrischinchilla.vale-vscode"
   ]
 }
