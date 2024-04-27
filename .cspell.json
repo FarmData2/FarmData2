@@ -31,7 +31,9 @@
     "docs/FarmData2.md",
     "modules/**/components.d.ts",
     "modules/**/module/config",
-    "scratch"
+    "scratch",
+    ".vale.ini",
+    ".vale"
   ],
   "enableFiletypes": [
     "dockercompose",
