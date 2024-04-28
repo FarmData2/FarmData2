@@ -28,7 +28,7 @@ Use the following steps to create a FarmData2 Development Environment on your lo
 
 1. Check that Docker Desktop is running.
 1. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
-1. Click the <!-- vale RedHat.DoNotUseTerms = NO -->green<!-- vale RedHat.DoNotUseTerms = YES--> "Code" button and copy the HTTPS URL of your fork. This URL should have your GitHub username in it.
+1. Click the <!-- vale RedHat.DoNotUseTerms = NO : green is associated with the "Code" button -->green<!-- vale RedHat.DoNotUseTerms = YES--> "Code" button and copy the HTTPS URL of your fork. This URL should have your GitHub username in it.
 1. In a terminal on your local machine (use a WSL terminal if on Windows):
    1. Clone your fork of the FarmData2 repository:
       - `git clone <URL>`

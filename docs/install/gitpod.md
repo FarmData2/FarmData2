@@ -29,12 +29,7 @@ Use the following steps to create a FarmData2 Development Environment in a _GitP
       - Connect by using a VNC client by following the instructions in the output. See the [Connect Using a VNC Client](connecting.md#connect-using-a-vnc-client) section for more information.
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md)
 1. Visit [your GitPod workspaces](https://gitpod.io/workspaces/)
-   <!-- vale RedHat.DoNotUseTerms = NO -->
-
-   - Your "farmdata2" workspace will appear here with a green dot to its left, indicating that the workspace is running.
-
-   <!-- vale RedHat.DoNotUseTerms = YES -->
-
+   - Your "farmdata2" workspace will appear here with a <!-- vale RedHat.DoNotUseTerms = NO : green is associated with the dot -->green<!-- vale RedHat.DoNotUseTerms = YES --> dot to its left, indicating that the workspace is running.
 1. Click the _three vertical dots_ to the right of your farmdata2 workspace.
 1. Select "Pin" - this will keep your workspace from being deleted if inactive for two weeks.
 1. Click the _three vertical dots_ again.
