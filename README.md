@@ -1,6 +1,3 @@
-<!-- vale Google.Headings = NO -->
-<!-- FarmData2 triggers this rule all of the time. -->
-
 # FarmData2
 
 Welcome to FarmData2. FarmData2 aims to support the day-to-day operation of diversified vegetable farms while facilitating the record keeping necessary for organic certification and for the study of sustainable farming practices. For example, FarmData2 forms enable farm workers to efficiently and reliably enter data about common operations at the time they occur:
@@ -85,5 +82,3 @@ FarmData2 is thankful to the following organizations for their in-kind and finan
 <!-- vale write-good.Passive = YES -->
 
 Complete information about the licenses and agreements that apply to the FarmData2 repository is in the [LICENSE.md](LICENSE.md) file.
-
-<!-- vale Google.Headings = YES -->
