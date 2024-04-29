@@ -1,28 +1,28 @@
 # Connecting to the FarmData2 Development Environment
 
-There are two ways to connect to the linux-based FarmData2 Development Environment.
+You can connect to the Linux-based FarmData2 Development Environment in two ways. You can connect [by using your web browser](#connect-by-using-your-web-browser) or you can connect [by using a VNC Client](#connect-by-using-a-vnc-client).
 
-## Connect Using Your Web Browser
+## Connect by Using Your Web Browser
 
-Connecting with your web browser is the easiest way to connect to a FarmData2 Development Environment. There are no additional dependencies to install and the linux desktop will appear inside your browser window.
+Connecting by using your web browser is the easiest way to connect to a FarmData2 Development Environment. When connecting with your browser, there no dependencies to install on your machine and the Linux desktop will appear inside your browser window.
 
-There are a few things to know about connecting to a FarmData2 Development Environment in your browser.
+When connecting to a FarmData2 Development Environment in your browser there are some things to know.
 
-- There is a "noVNC Menu" that can be opened at the left edge of the desktop.
+- The "noVNC Menu," at the left edge of the window provides useful configuration options:
 
-  - Use the _gear_ icon and set the "Scaling Mode" to "Remote Resizing" to have the desktop automatically fill the browser window.
-  - Use the _full screen_ icon to change the desktop into full screen mode to hide the browser decorations and provide more space for the linux desktop.
-  - Use the _clipboard_ icon to copy and paste information between the FarmData2 Development Environment and your local machine. If copying between your local machine and the FarmData2 Development Environment is something you do frequently you may want to consider [using a VNC Client](#connect-using-a-vnc-client), which does not have this limitation.
+  - Click the _gear_ icon and set the "Scaling Mode" to "Remote Resizing" to have the desktop automatically fill the browser window.
+  - Click the _full screen_ icon to change the desktop into full screen mode to hide the browser decorations and provide more space for the Linux desktop.
+  - By using the _clipboard_ icon you can copy and paste information between the FarmData2 Development Environment and your local machine. If copying between your local machine and the FarmData2 Development Environment is something you do frequently you might want to consider connecting by [using a VNC Client](#connect-by-using-a-vnc-client), which does not have this limitation.
 
-- See the [Keyboard Shortcuts](#keyboard-shortcuts) below for a list of key combinations that can be used within the FarmData2 Development Environment.
+- See the [Keyboard Shortcuts](#keyboard-shortcuts) for a list of key combinations that can be used within the FarmData2 Development Environment.
 
-## Connect Using a VNC Client
+## Connect by using a VNC Client
 
-You can also connect to a FarmData2 Development Environment using a VNC Client. To do so, you will need to install a VNC client such as the [Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/) on your local machine.
+You can also connect to a FarmData2 Development Environment with a VNC Client. To do so, you will need to install a VNC client such as the [Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/) on your local machine.
 
-The main advantage of using a VNC client as opposed to connecting in your browser, is that you will be able to copy and paste between your host machine and the FarmData2 Development Environment more easily.
+The main advantage of a VNC client as opposed to connecting in your browser, is that copy and paste between your host machine and the FarmData2 Development Environment will work naturally.
 
-- See the [Keyboard Shortcuts](#keyboard-shortcuts) below for a list of key combinations that can be used within the FarmData2 Development Environment.
+- See the [Keyboard Shortcuts](#keyboard-shortcuts) for a list of key combinations that can be used within the FarmData2 Development Environment.
 
 ## Keyboard Shortcuts
 
