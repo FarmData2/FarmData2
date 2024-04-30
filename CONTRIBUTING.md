@@ -168,12 +168,7 @@ git commit -m "message that describes the changes"
 
 #### Pre-Commit Checks
 
-<!-- vale alex.ProfanityUnlikely = NO -->
-<!-- hook is standard terminology here. -->
-
-When you make your commit, a _pre-commit git hook_ in the FarmData2 Development Environment will run and perform a set of checks on the files that you are committing.
-
-<!-- vale alex.ProfanityUnlikely = YES -->
+When you make your commit, a <!-- vale alex.ProfanityUnlikely = NO : hook is standard terminology here. -->_pre-commit git hook_<!-- vale alex.ProfanityUnlikely = NO --> in the FarmData2 Development Environment will run and perform a set of checks on the files that you are committing.
 
 These checks include things such as:
 
@@ -187,8 +182,7 @@ These checks include things such as:
   - Broken links
   - Use of inclusive language
 
-<!-- vale alex.ProfanityUnlikely = NO -->
-<!-- failure refers to an automated test not a person here. -->
+<!-- vale alex.ProfanityUnlikely = NO : failure refers to an automated test not a person here. -->
 
 If any of the pre-commit checks fail, the reasons for the failure will be displayed and the commit will not be made.
 
