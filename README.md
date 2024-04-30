@@ -41,11 +41,11 @@ FarmData2 is a plugin module for [farmOS](https://farmos.org/). farmOS is a [Dru
 
 <!-- vale Google.Colons = YES -->
 
-The [Overview of the FarmData2 Codebase](docs/contributing/codebase.md) document provides further details.
-
 ## Contributing to FarmData2
 
-If you are considering contributing to the development of FarmData2, the next step is to read the [Contributing Guide](CONTRIBUTING.md).
+If you are considering contributing to the development of FarmData2, the sequence of steps outlined in the [Contributing Guide](CONTRIBUTING.md) are a great way to get started.
+
+If you are returning or looking for a specific part of the documentation, the [FarmData2 Documentation Index](docs/index.md) provides a comprehensive set of links to all the documentation.
 
 ## Support for FarmData2
 
