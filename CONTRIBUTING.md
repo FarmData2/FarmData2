@@ -171,7 +171,7 @@ git commit -m "message that describes the changes"
 <!-- vale alex.ProfanityUnlikely = NO -->
 <!-- hook is standard terminology here. -->
 
-When you make your commit, a _pre-commit git hook in the FarmData2 Development Environment will run and perform a set of checks \_on the files that you are committing_.
+When you make your commit, a _pre-commit git hook_ in the FarmData2 Development Environment will run and perform a set of checks on the files that you are committing.
 
 <!-- vale alex.ProfanityUnlikely = YES -->
 
