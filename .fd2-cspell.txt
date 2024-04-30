@@ -43,6 +43,7 @@ Pietraszko
 pinia
 preprocess
 printlog
+proselint
 readlink
 rushstack
 saithodev

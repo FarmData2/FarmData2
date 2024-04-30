@@ -1,29 +1,56 @@
 # Working on Documentation
 
-- Details coming soon.
+The FarmData2 documentation is written in [GitHub flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
-==
+The documentation in all the markdown (`.md`) files in FarmData2 are style checked by the [Vale](https://vale.sh/) using the style guides:
 
-Uses the Vale linter.
+- Vale
+- RedHat
+- Google
+- Microsoft
+- alex
+- write-good
+- proselint
 
-If you change .vale.ini then must run vale sync
+## The Vale Linter
 
-How to disable a rule:
+### Turning Off a Rule for a Block of Text
+
+A vale rule can be turned off for a full block of text.
 
 ```html
 <!-- vale RedHat.DoNotUseTerms = NO : give an explanation -->
 You can turn off a specific rule for a block of text.
 <!-- vale RedHat.DoNotUseTerms = YES -->
-
-You can turn off <!-- vale RedHat.DoNotUseTerms = NO : give an explanation -->a specific rule for part of<!-- vale RedHat.DoNotUseTerms = YES --> a block of text.
 ```
 
-Note: Sometimes vale will not detect the disabling of the rules. When this happens try applying it to a larger block of text. For example to an entire bullet in a list.
+Sometimes when `: explanation` is used within the `vale` comment it will not be recognized. In those cases a second comment can be used for the explanation.
 
 ```html
-<!-- vale off : give an explanation -->
-You can turn off all Vale rules for a block of text
-<!-- vale on -->
-
-You can turn off <!-- vale off : give an explanation -->all Vale rules for part of<!-- vale on --> a block of text.
+<!-- vale RedHat.DoNotUseTerms = NO -->
+<!-- give an explanation -->
+You can turn off a specific rule for a block of text.
+<!-- vale RedHat.DoNotUseTerms = YES -->
 ```
+
+### Turning Off a Rule Inline
+
+A vale rule can be turned off inline so that it applies to part of a block of text.
+
+```html
+You can turn off
+<!-- vale RedHat.DoNotUseTerms = NO : give an explanation -->a specific rule for
+part of<!-- vale RedHat.DoNotUseTerms = YES -->
+a block of text.
+```
+
+Note that sometimes vale will not detect the inline disabling of rules. When this happens try disabling the rule for a block of text. For example to an entire bullet in a list.
+
+### Vale Configuration
+
+The `.vale.ini` file provides the configuration for the Vale linter. It determines the rule sets that are used, the types of files that are linted and disables specific rules. See [the Vale Configuration documentation](https://vale.sh/docs/topics/config) for more detail.
+
+If the `.vale.ini` file is modified then before changes will take effect you will need to:
+
+- run the `vale sync` command.
+- restart VSCodium.
