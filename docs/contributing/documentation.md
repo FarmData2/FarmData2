@@ -1,8 +1,17 @@
-# Working on Documentation
+# Documentation Guide
 
 The FarmData2 documentation is written in [GitHub flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
-The documentation in all the markdown (`.md`) files in FarmData2 are style checked by the [Vale](https://vale.sh/) using the style guides:
+The project root directory contains the main documentation files (`README.md`, `CODE_OF_CONDUCT.md`, `LICENSE.md`, `CHANGELOG.md`, and `CONTRIBUTING.md`). All other documentation is contained in the `docs` directory and its sub-directories.
+
+Documentation contained in the `docs/components` and the `docs/libraries` sub-directories documents code details. This documentation is automatically generated from the source code. The details of how that documentation is generated are contained in the appropriate contribution guides:
+
+- [Components Guide](components.md)
+- [Library Guide](libraries.md)
+
+## The Vale Linter
+
+The documentation in all the markdown (`.md`) files in FarmData2 are style checked by [Vale](https://vale.sh/) with the style guides:
 
 - Vale
 - RedHat
@@ -11,8 +20,6 @@ The documentation in all the markdown (`.md`) files in FarmData2 are style check
 - alex
 - write-good
 - proselint
-
-## The Vale Linter
 
 ### Turning Off a Rule for a Block of Text
 
