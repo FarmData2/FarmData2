@@ -4,6 +4,7 @@ bashlint
 Braught
 chgrp
 CHUAU
+Cinos
 contconf
 conventionalcommits
 datacy
