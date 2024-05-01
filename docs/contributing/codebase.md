@@ -16,7 +16,7 @@ libraries
 
 
 
-===
+=== Raw Notes Below ===
 
 FarmData2 is a plugin module for [farmOS](https://farmos.org/).
 
@@ -26,4 +26,4 @@ FarmData2 uses several other tools and technologies. Is uses [GitHub flavored Ma
 
 While, farmOS is a [Drupal](https://www.drupal.org/) application, little of the FarmData2 code requires any knowledge of Drupal.
 
-The [Overview of the FarmData2 Codebase](docs/contributing/codebase.md) document provides further details.
+The [Overview of the FarmData2 Codebase](codebase.md) document provides further details.
