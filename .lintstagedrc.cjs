@@ -232,11 +232,15 @@ module.exports = {
     'shellcheck',
     'shfmt --write --indent 2 --space-redirects',
   ],
-  '**/*.md': [
-    'markdown-link-check --config .markdown-link-check.json --quiet',
-    'vale',
-  ],
-  '*.vue|*.js|*.jsx|*.cjs|*.mjs|*.json|*.md': async (files) => {
+  '**/*.md': async (files) => {
+    const filesToLint = await removeIgnoredFiles(files);
+    return [
+      `markdown-link-check --config .markdown-link-check.json --quiet ${filesToLint}`,
+      `eslint --max-warnings=0 --ext md ${filesToLint}`,
+      `vale ${filesToLint}`,
+    ];
+  },
+  '*.vue|*.js|*.jsx|*.cjs|*.mjs|*.json': async (files) => {
     const filesToLint = await removeIgnoredFiles(files);
     return [`eslint --max-warnings=0 ${filesToLint}`];
   },
