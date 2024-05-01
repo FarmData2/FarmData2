@@ -9,12 +9,33 @@ module.exports = {
     '@vue/eslint-config-prettier/skip-formatting',
     'plugin:json/recommended',
     'plugin:prettier/recommended',
-    'plugin:md/prettier',
   ],
   overrides: [
     {
       files: ['**/*.comp.cy.js', '**/*.unit.cy.js', '**/*.e2e.cy.js'],
       extends: ['plugin:cypress/recommended'],
+    },
+    {
+      files: ['*.md'],
+      extends: ['plugin:md/prettier'],
+      parser: 'markdown-eslint-parser',
+      rules: {
+        'prettier/prettier': ['error', { parser: 'markdown' }],
+        'md/remark': [
+          'error',
+          {
+            plugins: [
+              // From: https://scinos.dev/posts/2020-11-24-eslint-for-markdown/
+              ...require('eslint-plugin-md').configs.prettier.rules[
+                'md/remark'
+              ][1].plugins,
+
+              // List of disabled rules form the preset
+              ['lint-maximum-line-length', false],
+            ],
+          },
+        ],
+      },
     },
   ],
   parserOptions: {
