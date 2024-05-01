@@ -4,24 +4,26 @@ The FarmData2 documentation is written in [GitHub flavored Markdown](https://doc
 
 The project root directory contains the main documentation files (`README.md`, `CODE_OF_CONDUCT.md`, `LICENSE.md`, `CHANGELOG.md`, and `CONTRIBUTING.md`). All other documentation is contained in the `docs` directory and its sub-directories.
 
-Documentation contained in the `docs/components` and the `docs/libraries` sub-directories documents code details. This documentation is automatically generated from the source code. The details of how that documentation is generated are contained in the appropriate contribution guides:
+Documentation contained in the `docs/components` and the `docs/libraries` sub-directories documents code details. This documentation is automatically generated from the source code. The details of how that documentation is written and generated are contained in the appropriate contribution guides:
 
 - [Components Guide](components.md)
 - [Library Guide](libraries.md)
 
-## The Vale Linter
+# test
 
-The documentation in all the markdown (`.md`) files in FarmData2 are style checked by [Vale](https://vale.sh/) with the style guides:
+## Documentation Pre-commit Checks
 
-- Vale
-- RedHat
-- Google
-- Microsoft
-- alex
-- write-good
-- proselint
+All markdown (`.md`) files staged for a commit must pass checks by [markdown-link-check](https://github.com/tcort/markdown-link-check), [Vale](https://vale.sh/), and [eslint-plugin-md](https://github.com/leo-buneev/eslint-plugin-md).
 
-### Turning Off a Rule for a Block of Text
+### Markdown Link Check
+
+Markdown link check visits each link in the documentation to check that the link is valid (Status Code 200). If any link is not valid then the check will fail and the commit will be canceled. To prevent markdown link check from checking a link, add it to the `.markdown-link-check.json` file.
+
+### eslint md/prettier
+
+### Vale
+
+#### Turning Off a Rule for a Block of Text
 
 A vale rule can be turned off for a full block of text.
 
@@ -40,7 +42,7 @@ You can turn off a specific rule for a block of text.
 <!-- vale RedHat.DoNotUseTerms = YES -->
 ```
 
-### Turning Off a Rule Inline
+#### Turning Off a Rule Inline
 
 A vale rule can be turned off inline so that it applies to part of a block of text.
 
@@ -53,7 +55,7 @@ a block of text.
 
 Note that sometimes vale will not detect the inline disabling of rules. When this happens try disabling the rule for a block of text. For example to an entire bullet in a list.
 
-### Vale Configuration
+#### Vale Configuration
 
 The `.vale.ini` file provides the configuration for the Vale linter. It determines the rule sets that are used, the types of files that are linted and disables specific rules. See [the Vale Configuration documentation](https://vale.sh/docs/topics/config) for more detail.
 
