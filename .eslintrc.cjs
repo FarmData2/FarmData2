@@ -24,14 +24,18 @@ module.exports = {
         'md/remark': [
           'error',
           {
+            // From: https://scinos.dev/posts/2020-11-24-eslint-for-markdown/
             plugins: [
-              // From: https://scinos.dev/posts/2020-11-24-eslint-for-markdown/
               ...require('eslint-plugin-md').configs.prettier.rules[
                 'md/remark'
               ][1].plugins,
 
               // List of disabled rules form the preset
               ['lint-maximum-line-length', false],
+
+              // This special plugin is used to allow the syntax <!--eslint ignore <rule>-->.
+              // It has to come last!
+              ['message-control', { name: 'eslint', source: 'remark-lint' }],
             ],
           },
         ],
