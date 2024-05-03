@@ -14,7 +14,7 @@
 - [Local Installation](install/local.md) - guide for installing the FarmData2 Developer Environment on your machine with Docker.
 - [Native Installation](install/native.md) - information about installing the FarmData2 Developer Environment on your machine without Docker.
 - [Developer Environment Setup](install/setup.md) - instructions for setting up the FarmData2 Developer Environment after installation.
-- [Connecting to the Developer Environment] - instructions for connecting to the FarmData2 Developer Environment with a browser or a VNC client.
+- [Connecting to the Developer Environment](install/connecting.md) - instructions for connecting to the FarmData2 Developer Environment with a browser or a VNC client.
 - [Credentials](install/credentials.md) - login credentials for the FarmData2 Developer Environment and its farmOS instance with example data.
 
 ## Contributing
