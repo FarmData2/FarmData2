@@ -35,7 +35,7 @@ services:
       XDEBUG_CONFIG: discover_client_host=yes
 
   fd2dev:
-    image: farmdata2/fd2dev:fd2.8
+    image: farmdata2/fd2dev:fd2.9
     container_name: fd2_dev
     init: true
     volumes:

@@ -4,6 +4,7 @@ bashlint
 Braught
 chgrp
 CHUAU
+Cinos
 contconf
 conventionalcommits
 datacy
@@ -14,9 +15,12 @@ dockerlint
 drupalcode
 drush
 entrypoints
+Farhan
 farmadata
 farmdata
+Farmier
 farmos
+FOSS
 getent
 getopt
 gids
@@ -40,12 +44,15 @@ Pietraszko
 pinia
 preprocess
 printlog
+proselint
 readlink
 rushstack
 saithodev
 setsid
 shellcheck
 shfmt
+Siddiqui
+Steiman
 toplevel
 transplantings
 unplugin

@@ -1,4 +1,12 @@
-# Library
+# Working on a Libraries
+
+- Details coming soon.
+
+- Tour of a Library
+
+=== Raw Notes Below ===
+
+## Library
 
 Javascript library of FarmData2 custom reusable functions.
 

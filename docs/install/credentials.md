@@ -14,13 +14,17 @@ When connecting to the FarmData2 Development Environment you will be automatical
 
 The `fd2dev` user belongs to the following groups::
 
-- `fd2docker` - allowing it to run docker commands using the host's docker daemon.
-- `fd2dev` - allowing it to modify files mounted from the host.
+- `fd2docker` - allowing it to run docker commands by using the host's docker daemon.
+- `fd2dev` - allowing it to change files mounted from the host.
 - `sudo` - allowing it to run commands as root.
 
 ## farmOS Credentials
 
-You can log into the farmOS instance running in the FarmData2 Development Environment using the following credentials:
+You can log in to the farmOS instance running in the FarmData2 Development Environment by connecting the browser to:
+
+- [http://farmos](http://farmos)
+
+and by using any of the following credentials:
 
 - The Drupal Admin User:
   - User: `admin`

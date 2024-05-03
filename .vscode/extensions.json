@@ -6,6 +6,7 @@
     "esbenp.prettier-vscode",
     "bierner.markdown-preview-github-styles",
     "timonwong.shellcheck",
-    "mkhl.shfmt"
+    "mkhl.shfmt",
+    "chrischinchilla.vale-vscode"
   ]
 }

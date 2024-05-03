@@ -1,4 +1,17 @@
-# Components
+# Working on Vue.js Components or Examples
+
+- Details coming soon.
+
+- Tour of a Component
+
+
+===
+
+Include discussion of why build simple custom components..
+- reusability (e.g. fetching locations)
+- testability
+
+## Components
 
 Custom FarmData2 Vue Components.
 
