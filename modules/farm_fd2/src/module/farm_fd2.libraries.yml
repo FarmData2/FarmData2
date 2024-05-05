@@ -6,9 +6,8 @@ main:
       attributes: { type: 'module' }
   css:
     component:
-      main/main.css: {}
-      shared/index.css: {}
-      
+      style/style.css: {}
+
 tray_seeding:
   js:
     tray_seeding/tray_seeding.js:
@@ -17,9 +16,7 @@ tray_seeding:
       attributes: { type: 'module' }
   css:
     component:
-      tray_seeding/tray_seeding.css: {}
-      shared/index.css: {}
-      SubmitResetButtons/SubmitResetButtons.css: {}
+      style/style.css: {}
 
 seeding:
   js:
@@ -29,8 +26,7 @@ seeding:
       attributes: { type: 'module' }
   css:
     component:
-      seeding/seeding.css: {}
-      shared/index.css: {}
+      style/style.css: {}
 
 direct_seeding:
   js:
@@ -40,10 +36,7 @@ direct_seeding:
       attributes: { type: 'module' }
   css:
     component:
-      direct_seeding/direct_seeding.css: {}
-      shared/index.css: {}
-      SoilDisturbance/SoilDisturbance.css: {}
-      SubmitResetButtons/SubmitResetButtons.css: {}
+      style/style.css: {}
 
 transplanting:
   js:
@@ -53,7 +46,4 @@ transplanting:
       attributes: { type: 'module' }
   css:
     component:
-      transplanting/transplanting.css: {}
-      shared/index.css: {}
-      SoilDisturbance/SoilDisturbance.css: {}
-      SubmitResetButtons/SubmitResetButtons.css: {}
+      style/style.css: {}
