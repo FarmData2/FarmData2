@@ -54,7 +54,7 @@ let viteConfig = {
   build: {
     outDir: '../../dist/fd2_school',
     emptyOutDir: true,
-    exclude: ['**/*.cy.js', '**/*.cy.comp.js', '**/*.cy.unit.js'],
+    cssCodeSplit: false,
     rollupOptions: {
       input: Object.fromEntries(
         glob
@@ -67,19 +67,7 @@ let viteConfig = {
       output: {
         // Ensures that the entry point and css names are not hashed.
         entryFileNames: '[name]/[name].js',
-        assetFileNames: (assetInfo) => {
-          let name = assetInfo.name.split('/').at(0);
-          let ext = assetInfo.name.split('.').at(1);
-          if (ext === 'css') {
-            if (name.startsWith('_plugin-vue_')) {
-              return 'shared/index.css';
-            } else {
-              return '[name]/[name].css';
-            }
-          } else {
-            return 'shared/[name].[ext]';
-          }
-        },
+        assetFileNames: '[name]/[name].[ext]',
         chunkFileNames: '[name]/[name].js',
       },
     },

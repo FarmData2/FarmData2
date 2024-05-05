@@ -5,10 +5,9 @@ main:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      main/main.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 component_examples:
   js:
     component_examples/component_examples.js:
@@ -16,10 +15,9 @@ component_examples:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      component_examples/component_examples.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 bed_picker:
   js:
     bed_picker/bed_picker.js:
@@ -27,10 +25,9 @@ bed_picker:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      bed_picker/bed_picker.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 date_selector:
   js:
     date_selector/date_selector.js:
@@ -38,10 +35,9 @@ date_selector:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      date_selector/date_selector.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 picker_base:
   js:
     picker_base/picker_base.js:
@@ -49,10 +45,9 @@ picker_base:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      picker_base/picker_base.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 selector_base:
   js:
     selector_base/selector_base.js:
@@ -60,10 +55,9 @@ selector_base:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      selector_base/selector_base.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
+
 picklist_base:
   js:
     picklist_base/picklist_base.js:
@@ -71,11 +65,9 @@ picklist_base:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      picklist_base/picklist_base.css: {}
     component:
-      shared/index.css: {}
-      PicklistBase/PicklistBase.css: {}
+      style/style.css: {}
+
 transplanting_picklist:
   js:
     transplanting_picklist/transplanting_picklist.js:
@@ -83,8 +75,5 @@ transplanting_picklist:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      transplanting_picklist/transplanting_picklist.css: {}
     component:
-      shared/index.css: {}
-      PicklistBase/PicklistBase.css: {}
+      style/style.css: {}

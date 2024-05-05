@@ -5,7 +5,5 @@ main:
       minified: true
       attributes: { type: 'module' }
   css:
-    theme:
-      main/main.css: {}
     component:
-      shared/index.css: {}
+      style/style.css: {}
