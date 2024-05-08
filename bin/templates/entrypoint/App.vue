@@ -176,7 +176,7 @@ export default {
        * This will be when the user clicks the 'Reset' button,
        * or when the form has been successfully submitted.
        */
-      this.form.comment = null;
+      this.form.comment = '';
       this.enableSubmit = true;
     },
     showErrorToast(title, message) {

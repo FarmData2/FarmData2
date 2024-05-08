@@ -47,9 +47,11 @@ export async function submitForm(formData) {
     const sampleOp = {
       name: 'sampleOp',
       do: async () => {
+        // Simulate the time it takes to make an API call.
+        await new Promise((r) => setTimeout(r, 2000));
+
         // Code here does the operation and returns the result.
         console.log(formData);
-        console.log('done.');
         return formData;
       },
       undo: async (results) => {
