@@ -196,12 +196,13 @@ error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
 echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
 sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
 echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
 sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
 sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
@@ -266,12 +267,23 @@ sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FI
 echo "Updated $ROUTING_YML_FILE from templates."
 echo ""
 
-# Run the included e2e tests to be sure everything is working...
-# Note: The test script does the builds for the preview and live farmOS servers.
+# Run the included unit and e2e tests to be sure everything is working...
 TEST_MODULE=${MODULE_NAME##*_}
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.*.e2e.cy.js"
+
+echo "Running unit tests on $ENTRY_POINT/lib.js in the $MODULE_NAME module..."
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.*.unit.cy.js"
+UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILE")
+UNIT_EXIT_CODE=$?
+if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
+  echo "  Errors occurred when running unit tests. Output will be shown below"
+else
+  echo "  Success."
+fi
+echo "Unit Tests complete."
+echo ""
 
 echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.*.e2e.cy.js"
 
 echo "  Testing on dev server..."
 DEV_TEST_OUT=$(test.bash --e2e --dev --"$TEST_MODULE" --glob="$TEST_FILE")
@@ -302,16 +314,6 @@ fi
 
 echo "E2E Tests complete."
 echo ""
-
-echo "Running unit tests on $ENTRY_POINT/lib.js in the $MODULE_NAME module..."
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.*.unit.cy.js"
-UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILE")
-UNIT_EXIT_CODE=$?
-if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
-  echo "  Errors occurred when running unit tests. Output will be shown below"
-else
-  echo "  Success."
-fi
 
 ((TESTS_PASSED = DEV_EXIT_CODE || PREV_EXIT_CODE || LIVE_EXIT_CODE || UNIT_EXIT_CODE))
 

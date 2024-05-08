@@ -26,7 +26,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
   });
 
   function populateForm() {
-    cy.get('[data-cy="tray-seeding-date"]').type(dayjs().format('1999-01-02'));
+    cy.get('[data-cy="date-input"]').type(dayjs().format('1999-01-02'));
 
     // TODO: Populate additional elements of the form with valid values here,
 
@@ -37,7 +37,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
 
-    cy.get('[data-cy="tray-seeding-date"]').clear();
+    cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
 

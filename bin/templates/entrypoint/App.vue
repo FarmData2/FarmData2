@@ -19,7 +19,7 @@
           data-cy="%ID_PREFIX%-header"
           class="text-center"
         >
-          %ENTRY_POINT%
+          %ENTRY_POINT_TITLE%
         </h2>
       </template>
 

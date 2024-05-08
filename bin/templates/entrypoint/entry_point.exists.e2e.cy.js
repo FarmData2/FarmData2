@@ -1,8 +1,5 @@
 describe('%ENTRY_POINT%: exists and has main page elements.', () => {
   beforeEach(() => {
-    /**
-     *
-     */
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
 
@@ -22,8 +19,8 @@ describe('%ENTRY_POINT%: exists and has main page elements.', () => {
     cy.get('[data-cy="%ID_PREFIX%-card"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-header"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-header"]').should(
-      'have.text',
-      '%ENTRY_POINT%'
+      'contain.text',
+      '%ENTRY_POINT_TITLE%'
     );
     cy.get('[data-cy="%ID_PREFIX%-form"]').should('exist');
   });
