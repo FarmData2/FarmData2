@@ -24,15 +24,19 @@ describe('%ENTRY_POINT%: Date Component', () => {
   it('Date props are correct', () => {
     cy.get('[data-cy="date-required"]').should('be.visible');
     cy.get('[data-cy="date-label"]').should('have.text', 'Date:');
-    cy.get('[data-cy="date-required"]').should('not.exist');
+    cy.get('[data-cy="date-required"]').should('exist');
     cy.get('[data-cy="date-input"]').should(
       'have.value',
       dayjs().format('YYYY-MM-DD')
     );
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-invalid');
   });
 
   it('Date validity styling works', () => {
+    cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="date-input"]').should('have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('not.have.class', 'is-valid');
+    cy.get('[data-cy="date-input"]').should('have.class', 'is-invalid');
   });
 });

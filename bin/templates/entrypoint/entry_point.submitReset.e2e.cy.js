@@ -6,7 +6,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
     cy.restoreSessionStorage();
 
     cy.login('admin', 'admin');
-    cy.visit('fd2/tray_seeding/');
+    cy.visit('%DRUPAL_ROUTE%/');
 
     cy.waitForPage();
   });
@@ -26,7 +26,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
   });
 
   function populateForm() {
-    cy.get('[data-cy="tray-seeding-date"]').type(dayjs().format('YYYY-MM-DD'));
+    cy.get('[data-cy="tray-seeding-date"]').type(dayjs().format('1999-01-02'));
 
     // TODO: Populate additional elements of the form with valid values here,
 
@@ -65,7 +65,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="date-input"]').should(
       'have.value',
-      dayjs().format('YYYY-MM-DD')
+      dayjs().format('1999-01-02')
     );
 
     /*

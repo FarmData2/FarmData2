@@ -168,7 +168,7 @@ export default {
          * Only reset these form elements if the reset is not sticky.
          * Typically just when the user has clicked the 'Reset' button.
          */
-        this.form.seedingDate = dayjs().format('YYYY-MM-DD');
+        this.form.date = dayjs().format('YYYY-MM-DD');
       }
 
       /*

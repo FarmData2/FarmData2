@@ -19,7 +19,6 @@ describe('%ENTRY_POINT%: exists and has main page elements.', () => {
 
   it('Main page elements exist', () => {
     cy.get('[data-cy="%ID_PREFIX%"]').should('exist');
-    cy.get('[data-cy="%ID_PREFIX%-toaster"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-card"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-header"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-header"]').should(
