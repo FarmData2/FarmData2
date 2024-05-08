@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-describe('%ENTRY_POINT: Submit/Reset Buttons component', () => {
+describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();

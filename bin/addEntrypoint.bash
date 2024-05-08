@@ -239,7 +239,7 @@ cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.lib.submit.unit.cy.js"
+sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
 
 echo ""
