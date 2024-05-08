@@ -65,7 +65,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="date-input"]').should(
       'have.value',
-      dayjs().format('1999-01-02')
+      dayjs().format('YYYY-MM-DD')
     );
 
     /*
