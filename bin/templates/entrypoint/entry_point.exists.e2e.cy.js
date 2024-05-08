@@ -1,10 +1,31 @@
-describe('Check that the %ENTRY_POINT% entry point in %MODULE_NAME% exists.', () => {
-  it('Check that the page loaded.', () => {
-    // Login if running in live farmOS.
+describe('%ENTRY_POINT%: exists and has main page elements.', () => {
+  beforeEach(() => {
+    /**
+     *
+     */
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+
     cy.login('admin', 'admin');
-    // Go to the main page.
     cy.visit('%DRUPAL_ROUTE%/');
-    // Check that the page loads.
+
     cy.waitForPage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
+  it('Main page elements exist', () => {
+    cy.get('[data-cy="%ID_PREFIX%"]').should('exist');
+    cy.get('[data-cy="%ID_PREFIX%-toaster"]').should('exist');
+    cy.get('[data-cy="%ID_PREFIX%-card"]').should('exist');
+    cy.get('[data-cy="%ID_PREFIX%-header"]').should('exist');
+    cy.get('[data-cy="%ID_PREFIX%-header"]').should(
+      'have.text',
+      '%ENTRY_POINT%'
+    );
+    cy.get('[data-cy="%ID_PREFIX%-form"]').should('exist');
   });
 });
