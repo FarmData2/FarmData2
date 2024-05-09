@@ -31,6 +31,7 @@ describe('%ENTRY_POINT%: Submit/Reset Buttons component', () => {
     // TODO: Populate additional elements of the form with valid values here,
 
     cy.get('[data-cy="comment-input"]').type('This is a comment');
+    cy.get('[data-cy="comment-input"]').blur();
   }
 
   it('Invalid date disables submit', () => {
