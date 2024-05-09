@@ -267,23 +267,13 @@ sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FI
 echo "Updated $ROUTING_YML_FILE from templates."
 echo ""
 
-# Run the included unit and e2e tests to be sure everything is working...
+# Run the e2e exists tests to be sure dev and preview versions work.
+# Note: Do not need to run all tests here because they will be run
+#       by the git pre-commit hook when the commit is made.
 TEST_MODULE=${MODULE_NAME##*_}
 
-echo "Running unit tests on $ENTRY_POINT/lib.js in the $MODULE_NAME module..."
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/lib.*.unit.cy.js"
-UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILE")
-UNIT_EXIT_CODE=$?
-if [ ! "$UNIT_EXIT_CODE" == "0" ]; then
-  echo "  Errors occurred when running unit tests. Output will be shown below"
-else
-  echo "  Success."
-fi
-echo "Unit Tests complete."
-echo ""
-
 echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
-TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.*.e2e.cy.js"
+TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.e2e.cy.js"
 
 echo "  Testing on dev server..."
 DEV_TEST_OUT=$(test.bash --e2e --dev --"$TEST_MODULE" --glob="$TEST_FILE")
@@ -299,15 +289,6 @@ PREV_TEST_OUT=$(test.bash --e2e --prev --"$TEST_MODULE" --glob="$TEST_FILE")
 PREV_EXIT_CODE=$?
 if [ ! "$PREV_EXIT_CODE" == "0" ]; then
   echo "  Errors occurred when testing on the preview server. Output will be shown below"
-else
-  echo "  Success."
-fi
-
-echo "  Testing on farmOS server..."
-LIVE_TEST_OUT=$(test.bash --e2e --live --"$TEST_MODULE" --glob="$TEST_FILE")
-LIVE_EXIT_CODE=$?
-if [ ! "$LIVE_EXIT_CODE" == "0" ]; then
-  echo "  Errors occurred when testing on the farmOS server. Output will be shown below"
 else
   echo "  Success."
 fi
