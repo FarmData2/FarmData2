@@ -4,22 +4,35 @@ Entry points are pages that are accessed through the FarmData2 menus (FarmData2,
 
 Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document.
 
+## Outline
+
+- [TL-DR](#tl-dr)
+- [Entry Points](#entry-points)
+  - [Creating the New Entry Point](#creating-the-new-entry-point)
+  - [Finding the New Entry Point](#finding-the-new-entry-point)
+    - [Finding the New Entry Point in farmOS](#finding-the-new-entry-point-in-farmos)
+    - [Finding the New Entry Point in the Source Code](#finding-the-new-entry-point-in-the-source-code)
+  - [Watching a Module](#watching-a-module)
+  - [Running Entry Point Tests](#running-entry-point-tests)
+    - [Running Unit Tests](#running-unit-tests)
+    - [Running End-to-End Tests](#running-end-to-end-tests)
+
+
 ## TL-DR
 
 To create a new entry point:
 
-1. `addEntrypoint.bash`
-2. Answer the prompts.
-3. Login to farmOS and go to the entry point.
-4. Find the entry point subdirectory in `modules`
-5. Start the watcher for the module containing your entry point:
+1. Run `addEntrypoint.bash` and answer the prompts.
+2. Login to farmOS and go to the entry point.
+3. Find the entry point subdirectory in `modules`
+4. Start the watcher for the module containing your entry point:
 
 - `npm run watch:fd2`
 - `npm run watch:examples`
 - `npm run watch:school`
 
-6. Create and test the entry point functionality.
-7. Submit a pull request for the feature branch containing the new entry point.
+5. Create and test the entry point functionality.
+6. Submit a pull request for the feature branch containing the new entry point.
 
 ## Entry Points
 
@@ -36,36 +49,36 @@ Running `addEntryPoint.bash` script will guide you through the creation of a new
 1. The **parent menu** on which the option for this entry point should be added. The title for this entry point will appear on the specified menu.
 1. The **permissions** that a user must have to see the menu. The permissions that are available can be found by logging into farmOS as `admin` and visiting the [farmOS People page](http://farmos/admin/people/permissions). Then use the browser dev-tools to inspect the check boxes to find the name of the permission.
 
-When you have entered the information and confirmed that you want to the new entry point, the entry point will be created. As the entry point is created:
+When you have entered the information and confirmed that you want to the new entry point, the scrip will create a new entry point by:
 
-1. A new feature branch will be created.
-2. A set of template files for the entry point will be copied to a subdirectory in its module.
-3. Tests will be run to confirm that the entry point was created.
-4. The template files will be committed to the feature branch.
+1. Creating and switching to a new feature branch named `add_<entry_point_name>_entry_point`
+2. Creating a subdirectory in the module containing the new entry point.
+3. Copying a set of template files for the entry point into the subdirectory.
+4. Updating the module configuration to include the new entry point.
+5. Running tests to confirm that the entry point was created.
+6. Committing the template files to the feature branch.
 
 This process can take several minutes.
 
 ### Finding the New Entry Point
 
-#### In farmOS
+#### Finding the New Entry Point in farmOS
 
-Login to farmOS and use the FarmData2 menus to find the option for the module containing the new entry point. 
+Open Mozilla Firefox and login to farmOS at [http://farmos](http://farmos). Then use the FarmData2 menus to find the option for the module containing the template for the new entry point.
 
+<a href="images/EntryPointTemplate.png"><img src="images/EntryPointTemplate.png" alt="The entry point template." width="320" style="border: 1px solid black"></a>
 
+Note: if the entrypoint template page is blank, hold the "shift" key and click the reload button in the browser (&#10227;).
 
-#### In the Source Code
+#### Finding the New Entry Point in the Source Code
 
-The changes 
-
-creates a new feature branch for the entry point.
-
-a subdirectory of the directory for its module. For example, creating an entry point named `new_entry_point` in the `farm_fd2` module will create the subdirectory `new-entry-point` as shown in the following directory tree:
+The directory for the module in which the new entry point is being created will contain a new a subdirectory for the entry point's code. For example, creating an entry point named `new_entry_point` in the `farm_fd2` module will create the subdirectory `new_entry_point` as shown in the following directory tree:
 
 <pre>
 FarmData2
 ├── ...
 ├── modules
-│   ├── css
+│   ├── ...
 │   ├── farm_fd2
 │   │   ├── dist
 │   │   └── src
@@ -83,17 +96,11 @@ FarmData2
 :   :
 </pre>
 
-creates and switches to a feature branch for your work on the new entry point.  The initial template files for the entry point are committed to this new feature branch. The name of the branch can be found by using `git status`.
+The [Tour of an Entry Point](#tour-of-an-entry-point) section describes the new entry point template in detail.
 
-Each entry point is contained in 
-
-The [Tour of an Entry Point](#tour-of-an-entry-point) section describes the details of the new entry point.
-
-### Building or Watching a Module
+### Watching a Module
 
 When the code associated with an entry point is changed, the module containing it must be rebuilt before the changes will appear in farmOS.
-
-#### Watching a Module
 
 A module can be _watched_, which will cause it to be rebuilt any time changes are made to any of the files that it uses. To watch a module, open a new terminal and use the appropriate command for the module you want to watch:
 
@@ -101,14 +108,40 @@ A module can be _watched_, which will cause it to be rebuilt any time changes ar
 - `npm run watch:examples`
 - `npm run watch:school`
 
-#### Manually Rebuilding a Module
+Output in the terminal will show the module is rebuilt and any errors that occur.
 
+The [Watch and Build Alternatives](#watch-and-build-alternatives) section describes other approaches to watching or building modules that might be useful or preferred in some circumstances.
 
 ### Running Entry Point Tests
 
+The entry point template contains unit tests and end-to-end tests for its functionality. As more functionality is added to the entry point will need to be changed and more tests will need be added. [The Entry Point Test Files](#the-entry-point-test-files) section describes the conventions to be used for these tests.
+
 #### Running Unit Tests
 
+To run the unit tests for an entry point open a new terminal and adapt the following command:
+
+```bash
+test.bash --unit --<module> --glob=modules/**/<entry_point_name>/*.unit.cy.js --gui
+```
+
+- `<module>` must be one of `fd2`, `examples` or `school`.
+- `<entry_point_name>` must be the name of the entry point to test.
+- The `--gui` flag causes the tests to run in the Cypress GUI. Omit the `--gui` flag to run the tests _headless_ with results reported in the terminal.
+- Omit the `--glob` flag to run the unit tests for all entry points in the module.
+
 #### Running End-to-End Tests
+
+To run the end-to-end (e2e) tests for an entry point open a new terminal and adapt the following command:
+
+```bash
+test.bash --e2e --live --<module> --glob=modules/**/<entry_point_name>/*.e2e.cy.js
+
+```
+
+- `<module>` must be one of `fd2`, `examples` or `school`.
+- `<entry_point_name>` must be the name of the entry point to test.
+- The `--gui` flag causes the tests to run in the Cypress GUI. Omit the `--gui` flag to run the tests _headless_ with results reported in the terminal.
+- Omit the `--glob` flag to run the e2e tests for all entry points in the module.
 
 ## Tour of an Entry Point
 
@@ -120,11 +153,11 @@ A module can be _watched_, which will cause it to be rebuilt any time changes ar
 
 #### The `lib.js` File
 
-#### The Test Files
+#### The Entry Point Test Files
 
-##### Unit Tests
+##### Entry Point Unit Tests
 
-##### End-to-End Tests
+##### Entry Point End-to-End Tests
 
 ## More Details
 
@@ -136,11 +169,13 @@ A module can be _watched_, which will cause it to be rebuilt any time changes ar
 
 ### Module Structure
 
-### Other Servers
+### Watch and Build Alternatives
 
 #### The Dev Server
 
 #### The Preview Server
+
+#### Builds
 
 === Raw Notes Below ===
 
