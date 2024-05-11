@@ -1,8 +1,146 @@
 # Working on Entry Points
 
-- Details coming soon.
+Entry points are pages that are accessed through the FarmData2 menus (FarmData2, FD2 Examples, FD2 School) in farmOS. For example, the Tray Seeding, Direct Seeding and Transplanting menu options lead to pages (entry points) for collecting data about the corresponding activity.
 
-- Tour of an Entry Point
+Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document.
+
+## TL-DR
+
+To create a new entry point:
+
+1. `addEntrypoint.bash`
+2. Answer the prompts.
+3. Login to farmOS and go to the entry point.
+4. Find the entry point subdirectory in `modules`
+5. Start the watcher for the module containing your entry point:
+
+- `npm run watch:fd2`
+- `npm run watch:examples`
+- `npm run watch:school`
+
+6. Create and test the entry point functionality.
+7. Submit a pull request for the feature branch containing the new entry point.
+
+## Entry Points
+
+The following sub-sections describe how to create, change and test entry points in FarmData2.
+
+### Creating an Entry Point
+
+Running `addEntryPoint.bash` script will guide you through the creation of a new entry point. This script prompts for the following information and then uses it to create the new entry point:
+
+1. **The module** in which to create the new entry point. The entry point can be created in the `farm_fd2`, `farm_fd2_examples`, or `farm_fd2_school` module, which correspond to the similarly named FarmData2 menus in farmOS.
+1. **The name** for the new entry point. This name is used internally in code and is not visible to users. The name should be entered in `snake_case`, with words being all lowercase and separated by underscore (`_`) characters.
+1. **A short title** for the new entry point. The title is the text that will be used as the menu option for accessing the entry point. It also appears at the top of the entry point page. The title should be in Title Case, with words capitalized and separated by spaces. This often uses the same words as the name.
+1. A one sentence **description** of the new entry point. This description is used as a tooltip by Drupal and should be written to be meaningful to a user.
+1. The **parent menu** on which the option for this entry point should be added. The title for this entry point will appear on the specified menu.
+1. The **permissions** that a user must have to see the menu. The permissions that are available can be found by logging into farmOS as `admin` and visiting the [farmOS People page](http://farmos/admin/people/permissions). Then use the browser dev-tools to inspect the check boxes to find the name of the permission.
+
+When you have entered the information and confirmed that you want to the new entry point, the entry point will be created. As the entry point is created:
+
+1. A new feature branch will be created.
+2. A set of template files for the entry point will be copied to a subdirectory in its module.
+3. Tests will be run to confirm that the entry point was created.
+4. The template files will be committed to the feature branch.
+
+This process can take several minutes.
+
+### Finding the New Entry Point
+
+#### In farmOS
+
+Login to farmOS and use the FarmData2 menus to find the option for the module containing the new entry point. 
+
+
+
+#### In the Source Code
+
+The changes 
+
+creates a new feature branch for the entry point.
+
+a subdirectory of the directory for its module. For example, creating an entry point named `new_entry_point` in the `farm_fd2` module will create the subdirectory `new-entry-point` as shown in the following directory tree:
+
+<pre>
+FarmData2
+├── ...
+├── modules
+│   ├── css
+│   ├── farm_fd2
+│   │   ├── dist
+│   │   └── src
+│   │       ├── entrypoints
+│   │       │   ├── direct_seeding
+│   │       │   ├── <strong>new_entry_point</strong>
+│   │       │   ├── tray_seeding
+│   │       │   ├── transplanting
+|   |       :   :
+|   |
+│   ├── farm_fd2_examples
+│   │   └── ...
+│   ├── farm_fd2_school
+│   │   └── ...
+:   :
+</pre>
+
+creates and switches to a feature branch for your work on the new entry point.  The initial template files for the entry point are committed to this new feature branch. The name of the branch can be found by using `git status`.
+
+Each entry point is contained in 
+
+The [Tour of an Entry Point](#tour-of-an-entry-point) section describes the details of the new entry point.
+
+### Building or Watching a Module
+
+When the code associated with an entry point is changed, the module containing it must be rebuilt before the changes will appear in farmOS.
+
+#### Watching a Module
+
+A module can be _watched_, which will cause it to be rebuilt any time changes are made to any of the files that it uses. To watch a module, open a new terminal and use the appropriate command for the module you want to watch:
+
+- `npm run watch:fd2`
+- `npm run watch:examples`
+- `npm run watch:school`
+
+#### Manually Rebuilding a Module
+
+
+### Running Entry Point Tests
+
+#### Running Unit Tests
+
+#### Running End-to-End Tests
+
+## Tour of an Entry Point
+
+### Entry Point Directory Structure
+
+### Entry Point Code
+
+#### The `App.vue` File
+
+#### The `lib.js` File
+
+#### The Test Files
+
+##### Unit Tests
+
+##### End-to-End Tests
+
+## More Details
+
+### Testing Tips
+
+### Permissions
+
+### Pre-populating farmOS Data
+
+### Module Structure
+
+### Other Servers
+
+#### The Dev Server
+
+#### The Preview Server
 
 === Raw Notes Below ===
 
@@ -469,7 +607,7 @@ describe('Sample test.', () => {
 
 ## Drupal module and CSS
 
-If an entry point uses a component that contains its own `<style scoped>` element, and that component is used in more than one entry point, then the `.css` file for the component must be included in the entry point's `css` section in the `farm_fd2.libraries.yml` file.  See the `direct_seeding` entry point section of `farm_fd2.libraries.yml` for an example.
+If an entry point uses a component that contains its own `<style scoped>` element, and that component is used in more than one entry point, then the `.css` file for the component must be included in the entry point's `css` section in the `farm_fd2.libraries.yml` file. See the `direct_seeding` entry point section of `farm_fd2.libraries.yml` for an example.
 
 ## Technical Build Details
 

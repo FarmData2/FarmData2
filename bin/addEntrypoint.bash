@@ -151,6 +151,7 @@ echo "            drupal route: $DISPLAY_DRUPAL_ROUTE"
 echo "       drupal route name: $DRUPAL_ROUTE_NAME"
 echo "    permissions required: $ENTRY_POINT_PERMISSIONS"
 echo "  HTML element id prefix: $ID_PREFIX"
+echo "     Feature Branch Name: $FEATURE_BRANCH_NAME"
 echo ""
 
 # Confirm that the entry point should be created.
