@@ -6,7 +6,6 @@ Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be h
 
 ## Outline
 
-- [TL-DR](#tl-dr)
 - [Entry Points](#entry-points)
   - [Creating the New Entry Point](#creating-the-new-entry-point)
   - [Finding the New Entry Point](#finding-the-new-entry-point)
@@ -16,23 +15,6 @@ Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be h
   - [Running Entry Point Tests](#running-entry-point-tests)
     - [Running Unit Tests](#running-unit-tests)
     - [Running End-to-End Tests](#running-end-to-end-tests)
-
-
-## TL-DR
-
-To create a new entry point:
-
-1. Run `addEntrypoint.bash` and answer the prompts.
-2. Login to farmOS and go to the entry point.
-3. Find the entry point subdirectory in `modules`
-4. Start the watcher for the module containing your entry point:
-
-- `npm run watch:fd2`
-- `npm run watch:examples`
-- `npm run watch:school`
-
-5. Create and test the entry point functionality.
-6. Submit a pull request for the feature branch containing the new entry point.
 
 ## Entry Points
 
@@ -98,11 +80,17 @@ FarmData2
 
 The [Tour of an Entry Point](#tour-of-an-entry-point) section describes the new entry point template in detail.
 
+### Implementing Entry Point Functionality
+
+The functionality of the entry point template is customized to its intended purpose by adding components to the page in the `App.vue` file and implementing the `submitForm` function in the `lib.js` file.
+
+The [Tour of an Entry Point](#tour-of-an-entry-point) section provides more detail and examples of how to customize the entry point template.
+
 ### Watching a Module
 
 When the code associated with an entry point is changed, the module containing it must be rebuilt before the changes will appear in farmOS.
 
-A module can be _watched_, which will cause it to be rebuilt any time changes are made to any of the files that it uses. To watch a module, open a new terminal and use the appropriate command for the module you want to watch:
+Most commonly you will want to _watch_ the module on which you are working. Watching the module causes it to be rebuilt any time changes are made to any of the files that it uses. To watch a module, open a new terminal and use the appropriate command for the module you want to watch:
 
 - `npm run watch:fd2`
 - `npm run watch:examples`
@@ -121,7 +109,7 @@ The entry point template contains unit tests and end-to-end tests for its functi
 To run the unit tests for an entry point open a new terminal and adapt the following command:
 
 ```bash
-test.bash --unit --<module> --glob=modules/**/<entry_point_name>/*.unit.cy.js --gui
+test.bash --unit -- --gui < module > --glob=modules/**/ < entry_point_name > /*.unit.cy.js
 ```
 
 - `<module>` must be one of `fd2`, `examples` or `school`.
@@ -134,8 +122,7 @@ test.bash --unit --<module> --glob=modules/**/<entry_point_name>/*.unit.cy.js --
 To run the end-to-end (e2e) tests for an entry point open a new terminal and adapt the following command:
 
 ```bash
-test.bash --e2e --live --<module> --glob=modules/**/<entry_point_name>/*.e2e.cy.js
-
+test.bash --e2e --live -- < module > --glob=modules/**/ < entry_point_name > /*.e2e.cy.js
 ```
 
 - `<module>` must be one of `fd2`, `examples` or `school`.
