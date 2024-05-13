@@ -1,13 +1,15 @@
 # Working on Entry Points
 
-Entry points are pages that are accessed through the FarmData2 menus (FarmData2, FD2 Examples, FD2 School) in farmOS. For example, the Tray Seeding, Direct Seeding and Transplanting menu options lead to pages (entry points) for collecting data about the corresponding activity.
+The purpose of this document is to describe how to create, change and test entry points in FarmData2.
+
+Entry points are pages that provide FarmData2 functionality. The entry points are accessed through the FarmData2 menus (FarmData2, FD2 Examples, FD2 School) in farmOS. For example, the Tray Seeding, Direct Seeding and Transplanting menu options lead to pages (entry points) for collecting data about the corresponding activity.
 
 Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document.
 
 ## Outline
 
-- [Entry Points](#entry-points)
-  - [Creating the New Entry Point](#creating-the-new-entry-point)
+- [Creating a New Entry Point](#creating-a-new-entry-point)
+
   - [Finding the New Entry Point](#finding-the-new-entry-point)
     - [Finding the New Entry Point in farmOS](#finding-the-new-entry-point-in-farmos)
     - [Finding the New Entry Point in the Source Code](#finding-the-new-entry-point-in-the-source-code)
@@ -18,11 +20,15 @@ Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be h
 
 ## Entry Points
 
-The following sub-sections describe how to create, change and test entry points in FarmData2.
+### Creating a New Entry Point
 
-### Creating an Entry Point
+The following command is used to create a new entry point:
 
-Running `addEntryPoint.bash` script will guide you through the creation of a new entry point. This script prompts for the following information and then uses it to create the new entry point:
+```bash
+addEntryPoint.bash`
+```
+
+This command runs a script that will guide you through the creation of a new entry point. You will be prompted for the following information:
 
 1. **The module** in which to create the new entry point. The entry point can be created in the `farm_fd2`, `farm_fd2_examples`, or `farm_fd2_school` module, which correspond to the similarly named FarmData2 menus in farmOS.
 1. **The name** for the new entry point. This name is used internally in code and is not visible to users. The name should be entered in `snake_case`, with words being all lowercase and separated by underscore (`_`) characters.
@@ -31,22 +37,28 @@ Running `addEntryPoint.bash` script will guide you through the creation of a new
 1. The **parent menu** on which the option for this entry point should be added. The title for this entry point will appear on the specified menu.
 1. The **permissions** that a user must have to see the menu. The permissions that are available can be found by logging into farmOS as `admin` and visiting the [farmOS People page](http://farmos/admin/people/permissions). Then use the browser dev-tools to inspect the check boxes to find the name of the permission.
 
-When you have entered the information and confirmed that you want to the new entry point, the scrip will create a new entry point by:
+When you have entered the information and confirmed that you want to create the new entry point, the script will perform the following operations to generate the new entry point:
 
 1. Creating and switching to a new feature branch named `add_<entry_point_name>_entry_point`
 2. Creating a subdirectory in the module containing the new entry point.
-3. Copying a set of template files for the entry point into the subdirectory.
-4. Updating the module configuration to include the new entry point.
-5. Running tests to confirm that the entry point was created.
-6. Committing the template files to the feature branch.
+3. Customizing a set of template files for the entry point and copying them into the subdirectory.
+4. Updating the module's configuration so that its menu option will appear in farmOS.
+5. Running tests to confirm that the new entry point was created.
+6. Committing the customized template files to the feature branch.
 
 This process can take several minutes.
+
+### A Tour of the Entry Point Template
+
+A newly created entry point provides minimal functionality that is intended to be customized to serve its intended purpose. The following sub-sections provide a guide to the structure and functionality of the template and pointers to more information and examples that will be helpful in customizing it.
 
 ### Finding the New Entry Point
 
 #### Finding the New Entry Point in farmOS
 
 Open Mozilla Firefox and login to farmOS at [http://farmos](http://farmos). Then use the FarmData2 menus to find the option for the module containing the template for the new entry point.
+
+The new entry point will include a few elements. In the Title you have given it, an input field for the date, a place to enter a comment, a submit button, and a reset button.
 
 <a href="images/EntryPointTemplate.png"><img src="images/EntryPointTemplate.png" alt="The entry point template." width="320" style="border: 1px solid black"></a>
 
@@ -131,6 +143,8 @@ test.bash --e2e --live -- < module > --glob=modules/**/ < entry_point_name > /*.
 - Omit the `--glob` flag to run the e2e tests for all entry points in the module.
 
 ## Tour of an Entry Point
+
+The `addEntrypoint.bash` script uses a set of template files to create a new entrypoint.
 
 ### Entry Point Directory Structure
 
