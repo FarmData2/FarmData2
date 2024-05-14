@@ -21,7 +21,13 @@ Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be h
     - [Running End-to-End Tests](#running-end-to-end-tests)
 - [Tour of an Entry Point](#tour-of-an-entry-point)
   - [Entry Point Directory Structure](#entry-point-directory-structure)
-
+  - [Entry Point Code](#entry-point-code)
+    - [The `App.vue` File](#the-appvue-file)
+      - [Adding Components to `App.vue`](#adding-components-to-appvue)
+      - [`App.vue` Examples](#appvue-examples)
+    - [The `lib.js` File](#the-libjs-file)
+      - [The `submitForm` Function](#the-submitform-function)
+      - [`lib.js` Examples](#libjs-examples)
 
 ## Creating a New Entry Point
 
@@ -195,13 +201,61 @@ FarmData2
   - `lib.js` contains the `submitForm` function that creates the data records for the entry point in the farmOS database.
 - The `*.e2e.cy.js` files contain end-to-end tests for the entry point. More details on these files can be found in the [Entry Point End-to-End Tests](#entry-point-end-to-end-tests) section.
 - The `lib.submit.unit.cy.js` file contains unit tests for the `submitForm` function in `lib.js`. More details on these files can be found in the [Entry Point Unit Tests](#entry-point-unit-tests) section.
-- The `index.html`, `example_entry_point.html`, and `example_entry_point.js` are "plumbing" for the Vue app and do not need to be edited.
+- The `index.html`, `example_entry_point.html`, and `example_entry_point.js` are boilerplate for the Vue app and do not need to be edited.
 
 ### Entry Point Code
 
+The following sub-sections provide a guide to the entry point code and pointers to more information and examples that will be helpful in customizing it. You can follow along by looking at the `example_entry_point` in the `farm_fd2_examples` module, or by having created a new entry point of your own by using the `addEntryPoint.bash` script.
+
 #### The `App.vue` File
 
+The `App.vue` file defines a _Vue Single File Component_ (SFC) using the Vue's _Options API_. This SFC is what is displayed when the entry point is visited in farmOS.
+
+If you are not familiar with Vue SFC or Vue's Options API the following resources are great places to start:
+
+- The "Getting Started" and "Essentials" sections of the [Vue Introduction](https://vuejs.org/guide/introduction.html).
+- Vue Mastery's [Intro to Vue 3 video course](https://www.vuemastery.com/courses/intro-to-vue-3/intro-to-vue3) are a great place to start.
+
+##### Adding Components to `App.vue`
+
+FarmData2 entry points are customized to their purpose by adding Vue Components to the `App.vue` file. The following resources will be helpful in customizing the entry point:
+
+- The comments in the `App.vue` file in the entry point describe the structure and organization of a FarmData2 entry point SFC.
+- The ["Component Basics"](https://vuejs.org/guide/essentials/component-basics.html) section of the Vue Introduction shows how to add Vue component to a SFC.
+- The [FarmData2 Documentation](http://localhost:8082/docs/FarmData2.md) page provides a links to the documentation for each custom FarmData2 Vue component, a live running example of the component, and a static code example of its use.
+  - The guide to [Working on a Vue.js Component](components.md) provides information about creating and testing custom Vue Components for FarmData2.
+- The documentation for the [BootstrapVueNext Components](https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs.html). These Vue Components are typically used inside of the custom Vue Components for FarmData2, but might be used directly in an entry point. Note that BootstrapVueNext is under active development and its documentation is evolving with its development. FarmData2 has pinned to a specific version of BootstrapVueNext for stability. There will be inconsistencies between the BootstrapVueNext documentation and the code in FarmData2.
+
+##### `App.vue` Examples
+
+Examples of `App.vue` files can be found in the existing entry points including:
+
+- [Example Entry Point `App.vue`](../../modules/farm_fd2_examples/src/entrypoints/example_entry_point/App.vue)
+- [Tray Seeding `App.vue`](../../modules/farm_fd2/src/entrypoints/tray_seeding/App.vue)
+- [Direct Seeding `App.vue`](../../modules/farm_fd2/src/entrypoints/direct_seeding/App.vue)
+- [Transplanting `App.vue`](../../modules/farm_fd2/src/entrypoints/transplanting/App.vue)
+
 #### The `lib.js` File
+
+The `lib.js` file is a JavaScript library for the entry point. At a minimum it contains the `submitForm` function that is called when the "Submit" button is clicked. It may also contain other functions that are useful for the entrypoint.
+
+Implementing the `submitForm` and other functions in the `lib.js` file, as opposed to directly in the `App.vue` file, allows them to be unit tested. See the [Entry Point Unit Tests](#entry-point-unit-tests) section for more details.
+
+##### The `submitForm` Function
+
+This function uses the `farmosUtil` library to create the data records for the entry point in the farmOS database.
+
+
+NEED TO POINT TO THE FARMOS UTIL LIBRARY and THE TRANSACTION function in particular.
+
+
+##### `lib.js` Examples
+
+Examples of `App.vue` files can be found in the existing entry points including:
+
+- [Tray Seeding `lib.js`](../../modules/farm_fd2/src/entrypoints/tray_seeding/lib.js)
+- [Direct Seeding `lib.js`](../../modules/farm_fd2/src/entrypoints/direct_seeding/lib.js)
+- [Transplanting `lib.js`](../../modules/farm_fd2/src/entrypoints/transplanting/lib.js)
 
 ### The Entry Point Tests
 
@@ -209,9 +263,11 @@ FarmData2
 
 #### Entry Point End-to-End Tests
 
+#### Testing Tips
+
 ## More Details
 
-### Testing Tips
+### The `--dev` Flag
 
 ### Permissions
 
