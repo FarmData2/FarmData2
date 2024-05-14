@@ -1,18 +1,38 @@
 <template>
+  <!-- 
+    Every HTML element that is tested must have an id and a 
+    data-cy attribute. The values of these attributes should be
+    the same and should be prefixed with the name of the entry point.
+    Use the examples below as a guide when adding your own elements.
+  -->
   <div
     id="%ID_PREFIX%"
     data-cy="%ID_PREFIX%"
   >
+    <!-- 
+      The BToaster element provides an anchor for BootstrapVueNext
+      Toast elements.  FarmData2 uses Toast elements to display 
+      status and error messages that occur during the use of an
+      entry point. 
+    -->
     <BToaster
       id="%ID_PREFIX%-toaster"
       data-cy="%ID_PREFIX%-toaster"
     />
+    <!-- 
+      A BCard element is used to provide all a consistent look and 
+      feel across all FarmData2 entry points. 
+    -->
     <BCard
       id="%ID_PREFIX%-card"
       data-cy="%ID_PREFIX%-card"
       bg-variant="light"
       header-tag="header"
     >
+      <!-- 
+        The header of the BCard is used to display the title of
+        the entry point.
+      -->
       <template #header>
         <h2
           id="%ID_PREFIX%-header"
@@ -23,10 +43,23 @@
         </h2>
       </template>
 
+      <!--
+        The BForm element is a container used to hold all of the 
+        components that make up the data entry form for the entry point.
+      -->
       <BForm
         id="%ID_PREFIX%-form"
         data-cy="%ID_PREFIX%-form"
       >
+        <!--
+          Components are added here to build the data collection form 
+          for the entry point.
+
+          The components in the BForm element are typically custom
+          FarmData2 components but may also be BootstrapVueNext components
+          or basic HTML elements.
+        -->
+
         <!-- Date -->
         <DateSelector
           id="%ID_PREFIX%-date"
@@ -34,11 +67,23 @@
           required
           v-model:date="form.date"
           v-bind:showValidityStyling="validity.show"
-          v-on:valid="validity.date = $event"
+          v-on:valid="
+            (valid) => {
+              validity.date = valid;
+            }
+          "
           v-on:ready="createdCount++"
         />
 
-        <!-- Add additional form elements here. -->
+        <!-- 
+          Add additional form elements here.
+        
+          See the FarmData2 documentation for links to the documentation
+          for the custom FarmData2 Vue Components.
+
+          See the BootstrapVueNext documentation for links to the 
+          documentation for its Vue Components.
+        -->
 
         <hr />
         <!-- Comment Box -->
@@ -46,7 +91,11 @@
           id="%ID_PREFIX%-comment"
           data-cy="%ID_PREFIX%-comment"
           v-model:comment="form.comment"
-          v-on:valid="validity.comment = $event"
+          v-on:valid="
+            (valid) => {
+              validity.comment = valid;
+            }
+          "
           v-on:ready="createdCount++"
         />
 
@@ -63,8 +112,15 @@
       </BForm>
     </BCard>
 
-    <!-- Do not change this div. It is used by the e2e tests.-->
+    <!-- 
+      This invisible div is used to signal e2e tests, allowing them 
+      to check if all of the page content has been loaded. 
+      See the `data.createdCount` attribute and the `pageDoneLoading`
+      computed property in the `<script>` section below for 
+      more information.
+    -->
     <div
+      id="page-loaded"
       data-cy="page-loaded"
       v-show="false"
     >
@@ -89,55 +145,163 @@ export default {
   },
   data() {
     return {
+      /*
+       * The `data.form` object is used to hold all of the data that is
+       * collected from the form. This data is stored in a single
+       * object so that it can be passed easily to the submitForm
+       * function in the lib.js file.
+       *
+       * Each of the Vue Components above should use `v-model` to bind its
+       * value to an attribute in the `data` object. See the `DateSelector`
+       * and `CommentBox` Vue Components above for examples.
+       */
       form: {
         date: dayjs().format('YYYY-MM-DD'),
         comment: null,
       },
+      /*
+       * The `data.validity object` is used to hold the validity values
+       * for each of the Vue Components. This data is stored in a single
+       * object to parallel the use of the `data.form` object.
+       *
+       * Each of the Vue Components above uses `v-bind` to bind its
+       * `valid` prop to to an attribute in the `data.validity` object.
+       * See the DateSelector and CommentBox Vue Components above for examples.
+       *
+       * When the `data.validity.show` attribute is `true` each Vue
+       * Component will display a Bootstrap validation style based on the
+       * value of the `data.validity` attribute bound to its `valid` prop.
+       * If the `valid` prop is:
+       * - `true` - the component is valid and will appear in green with a checkmark.
+       * - `false` - the component is invalid and will appear in red with an X and feedback.
+       * - `null` - the component will not be styled.
+       *
+       * The `data.validity.show` value is controlled by the `submit()`
+       * and `reset()` methods below.
+       */
       validity: {
         show: false,
         date: false,
         comment: false,
       },
+
+      /*
+       * These values are bound to props of the `SubmitResetButtons`
+       * Vue Component. See the `SubmitResetButtons` Vue Component above
+       * for an example. The `submit()` and `reset()` methods, and the
+       * `watch` for the `data.validity` object control these values to
+       * enable and disable submission as appropriate.
+       */
       enableSubmit: true,
       enableReset: true,
+
+      /*
+       * This value is used to ensure that only one submission error
+       * is displayed. The `submitForm()` function in `lib.js` is called
+       * to submit the form. If there are connectivity issues, that function
+       * may generate multiple errors.  The `showErrorToast()` function
+       * uses this value to ensure that only one of those errors is shown.
+       */
       errorShown: false,
+
+      /*
+       * This value counts the number of components that have been created
+       * including the SFC that is the entry point.  This value is used by
+       * the `pageDoneLoading` computed property to determine when all of
+       * the components have been crated.  See the `pageDoneLoading` computed
+       * property below for more information.
+       */
       createdCount: 0,
     };
   },
   computed: {
+    /*
+     * This property must become `true` when all of the components
+     * used by this entry point, plus the entry point's SFC itself,
+     * are fully ready to be used. For example any API calls that
+     * they make in their `created` hooks are complete.
+     *
+     * To find the value to use for comparison here, count one for each
+     * FarmData2 Vue Component that is used by this entry point and add
+     * one for the entry point SFC itself. BootstrapVueNext Vue Components
+     * do not follow this convention and should not be counted.
+     *
+     * This computed property is:
+     *  - bound in the invisible`page-loaded` `div` above.
+     *  - incremented in response to the `ready` event in a `v-on`
+     *    handler for each Vue Component used in the entry point.
+     *    See the `DateSelector`,  `CommentBox` and `SubmitResetButtons`
+     *    Vue Components above.
+     *  - incremented when this entry point's `created` life cycle hook
+     *    completes.  See the `created()` method below.
+     *
+     * E2e tests for this entry point will use the `cy.waitForPage()`
+     * function to check this value and only continue with the test
+     * when all of the components are fully ready.
+     */
     pageDoneLoading() {
-      /*
-       * To find the value to use here, count one for each component in the template
-       * and one for the created() hook. This is ultimately used to allow tests
-       * to ensure that the full page has loaded before testing page elements.
-       */
       return this.createdCount == 4;
     },
   },
   methods: {
+    /*
+     * This method must return `true` if the values of all of the input
+     * elements in the form are valid to be submitted to farmOS.
+     *
+     * Typically this will be when all of the attributes in `data.validity`
+     * are `true`. That happens when the most recent `valid` event from
+     * each FarmData2 Vue component has the value `true`.
+     *
+     * If a form contains any BootstrapVueNext Vue Components
+     * or basic HTML input elements, then this method will have to manually
+     * account for their validity as they do not emit `valid` events.
+     */
+    validToSubmit() {
+      return Object.values(this.validity).every((item) => item === true);
+    },
+    /*
+     * This method is called when the "Submit" button is clicked. See
+     * the `v-on:submit` binding in the `SubmitResetButtons` Vue Component
+     * in the `<template>` above.
+     */
     submit() {
       this.validity.show = true;
 
-      // If all of the form values are valid...
-      if (Object.values(this.validity).every((item) => item === true)) {
-        // Disable submit and reset while the form is being submitted
+      if (this.validToSubmit()) {
+        /*
+         * The "Submit" and "Reset" buttons are disabled while the
+         * form is being submitted.
+         */
         this.disableSubmit = true;
         this.disableReset = true;
 
+        /*
+         * Show a status message at the top of the screen
+         * while the submission is processing.
+         */
         uiUtil.showToast(
-          'Submitting tray seeding...',
+          'Submitting %ENTRY_POINT%...',
           '',
           'top-center',
           'success'
         );
 
+        /*
+         * Use the `submitForm()` function in `lib.js` to build
+         * assets, logs and quantities based on the values in `data.form`
+         * and submit them to farmOS.
+         */
         lib
           .submitForm(this.form)
           .then(() => {
+            /*
+             * If we get here, the submission was successful, so hide
+             * the status message and display a success message.
+             */
             uiUtil.hideToast();
             this.reset(true);
             uiUtil.showToast(
-              'Tray seeding created.',
+              '%ENTRY_POINT% created.',
               '',
               'top-center',
               'success',
@@ -145,6 +309,10 @@ export default {
             );
           })
           .catch(() => {
+            /*
+             * If we get here, the submission failed, so hide the status
+             * message and display an error message.
+             */
             uiUtil.hideToast();
             this.showErrorToast(
               'Error creating %ENTRY_POINT%.',
@@ -154,28 +322,45 @@ export default {
           });
       } else {
         /*
-         * Some value is not valid. Disable the Submit button until the values
-         * have been edited to be valid. See watch.validity below.
+         * One or more of the input values is not valid for submission to
+         * farmOS. Disable the Submit button until the values
+         * have been edited to be valid.
+         *
+         * See watch.validity below for where the button is re-enabled.
          */
         this.enableSubmit = false;
       }
     },
+    /*
+     * This method is called when the "Reset" button is clicked or when
+     * a successful submission is made.
+     *
+     * See the `submit()` method above and the `v-on:reset` binding in
+     * the `SubmitResetButtons` Vue Component in the `<template>` above.
+     *
+     * A reset can be "Sticky" or "Non-Sticky".
+     *
+     * A "Sticky" reset occurs following a successful submission.
+     * During a "Sticky" reset any values that are "Sticky" are not reset.
+     * "Sticky" values should be values that are likely to remain the same
+     * if multiple submissions are made in sequence.
+     *
+     * A "Non-Sticky" reset occurs when the "Reset" button is clicked.
+     * All values are reset during a "Non-Sticky" reset.
+     *
+     * Which values are reset on a "Sticky" reset will be different for
+     * each entry point and should to be evaluated carefully and
+     * then customized in this function.
+     */
     reset(sticky = false) {
       this.validity.show = false;
 
       if (!sticky) {
-        /*
-         * Only reset these form elements if the reset is not sticky.
-         * Typically just when the user has clicked the 'Reset' button.
-         */
+        // Reset is not sticky, so reset the sticky values.
         this.form.date = dayjs().format('YYYY-MM-DD');
       }
 
-      /*
-       * Reset these form elements anytime the form is reset.
-       * This will be when the user clicks the 'Reset' button,
-       * or when the form has been successfully submitted.
-       */
+      // Always reset the non-sticky values.
       this.form.comment = '';
       this.enableSubmit = true;
     },
@@ -193,32 +378,45 @@ export default {
     validity: {
       handler() {
         /*
-         * If a form element is invalid when the "Submit Button" is clicked.
-         * This function watches the validity values of the fields and and
-         * re-enables the submit button if all of the values have been
-         * edited to be valid.
+         * If a form element is invalid when the "Submit" button is clicked
+         * the "Submit" button will have been disabled. This function
+         * watches the validity values of the components and re-enables the
+         * "Submit" button when they are valid to be submitted.
          */
-        if (Object.values(this.validity).every((item) => item === true)) {
+        if (this.validToSubmit()) {
           this.enableSubmit = true;
         }
       },
       deep: true,
     },
   },
+  /*
+   * The `created()` life cycle hook is called when the Vue instance
+   * for the entry point has been created in the browser. This function
+   * can be used to do initialization of the entry point. For example,
+   * if the entry point needs data from farmOS then this function can
+   * fetch that data. In most cases, data needed from farmOS is fetched
+   * by the individual Vue Components used in the page and this hook
+   * will simply increment `this.createdCount`.
+   */
   created() {
-    /*
-     * Place any code here that needs to be run when the page has
-     * been created in the browser.
-     */
-
     this.createdCount++;
   },
 };
 </script>
 
 <style>
+/* 
+ * Import a set of standard CSS styles for FarmData2 
+ * entry points that optimize the page for mobile devices.
+ */
 @import url('@css/fd2-mobile.css');
 
+/*
+ * Include any other styles for this entry point. It is best
+ * practice here to use id selectors (`#`) for the elements 
+ * in the entry point.
+ */
 #%ID_PREFIX%-date {
   margin-top: 2px;
   margin-bottom: 8px;
