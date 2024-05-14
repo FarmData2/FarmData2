@@ -356,11 +356,11 @@ export default {
       this.validity.show = false;
 
       if (!sticky) {
-        // Reset is not sticky, so reset the sticky values.
+        /* Reset is not sticky, so reset the sticky values. */
         this.form.date = dayjs().format('YYYY-MM-DD');
       }
 
-      // Always reset the non-sticky values.
+      /* Always reset the non-sticky values. */
       this.form.comment = '';
       this.enableSubmit = true;
     },
