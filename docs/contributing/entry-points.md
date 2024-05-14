@@ -10,7 +10,7 @@ Familiarity with the [Overview of the FarmData2 Codebase](codebase.md) will be h
 
 - [Creating a New Entry Point](#creating-a-new-entry-point)
   - [The Entry Point Template](#the-entry-point-template)
-  - [Generating a New Entry Point Template](#generating-a-new-entry-point-template)
+  - [Generating a New Entry Point](#generating-a-new-entry-point)
   - [Finding the New Entry Point](#finding-the-new-entry-point)
     - [Finding the Running Entry Point in farmOS](#finding-the-running-entry-point-in-farmos)
     - [Finding the Source Code for the Entry Point](#finding-the-source-code-for-the-entry-point)
@@ -218,7 +218,7 @@ If you are not familiar with Vue SFC or Vue's Options API the following resource
 
 ##### Adding Components to `App.vue`
 
-FarmData2 entry points are customized to their purpose by adding Vue Components to the `App.vue` file. The following resources will be helpful in customizing the entry point:
+Vue Components are added to an entry point's `App.vue` file to customize its input form to its purpose. The following resources will be helpful in customizing the entry point's `App.vue` file:
 
 - The comments in the `App.vue` file in the entry point describe the structure and organization of a FarmData2 entry point SFC.
 - The ["Component Basics"](https://vuejs.org/guide/essentials/component-basics.html) section of the Vue Introduction shows how to add Vue component to a SFC.
@@ -237,27 +237,29 @@ Examples of `App.vue` files can be found in the existing entry points including:
 
 #### The `lib.js` File
 
-The `lib.js` file is a JavaScript library for the entry point. At a minimum it contains the `submitForm` function that is called when the "Submit" button is clicked. It may also contain other functions that are useful for the entrypoint.
+The `lib.js` file is a JavaScript library for the entry point. It contains at least the `submitForm` function, which is called when the "Submit" button is clicked. It can also contain other functions that are useful for the entrypoint.
 
-Implementing the `submitForm` and other functions in the `lib.js` file, as opposed to directly in the `App.vue` file, allows them to be unit tested. See the [Entry Point Unit Tests](#entry-point-unit-tests) section for more details.
+Implementing the `submitForm` and other functions in the `lib.js` file, as opposed to directly in the `App.vue` file, makes it possible to unit test them. See the [Entry Point Unit Tests](#entry-point-unit-tests) section for more details.
 
 ##### The `submitForm` Function
 
-This function uses the `farmosUtil` library to create the data records for the entry point in the farmOS database.
+When the "Submit" button on a entry point page is clicked, the `submitForm` function in the `lib.js` file is called. This function must be customized to its entry point's purpose by using the `farmosUtil` library to create the farmOS assets, logs and quantities needed to represent the entry point's operation.
 
+The following resources will be helpful in customizing the entry point's `submitForm` function:
 
-NEED TO POINT TO THE FARMOS UTIL LIBRARY and THE TRANSACTION function in particular.
-
+- The [Example Entry Point `lib.js`](../../modules/farm_fd2_examples/src/entrypoints/example_entry_point/lib.js) contains comments that describe the customizations that need to be made.
+- The [`farmOSUtil` library](https://github.com/farmOS/farmOSUtil) contains methods for creating the farmOS assets, logs and quantities needed to represent the entry point's operation.
+  - The [Guide to working on a Library](library.md) provides information about extending the `farmosUtil` library to include new functions.
 
 ##### `lib.js` Examples
 
-Examples of `App.vue` files can be found in the existing entry points including:
+Examples of `lib.js` files can be found in the existing entry points including:
 
 - [Tray Seeding `lib.js`](../../modules/farm_fd2/src/entrypoints/tray_seeding/lib.js)
 - [Direct Seeding `lib.js`](../../modules/farm_fd2/src/entrypoints/direct_seeding/lib.js)
 - [Transplanting `lib.js`](../../modules/farm_fd2/src/entrypoints/transplanting/lib.js)
 
-### The Entry Point Tests
+### The Entry Point Test Files
 
 #### Entry Point Unit Tests
 
