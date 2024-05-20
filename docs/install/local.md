@@ -69,7 +69,7 @@ The FarmData2 Development Environment will restart much faster that the first ti
 1. Wait for the message "FarmData2 Development Environment started" to appear in your terminal.
 1. [Connect to the FarmData2 Development Environment](connecting.md):
    - Using your web browser by visiting:
-     - `http://localhost:6109`
+     - `http://localhost:6901`
    - Or by using a VNC client and connecting to:
      - `localhost:5901`
 1. When you are done working:
