@@ -24,7 +24,7 @@ FarmData2 is a plugin module for [farmOS](https://www.drupal.org/project/farm) a
 
 If you are familiar with hosting docker and database-backed websites you can [host your own instance of farmOS](https://farmos.org/hosting/install/). You can then install the latest release of the [FarmData2 Drupal Module](https://www.drupal.org/project/farmdata2) into your farmOS instance.
 
-For those preferring a managed approach [Farmier](https://farmier.com/) offers a subscription service where they create and host farmOS instances. FarmData2 hopes to be available on Farmier hosted instances of farmOS soon.
+For those preferring a managed approach, [Farmier](https://farmier.com/) offers a subscription service where they create and host farmOS instances. FarmData2 hopes to be available on Farmier hosted instances of farmOS soon.
 
 ## Help and Communications
 
