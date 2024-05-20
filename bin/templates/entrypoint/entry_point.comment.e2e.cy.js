@@ -1,4 +1,4 @@
-describe('%ENTRY_POINT%: Comment Component', () => {
+describe('%ENTRY_POINT_TITLE%: Comment Component', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();

@@ -247,7 +247,7 @@ When the "Submit" button on a entry point page is clicked, the `submitForm` func
 
 The following resources will be helpful in customizing the entry point's `submitForm` function:
 
-- The [Example Entry Point `lib.js`](../../modules/farm_fd2_examples/src/entrypoints/example_entry_point/lib.js) contains comments that describe the customizations that need to be made.
+- The [Example Entry Point `lib.js`](../../modules/farm_fd2_examples/src/entrypoints/example_entry_point/lib.js) contains a _TODO_ list and comments that describe the customizations that need to be made.
 - The [`farmOSUtil` library](https://github.com/farmOS/farmOSUtil) contains methods for creating the farmOS assets, logs and quantities needed to represent the entry point's operation.
   - The [Guide to working on a Library](library.md) provides information about extending the `farmosUtil` library to include new functions.
 
@@ -261,9 +261,76 @@ Examples of `lib.js` files can be found in the existing entry points including:
 
 ### The Entry Point Test Files
 
+Entry points have two types of tests associated with them. The functions in the `lib.js` file have unit tests and the functionality in the `App.vue` file has end-to-end tests.
+
 #### Entry Point Unit Tests
 
+The entry point template provides the `lib.submit.unit.cy.js` and `lib.submitError.unit.cy.js` test files. These files are intended to test the `submitForm` function in the `lib.js` file. The `submitForm` function is not yet implemented, so the tests provided are placeholders to be adapted to your `submitForm` function.
+
+You can find examples of the unit tests for the `submitForm` function in other entry points including:
+
+- [Tray Seeding `lib.submit.unit.cy.js`](../../modules/farm_fd2/src/entrypoints/tray_seeding/lib.submit.unit.cy.js)
+- [Tray Seeding `lib.submitError.unit.cy.js`](../../modules/farm_fd2/src/entrypoints/tray_seeding/lib.submitError.unit.cy.js)
+
+If other functions are added to the `lib.js` file, their unit tests should be placed in a file incorporating their name. For example, if a function named `computeValid` is added then its unit tests should be placed in `lib.computeValid.unit.cy.js`.
+
 #### Entry Point End-to-End Tests
+
+The entry point end-to-end tests check that the entry point exists, has all the correct components, the component's props are set, and the form submits the correct data.
+
+The entry point template provides the following end-to-end (e2e) tests:
+
+- `*.exists.e2e.cy.js` - tests that the page exists. can be accessed by appropriate users, and contains the main structural elements.
+- `*.date.e2e.cy.js` - tests the `DateSelector` component.
+- `*.comment.e2e.cy.js` - tests the `CommentBox` component.
+- `*.submitReset.e2e.cy.js` - tests the `SubmitResetButtons` component.
+
+As you begin to customize the entry point's `App.vue` file you will need to:
+
+1. Edit the `*.submitReset.e2e.cy.js` to account for any added components.
+
+   - Use the comments in the file as a guide.
+
+2. Add a `*.<component>.e2e.cy.js` test file for each component that you add. These files should:
+
+   - Check that the component initially:
+
+     - exists or not as appropriate.
+     - is visible or not as appropriate.
+     - is enabled or not as appropriate.
+
+3. Test that the component's props that are set in `App.vue` are reflected in the page. For example:
+
+   - required or not.
+   - default value set by a prop.
+   - contents of dropdown affected by props.
+   - existence of buttons affected by props.
+
+4. Test the validity styling of the component:
+
+   - Place an in-valid or valid value in the component.
+   - Click submit
+   - Check component for appropriate styles (`is-valid` or `is-invalid`)
+   - If the error feedback message is set by a prop in `App.vue` it should also be checked.
+
+5. Test that the component's behavior that is affected by props is reflected in the page. For example:
+
+   - behavior of buttons affected by props.
+   - open collapsible elements and check contents affected by props.
+   - and so forth.
+
+6. Add a `*.submission.e2e.cy.js` test file to test successful and unsuccessful submissions.
+
+  - Test successful submit
+    - configure form with all fields valid
+    - submit
+    - check:
+      - creates all of the records
+      - shows/hides submitting banner
+      - resets form leaving "sticky" values in place.
+      - shows/hides success banner
+  - Test submit w/ error
+    - shows/hides error banner
 
 #### Testing Tips
 

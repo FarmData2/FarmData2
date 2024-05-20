@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import * as lib from './lib';
 
-describe('Test the %ENTRY_POINT% lib submission error', () => {
+describe('Test the %ENTRY_POINT_TITLE% lib submission error', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the entry point.  This will be passed
@@ -25,7 +25,7 @@ describe('Test the %ENTRY_POINT% lib submission error', () => {
   });
 
   it(
-    '%ENTRY_POINT% records are deleted if there is a submission error',
+    '%ENTRY_POINT_TITLE%: records are deleted if there is a submission error',
     { retries: 4 },
     () => {
       /*

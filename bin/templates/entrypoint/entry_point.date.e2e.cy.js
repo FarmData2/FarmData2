@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-describe('%ENTRY_POINT%: Date Component', () => {
+describe('%ENTRY_POINT_TITLE%: Date Component', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();

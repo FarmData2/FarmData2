@@ -2,7 +2,7 @@ import * as lib from './lib';
 // eslint-disable-next-line no-unused-vars
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-describe('Test the %ENTRY_POINT% lib submission', () => {
+describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the entry point.  This will be passed
@@ -43,16 +43,16 @@ describe('Test the %ENTRY_POINT% lib submission', () => {
    * Each test will fetch the the log, asset or quantity that it
    * is testing from farmOS and compare it to the expected result.
    *
-   * See modules/farm_fd2/src/entrypoints/tray_seeding/lib.js for
-   * an example of how to test the logs, assets and quantities.
+   * See modules/farm_fd2/src/entrypoints/tray_seeding/lib.submit.unit.cy.js 
+   * for an example of how to test the logs, assets and quantities.
    */
 
   /*
    * This test is a place holder and should be removed
-   * and replaced with actual tests when the submitForm
+   * and replaced with actual tests as the submitForm
    * function is being written and tested.
    */
-  it('Placeholder that just checks the sampleOp result', () => {
+  it('%ENTRY_POINT_TITLE%: Placeholder checks the sampleOp result', () => {
     expect(result.sampleOp.date).to.equal('1950-01-02');
     expect(result.sampleOp.comment).to.equal('A comment');
   });
