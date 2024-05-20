@@ -280,7 +280,7 @@ export default {
          * while the submission is processing.
          */
         uiUtil.showToast(
-          'Submitting %ENTRY_POINT%...',
+          'Submitting %ENTRY_POINT_TITLE%...',
           '',
           'top-center',
           'success'
@@ -301,7 +301,7 @@ export default {
             uiUtil.hideToast();
             this.reset(true);
             uiUtil.showToast(
-              '%ENTRY_POINT% created.',
+              '%ENTRY_POINT_TITLE% created.',
               '',
               'top-center',
               'success',
@@ -315,7 +315,7 @@ export default {
              */
             uiUtil.hideToast();
             this.showErrorToast(
-              'Error creating %ENTRY_POINT%.',
+              'Error creating %ENTRY_POINT_TITLE%.',
               'Check your network connection and try again.'
             );
             this.enableSubmit = true;

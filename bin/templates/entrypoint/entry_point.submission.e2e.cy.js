@@ -1,10 +1,10 @@
-describe('Tray Seeding: Submission tests', () => {
+describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
 
     cy.login('admin', 'admin');
-    cy.visit('fd2/tray_seeding/');
+    cy.visit('%DRUPAL_ROUTE%/');
     cy.waitForPage();
   });
 
@@ -16,28 +16,11 @@ describe('Tray Seeding: Submission tests', () => {
   function submitForm() {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
-    cy.get('[data-cy="tray-seeding-crop"]')
-      .find('[data-cy="selector-input"]')
-      .select('ARUGULA');
-    cy.get('[data-cy="tray-seeding-location"]')
-      .find('[data-cy="selector-input"]')
-      .select('CHUAU');
 
-    cy.get('[data-cy="tray-seeding-trays"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="tray-seeding-trays"]')
-      .find('[data-cy="numeric-input"]')
-      .type('10');
-    cy.get('[data-cy="tray-seeding-tray-size"]')
-      .find('[data-cy="selector-input"]')
-      .select('50');
-    cy.get('[data-cy="tray-seeding-seeds"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="tray-seeding-seeds"]')
-      .find('[data-cy="numeric-input"]')
-      .type('3');
+    /*
+     * TODO: Add code to fill in values for other fields as they
+     * are added to the input form.
+     */
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -47,11 +30,11 @@ describe('Tray Seeding: Submission tests', () => {
 
   it('Test successful submission', () => {
     /*
-     * Create a spy to watch for the seeding log, which is the
-     * last thing created by the lib.submitForm function that is
-     * called when the "Submit" button is clicked.
+     * TODO: Customize this spy to watch for the last log
+     * or asset created by the lib.submitForm function that
+     * is called when the "Submit" button is clicked.
      */
-    cy.intercept('POST', '**/api/log/seeding', cy.spy().as('submitSpy'));
+    cy.intercept('POST', '**/api/*', cy.spy().as('submitSpy'));
 
     /*
      * Fill in the form and click the "Submit" button.
@@ -61,12 +44,12 @@ describe('Tray Seeding: Submission tests', () => {
     // Check for the status toast while the form is submitting.
     cy.get('.toast')
       .should('be.visible')
-      .should('contain.text', 'Submitting tray seeding...');
+      .should('contain.text', 'Submitting %ENTRY_POINT_TITLE%...');
 
     // Give time for all the records to be created.
     cy.get('.toast', { timeout: 10000 }).should(
       'contain.text',
-      'Tray seeding created.'
+      '%ENTRY_POINT_TITLE% created.'
     );
 
     /*
@@ -78,40 +61,39 @@ describe('Tray Seeding: Submission tests', () => {
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
-    cy.get('[data-cy="tray-seeding-location"]')
-      .find('[data-cy="selector-input"]')
-      .should('have.value', 'CHUAU');
 
     // Check that the other parts of the form are reset.
-    cy.get('[data-cy="tray-seeding-crop"]')
-      .find('[data-cy="selector-input"]')
-      .should('have.value', null);
-    cy.get('[data-cy="tray-seeding-trays"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '1.00');
-    cy.get('[data-cy="tray-seeding-tray-size"]')
-      .find('[data-cy="selector-input"]')
-      .should('have.value', null);
-    cy.get('[data-cy="tray-seeding-seeds"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '1');
     cy.get('[data-cy="comment-input"]').should('have.value', '');
+
+    /*
+     * TODO: Add checks above for the other parts of the form as they
+     * are added to the input form.
+     */
 
     // Finally check that the toast is hidden.
     cy.get('.toast').should('not.exist');
   });
 
   it('Test submission with network error', () => {
-    cy.intercept('POST', '**/api/log/seeding', {
+    /*
+     * TODO: Customize this spy to watch for the last log
+     * or asset created by the lib.submitForm function that
+     * is called when the "Submit" button is clicked.
+     */
+
+    cy.intercept('POST', '**/api/*', {
       statusCode: 401,
     });
+
     submitForm();
+
     cy.get('.toast')
       .should('be.visible')
-      .should('contain.text', 'Submitting tray seeding...');
+      .should('contain.text', 'Submitting %ENTRY_POINT_TITLE%...');
+
     cy.get('.toast')
       .should('be.visible')
-      .should('contain.text', 'Error creating tray seeding.');
+      .should('contain.text', 'Error creating %ENTRY_POINT_TITLE% records.');
     cy.get('.toast', { timeout: 7000 }).should('not.exist');
   });
 });
