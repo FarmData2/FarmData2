@@ -46,3 +46,9 @@ farm.fd2_examples_transplanting_picklist:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_transplanting_picklist.content
   weight: 100
+farm.fd2_examples_soil_disturbance:
+  title: 'SoilDisturbance'
+  description: 'Example for use of the SoilDisturbance component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_soil_disturbance.content
+  weight: 100
