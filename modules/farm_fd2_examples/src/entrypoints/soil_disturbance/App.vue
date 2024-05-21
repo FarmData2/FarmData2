@@ -12,13 +12,13 @@
     v-model:area="form.area"
     v-model:depth="form.depth"
     v-model:equipment="form.equipment"
-    v-model:includePasses="form.includePasses"
+    v-bind:includePasses="includePasses"
     v-model:speed="form.speed"
     v-model:passes="form.passes"
     v-bind:showValidityStyling="validity.showStyling"
     v-on:valid="
       (valid) => {
-        validity.isValid = valid;
+        validity.soilDisturbance = valid;
       }
     "
     v-on:ready="createdCount++"
@@ -55,73 +55,6 @@
         </td>
       </tr>
       <tr>
-        <td>area</td>
-        <td>
-          <BButton
-            id="set-area-button"
-            data-cy="set-area-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="changeArea"
-          >
-            Area = 50
-          </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>depth</td>
-        <td>
-          <BButton
-            id="set-depth-button"
-            data-cy="set-depth-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="changeDepth"
-          >
-            Depth = 6
-          </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>speed</td>
-        <td>
-          <BButton
-            id="set-speed-button"
-            data-cy="set-speed-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="changeSpeed"
-          >
-            Speed = 3
-          </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>Set Passes</td>
-        <td>
-          <BButton
-            id="set-passes-button"
-            data-cy="set-passes-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="changePasses"
-          >
-            Passes = 4
-          </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>includePasses</td>
-        <td>
-          <BFormCheckbox
-            id="include-passes-checkbox"
-            data-cy="include-passes-checkbox"
-            switch
-            v-model="form.includePasses"
-          />
-        </td>
-      </tr>
-      <tr>
         <td>Add Planter</td>
         <td>
           <BButton
@@ -149,6 +82,75 @@
           </BButton>
         </td>
       </tr>
+      <template v-if="form.equipment.length > 0">
+        <tr>
+          <td>area</td>
+          <td>
+            <BButton
+              id="set-area-button"
+              data-cy="set-area-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="changeArea"
+            >
+              Area = 50
+            </BButton>
+          </td>
+        </tr>
+        <tr>
+          <td>depth</td>
+          <td>
+            <BButton
+              id="set-depth-button"
+              data-cy="set-depth-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="changeDepth"
+            >
+              Depth = 6
+            </BButton>
+          </td>
+        </tr>
+        <tr>
+          <td>speed</td>
+          <td>
+            <BButton
+              id="set-speed-button"
+              data-cy="set-speed-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="changeSpeed"
+            >
+              Speed = 3
+            </BButton>
+          </td>
+        </tr>
+        <tr>
+          <td>includePasses</td>
+          <td>
+            <BFormCheckbox
+              id="include-passes-checkbox"
+              data-cy="include-passes-checkbox"
+              switch
+              v-model="includePasses"
+            />
+          </td>
+        </tr>
+        <tr v-if="includePasses">
+          <td>Set Passes</td>
+          <td>
+            <BButton
+              id="set-passes-button"
+              data-cy="set-passes-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="changePasses"
+            >
+              Passes = 4
+            </BButton>
+          </td>
+        </tr>
+      </template>
     </tbody>
   </table>
 
@@ -160,8 +162,8 @@
     </thead>
     <tbody>
       <tr>
-        <td>valid</td>
-        <td>{{ validity.isValid }}</td>
+        <td>equipment</td>
+        <td>{{ form.equipment }}</td>
       </tr>
       <tr>
         <td>area</td>
@@ -172,20 +174,16 @@
         <td>{{ form.depth }}</td>
       </tr>
       <tr>
-        <td>equipment</td>
-        <td>{{ form.equipment }}</td>
-      </tr>
-      <tr>
-        <td>include passes</td>
-        <td>{{ form.includePasses }}</td>
-      </tr>
-      <tr>
         <td>speed</td>
         <td>{{ form.speed }}</td>
       </tr>
       <tr>
         <td>passes</td>
         <td>{{ form.passes }}</td>
+      </tr>
+      <tr>
+        <td>valid</td>
+        <td>{{ validity.soilDisturbance }}</td>
       </tr>
     </tbody>
   </table>
@@ -210,8 +208,8 @@ export default {
   data() {
     return {
       required: true,
+      includePasses: true,
       form: {
-        includePasses: true,
         area: 100,
         depth: 0,
         equipment: [],
@@ -220,6 +218,7 @@ export default {
       },
       validity: {
         showStyling: false,
+        soilDisturbance: false,
       },
       createdCount: 0,
     };
@@ -264,7 +263,7 @@ export default {
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
-date-selector-hack {
+soil-disturbance-hack {
   display: none;
 }
 </style>
