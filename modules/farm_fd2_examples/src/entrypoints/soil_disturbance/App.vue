@@ -72,6 +72,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="clearEquipment"
+            :disabled="form.equipment.length == 0"
           >
             clear equipment
           </BButton>
