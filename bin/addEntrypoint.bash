@@ -245,12 +245,10 @@ echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submitError.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
 echo "  Added $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
 
 echo ""

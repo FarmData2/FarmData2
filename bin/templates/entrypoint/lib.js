@@ -101,7 +101,7 @@ export async function submitForm(formData) {
     console.error('%ENTRY_POINT% lib.js:');
     console.error(error);
 
-    let errorMsg = 'Error creating %ENTRY_POINT_NAME% records.';
+    let errorMsg = 'Error creating %ENTRY_POINT_TITLE% records.';
 
     for (const key of Object.keys(error.results)) {
       if (error.results[key]) {
