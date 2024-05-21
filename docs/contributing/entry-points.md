@@ -265,7 +265,10 @@ Entry points have two types of tests associated with them. The functions in the 
 
 #### Entry Point Unit Tests
 
-The entry point template provides the `lib.submit.unit.cy.js` and `lib.submitError.unit.cy.js` test files. These files are intended to test the `submitForm` function in the `lib.js` file. 
+The entry point template provides two test files:
+- `lib.submit.unit.cy.js` - tests a successful call to the `submitForm` function in `lib.js`.
+- `lib.submitError.unit.cy.js` tests an unsuccessful to the `submitForm` function in the `lib.js` file.
+
 
 
 

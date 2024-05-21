@@ -1,4 +1,11 @@
 describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
+  /*
+   * TODO: Customize this route to match the last log
+   * or asset created by the lib.submitForm function that
+   * is called when the "Submit" button is clicked.
+   */
+  const apiRoute = '**/api/log';
+
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -29,12 +36,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   }
 
   it('Test successful submission', () => {
-    /*
-     * TODO: Customize this spy to watch for the last log
-     * or asset created by the lib.submitForm function that
-     * is called when the "Submit" button is clicked.
-     */
-    cy.intercept('POST', '**/api/*', cy.spy().as('submitSpy'));
+    cy.intercept('POST', apiRoute, cy.spy().as('submitSpy'));
 
     /*
      * Fill in the form and click the "Submit" button.
@@ -75,13 +77,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   });
 
   it('Test submission with network error', () => {
-    /*
-     * TODO: Customize this spy to watch for the last log
-     * or asset created by the lib.submitForm function that
-     * is called when the "Submit" button is clicked.
-     */
-
-    cy.intercept('POST', '**/api/*', {
+    cy.intercept('POST', apiRoute, {
       statusCode: 401,
     });
 

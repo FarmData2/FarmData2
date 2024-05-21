@@ -38,10 +38,4 @@
 
 ## FarmData2 Component and Library Documentation
 
-Run the following command to be able to view the Component and Library documentation:
-
-```bash
-npm run docs:view
-```
-
 - [FarmData2 Documentation](FarmData2.md) - API documentation for the FarmData2 custom Vue components and JavaScript libraries.

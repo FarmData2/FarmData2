@@ -22,7 +22,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```Javascript
  * {
  *   ... TODO: add attribute names and types. For example...
- *   plantAsset: {asset--plant},
+ *   sampleOp: {log--seeding},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
@@ -47,16 +47,49 @@ export async function submitForm(formData) {
     const sampleOp = {
       name: 'sampleOp',
       do: async () => {
-        // Simulate the time it takes to make an API call.
-        await new Promise((r) => setTimeout(r, 2000));
+        /*
+         * Simulate an operation that will be caught by the spy in
+         * the %ENTRY_POINT%.submission.e2e.cy.js file.
+         *
+         * This operation fetches the first seeding log.
+         * In practice, operations will add assets, logs and quantities
+         * rather than fetching them.
+         */
+        const farm = await farmosUtil.getFarmOSInstance();
+        const filter = {
+          type: ['log--seeding'],
+          name: '2019-08-29_ts_LETTUCE-ICEBERG',
+        };
+        const result = await farm.log.fetch(filter);
 
-        // Code here does the operation and returns the result.
+        /*
+         * Just here for this sampleOp.  In practice, ops will not
+         * will not print any output to the console.
+         */
         console.log(formData);
-        return formData;
+        console.log(result);
+
+        return result;
       },
       undo: async (results) => {
-        // Code here undoes the operation if necessary.
-        console.log(results);
+        /*
+         * Simulate an operation that will be caught by the spy in
+         * the %ENTRY_POINT%.submission.e2e.cy.js file.
+         *
+         * This operation fetches the first seeding log.
+         * In practice, operations will delete the asset, log
+         * or quantity that was created in `do`.
+         */
+        const result = await farmosUtil.getSeedingLog(results.sampleOp.id);
+
+        /*
+         * Just here for this sampleOp.  In practice, ops will not
+         * will not print any output to the console.
+         */
+        console.log(formData);
+        console.log(result);
+
+        return result;
       },
     };
     // Add the operation to the ops for the transaction.
@@ -68,7 +101,7 @@ export async function submitForm(formData) {
     console.error('%ENTRY_POINT% lib.js:');
     console.error(error);
 
-    let errorMsg = 'Error creating %ENTRY_POINT% records.';
+    let errorMsg = 'Error creating %ENTRY_POINT_NAME% records.';
 
     for (const key of Object.keys(error.results)) {
       if (error.results[key]) {
