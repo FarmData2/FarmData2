@@ -55,7 +55,7 @@
         </td>
       </tr>
       <tr>
-        <td>Add Planter</td>
+        <td>equipment</td>
         <td>
           <BButton
             id="add-equipment-button"
@@ -64,13 +64,8 @@
             size="sm"
             v-on:click="addEquipment"
           >
-            Add Planter
+            add planter
           </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>Clear</td>
-        <td>
           <BButton
             id="clear-equipment-button"
             data-cy="clear-equipment-button"
@@ -78,25 +73,11 @@
             size="sm"
             v-on:click="clearEquipment"
           >
-            Clear Equipment
+            clear equipment
           </BButton>
         </td>
       </tr>
       <template v-if="form.equipment.length > 0">
-        <tr>
-          <td>area</td>
-          <td>
-            <BButton
-              id="set-area-button"
-              data-cy="set-area-button"
-              variant="outline-primary"
-              size="sm"
-              v-on:click="changeArea"
-            >
-              Area = 50
-            </BButton>
-          </td>
-        </tr>
         <tr>
           <td>depth</td>
           <td>
@@ -107,7 +88,7 @@
               size="sm"
               v-on:click="changeDepth"
             >
-              Depth = 6
+              depth = 6
             </BButton>
           </td>
         </tr>
@@ -121,7 +102,21 @@
               size="sm"
               v-on:click="changeSpeed"
             >
-              Speed = 3
+              speed = 3
+            </BButton>
+          </td>
+        </tr>
+        <tr>
+          <td>area</td>
+          <td>
+            <BButton
+              id="set-area-button"
+              data-cy="set-area-button"
+              variant="outline-primary"
+              size="sm"
+              v-on:click="changeArea"
+            >
+              area = 50
             </BButton>
           </td>
         </tr>
@@ -137,7 +132,7 @@
           </td>
         </tr>
         <tr v-if="includePasses">
-          <td>Set Passes</td>
+          <td>passes</td>
           <td>
             <BButton
               id="set-passes-button"
@@ -146,7 +141,7 @@
               size="sm"
               v-on:click="changePasses"
             >
-              Passes = 4
+              passes = 4
             </BButton>
           </td>
         </tr>
@@ -166,16 +161,16 @@
         <td>{{ form.equipment }}</td>
       </tr>
       <tr>
-        <td>area</td>
-        <td>{{ form.area }}</td>
-      </tr>
-      <tr>
         <td>depth</td>
         <td>{{ form.depth }}</td>
       </tr>
       <tr>
         <td>speed</td>
         <td>{{ form.speed }}</td>
+      </tr>
+      <tr>
+        <td>area</td>
+        <td>{{ form.area }}</td>
       </tr>
       <tr>
         <td>passes</td>
