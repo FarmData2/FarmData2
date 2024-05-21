@@ -1,13 +1,9 @@
-.example-table {
+table.example-table {
+  border-collapse: collapse;
   border: 1px solid black;
   margin-top: 2px;
   margin-bottom: 2px;
   width: auto;
-}
-
-.example-table {
-  border-collapse: collapse;
-  border: 1px solid black;
 }
 
 .example-table thead th {
