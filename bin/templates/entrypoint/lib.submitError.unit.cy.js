@@ -61,7 +61,7 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission error', () => {
           })
           .catch((error) => {
             expect(error.message).to.contain(
-              'Error creating %ENTRY_POINT_TITLE%.'
+              'Error creating %ENTRY_POINT_TITLE% records.'
             );
 
             /*
