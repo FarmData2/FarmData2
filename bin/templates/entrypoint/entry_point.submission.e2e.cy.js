@@ -1,8 +1,8 @@
 describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   /*
    * TODO: Customize this route to match the last log
-   * or asset created by the lib.submitForm function that
-   * is called when the "Submit" button is clicked.
+   *       or asset created by the lib.submitForm function that
+   *       is called when the "Submit" button is clicked.
    */
   const apiRoute = '**/api/log';
 
@@ -26,7 +26,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
 
     /*
      * TODO: Add code to fill in values for other fields as they
-     * are added to the input form.
+     *       are added to the input form.
      */
 
     cy.get('[data-cy="comment-input"]').type('test comment');
@@ -69,7 +69,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
 
     /*
      * TODO: Add checks above for the other parts of the form as they
-     * are added to the input form.
+     *       are added to the input form.
      */
 
     // Finally check that the toast is hidden.
