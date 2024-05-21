@@ -13,6 +13,7 @@
     v-model:depth="form.depth"
     v-model:equipment="form.equipment"
     v-bind:includePasses="includePasses"
+    v-bind:includeArea="includeArea"
     v-model:speed="form.speed"
     v-model:passes="form.passes"
     v-bind:showValidityStyling="validity.showStyling"
@@ -108,6 +109,17 @@
           </td>
         </tr>
         <tr>
+          <td>includeArea</td>
+          <td>
+            <BFormCheckbox
+              id="include-area-checkbox"
+              data-cy="include-area-checkbox"
+              switch
+              v-model="includeArea"
+            />
+          </td>
+        </tr>
+        <tr v-if="includeArea">
           <td>area</td>
           <td>
             <BButton
@@ -205,6 +217,7 @@ export default {
     return {
       required: true,
       includePasses: true,
+      includeArea: true,
       form: {
         area: 100,
         depth: 0,

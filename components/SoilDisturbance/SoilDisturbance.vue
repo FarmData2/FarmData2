@@ -54,7 +54,7 @@
     <NumericInput
       id="soil-disturbance-area"
       data-cy="soil-disturbance-area"
-      v-if="form.equipment.length > 0"
+      v-if="form.equipment.length > 0 && includeArea"
       required
       label="Area (%)"
       invalidFeedbackText="Area must be a positive number."
@@ -148,6 +148,13 @@ export default {
     equipment: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * Whether to include an input area for the percentage of the selected location that was affected by the soil disturbance.
+     */
+    includeArea: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Whether to include an input area for the number of passes over the area.
