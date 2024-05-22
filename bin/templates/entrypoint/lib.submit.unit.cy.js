@@ -27,6 +27,11 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
      *         - modules/farm_fd2/src/entrypoints/direct_seeding
      */
 
+    /*
+     * Submit the form using lib.submitForm from farmosUtil to create
+     * all the logs, assets and quantities needed to represent a
+     * %ENTRY_POINT_TITLE%.
+     */
     cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((res) => {
       result = res;
     });
