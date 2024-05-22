@@ -48,8 +48,10 @@ export async function submitForm(formData) {
       name: 'sampleOp',
       do: async () => {
         /*
-         * Simulate an operation that will be caught by the spy in
-         * the %ENTRY_POINT%.submission.e2e.cy.js file.
+         * Simulate an operation that will be caught by the intercepts
+         * and spies in:
+         *   - %ENTRY_POINT%.submission.e2e.cy.js
+         *   - lib.submitError.unit.cy.js
          *
          * This operation fetches the first seeding log.
          * In practice, operations will add assets, logs and quantities
@@ -57,7 +59,7 @@ export async function submitForm(formData) {
          */
         const farm = await farmosUtil.getFarmOSInstance();
         const filter = {
-          type: ['log--seeding'],
+          type: 'log--seeding',
           name: '2019-08-29_ts_LETTUCE-ICEBERG',
         };
         const result = await farm.log.fetch(filter);
