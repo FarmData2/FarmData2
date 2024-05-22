@@ -61,6 +61,7 @@
           v-bind:pickedBeds="form.beds"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
+          v-on:update:beds="(checkedBeds) => handleBedsUpdate(checkedBeds)"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
@@ -247,6 +248,9 @@ export default {
     };
   },
   methods: {
+    handleBedsUpdate(checkedBeds) {
+      this.form.beds = checkedBeds;
+    },
     submit() {
       this.validity.show = true;
 
