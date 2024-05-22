@@ -68,12 +68,6 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('5');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .type('50');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -155,9 +149,6 @@ describe('Direct Seeding: Submission tests', () => {
     cy.get('[data-cy="direct-seeding-bed-feet"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '100');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '');
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
     // Finally check that the toast is hidden.
