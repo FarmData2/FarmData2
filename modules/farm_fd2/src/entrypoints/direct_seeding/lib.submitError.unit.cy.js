@@ -18,7 +18,6 @@ describe('Error when submitting using the direct_seeding lib.', () => {
     equipment: ['Tractor'],
     depth: 6,
     speed: 5,
-    area: 50,
     comment: 'A comment',
   };
 
@@ -104,11 +103,8 @@ describe('Error when submitting using the direct_seeding lib.', () => {
           expect(error.message).to.contain(
             'Result of operation speedQuantity could not be cleaned up.'
           );
-          expect(error.message).to.contain(
-            'Result of operation areaQuantity could not be cleaned up.'
-          );
 
-          expect(standardQuantityDeletes).to.equal(7);
+          expect(standardQuantityDeletes).to.equal(6);
           expect(seedingLogDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
         }),
@@ -193,7 +189,7 @@ describe('Error when submitting using the direct_seeding lib.', () => {
           expect(error.message).not.to.contain('rowFeetQuantity');
           expect(error.message).not.to.contain('rosPerBedQuantity.');
           expect(error.message).not.to.contain('rowFeetQuantity');
-          expect(standardQuantityDeletes).to.equal(3);
+          expect(standardQuantityDeletes).to.equal(2);
           expect(seedingLogDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
         })

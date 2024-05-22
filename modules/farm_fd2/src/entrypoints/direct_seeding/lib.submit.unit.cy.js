@@ -19,7 +19,6 @@ describe('Submission using the direct_seeding lib.', () => {
     equipment: ['Tractor'],
     depth: 6,
     speed: 5,
-    area: 75,
     comment: 'A comment',
   };
 
@@ -291,30 +290,6 @@ describe('Submission using the direct_seeding lib.', () => {
     );
   });
 
-  it('Check the area quantity--standard', () => {
-    cy.wrap(farmosUtil.getStandardQuantity(result.areaQuantity.id)).then(
-      (areaQuantity) => {
-        expect(areaQuantity.type).to.equal('quantity--standard');
-        expect(areaQuantity.attributes.measure).to.equal('ratio');
-        expect(areaQuantity.attributes.value.decimal).to.equal(
-          form.area.toString()
-        );
-        expect(areaQuantity.attributes.label).to.equal('Area');
-
-        expect(areaQuantity.attributes.inventory_adjustment).to.be.null;
-
-        expect(areaQuantity.relationships.units.type).to.equal(
-          'taxonomy_term--unit'
-        );
-        expect(areaQuantity.relationships.units.id).to.equal(
-          result.areaQuantity.relationships.units.id
-        );
-
-        expect(areaQuantity.relationships.inventory_asset).to.be.null;
-      }
-    );
-  });
-
   it('Check the soil disturbance log--activity', () => {
     cy.wrap(
       farmosUtil.getSoilDisturbanceActivityLog(result.activityLog.id)
@@ -348,15 +323,12 @@ describe('Submission using the direct_seeding lib.', () => {
         categoryMap.get('seeding_direct').id
       );
 
-      expect(activityLog.relationships.quantity.length).to.equal(3);
+      expect(activityLog.relationships.quantity.length).to.equal(2);
       expect(activityLog.relationships.quantity[0].id).to.equal(
         result.depthQuantity.id
       );
       expect(activityLog.relationships.quantity[1].id).to.equal(
         result.speedQuantity.id
-      );
-      expect(activityLog.relationships.quantity[2].id).to.equal(
-        result.areaQuantity.id
       );
       expect(activityLog.relationships.equipment.length).to.equal(1);
       expect(activityLog.relationships.equipment[0].id).to.equal(
