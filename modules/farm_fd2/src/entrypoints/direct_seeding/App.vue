@@ -61,9 +61,6 @@
           v-bind:pickedBeds="form.beds"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:update:beds="
-            (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
-          "
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
@@ -146,12 +143,11 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:area="form.area"
+              v-bind:includeArea="includeArea"
               v-on:valid="validity.soilDisturbance = $event"
               v-on:update:equipment="form.equipment = $event"
               v-on:update:depth="form.depth = $event"
               v-on:update:speed="form.speed = $event"
-              v-on:update:area="form.area = $event"
               v-on:error="(msg) => showErrorToast('Network Error', msg)"
               v-on:ready="createdCount++"
             />
@@ -230,7 +226,6 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: '',
         comment: null,
       },
       validity: {
@@ -244,6 +239,7 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
+      includeArea: false,
       enableSubmit: true,
       enableReset: true,
       errorShown: false,
@@ -251,15 +247,6 @@ export default {
     };
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
-      this.form.beds = checkedBeds;
-
-      if (checkedBeds.length == 0) {
-        this.form.area = '';
-      } else {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
-      }
-    },
     submit() {
       this.validity.show = true;
 
@@ -315,7 +302,6 @@ export default {
       this.form.cropName = null;
       this.form.beds = [];
       this.form.bedFeet = 100;
-      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
