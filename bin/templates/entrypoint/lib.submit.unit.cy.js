@@ -59,7 +59,9 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
    *       points.
    */
   it('%ENTRY_POINT_TITLE%: Placeholder checks the sampleOp result', () => {
-    expect(result.sampleOp.date).to.equal('1950-01-02');
-    expect(result.sampleOp.comment).to.equal('A comment');
+    expect(result.sampleOp.attributes.timestamp).to.contain('2019-08-29');
+    expect(result.sampleOp.attributes.name).to.equal(
+      '2019-08-29_ts_LETTUCE-ICEBERG'
+    );
   });
 });

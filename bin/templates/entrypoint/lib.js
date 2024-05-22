@@ -62,16 +62,16 @@ export async function submitForm(formData) {
           type: 'log--seeding',
           name: '2019-08-29_ts_LETTUCE-ICEBERG',
         };
-        const result = await farm.log.fetch(filter);
+        const result = await farm.log.fetch({ filter });
 
         /*
          * Just here for this sampleOp.  In practice, ops will not
          * will not print any output to the console.
          */
         console.log(formData);
-        console.log(result);
+        console.log(result.fulfilled[0][0].data.data[0]);
 
-        return result;
+        return result.fulfilled[0][0].data.data[0];
       },
       undo: async (results) => {
         /*
