@@ -37,7 +37,7 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission error', () => {
        *         - modules/farm_fd2/src/entrypoints/tray_seeding
        *         - modules/farm_fd2/src/entrypoints/direct_seeding
        */
-      cy.intercept('POST', '**/api/log', {
+      cy.intercept('GET', '**/api/log/*', {
         statusCode: 401,
       });
 
