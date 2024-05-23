@@ -1,5 +1,4 @@
 import { defineConfig } from 'cypress';
-import Cypress from 'cypress';
 import { execSync } from 'child_process';
 import vitePreprocessor from 'cypress-vite';
 
