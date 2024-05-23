@@ -315,7 +315,7 @@ export default {
              */
             uiUtil.hideToast();
             this.showErrorToast(
-              'Error creating %ENTRY_POINT_TITLE%.',
+              'Error creating %ENTRY_POINT_TITLE% records.',
               'Check your network connection and try again.'
             );
             this.enableSubmit = true;
