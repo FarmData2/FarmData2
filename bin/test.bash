@@ -47,7 +47,7 @@ cleanup() {
 
   # Set default EXIT_CODE to 130 if not provided
   EXIT_CODE=${1:-130}
-  
+
   # Terminate the dev server if it's running
   if [ -n "$DEV_GID" ]; then
     echo "Terminating the dev server..."
@@ -76,7 +76,7 @@ cleanup() {
     echo "Builder terminated."
   fi
   # Exit the script
-  exit $EXIT_CODE
+  exit "$EXIT_CODE"
 }
 # Trap SIGINT (Ctrl-C) and SIGTERM
 trap cleanup SIGINT SIGTERM
@@ -198,22 +198,26 @@ if [ -n "$UNIT_TESTS" ]; then
 fi
 
 # Setup to run e2e or component or unit tests.
+CYPRESS_ENV="none=none"
 if [ -n "$E2E_TESTS" ]; then
   echo "End-to-end testing requested."
   CYPRESS_TEST_TYPE="e2e"
   if [ -n "$TEST_FD2" ]; then
     echo "  Testing the farm_fd2 module."
     PROJECT_DIR="modules/farm_fd2"
+    CYPRESS_ENV="module=./$PROJECT_DIR"
     CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2"
   elif [ -n "$TEST_EXAMPLES" ]; then
     echo "  Testing the farm_fd2_examples module."
     PROJECT_DIR="modules/farm_fd2_examples"
+    CYPRESS_ENV="module=./$PROJECT_DIR"
     CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_examples"
   else
     echo "  Testing the farm_fd2_school module."
     PROJECT_DIR="modules/farm_fd2_school"
+    CYPRESS_ENV="module=./$PROJECT_DIR"
     CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
     URL_PREFIX="fd2_school"
   fi
@@ -332,15 +336,15 @@ safe_cd $PROJECT_DIR
 
 if [ -n "$CYPRESS_GUI" ]; then
   echo "Running test in the Cypress GUI."
-  npx cypress open --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
+  npx cypress open --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
   EXIT_CODE=$?
 else
   echo "Running tests headless."
-  npx cypress run --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
+  npx cypress run --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
   EXIT_CODE=$?
 fi
 
 echo "Tests complete."
 
 # Runs normal cleanup
-cleanup $EXIT_CODE
+cleanup "$EXIT_CODE"

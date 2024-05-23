@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress';
 import { execSync } from 'child_process';
+import vitePreprocessor from 'cypress-vite';
 
 export default defineConfig({
   screenshotOnRunFailure: false,
@@ -14,7 +15,14 @@ export default defineConfig({
       framework: 'vue',
       bundler: 'vite',
     },
-    setupNodeEvents(on) {
+    setupNodeEvents(on, config) {
+      on(
+        'file:preprocessor',
+        vitePreprocessor({
+          configFile: config.env.module + '/vite.config.e2e.js',
+          mode: 'development',
+        })
+      );
       on('task', {
         log(message) {
           console.log(message);
