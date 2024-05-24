@@ -1,4 +1,8 @@
+//import { lib } from './lib.js';
+
 describe('Tray Seeding: Submission tests', () => {
+  before(() => {});
+
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -53,6 +57,11 @@ describe('Tray Seeding: Submission tests', () => {
      */
     cy.intercept('POST', '**/api/log/seeding', cy.spy().as('submitSpy'));
 
+    cy.window().then((win) => {
+      console.log(win);
+      cy.spy(win, 'libForm').as('submitFuncSpy');
+    });
+
     /*
      * Fill in the form and click the "Submit" button.
      */
@@ -75,6 +84,8 @@ describe('Tray Seeding: Submission tests', () => {
      * already do that.
      */
     cy.get('@submitSpy').should('be.called');
+
+    cy.get('@submitFuncSpy').should('be.called');
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');

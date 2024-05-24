@@ -162,7 +162,7 @@ import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib.js';
+import { lib } from './lib.js';
 
 export default {
   components: {
