@@ -231,7 +231,7 @@ export default {
         );
 
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
             this.reset(true);
@@ -293,6 +293,13 @@ export default {
   },
   created() {
     this.createdCount++;
+
+    /*
+     * Make the lib containing the submitForm function accessible to the
+     * e2e tests so that the submission test can spy on the submitForm
+     * function to verify that it is receiving the correct information.
+     */
+    document.defaultView.lib = lib;
   },
 };
 </script>
