@@ -1,6 +1,4 @@
 describe('Tray Seeding: Submission tests', () => {
-  before(() => {});
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
