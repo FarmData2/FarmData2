@@ -135,7 +135,7 @@ import DateSelector from '@comps/DateSelector/DateSelector.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib.js';
+import { lib } from './lib.js';
 
 export default {
   components: {
@@ -289,10 +289,13 @@ export default {
         /*
          * Use the `submitForm()` function in `lib.js` to build
          * assets, logs and quantities based on the values in `data.form`
-         * and submit them to farmOS.
+         * and submit them to farmOS.  We pass a copy of this.form so
+         * that the tests in %ENTRY_POINT%.submission.e2e.cy.js and
+         * %ENTRY_POINT%.submitError.e2e.cy.js have their own copy that
+         * is not modified when the form is reset during testing.
          */
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             /*
              * If we get here, the submission was successful, so hide
@@ -370,7 +373,7 @@ export default {
         this.enableSubmit = false;
         this.enableReset = false;
 
-        uiUtil.showToast(title, message, 'top-center', 'danger');
+        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
       }
     },
   },
@@ -401,6 +404,15 @@ export default {
    */
   created() {
     this.createdCount++;
+
+    if (window.Cypress) {
+      /*
+       * Make the lib containing the submitForm function accessible to the
+       * e2e tests so that the submission test can spy on the submitForm
+       * function to verify that it is receiving the correct information.
+       */
+      document.defaultView.lib = lib;
+    }
   },
 };
 </script>

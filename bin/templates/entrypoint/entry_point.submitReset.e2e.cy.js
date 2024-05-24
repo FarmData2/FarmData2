@@ -28,7 +28,9 @@ describe('%ENTRY_POINT_TITLE%: Submit/Reset Buttons component', () => {
   function populateForm() {
     cy.get('[data-cy="date-input"]').type(dayjs().format('1999-01-02'));
 
-    // TODO: Populate additional elements of the form with valid values here,
+    /*
+     * TODO: Populate additional elements of the form with valid values.
+     */
 
     cy.get('[data-cy="comment-input"]').type('This is a comment');
     cy.get('[data-cy="comment-input"]').blur();

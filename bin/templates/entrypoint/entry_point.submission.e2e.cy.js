@@ -1,11 +1,4 @@
 describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
-  /*
-   * TODO: Customize this route to match the last log
-   *       or asset created by the lib.submitForm function that
-   *       is called when the "Submit" button is clicked.
-   */
-  const apiRoute = '**/api/log';
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -36,8 +29,12 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   }
 
   it('Test successful submission', () => {
-    cy.intercept('GET', apiRoute, (req) => {
-      console.log(req.body);
+    /*
+     * Setup a spy for the lib.submitForm function.  This will allow
+     * us to check that the form passed to that function is correct.
+     */
+    cy.window().then((win) => {
+      cy.spy(win.lib, 'submitForm').as('submitFormSpy');
     });
 
     /*
@@ -56,6 +53,19 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
       '%ENTRY_POINT_TITLE% created.'
     );
 
+    // Check that submitForm was called with the correct data.
+    cy.get('@submitFormSpy').then((spy) => {
+      expect(spy).to.be.calledOnce;
+
+      let formData = spy.getCall(0).args[0];
+      expect(formData.seedingDate).to.equal('1950-01-02');
+      /*
+       * TODO: Add checks for the other parts of the formData
+       *       as they are added to the input form.
+       */
+      expect(formData.comment).to.equal('test comment');
+    });
+
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
 
@@ -63,8 +73,8 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
     /*
-     * TODO: Add checks above for the other parts of the form as they
-     *       are added to the input form.
+     * TODO: Add checks above to ensure that newly added parts of the
+     *       form are reset.
      */
 
     // Finally check that the toast is hidden.
@@ -72,7 +82,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
   });
 
   it('Test submission with network error', () => {
-    cy.intercept('POST', apiRoute, {
+    cy.intercept('**/api/**/*', {
       statusCode: 401,
     });
 

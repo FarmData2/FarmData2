@@ -1,4 +1,4 @@
-import * as lib from './lib';
+import { lib } from './lib';
 // TODO: Delete this comment and the eslint-disable on the next line.
 // eslint-disable-next-line no-unused-vars
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';

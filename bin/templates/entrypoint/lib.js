@@ -27,7 +27,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-export async function submitForm(formData) {
+async function submitForm(formData) {
   try {
     let ops = [];
 
@@ -48,30 +48,14 @@ export async function submitForm(formData) {
       name: 'sampleOp',
       do: async () => {
         /*
-         * Simulate an operation that will be caught by the intercepts
-         * and spies in:
-         *   - %ENTRY_POINT%.submission.e2e.cy.js
-         *   - lib.submitError.unit.cy.js
-         *
-         * This operation fetches the first seeding log.
-         * In practice, operations will add assets, logs and quantities
-         * rather than fetching them.
+         * Simulate the time that some API calls would take so that
+         * the test can check for the submitting and success toasts.
          */
-        const farm = await farmosUtil.getFarmOSInstance();
-        const filter = {
-          type: 'log--seeding',
-          name: '2019-08-29_ts_LETTUCE-ICEBERG',
+        await new Promise((r) => setTimeout(r, 2000));
+
+        return {
+          sampleOp: formData,
         };
-        const result = await farm.log.fetch({ filter });
-
-        /*
-         * Just here for this sampleOp.  In practice, ops will not
-         * will not print any output to the console.
-         */
-        console.log(formData);
-        console.log(result.fulfilled[0][0].data.data[0]);
-
-        return result.fulfilled[0][0].data.data[0];
       },
       undo: async (results) => {
         /*
@@ -124,3 +108,7 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+
+export const lib = {
+  submitForm,
+};
