@@ -1,4 +1,4 @@
-import * as lib from './lib';
+import { lib } from './lib';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Test the tray seeding lib', () => {

@@ -1,4 +1,4 @@
-import * as lib from './lib';
+import { lib } from './lib';
 
 describe('Test error when submitting tray seeding lib', () => {
   let form = {
