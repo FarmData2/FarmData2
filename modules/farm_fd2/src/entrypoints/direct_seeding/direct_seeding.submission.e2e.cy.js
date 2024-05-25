@@ -1,41 +1,4 @@
-import * as farmosUtil from '../../../../../library/farmosUtil/farmosUtil.js';
-
 describe('Direct Seeding: Submission tests', () => {
-  let cropMap = null;
-  let fieldMap = null;
-  let equipMap = null;
-  let bedMap = null;
-  let valuesMap = null;
-  let maps = new Map();
-
-  before(() => {
-    // get maps
-    let cropPromoise = farmosUtil.getCropNameToTermMap();
-    let fieldPromise = farmosUtil.getFieldNameToAssetMap();
-    let equipmentPromise = farmosUtil.getEquipmentNameToAssetMap();
-    let bedPromise = farmosUtil.getBedNameToAssetMap();
-
-    valuesMap = new Map();
-    valuesMap.set('Bed Feet', '200');
-    valuesMap.set('Rows/Bed', '5');
-    valuesMap.set('Row Feet', '1000');
-    valuesMap.set('Bed Width', '30');
-    valuesMap.set('Depth', '6');
-    valuesMap.set('Speed', '5');
-
-    let promiseMap = new Map();
-    promiseMap.set('crop', cropPromoise);
-    promiseMap.set('field', fieldPromise);
-    promiseMap.set('equipment', equipmentPromise);
-    promiseMap.set('bed', bedPromise);
-
-    return promiseMap.forEach((values, keys) =>
-      values.then((map) => {
-        maps.set(keys, map);
-      })
-    );
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -113,48 +76,15 @@ describe('Direct Seeding: Submission tests', () => {
   }
 
   it('Test successful submission', () => {
-    /*
-     * Create a spy to watch for the activity log created by the
-     * lib.submitForm function that is called when the "Submit"
-     * button is clicked.
+    /**
+     * Setup a spy on the submitForm function in lib.js, the
+     * function that is called when the submit button is clicked.
+     * The spy will be used to check that the argument passed to the
+     * submitForm function contains the expected data from the form.
      */
-    cy.intercept('POST', '**/api/asset/plant', (req) => {
-      // check plant name
-      cropMap = maps.get('crop');
-      let cropID = cropMap.get('ARUGULA').id;
-      expect(req.body.data.relationships.plant_type.data[0].id).to.eq(cropID);
-    }).as('submitSpy');
-
-    cy.intercept('POST', '**/api/log/activity', (req) => {
-      // check plant location
-      fieldMap = maps.get('field');
-      bedMap = maps.get('bed');
-
-      let fieldArray = req.body.data.relationships.location.data;
-      let fieldIdALF = fieldMap.get('ALF').id;
-      let fieldIdALF1 = bedMap.get('ALF-1').id;
-      let fieldIdALF4 = bedMap.get('ALF-4').id;
-
-      expect(fieldArray[0].id).to.eq(fieldIdALF);
-      expect(fieldArray[1].id).to.eq(fieldIdALF1);
-      expect(fieldArray[2].id).to.eq(fieldIdALF4);
-
-      // check equipment
-      equipMap = maps.get('equipment');
-      let equipArray = req.body.data.relationships.equipment.data;
-      let tractorID = equipMap.get('Tractor').id;
-      expect(equipArray[0].id).to.eq(tractorID);
-      expect(req.body.data.attributes.name).to.include('ALF');
-      expect(req.body.data.attributes.name).to.include('1950-01-02');
-      expect(req.body.data.relationships.location.data.length).to.eq(3);
-    }).as('submitSpy');
-
-    cy.intercept('POST', '**/api/quantity/standard', (req) => {
-      // intercept standard values {ie. bed feet, rows/bed ...}
-      let valueLabel = req.body.data.attributes.label;
-      let valueNum = req.body.data.attributes.value.decimal;
-      expect(valuesMap.get(valueLabel)).to.eq(valueNum.toString());
-    }).as('submitSpy');
+    cy.window().then((win) => {
+      cy.spy(win.lib, 'submitForm').as('submitFormSpy');
+    });
 
     /*
      * Fill in the form and click the "Submit" button.
@@ -173,11 +103,25 @@ describe('Direct Seeding: Submission tests', () => {
     );
 
     /*
-     * Ensure that the lib.submitForm function was called.
-     * No need to check the db for the records as the lib unit tests
-     * already do that.
+     * Check that the submitForm function was called with the
+     * expected form data.
      */
-    //cy.get('@submitSpy').should('be.calledOnce');
+    cy.get('@submitFormSpy').then((spy) => {
+      expect(spy).to.be.calledOnce;
+
+      let formData = spy.getCall(0).args[0];
+      console.log(formData);
+      console.log('formData');
+      expect(formData.seedingDate).to.equal('1950-01-02');
+      expect(formData.cropName).to.equal('ARUGULA');
+      expect(formData.locationName).to.equal('ALF');
+      expect(formData.bedFeet).to.equal(200);
+      expect(formData.rowsPerBed).to.equal('5');
+      expect(formData.bedWidth).to.equal(30);
+      expect(formData.depth).to.equal(6);
+      expect(formData.speed).to.equal(5);
+      expect(formData.comment).to.equal('test comment');
+    });
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');

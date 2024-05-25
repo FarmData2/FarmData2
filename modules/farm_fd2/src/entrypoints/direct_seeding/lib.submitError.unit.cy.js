@@ -1,4 +1,4 @@
-import * as lib from './lib.js';
+import { lib } from './lib.js';
 
 describe('Error when submitting using the direct_seeding lib.', () => {
   /*
