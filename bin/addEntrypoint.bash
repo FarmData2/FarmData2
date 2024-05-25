@@ -357,7 +357,7 @@ else
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New entry point $ENTRY_POINT created in module $MODULE_NAME."
 
   # Commit the changes to the feature branch and print some info...
-  echo "Committing starter code the new feature branch: $FEATURE_BRANCH_NAME."
+  echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
   git add .
   git commit --quiet -m "Add starter code for entry point: $ENTRY_POINT"
   error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."

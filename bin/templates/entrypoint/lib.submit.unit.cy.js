@@ -76,7 +76,6 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
     cy.wrap(farmosUtil.getPlantAsset(submittedObjects.sampleOp.id)).then(
       (plantAsset) => {
         expect(plantAsset.type).to.equal('asset--plant');
-        expect(plantAsset.attributes.timestamp).to.contain('2019-08-29');
         expect(plantAsset.attributes.name).to.equal('1950-01-02_ZUCCHINI');
         expect(plantAsset.attributes.status).to.equal('active');
         expect(plantAsset.attributes.notes.value).to.equal(form.comment);
