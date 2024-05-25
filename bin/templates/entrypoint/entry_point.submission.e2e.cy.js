@@ -58,7 +58,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
       expect(spy).to.be.calledOnce;
 
       let formData = spy.getCall(0).args[0];
-      expect(formData.seedingDate).to.equal('1950-01-02');
+      expect(formData.date).to.equal('1950-01-02');
       /*
        * TODO: Add checks for the other parts of the formData
        *       as they are added to the input form.

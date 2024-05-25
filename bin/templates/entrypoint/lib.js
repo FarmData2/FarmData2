@@ -15,7 +15,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * Create the farmOS records (asset, quantities and log) to represent
  * ... TODO: update the description ....
  *
- * @param {Object} formData the form data.
+ * @param {Object} form the form containing the data from the entry point.
  * @returns {Promise} a promise that resolves when the records are successfully created.
  * The returned value is an object containing the asset, quantities and log that
  * were sent to the server.  This object has the following properties:
@@ -27,55 +27,40 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-async function submitForm(formData) {
+async function submitForm(form) {
   try {
     let ops = [];
 
     /*
-     * TODO: Remove this sampleOp and add operations that create the
-     *       logs, assets and quantities needed by the entry point.
+     * This sampleOP creates a plant asset to illustrate how an operation works.
+     *
+     * TODO: Delete or customize this sampleOp and add new operations that
+     *       create the logs, assets and quantities needed by the new entry point.
      *
      *       See:
-     *         - the documentation for the `runTransaction` function in
-     *           `libraries/farmosUtil.js` for detailed information about
-     *           the operation objects.
-     *
      *         - the `modules/farm_fd2/src/entrypoints/tray_seeding/lib.js`
      *           file for examples of using operation objects to create
      *           logs, assets and quantities.
+     *
+     *         - the documentation for the `runTransaction` function in
+     *           `libraries/farmosUtil.js` for detailed information about
+     *           the operation objects.
      */
     const sampleOp = {
       name: 'sampleOp',
       do: async () => {
         /*
-         * Simulate the time that some API calls would take so that
-         * the test can check for the submitting and success toasts.
+         * Create and return the asset, log or quantity for
+         * this operation using the functions in farmosUtil.
          */
-        await new Promise((r) => setTimeout(r, 2000));
-
-        return {
-          sampleOp: formData,
-        };
+        return await farmosUtil.createPlantAsset(
+          form.date,
+          form.crop,
+          form.comment
+        );
       },
       undo: async (results) => {
-        /*
-         * Simulate an operation that will be caught by the spy in
-         * the %ENTRY_POINT%.submission.e2e.cy.js file.
-         *
-         * This operation fetches the first seeding log.
-         * In practice, operations will delete the asset, log
-         * or quantity that was created in `do`.
-         */
-        const result = await farmosUtil.getSeedingLog(results.sampleOp.id);
-
-        /*
-         * Just here for this sampleOp.  In practice, ops will not
-         * will not print any output to the console.
-         */
-        console.log(formData);
-        console.log(result);
-
-        return result;
+        await farmosUtil.deletePlantAsset(results['sampleOp'].id);
       },
     };
     // Add the operation to the ops for the transaction.

@@ -28,30 +28,40 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission error', () => {
     { retries: 4 },
     () => {
       /*
-       * TODO: Modify the API path to create a error on submission of the
+       * TODO: Modify the API path below to create a error on submission of the
        *       last asset, log or quantity that is created by %ENTRY_POINT%/lib.js.
        *       At that point all other records should have been created and thus
-       *       should also all be deleted by their operation's `undo` function.
+       *       should also all be deleted by their operation's `undo` function when
+       *       the error occurs.
        *
        *       For examples, see the lib.submitError.unit.cy.js files in:
        *         - modules/farm_fd2/src/entrypoints/tray_seeding
        *         - modules/farm_fd2/src/entrypoints/direct_seeding
        */
-      cy.intercept('GET', '**/api/log/*', {
+      cy.intercept('POST', '**/api/asset/*', {
         statusCode: 401,
       });
 
       /*
        * TODO: Create an intercept with a spy for each of the endpoints
-       *       where records are being deleted.  We'll then check that each was
-       *       called the appropriate number of times.  This doesn't actually check
-       *       the database, but it gives reasonably high confidence that everything
-       *       worked.
+       *       where records are being deleted to count the number of deletions
+       *       that occur.  We'll then check that each spy was called the
+       *       appropriate number of times.  Note that this doesn't actually check
+       *       the database, but it does tell us that the API requests was made
+       *       which gives reasonably high confidence that everything worked.
        *
        *       For examples, see the lib.submitError.unit.cy.js files in:
        *         - modules/farm_fd2/src/entrypoints/tray_seeding
        *         - modules/farm_fd2/src/entrypoints/direct_seeding
        */
+      let plantAssetDeletes = 0;
+      cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+        plantAssetDeletes++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
       cy.wrap(
         lib
           .submitForm(form)
@@ -69,10 +79,15 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission error', () => {
              *       that the correct number of logs, assets, and quantities
              *       were deleted.
              *
+             *       Note: In this example the plant asset was not created in the
+             *             farmOS database due to the error caused by the intercept.
+             *             Thus, it will not be deleted either.
+             *
              *       For examples, see the lib.submitError.unit.cy.js files in:
              *         - modules/farm_fd2/src/entrypoints/tray_seeding
              *         - modules/farm_fd2/src/entrypoints/direct_seeding
              */
+            expect(plantAssetDeletes).to.equal(0);
           }),
         { timeout: 10000 }
       );

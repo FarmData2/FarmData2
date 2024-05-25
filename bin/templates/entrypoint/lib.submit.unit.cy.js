@@ -1,6 +1,4 @@
 import { lib } from './lib';
-// TODO: Delete this comment and the eslint-disable on the next line.
-// eslint-disable-next-line no-unused-vars
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
@@ -13,27 +11,39 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
    */
   let form = {
     date: '1950-01-02',
+    crop: 'ZUCCHINI', // Not in the sample form, but needed for testing
     comment: 'A comment',
   };
 
-  let result = null;
+  let submittedObjects = null;
+  let cropMap = null;
   before(() => {
     /*
      * TODO: Load any maps or other data from the API that will be needed
      *       by the tests.
      *
-     *       For examples, see the lib.submit.unit.cy.js files in:
+     *       For examples, see the before() function in lib.submit.unit.cy.js in:
      *         - modules/farm_fd2/src/entrypoints/tray_seeding
      *         - modules/farm_fd2/src/entrypoints/direct_seeding
      */
+    cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
+      cropMap = map;
+    });
 
     /*
      * Submit the form using lib.submitForm from farmosUtil to create
      * all the logs, assets and quantities needed to represent a
      * %ENTRY_POINT_TITLE%.
      */
-    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((res) => {
-      result = res;
+    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((results) => {
+      /*
+       * submittedObjects will be an object containing the log, asset and quantity
+       * objects that were submitted to farmOS. These are the objects that farmOS
+       * uses to create the logs, assets and quantities. They are not the created
+       * objects fetched from the farmOS database.  Each test below will fetch and
+       * check the actual objects from the farmOS database.
+       */
+      submittedObjects = results;
     });
   });
 
@@ -48,25 +58,42 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
   });
 
   /*
-   * TODO: Create one test for each log, asset and quantity that
-   *       is created by the lib.submitForm function. Each test will
-   *       fetch the the log, asset or quantity that it is testing from
-   *       farmOS and compare it to the expected result.
+   * TODO: Adapt this test and add others as necessary. There should be
+   *       One test for each log, asset and quantity that is created by
+   *       the lib.submitForm function. Each test will fetch the the log,
+   *       asset or quantity that it is testing from farmOS and compare it
+   *       to the expected values.
    *
-   *       Examples of lib.submit.unit.cy.js files can be found in:
+   *       See examples of tests in the lib.submit.unit.cy.js files in:
    *         - modules/farm_fd2/src/entrypoints/tray_seeding
    *         - modules/farm_fd2/src/entrypoints/direct_seeding
    */
-
-  /*
-   * TODO: Delete this test. It is just a place holder that
-   *       is included in the template for creating new entry
-   *       points.
-   */
   it('%ENTRY_POINT_TITLE%: Placeholder checks the sampleOp result', () => {
-    expect(result.sampleOp.attributes.timestamp).to.contain('2019-08-29');
-    expect(result.sampleOp.attributes.name).to.equal(
-      '2019-08-29_ts_LETTUCE-ICEBERG'
+    /*
+     * Fetch the plant asset that was created by lib.submitForm function
+     * and check that it is as expected for the form that was submitted.
+     */
+    cy.wrap(farmosUtil.getPlantAsset(submittedObjects.sampleOp.id)).then(
+      (plantAsset) => {
+        expect(plantAsset.type).to.equal('asset--plant');
+        expect(plantAsset.attributes.timestamp).to.contain('2019-08-29');
+        expect(plantAsset.attributes.name).to.equal('1950-01-02_ZUCCHINI');
+        expect(plantAsset.attributes.status).to.equal('active');
+        expect(plantAsset.attributes.notes.value).to.equal(form.comment);
+        expect(plantAsset.relationships.plant_type[0].type).to.equal(
+          'taxonomy_term--plant_type'
+        );
+        expect(plantAsset.relationships.plant_type[0].id).to.equal(
+          cropMap.get(form.crop).id
+        );
+
+        /**
+         * TODO: Add checks for all other attributes of the plant asset
+         *       that would be set by the operations in lib.submitForm.  For
+         *       example, location due to a movement log or inventory values
+         *       set by inventory adjustment quantities, etc.
+         */
+      }
     );
   });
 });
