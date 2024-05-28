@@ -20,7 +20,6 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   transplantingLog: {log--activity},
  *   depthQuantity: {quantity--standard},
  *   speedQuantity: {quantity--standard},
- *   areaQuantity: {quantity--standard},
  *   equipmentAssets: [ {asset--equipment}, ... ],
  *   soilDisturbanceLog: {log--activity},
  * }
@@ -253,22 +252,6 @@ export async function submitForm(formData) {
       };
       ops.push(speedQuantity);
 
-      const areaQuantity = {
-        name: 'areaQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'ratio',
-            formData.area,
-            'Area',
-            'PERCENT'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
-        },
-      };
-      ops.push(areaQuantity);
-
       // Get the asset--equipment objects for the chosen equipment
       const equipmentAssets = {
         name: 'equipmentAssets',
@@ -293,11 +276,7 @@ export async function submitForm(formData) {
             formData.beds,
             ['tillage', 'transplanting'],
             results.transplantingAsset,
-            [
-              results.depthQuantity,
-              results.speedQuantity,
-              results.areaQuantity,
-            ],
+            [results.depthQuantity, results.speedQuantity],
             results.equipmentAssets
           );
         },
@@ -316,7 +295,6 @@ export async function submitForm(formData) {
       results['equipmentAssets'] = null;
       results['depthQuantity'] = null;
       results['speedQuantity'] = null;
-      results['areaQuantity'] = null;
       results['activityLog'] = null;
     }
 
