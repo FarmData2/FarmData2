@@ -326,3 +326,7 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+
+export const lib = {
+  submitForm,
+};

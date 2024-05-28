@@ -253,7 +253,7 @@
 
 <script>
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib';
+import { lib } from './lib.js';
 import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
@@ -345,7 +345,7 @@ export default {
         );
 
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
             this.reset(true); // keep sticky parts.
@@ -410,6 +410,14 @@ export default {
   },
   created() {
     this.createdCount++;
+    if (window.Cypress) {
+      /*
+       * Make the lib containing the submitForm function accessible to the
+       * e2e tests so that the submission test can spy on the submitForm
+       * function to verify that it is receiving the correct information.
+       */
+      document.defaultView.lib = lib;
+    }
   },
 };
 </script>
