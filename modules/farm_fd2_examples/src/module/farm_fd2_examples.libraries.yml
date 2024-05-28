@@ -77,3 +77,13 @@ transplanting_picklist:
   css:
     component:
       style/style.css: {}
+
+soil_disturbance:
+  js:
+    soil_disturbance/soil_disturbance.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}

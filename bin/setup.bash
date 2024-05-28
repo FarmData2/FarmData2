@@ -60,7 +60,7 @@ git config --global user.name "$GIT_USER"
 git config --global user.email "$GIT_EMAIL"
 echo ""
 echo "    Setting the upstream remote..."
-git remote add upstream https://github.com/FarmData/FarmData2.git
+git remote add upstream https://github.com/FarmData2/FarmData2.git
 echo "    Set."
 echo "  Configured."
 

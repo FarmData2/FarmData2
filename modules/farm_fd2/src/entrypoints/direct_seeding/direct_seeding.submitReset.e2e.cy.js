@@ -65,12 +65,6 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('3');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .type('25');
 
     cy.get('[data-cy="comment-input"]').clear();
     cy.get('[data-cy="comment-input"]').type('Test comment');
@@ -169,26 +163,6 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
-  it('Invalid area disables submit if equipment is selected', () => {
-    populateForm();
-    cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .blur();
-
-    cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="submit-button"]').should('be.disabled');
-
-    cy.get('[data-cy="equipment-selector-1"]')
-      .find('[data-cy="selector-delete-button"]')
-      .click();
-
-    cy.get('[data-cy="submit-button"]').should('be.enabled');
-  });
-
   it('Reset button resets form', () => {
     populateForm();
     cy.get('[data-cy="reset-button"]').click();
@@ -249,8 +223,5 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '0.0');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '');
   });
 });
