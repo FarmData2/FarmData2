@@ -24,7 +24,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-export async function submitForm(formData) {
+async function submitForm(formData) {
   try {
     const ops = [];
     const equipmentAssets = [];
@@ -247,3 +247,6 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+export const lib = {
+  submitForm,
+};
