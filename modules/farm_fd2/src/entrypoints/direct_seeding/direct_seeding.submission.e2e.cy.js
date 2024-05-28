@@ -110,8 +110,6 @@ describe('Direct Seeding: Submission tests', () => {
       expect(spy).to.be.calledOnce;
 
       let formData = spy.getCall(0).args[0];
-      console.log(formData);
-      console.log('formData');
       expect(formData.seedingDate).to.equal('1950-01-02');
       expect(formData.cropName).to.equal('ARUGULA');
       expect(formData.locationName).to.equal('ALF');
