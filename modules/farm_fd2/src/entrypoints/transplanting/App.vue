@@ -182,7 +182,7 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:area="form.area"
+              v-bind:includeArea="includeArea"
               v-on:valid="
                 (valid) => {
                   validity.soilDisturbance = valid;
@@ -201,11 +201,6 @@
               v-on:update:speed="
                 (speed) => {
                   form.speed = speed;
-                }
-              "
-              v-on:update:area="
-                (area) => {
-                  form.area = area;
                 }
               "
               v-on:error="
@@ -285,6 +280,7 @@ export default {
       enableSubmit: true,
       enableReset: true,
       rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      includeArea: false,
       form: {
         cropName: null,
         picked: [],
@@ -297,7 +293,6 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: '',
         comment: '',
       },
       validity: {
@@ -332,14 +327,8 @@ export default {
     },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
+    handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
-
-      if (checkedBeds.length == 0) {
-        this.form.area = '';
-      } else {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
-      }
     },
     submit() {
       this.validity.show = true;
@@ -396,7 +385,6 @@ export default {
       this.form.beds = [];
       this.form.cropName = null;
       this.form.bedFeet = 100;
-      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
