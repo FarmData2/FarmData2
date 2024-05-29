@@ -33,18 +33,59 @@ describe('Transplanting: Crop Component', () => {
     cy.get(`[data-cy="picklist-quantity-0"]`).should('have.value', 4);
     cy.get(`[data-cy="picklist-date-0"]`).should('have.text', '2019-03-11');
     cy.get(`[data-cy="picklist-location-0"]`).should('have.text', 'CHUAU');
-    // cy.get('[data-cy="picklist-info-icon-0"]').should('exist').click();
-    // cy.get('[data-cy="picklist-info-overlay"]').should('be.visible');
-    // cy.get('[data-cy="picklist-info-user-0"]').should('exist');
-    // cy.get('[data-cy="picklist-info-user-0"]').should(
-    //   'have.text',
-    //   'User: admin'
-    // );
+    cy.get('[data-cy="picklist-info-icon-0"]')
+      .should('exist')
+      .click({ force: true });
+    cy.get('[data-cy="picklist-info-overlay"]').should('be.visible');
+    cy.get('[data-cy="picklist-info-user-0"]').should(
+      'have.text',
+      'User: admin'
+    );
+    cy.get('[data-cy="picklist-info-tray-size-0"]').should(
+      'have.text',
+      'Tray Size: 128'
+    );
+    cy.get('[data-cy="picklist-info-seeds/cell-0"]').should(
+      'have.text',
+      'Seeds/Cell: 1'
+    );
+    cy.get('[data-cy="picklist-info-total-seeds-0"]').should(
+      'have.text',
+      'Total Seeds: 512'
+    );
+    cy.get('[data-cy="picklist-info-notes-0"]').should(
+      'have.text',
+      'Notes: First broccoli tray seeding.'
+    );
 
     // last row
     cy.get(`[data-cy="picklist-quantity-4"]`).should('have.value', 2);
     cy.get(`[data-cy="picklist-date-4"]`).should('have.text', '2019-07-26');
     cy.get(`[data-cy="picklist-location-4"]`).should('have.text', 'JASMINE');
+    cy.get('[data-cy="picklist-info-icon-4"]')
+      .should('exist')
+      .click({ force: true });
+    cy.get('[data-cy="picklist-info-overlay"]').should('be.visible');
+    cy.get('[data-cy="picklist-info-user-4"]').should(
+      'have.text',
+      'User: admin'
+    );
+    cy.get('[data-cy="picklist-info-tray-size-4"]').should(
+      'have.text',
+      'Tray Size: 288'
+    );
+    cy.get('[data-cy="picklist-info-seeds/cell-4"]').should(
+      'have.text',
+      'Seeds/Cell: 1'
+    );
+    cy.get('[data-cy="picklist-info-total-seeds-4"]').should(
+      'have.text',
+      'Total Seeds: 576'
+    );
+    cy.get('[data-cy="picklist-info-notes-4"]').should(
+      'have.text',
+      'Notes: Last broccoli tray seeding.'
+    );
   });
 
   it('Crop props are correct', () => {
@@ -56,10 +97,18 @@ describe('Transplanting: Crop Component', () => {
       .should('have.value', null);
   });
 
-  it('Crop validity styling works', () => {
+  it('Crop validity styling works when no crop is selected', () => {
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="transplanting-picklist"]')
       .find('[data-cy="selector-input"]')
       .should('have.class', 'is-invalid');
+  });
+
+  it('Tray validity styling works when crop is selected, and no tray is selected', () => {
+    cy.get('[data-cy="transplanting-picklist"]')
+      .find('[data-cy="selector-input"]')
+      .select('BROCCOLI');
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="picklist-table"]').should('have.class', 'is-invalid');
   });
 });
