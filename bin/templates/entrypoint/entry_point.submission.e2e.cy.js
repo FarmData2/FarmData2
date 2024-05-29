@@ -42,6 +42,10 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
      */
     submitForm();
 
+    // Check that Submit and Reset are disabled while submitting.
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+
     // Check for the status toast while the form is submitting.
     cy.get('.toast')
       .should('be.visible')
@@ -77,8 +81,12 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
      *       form are reset.
      */
 
-    // Finally check that the toast is hidden.
+    // Check that the toast is hidden.
     cy.get('.toast').should('not.exist');
+
+    // Check that Submit button is re-enabled after submitting.
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
   });
 
   it('Test submission with network error', () => {

@@ -272,8 +272,8 @@ export default {
          * The "Submit" and "Reset" buttons are disabled while the
          * form is being submitted.
          */
-        this.disableSubmit = true;
-        this.disableReset = true;
+        this.enableSubmit = false;
+        this.enableReset = false;
 
         /*
          * Show a status message at the top of the screen
