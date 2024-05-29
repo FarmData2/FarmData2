@@ -244,20 +244,13 @@ export default {
     isValid() {
       if (this.form.equipment.length === 0) {
         return this.validity.equipment;
-      } else if (!this.includePasses) {
-        return (
-          this.validity.equipment &&
-          this.validity.depth &&
-          this.validity.speed &&
-          this.validity.area
-        );
       } else {
         return (
           this.validity.equipment &&
           this.validity.depth &&
           this.validity.speed &&
-          this.validity.area &&
-          this.validity.passes
+          (!this.includeArea || this.validity.area) &&
+          (!this.includePasses || this.validity.passes)
         );
       }
     },
