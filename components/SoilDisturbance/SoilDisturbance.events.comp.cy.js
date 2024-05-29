@@ -221,7 +221,9 @@ describe('Test the SoilDisturbance component events', () => {
 
     cy.mount(SoilDisturbance, {
       props: {
-        passes: 2,
+        required: true,
+        equipment: ['Tractor'],
+        passes: null,
         onReady: readySpy,
         onValid: validSpy,
       },
