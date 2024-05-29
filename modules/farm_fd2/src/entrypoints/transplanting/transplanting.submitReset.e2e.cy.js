@@ -78,6 +78,9 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="date-input"]').type('2024-05-30');
+    cy.get('[data-cy="date-input"]').blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid crop disables submit', () => {
@@ -85,6 +88,13 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="transplanting-picklist"]')
+      .find('[data-cy="selector-input"]')
+      .select('BROCCOLI');
+    cy.get('[data-cy="transplanting-picklist"]');
+    cy.get(`[data-cy="picklist-quantity-4"]`).select(2);
+    cy.get(`[data-cy="picklist-quantity-4"]`);
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid location disables submit', () => {
@@ -92,6 +102,23 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .click();
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .click();
+    cy.get('[data-cy="transplanting-location"]').find(
+      '[data-cy="selector-input"]'
+    );
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid bed feet disables submit', () => {
@@ -106,6 +133,13 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="transplanting-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .type(3);
+    cy.get('[data-cy="transplanting-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid bed width disables submit', () => {
@@ -120,6 +154,13 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="transplanting-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .type(5);
+    cy.get('[data-cy="transplanting-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   // Note: There is no way to make Rows/Bed invalid.
@@ -136,6 +177,14 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type(9);
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
 
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-delete-button"]')
@@ -156,6 +205,14 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type(15);
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
 
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-delete-button"]')
