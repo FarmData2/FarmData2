@@ -1,4 +1,4 @@
-import { lib } from './lib.js';
+import * as lib from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Submission using the direct_seeding lib.', () => {
