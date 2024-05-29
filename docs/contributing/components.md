@@ -373,3 +373,23 @@ Inside the script, after the imports and just before the `export default {` line
 
 - these are not user facing and are not included in the docs.
 - comments in the code can still be helpful to anyone modifying the component.
+
+
+### Permissions
+
+A component can check the permissions of the logged in farmOS user using appropriate function in `farmosUtil.js`.
+
+If a permission needs to be checked that is not yet supported it can be added to the `$perms` array in the `permissions` function in `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
+
+### Pre-populating farmOS Data
+
+The log categories and units used by FarmData2 are installed by the `farm_fd2.install` file in `modules/farm_fd2/src/module`.
+
+To add new log categories or units:
+
+- Edit the `farm_fd2.install` file.
+- Rebuild the module.
+- Uninstall the FarmData2 module (machine name: `farm_fd2`)
+- Re-enable the Farmdata2 module.
+
+Note: the `installDB.bash` script also uninstalls and re-enables the FarmData2 module. Thus, changes to the log categories and units will be reflected when tests are run headless.

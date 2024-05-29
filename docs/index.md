@@ -35,6 +35,7 @@
   - [Entry Point Guide](contributing/entry-points.md) - a guide to creating, documenting and testing entry points.
   - [Library Guide](contributing/libraries.md) - a guide to creating, documenting and testing library code.
   - [Infrastructure Guide](contributing/infrastructure.md) - a guide to creating, documenting and testing infrastructure.
+- [Testing Tips](contributing/testingTips.md) - general tips for testing in FarmData2.
 
 ## FarmData2 Component and Library Documentation
 
