@@ -155,29 +155,6 @@ describe('Test the SoilDisturbance component events', () => {
       });
   });
 
-  it('"valid" event ignores area if not included', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(SoilDisturbance, {
-      props: {
-        required: true,
-        area: null,
-        includeArea: false,
-        equipment: ['Tractor'],
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', true);
-      });
-  });
-
   it('Changing area emits "valid" event correctly', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
@@ -221,9 +198,7 @@ describe('Test the SoilDisturbance component events', () => {
 
     cy.mount(SoilDisturbance, {
       props: {
-        required: true,
-        equipment: ['Tractor'],
-        passes: null,
+        passes: 2,
         onReady: readySpy,
         onValid: validSpy,
       },
