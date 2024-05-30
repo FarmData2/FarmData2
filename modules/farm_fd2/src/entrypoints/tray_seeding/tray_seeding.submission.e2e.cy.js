@@ -65,6 +65,10 @@ describe('Tray Seeding: Submission tests', () => {
      */
     submitForm();
 
+    // Check that Submit and Reset are disabled while submitting.
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+
     // Check for the status toast while the form is submitting.
     cy.get('.toast')
       .should('be.visible')
@@ -115,6 +119,10 @@ describe('Tray Seeding: Submission tests', () => {
 
     // Finally check that the toast is hidden.
     cy.get('.toast').should('not.exist');
+
+    // Check that Submit button is re-enabled after submitting.
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 
   it('Test submission with network error', () => {
@@ -122,6 +130,8 @@ describe('Tray Seeding: Submission tests', () => {
       statusCode: 401,
     });
     submitForm();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
     cy.get('.toast')
       .should('be.visible')
       .should('contain.text', 'Submitting tray seeding...');
@@ -129,5 +139,7 @@ describe('Tray Seeding: Submission tests', () => {
       .should('be.visible')
       .should('contain.text', 'Error creating tray seeding.');
     cy.get('.toast', { timeout: 7000 }).should('not.exist');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 });

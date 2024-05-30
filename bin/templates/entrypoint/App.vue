@@ -332,8 +332,8 @@ export default {
              * If we get here, the submission failed, so hide the status
              * message and display an error message.
              */
-            uiUtil.hideToast();
             if (!this.errorShown) {
+              uiUtil.hideToast();
               this.errorShowing = true;
               uiUtil
                 .showToast(
