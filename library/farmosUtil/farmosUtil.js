@@ -1551,6 +1551,7 @@ export async function runTransaction(operations) {
         }
       }
     }
+    console.error('  Done.');
 
     const errorObj = new Error('Error running transaction.');
     errorObj.cause = error;

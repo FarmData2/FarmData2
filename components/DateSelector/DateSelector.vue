@@ -68,7 +68,7 @@ import dayjs from 'dayjs';
  * ------------------------| -----------
  * date-group              | The `BFormGroup` component containing this component.
  * date-label              | The `span` component containing the "Date:" label.
- * required-star           | The `*` that appears in the label if the input is required.
+ * date-required           | The `*` that appears in the label if the input is required.
  * date-input              | The `BFormInput` component used to select a date.
  * date-invalid-feedback   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
  */
