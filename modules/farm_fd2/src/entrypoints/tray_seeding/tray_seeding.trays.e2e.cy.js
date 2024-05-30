@@ -48,14 +48,14 @@ describe('Tray Seeding: Number of Trays Component', () => {
     cy.get('[data-cy="tray-seeding-trays"]')
       .find('[data-cy="numeric-increase-lg"]')
       .click();
-      cy.get('[data-cy="tray-seeding-trays"]')
+    cy.get('[data-cy="tray-seeding-trays"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '17.00');
 
     cy.get('[data-cy="tray-seeding-trays"]')
       .find('[data-cy="numeric-decrease-lg"]')
       .click();
-      cy.get('[data-cy="tray-seeding-trays"]')
+    cy.get('[data-cy="tray-seeding-trays"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '7.00');
 
