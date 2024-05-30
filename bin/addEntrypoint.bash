@@ -198,6 +198,7 @@ echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
 
 cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
 sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.App.vue"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
 echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
 

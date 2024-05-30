@@ -18,26 +18,13 @@ describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
     cy.waitForPage();
   });
 
-  it('Guest cannot access %ENTRY_POINT_TITLE% form', () => {
-    /*
-     * Skip this test if we are not running from the live farmOS
-     * server.  If we are running on the dev or preview server then
-     * the login does nothing and the test would fail because the page
-     * would be served to the guest.  When running on the live farmOS
-     * the login validates the guest credentials and enforces the permissions
-     * set for the entry point.
-     *
-     * For some reason the test is marked as "pending" when it is skipped
-     * in this way.  None the less, Cypress reports that all tests pass
-     * both on the live server and on the dev server.
-     */
-    cy.skipOn('localhost');
-
-    cy.login('guest', 'farmdata2');
-    cy.visit({ url: '%DRUPAL_ROUTE%/', failOnStatusCode: false });
-    cy.get('.page-title').should('contain.text', 'Access denied');
-  });
-
+  /*
+   * Additional tests here should check to ensure that only appropriate users
+   * have access to the page.
+   *
+   * See modules/farm_fd2/src/entrypoints/tray_seeding/tray_seeding.exists.e2e.cy.js
+   * for an examples.
+   */
   it('Main entry point elements exist', () => {
     cy.login('admin', 'admin');
     cy.visit('%DRUPAL_ROUTE%/');

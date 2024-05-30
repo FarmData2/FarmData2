@@ -103,8 +103,8 @@
         <SubmitResetButtons
           id="%ID_PREFIX%-submit-reset"
           data-cy="%ID_PREFIX%-submit-reset"
-          v-bind:enableSubmit="enableSubmit"
-          v-bind:enableReset="enableReset"
+          v-bind:enableSubmit="submitEnabled"
+          v-bind:enableReset="resetEnabled"
           v-on:ready="createdCount++"
           v-on:submit="submit()"
           v-on:reset="reset()"
@@ -186,23 +186,21 @@ export default {
       },
 
       /*
-       * These values are bound to props of the `SubmitResetButtons`
-       * Vue Component. See the `SubmitResetButtons` Vue Component above
-       * for an example. The `submit()` and `reset()` methods, and the
-       * `watch` for the `data.validity` object control these values to
-       * enable and disable submission as appropriate.
+       * This value will be true when the form is actively being submitted. It is
+       * set to true when submit() is called and to false when the submission has
+       * completed.  It is used by the submitEnabled and resetEnabled computed
+       * properties to disable and enable the Submit and Reset buttons.
        */
-      enableSubmit: true,
-      enableReset: true,
+      submitting: false,
 
       /*
        * This value is used to ensure that only one submission error
-       * is displayed. The `submitForm()` function in `lib.js` is called
+       * is displayed at a time. The `submitForm()` function in `lib.js` is called
        * to submit the form. If there are connectivity issues, that function
        * may generate multiple errors.  The `showErrorToast()` function
        * uses this value to ensure that only one of those errors is shown.
        */
-      errorShown: false,
+      errorShowing: false,
 
       /*
        * This value counts the number of components that have been created
@@ -242,8 +240,22 @@ export default {
     pageDoneLoading() {
       return this.createdCount == 4;
     },
-  },
-  methods: {
+    /*
+     * The Submit button will be enabled when this property is true.
+     * This property is bound to the `enableSubmit` prop of the
+     * `SubmitResetButtons` in the template.
+     */
+    submitEnabled() {
+      return !this.validity.show || (this.validToSubmit && !this.submitting);
+    },
+    /*
+     * The Reset button will be enabled when this property is true.
+     * This property is bound to the `enableReset` prop of the
+     * `SubmitResetButtons` in the template.
+     */
+    resetEnabled() {
+      return !this.submitting;
+    },
     /*
      * This method must return `true` if the values of all of the input
      * elements in the form are valid to be submitted to farmOS.
@@ -257,24 +269,22 @@ export default {
      * account for their validity as they do not emit `valid` events.
      */
     validToSubmit() {
-      return Object.values(this.validity).every((item) => item === true);
+      return Object.entries(this.validity)
+        .filter(([key]) => key !== 'show')
+        .every((item) => item[1] === true);
     },
+  },
+  methods: {
     /*
      * This method is called when the "Submit" button is clicked. See
      * the `v-on:submit` binding in the `SubmitResetButtons` Vue Component
      * in the `<template>` above.
      */
     submit() {
+      this.submitting = true;
       this.validity.show = true;
 
-      if (this.validToSubmit()) {
-        /*
-         * The "Submit" and "Reset" buttons are disabled while the
-         * form is being submitted.
-         */
-        this.enableSubmit = false;
-        this.enableReset = false;
-
+      if (this.validToSubmit) {
         /*
          * Show a status message at the top of the screen
          * while the submission is processing.
@@ -299,17 +309,23 @@ export default {
           .then(() => {
             /*
              * If we get here, the submission was successful, so hide
-             * the status message and display a success message.
+             * the status message and display a success message. Then
+             * reset the form and enable the Submit and Reset buttons
+             * when the success message is dismissed.
              */
             uiUtil.hideToast();
-            this.reset(true);
-            uiUtil.showToast(
-              '%ENTRY_POINT_TITLE% created.',
-              '',
-              'top-center',
-              'success',
-              2
-            );
+            uiUtil
+              .showToast(
+                '%ENTRY_POINT_TITLE% created.',
+                '',
+                'top-center',
+                'success',
+                2
+              )
+              .then(() => {
+                this.reset(true);
+                this.submitting = false;
+              });
           })
           .catch(() => {
             /*
@@ -317,21 +333,24 @@ export default {
              * message and display an error message.
              */
             uiUtil.hideToast();
-            this.showErrorToast(
-              'Error creating %ENTRY_POINT_TITLE% records.',
-              'Check your network connection and try again.'
-            );
-            this.enableSubmit = true;
+            if (!this.errorShown) {
+              this.errorShowing = true;
+              uiUtil
+                .showToast(
+                  'Error creating %ENTRY_POINT_TITLE% records.',
+                  'Check your network connection and try again.',
+                  'top-center',
+                  'danger',
+                  5
+                )
+                .then(() => {
+                  this.submitting = false;
+                  this.errorShowing = false;
+                });
+            }
           });
       } else {
-        /*
-         * One or more of the input values is not valid for submission to
-         * farmOS. Disable the Submit button until the values
-         * have been edited to be valid.
-         *
-         * See watch.validity below for where the button is re-enabled.
-         */
-        this.enableSubmit = false;
+        this.submitting = false;
       }
     },
     /*
@@ -359,40 +378,15 @@ export default {
       this.validity.show = false;
 
       if (!sticky) {
-        /* Reset is not sticky, so reset the sticky values. */
+        /* Reset is not sticky, so also reset the sticky values. */
         this.form.date = dayjs().format('YYYY-MM-DD');
       }
 
       /* Always reset the non-sticky values. */
       this.form.comment = '';
-      this.enableSubmit = true;
-    },
-    showErrorToast(title, message) {
-      if (!this.errorShown) {
-        this.errorShown = true;
-        this.enableSubmit = false;
-        this.enableReset = false;
-
-        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
-      }
     },
   },
-  watch: {
-    validity: {
-      handler() {
-        /*
-         * If a form element is invalid when the "Submit" button is clicked
-         * the "Submit" button will have been disabled. This function
-         * watches the validity values of the components and re-enables the
-         * "Submit" button when they are valid to be submitted.
-         */
-        if (this.validToSubmit()) {
-          this.enableSubmit = true;
-        }
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   /*
    * The `created()` life cycle hook is called when the Vue instance
    * for the entry point has been created in the browser. This function
@@ -410,6 +404,9 @@ export default {
        * Make the lib containing the submitForm function accessible to the
        * e2e tests so that the submission test can spy on the submitForm
        * function to verify that it is receiving the correct information.
+       *
+       * Note that this variable is not exposed unless we are running within
+       * the Cypress test environment.
        */
       document.defaultView.lib = lib;
     }

@@ -52,10 +52,9 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
       .should('contain.text', 'Submitting %ENTRY_POINT_TITLE%...');
 
     // Give time for all the records to be created.
-    cy.get('.toast', { timeout: 10000 }).should(
-      'contain.text',
-      '%ENTRY_POINT_TITLE% created.'
-    );
+    cy.get('.toast', { timeout: 10000 })
+      .should('be.visible')
+      .should('contain.text', '%ENTRY_POINT_TITLE% created.');
 
     // Check that submitForm was called with the correct data.
     cy.get('@submitFormSpy').then((spy) => {
@@ -86,7 +85,7 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
 
     // Check that Submit button is re-enabled after submitting.
     cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="reset-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 
   it('Test submission with network error', () => {
@@ -96,6 +95,9 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
 
     submitForm();
 
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+
     cy.get('.toast')
       .should('be.visible')
       .should('contain.text', 'Submitting %ENTRY_POINT_TITLE%...');
@@ -104,5 +106,8 @@ describe('%ENTRY_POINT_TITLE%: Submission tests', () => {
       .should('be.visible')
       .should('contain.text', 'Error creating %ENTRY_POINT_TITLE% records.');
     cy.get('.toast', { timeout: 7000 }).should('not.exist');
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 });
