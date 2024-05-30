@@ -332,17 +332,17 @@ The [Tips for Testing in FarmData2](testingTips.md) document provides some more 
 
 ### `addEntrypoint.bash` flags
 
-Two flags can be used with the `addEntrypoint.bash` script to change its behavior.
+Flags can be used with the `addEntrypoint.bash` script to change its behavior.
 
 - The `--dev` flag causes the `addEntrypoint.bash` script to create its new feature branch from the _current_ branch instead of from the `development` branch. This makes it easier to test changes that are being made to the template files.
 
-- The `--minimal` flag causes the `addEntrypoint.bash` script to create a minimal entrypoint that does not include all the template files. This can be useful when creating entry points for parent menus.
+- Other flags may be added in the future.
 
 ### The Drupal Module Files
 
 The `module` and `public` directories in each of the FarmData2 modules contains the files needed to build the associated Drupal module that plugs into farmOS.
 
-Typically, these files will not need to be modified manually. The `addEntrypoint.bash` script will automatically add the information for the new entry point to the appropriate module files. If you find yourself manually editing these files, check with one of the project maintainers on the [FarmData2 Zulip Chat](https://farmdata2.zulipchat.com). They can help ensure that that is the appropriate approach for what you are trying to do.
+Typically, these files will not need to be modified manually. The `addEntrypoint.bash` script will automatically add the information for the new entry point to the appropriate module files. If you find yourself manually editing these files, check with one of the project maintainers on the [FarmData2 Zulip Chat](https://farmdata2.zulipchat.com). They can confirm that is the appropriate approach for what you are trying to do.
 
 ### Watch Alternatives
 
