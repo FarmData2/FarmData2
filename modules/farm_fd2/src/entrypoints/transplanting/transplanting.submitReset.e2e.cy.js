@@ -28,7 +28,7 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
     if (!skipCrop) {
       cy.get('[data-cy="transplanting-picklist"]')
         .find('[data-cy="selector-input"]')
-        .select('BROCCOLI');
+        .select('LETTUCE-ICEBERG');
       cy.get(`[data-cy="picklist-quantity-4"]`).select(2);
     }
     if (!skipLocation) {
@@ -90,7 +90,7 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.disabled');
     cy.get('[data-cy="transplanting-picklist"]')
       .find('[data-cy="selector-input"]')
-      .select('BROCCOLI');
+      .select('LETTUCE-ICEBERG');
     cy.get('[data-cy="transplanting-picklist"]');
     cy.get(`[data-cy="picklist-quantity-4"]`).select(2);
     cy.get(`[data-cy="picklist-quantity-4"]`);
@@ -115,9 +115,6 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
       .find('input')
       .eq(3)
       .click();
-    cy.get('[data-cy="transplanting-location"]').find(
-      '[data-cy="selector-input"]'
-    );
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
@@ -185,6 +182,20 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
       .find('[data-cy="numeric-input"]')
       .blur();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Checks submit button enables after deleting equipment with invalid depth', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
 
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-delete-button"]')
@@ -213,6 +224,20 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
       .find('[data-cy="numeric-input"]')
       .blur();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Checks submit button enables after deleting equipment with invalid speed', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
 
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-delete-button"]')

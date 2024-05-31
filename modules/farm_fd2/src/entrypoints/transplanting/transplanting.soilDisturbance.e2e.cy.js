@@ -29,10 +29,6 @@ describe('Transplanting: Soil Disturbance Component', () => {
     cy.get(
       '[data-cy="transplanting-soil-disturbance-accordion-title"]'
     ).click();
-
-    cy.get(
-      '[data-cy="transplanting-soil-disturbance-accordion-title"]'
-    ).click();
     cy.get('[data-cy="transplanting-soil-disturbance-accordion-item"]').should(
       'be.visible'
     );

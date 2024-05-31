@@ -182,7 +182,7 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:includeArea="includeArea"
+              v-bind:includeArea="false"
               v-on:valid="
                 (valid) => {
                   validity.soilDisturbance = valid;
@@ -280,7 +280,6 @@ export default {
       enableSubmit: true,
       enableReset: true,
       rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-      includeArea: false,
       form: {
         cropName: null,
         picked: [],
