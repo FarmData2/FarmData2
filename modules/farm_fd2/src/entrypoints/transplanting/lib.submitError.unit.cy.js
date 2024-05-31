@@ -146,9 +146,6 @@ describe('Error when submitting using the transplanting lib.', () => {
           // On the second request, modify the response to have a status code of 401
           req.reply({
             statusCode: 401,
-            body: {
-              error: 'Unauthorized',
-            },
           });
         } else {
           // Continue with the request normally for other requests
@@ -192,33 +189,179 @@ describe('Error when submitting using the transplanting lib.', () => {
     }
   );
 
-  // it('Check quantities deleted explicitly if standard log not created', () => {
-  //   cy.intercept('POST', '**/api/quantity/standard/', {
-  //     statusCode: 401,
-  //   });
+  it('Check quantities deleted explicitly if transplanting log not created (without soil disturbance)', () => {
+    cy.intercept('POST', '**/api/log/activity', {
+      statusCode: 401,
+    });
 
-  //   let plantAssetDeletes = 0;
-  //   cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
-  //     plantAssetDeletes++;
-  //     req.reply({
-  //       statusCode: 200,
-  //     });
-  //   });
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
 
-  //   cy.wrap(
-  //     lib
-  //       .submitForm(form)
-  //       .then(() => {
-  //         // Shouldn't run because submitForm throws an error.
-  //         throw new Error('The submission should have failed.');
-  //       })
-  //       .catch((error) => {
-  //         expect(error.message).not.to.contain('bedWidthQuantity');
-  //         expect(error.message).not.to.contain('rowFeetQuantity');
-  //         expect(error.message).not.to.contain('rosPerBedQuantity.');
-  //         expect(error.message).not.to.contain('rowFeetQuantity');
-  //         expect(plantAssetDeletes).to.equal(0);
-  //       })
-  //   );
-  // });
+    let plantAssetDeletes = 0;
+    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+      plantAssetDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          // Shouldn't run because submitForm throws an error.
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('bedWidthQuantity');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(error.message).not.to.contain('rosPerBedQuantity.');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(standardQuantityDeletes).to.equal(5);
+          expect(plantAssetDeletes).to.equal(1);
+        })
+    );
+  });
+
+  it('Check quantities deleted explicitly if transplanting log not created (only soil disturbance)', () => {
+    // Counter to track the number of POST requests
+    let postRequestCount = 0;
+
+    // Intercept POST requests to the endpoint
+    cy.intercept('POST', '**/api/log/activity', (req) => {
+      postRequestCount += 1;
+      if (postRequestCount === 2) {
+        // On the second request, modify the response to have a status code of 401
+        req.reply({
+          statusCode: 401,
+        });
+      } else {
+        // Continue with the request normally for other requests
+        req.continue();
+      }
+    }).as('postRequest');
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          // Shouldn't run because submitForm throws an error.
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('bedWidthQuantity');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(error.message).not.to.contain('rosPerBedQuantity.');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(standardQuantityDeletes).to.equal(2);
+        })
+    );
+  });
+
+  it('Check quantities not deleted explicitly if transplanting log created and deleted (without soil disturbance)', () => {
+    cy.intercept('POST', '**/api/log/activity', {
+      statusCode: 401,
+    });
+
+    let seedingLogDeletes = 0;
+    cy.intercept('POST', '**/api/log/activity', () => {
+      seedingLogDeletes++;
+    });
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    let plantAssetDeletes = 0;
+    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+      plantAssetDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          // Shouldn't run because submitForm throws an error.
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('bedWidthQuantity');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(error.message).not.to.contain('rosPerBedQuantity.');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(standardQuantityDeletes).to.equal(5);
+          expect(seedingLogDeletes).to.equal(1);
+          expect(plantAssetDeletes).to.equal(1);
+        })
+    );
+  });
+
+  it('Check quantities not deleted explicitly if transplanting log created and deleted (only soil disturbance)', () => {
+    // Counter to track the number of POST requests
+    let postRequestCount = 0;
+
+    // Intercept POST requests to the endpoint
+    cy.intercept('POST', '**/api/log/activity', (req) => {
+      postRequestCount += 1;
+      if (postRequestCount === 2) {
+        // On the second request, modify the response to have a status code of 401
+        req.reply({
+          statusCode: 401,
+        });
+      } else {
+        // Continue with the request normally for other requests
+        req.continue();
+      }
+    }).as('postRequest');
+
+    let seedingLogDeletes = 0;
+    cy.intercept('POST', '**/api/log/activity', () => {
+      seedingLogDeletes++;
+    });
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          // Shouldn't run because submitForm throws an error.
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('bedWidthQuantity');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(error.message).not.to.contain('rosPerBedQuantity.');
+          expect(error.message).not.to.contain('rowFeetQuantity');
+          expect(standardQuantityDeletes).to.equal(2);
+          expect(seedingLogDeletes).to.equal(2);
+        })
+    );
+  });
 });
