@@ -17,8 +17,8 @@
     </h1>
 
     <p
-      id="%ID_PREFIX-text"
-      data-cy="%ID_PREFIX-text"
+      id="%ID_PREFIX%-text"
+      data-cy="%ID_PREFIX%-text"
     >
       Placeholder content for the %ENTRY_POINT_TITLE% entry point.
     </p>
