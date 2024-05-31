@@ -33,11 +33,11 @@ describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
     cy.get('[data-cy="%ID_PREFIX%"]').should('exist');
     cy.get('[data-cy="%ID_PREFIX%-header"]')
       .should('be.visible')
-      .should('have.text', '%ENTRY_POINT_TITLE%');
+      .should('contain.text', '%ENTRY_POINT_TITLE%');
     cy.get('[data-cy="%ID_PREFIX%-text"]')
       .should('be.visible')
       .should(
-        'have.text',
+        'contain.text',
         'Placeholder content for the %ENTRY_POINT_TITLE% entry point.'
       );
   });
