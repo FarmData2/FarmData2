@@ -5,20 +5,58 @@ source lib.bash
 
 PWD="$(pwd)"
 
+function usage {
+  echo "addEntryPoint.bash usage:"
+  echo "  -h|--help : Display this message."
+  echo ""
+  echo "  -d|--dev: Create the new entry point from the current branch"
+  echo "            instead of from the development branch."
+  echo "            This is useful for testing changes to the templates."
+  echo ""
+  echo "  -m|--min: Create a minimal entry point rather than a full"
+  echo "            entry point. The minimum entry point contains only"
+  echo "            the basic structure and placeholder text in App.vue"
+  echo "            and a basic existence test."
+  echo "            This is useful for creating parent menus"
+  echo ""
+
+  exit 255
+}
+
 # Get the path to the main repo directory.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
-# Check for the --dev flag and later create the feature branch
-# from current branch instead of from the development branch.
-# This allows testing of changes to the templates without first
-# committing them to development.
-DEV_FLAG=0
-if [ "$1" == "--dev" ]; then
-  DEV_FLAG=1
-  shift
-fi
+# Process the command line flags
+FLAGS=$(getopt -o d::h::m:: \
+  --long dev::,help::,min:: \
+  -- "$@")
+error_check "Unrecognized option provided."
+eval set -- "$FLAGS"
+
+while true; do
+  case $1 in
+  -d | --dev)
+    DEV_FLAG=1
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -m | --min)
+    MIN_FLAG=1
+    shift 2
+    ;;
+  --)
+    shift
+    break
+    ;;
+  *)
+    usage
+    ;;
+  esac
+done
 
 # Check that working tree is clean
 GIT_STATUS=$(git status --porcelain)
@@ -138,7 +176,11 @@ echo ""
 # shellcheck disable=SC1003
 DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
 
-echo "About to add an entry point as follows:"
+if [ -z "$MIN_FLAG" ]; then
+  echo "About to add a full entry point as follows:"
+else
+  echo "About to add a minimal entry point as follows:"
+fi
 echo "               in module: $MODULE_NAME"
 echo "        module directory: $MODULE_DIR"
 echo "        entry point name: $ENTRY_POINT"
@@ -166,7 +208,7 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
-if [ "$DEV_FLAG" -eq 0 ]; then
+if [ -z "$DEV_FLAG" ]; then
   # Create a new feature branch for the entrypoint from the development branch
   echo "  Updating development branch..."
   git switch --quiet development
@@ -196,70 +238,98 @@ mkdir "$ENTRY_POINT_SRC_DIR"
 error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
 echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
-echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
+if [ -z "$MIN_FLAG" ]; then
+  # Creating a full entry point.
+  cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.date.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.date.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.comment.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.comment.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submitReset.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submitReset.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submission.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submission.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
-echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
 
-cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
-echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
+  cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
+  echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.js"
-sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
 
-cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submitError.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
-sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
-echo "  Added $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
+  cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submitError.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
+else
+  # Creating a minimum entry point.
+  cp "$ENTRY_POINT_TEMPLATE_DIR/App-min.vue" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
+
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists-min.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
+
+  cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
+  sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
+
+  cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
+  echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
+
+  cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
+  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
+fi
 
 echo ""
 
