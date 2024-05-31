@@ -144,7 +144,7 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:includeArea="false"
+              v-bind:includeArea="includeArea"
               v-on:valid="validity.soilDisturbance = $event"
               v-on:update:equipment="form.equipment = $event"
               v-on:update:depth="form.depth = $event"
@@ -170,8 +170,8 @@
         <SubmitResetButtons
           id="direct-seeding-submit-reset"
           data-cy="direct-seeding-submit-reset"
-          v-bind:enableSubmit="submitEnabled"
-          v-bind:enableReset="resetEnabled"
+          v-bind:enableSubmit="enableSubmit"
+          v-bind:enableReset="enableReset"
           v-on:ready="createdCount++"
           v-on:submit="submit()"
           v-on:reset="reset()"
@@ -240,36 +240,24 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
-      submitting: false,
-      errorShowing: false,
+      includeArea: false,
+      enableSubmit: true,
+      enableReset: true,
+      errorShown: false,
       createdCount: 0,
     };
-  },
-  computed: {
-    pageDoneLoading() {
-      return this.createdCount == 10;
-    },
-    submitEnabled() {
-      return !this.validity.show || (this.validToSubmit && !this.submitting);
-    },
-    resetEnabled() {
-      return !this.submitting;
-    },
-    validToSubmit() {
-      return Object.entries(this.validity)
-        .filter(([key]) => key !== 'show')
-        .every((item) => item[1] === true);
-    },
   },
   methods: {
     handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
     },
     submit() {
-      this.submitting = true;
       this.validity.show = true;
 
-      if (this.validToSubmit) {
+      if (this.canSubmit) {
+        this.disableSubmit = true;
+        this.disableReset = true;
+
         uiUtil.showToast(
           'Submitting direct seeding...',
           '',
@@ -281,39 +269,25 @@ export default {
           .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
-            uiUtil
-              .showToast(
-                'Direct seeding created.',
-                '',
-                'top-center',
-                'success',
-                2
-              )
-              .then(() => {
-                this.reset(true);
-                this.submitting = false;
-              });
+            this.reset(true); // keep sticky parts.
+            uiUtil.showToast(
+              'Direct seeding created.',
+              '',
+              'top-center',
+              'success',
+              2
+            );
           })
           .catch(() => {
-            if (!this.errorShown) {
-              uiUtil.hideToast();
-              this.errorShowing = true;
-              uiUtil
-                .showToast(
-                  'Error creating direct seeding.',
-                  'Check your network connection and try again.',
-                  'top-center',
-                  'danger',
-                  5
-                )
-                .then(() => {
-                  this.submitting = false;
-                  this.errorShowing = false;
-                });
-            }
+            uiUtil.hideToast();
+            this.showErrorToast(
+              'Error creating direct seeding.',
+              'Check your network connection and try again.'
+            );
+            this.enableSubmit = true;
           });
       } else {
-        this.submitting = false;
+        this.enableSubmit = false;
       }
     },
     reset(sticky = false) {
@@ -333,13 +307,53 @@ export default {
       this.form.beds = [];
       this.form.bedFeet = 100;
       this.form.comment = null;
+      this.enableSubmit = true;
+    },
+    showErrorToast(title, message) {
+      if (!this.errorShown) {
+        this.errorShown = true;
+        this.enableSubmit = false;
+        this.enableReset = false;
+
+        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
+      }
     },
   },
-  watch: {},
+  computed: {
+    canSubmit() {
+      const required =
+        this.validity.seedingDate &&
+        this.validity.cropName &&
+        this.validity.location &&
+        this.validity.bedFeet &&
+        this.validity.bedWidth &&
+        this.validity.rowsPerBed &&
+        this.validity.soilDisturbance;
+
+      return required;
+    },
+    pageDoneLoading() {
+      return this.createdCount == 10;
+    },
+  },
+  watch: {
+    validity: {
+      handler() {
+        if (this.canSubmit) {
+          this.enableSubmit = true;
+        }
+      },
+      deep: true,
+    },
+  },
   created() {
     this.createdCount++;
-
     if (window.Cypress) {
+      /*
+       * Make the lib containing the submitForm function accessible to the
+       * e2e tests so that the submission test can spy on the submitForm
+       * function to verify that it is receiving the correct information.
+       */
       document.defaultView.lib = lib;
     }
   },
