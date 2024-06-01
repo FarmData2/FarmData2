@@ -117,6 +117,6 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
     expect(results.sampleOp.relationships.plant_type[0].id).to.equal(
       cropMap.get(form.crop).id
     );
-    expect(results.sampleOp.relationships.parents).to.be.null;
+    expect(results.sampleOp.relationships.parent).to.be.null;
   });
 });
