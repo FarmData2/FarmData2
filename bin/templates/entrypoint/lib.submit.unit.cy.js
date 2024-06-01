@@ -15,7 +15,7 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
     comment: 'A comment',
   };
 
-  let submittedObjects = null;
+  let results = null;
   let cropMap = null;
   before(() => {
     /*
@@ -35,15 +35,32 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
      * all the logs, assets and quantities needed to represent a
      * %ENTRY_POINT_TITLE%.
      */
-    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((results) => {
+    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((submitted) => {
       /*
-       * submittedObjects will be an object containing the log, asset and quantity
-       * objects that were submitted to farmOS. These are the objects that farmOS
-       * uses to create the logs, assets and quantities. They are not the created
-       * objects fetched from the farmOS database.  Each test below will fetch and
-       * check the actual objects from the farmOS database.
+       * submitted (and results) is an object containing the log, asset and
+       * quantity objects that were submitted to farmOS by the lib.submitForm
+       * function. These objects are not the actual objects that exist in the
+       * farmOS database, they are the objects sent to farmOS to ask it to create
+       * the logs, assets and quantities in its database. The tests below will
+       * check that each of the objects in results contains the expected data
+       * from the form that was submitted.
+       *
+       * Note checking the results (and not the database objects) here is sufficient
+       * because:
+       *   - The *.submission.e2e.cy.js test checks that the correct data
+       *     is passed from the user interface to the submitForm function.
+       *   - Checking the results here confirms that lib.submitForm has passed the
+       *     correct form data to the farmosUtil library functions that create the
+       *     logs, assets and quantities in the farmOS database.
+       *   - The tests for the farmosUtil library functions confirm that they
+       *     create the correct objects in the farmOS database for the data that
+       *     they are given.
+       *   - We trust that farmOS then handles the additional aspects of creating
+       *     the logs, assets and quantities correctly. For example, if we create a
+       *     log with a movement, we check that the log references the correct asset.
+       *     But we do not check that the location of the asset has been updated.
        */
-      submittedObjects = results;
+      results = submitted;
     });
   });
 
@@ -60,9 +77,19 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
   /*
    * TODO: Adapt this test and add others as necessary. There should be
    *       One test for each log, asset and quantity that is created by
-   *       the lib.submitForm function. Each test will fetch the the log,
-   *       asset or quantity that it is testing from farmOS and compare it
-   *       to the expected values.
+   *       the lib.submitForm function. Generally, this will be one test
+   *       for each operation in lib.submitForm.
+   *
+   *       The goal of each test is to ensure that the lib.js operation has
+   *       passed the correct form data to the farmosUtil function that is
+   *       creating the log, asset or quantity.
+   *
+   *       For example, the sampleOp creates a plant asset. The documentation
+   *       for the farmosUtil.createPlantAsset function shows it accepts arguments
+   *       for the date, cropName, comment and parents. Thus, the test will
+   *       check the parts of the results object that use those parameters to
+   *       confirm that they agree with what is expected based on the form data
+   *       that was submitted.
    *
    *       See examples of tests in the lib.submit.unit.cy.js files in:
    *         - modules/farm_fd2/src/entrypoints/tray_seeding
@@ -70,29 +97,26 @@ describe('Test the %ENTRY_POINT_TITLE% lib submission', () => {
    */
   it('%ENTRY_POINT_TITLE%: Placeholder checks the sampleOp result', () => {
     /*
-     * Fetch the plant asset that was created by lib.submitForm function
-     * and check that it is as expected for the form that was submitted.
+     * Check to be sure we get a plant asset.  This confirms that the lib.js
+     * operation called the correct function.
      */
-    cy.wrap(farmosUtil.getPlantAsset(submittedObjects.sampleOp.id)).then(
-      (plantAsset) => {
-        expect(plantAsset.type).to.equal('asset--plant');
-        expect(plantAsset.attributes.name).to.equal('1950-01-02_ZUCCHINI');
-        expect(plantAsset.attributes.status).to.equal('active');
-        expect(plantAsset.attributes.notes.value).to.equal(form.comment);
-        expect(plantAsset.relationships.plant_type[0].type).to.equal(
-          'taxonomy_term--plant_type'
-        );
-        expect(plantAsset.relationships.plant_type[0].id).to.equal(
-          cropMap.get(form.crop).id
-        );
+    expect(results.sampleOp.type).to.equal('asset--plant');
 
-        /**
-         * TODO: Add checks for all other attributes of the plant asset
-         *       that would be set by the operations in lib.submitForm.  For
-         *       example, location due to a movement log or inventory values
-         *       set by inventory adjustment quantities, etc.
-         */
-      }
+    /*
+     * Check the parts of the result that use the parameters that
+     * the lib.js operation passed to the farmosUtil.createPlantAsset
+     * function. It is only necessary to do enough checks to be sure
+     * that every parameter was passed correctly.  Tests for the
+     * farmosUtil functions confirm that they create the correct log,
+     * asset, or quantity in the farmOS database.
+     */
+    expect(results.sampleOp.attributes.name).to.equal(
+      form.date + '_' + form.crop
     );
+    expect(results.sampleOp.attributes.notes.value).to.equal(form.comment);
+    expect(results.sampleOp.relationships.plant_type[0].id).to.equal(
+      cropMap.get(form.crop).id
+    );
+    expect(results.sampleOp.relationships.parents).to.be.null;
   });
 });
