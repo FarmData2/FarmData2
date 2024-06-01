@@ -20,6 +20,7 @@ describe('Test the tray seeding lib', () => {
 
   let cropMap = null;
   let greenhouseMap = null;
+  let logCategoryMap = null;
   let unitMap = null;
 
   let result = null;
@@ -31,6 +32,10 @@ describe('Test the tray seeding lib', () => {
 
     cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
       cropMap = map;
+    });
+
+    cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((map) => {
+      logCategoryMap = map;
     });
 
     cy.wrap(farmosUtil.getUnitToTermMap()).then((map) => {
@@ -123,6 +128,15 @@ describe('Test the tray seeding lib', () => {
     expect(result.seedingLog.relationships.location[0].id).to.equal(
       greenhouseMap.get(form.locationName).id
     );
+
+    expect(result.seedingLog.relationships.category.length).to.equal(2);
+    expect(result.seedingLog.relationships.category[0].id).to.equal(
+      logCategoryMap.get('seeding').id
+    );
+    expect(result.seedingLog.relationships.category[1].id).to.equal(
+      logCategoryMap.get('seeding_tray').id
+    );
+
     expect(result.seedingLog.relationships.asset[0].id).to.equal(
       result.plantAsset.id
     );
