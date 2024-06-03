@@ -5,15 +5,29 @@
       <a href="bed_picker">BedPicker</a>: A component for picking multiple beds.
     </li>
     <li>
-      <a href="date_selector">DateSelector</a>: Component for selecting a date.
+      <a href="date_selector">DateSelector</a>: A component for selecting a
+      date.
     </li>
     <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>
     <li>
+      <a href="picklist_base">PicklistBase</a>: Base component for picking
+      multiple items from a list displayed as a table.
+    </li>
+    <li>
       <a href="selector_base">SelectorBase</a>: Base component for selecting an
       item via a drop down list.
+    </li>
+    <li>
+      <a href="soil_disturbance">SoilDisturbance</a>: A component for collecting
+      data on soil disturbances.
+    </li>
+    <li>
+      <a href="transplanting_picklist">TransplantingPicklist</a>: A component
+      for selecting a crop from a list of all crops that currently have tray
+      seedings.
     </li>
   </ul>
 
