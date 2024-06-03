@@ -11,7 +11,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```Javascript
  * {
  *   parents: [ {asset--plant}, ... ],
- *   transplantingAsset: {asset--plant},
+ *   transplantingPlantAsset: {asset--plant},
  *   trayInventoryQuantities: [ {quantity--standard}, ... ],
  *   bedFeetQuantity: {quantity--standard},
  *   bedWidthQuantity: {quantity--standard},
@@ -93,8 +93,8 @@ export async function submitForm(formData) {
     };
     ops.push(trayInventoryQuantities);
 
-    const transplantingAsset = {
-      name: 'transplantingAsset',
+    const transplantingPlantAsset = {
+      name: 'transplantingPlantAsset',
       do: async (results) => {
         return await farmosUtil.createPlantAsset(
           formData.transplantingDate,
@@ -105,11 +105,13 @@ export async function submitForm(formData) {
       },
       undo: async (results) => {
         if (results['transplantingLog'] != 'undone') {
-          await farmosUtil.deletePlantAsset(results['transplantingAsset'].id);
+          await farmosUtil.deletePlantAsset(
+            results['transplantingPlantAsset'].id
+          );
         }
       },
     };
-    ops.push(transplantingAsset);
+    ops.push(transplantingPlantAsset);
 
     const transplantingBedFeetQuantity = {
       name: 'transplantingBedFeetQuantity',
@@ -179,7 +181,7 @@ export async function submitForm(formData) {
           formData.bedFeet * formData.rowsPerBed,
           'Row Feet',
           'FEET',
-          results.transplantingAsset,
+          results.transplantingPlantAsset,
           'increment'
         );
       },
@@ -200,7 +202,7 @@ export async function submitForm(formData) {
           formData.transplantingDate,
           formData.location,
           formData.beds,
-          results.transplantingAsset,
+          results.transplantingPlantAsset,
           [
             results.transplantingBedFeetQuantity,
             results.transplantingBedWidthQuantity,
@@ -275,7 +277,7 @@ export async function submitForm(formData) {
             formData.location,
             formData.beds,
             ['tillage', 'transplanting'],
-            results.transplantingAsset,
+            results.transplantingPlantAsset,
             [results.depthQuantity, results.speedQuantity],
             results.equipmentAssets
           );
@@ -303,7 +305,7 @@ export async function submitForm(formData) {
     console.error('Transplanting: \n' + error.message);
     console.error(error);
 
-    let errorMsg = 'Error creating direct seeding.';
+    let errorMsg = 'Error creating transplanting.';
 
     for (const key of Object.keys(error.results)) {
       if (error.results[key]) {

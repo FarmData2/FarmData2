@@ -54,7 +54,7 @@ describe('Error when submitting using the transplanting lib.', () => {
   });
 
   it(
-    'Check error messages when cannot clean up excluding soilDistribution',
+    'Check error messages when cannot clean up excluding soilDisturbance',
     { retries: 4 },
     () => {
       /*
@@ -96,12 +96,12 @@ describe('Error when submitting using the transplanting lib.', () => {
           })
           .catch((error) => {
             console.log(error.message);
-            expect(error.message).to.contain('Error creating direct seeding.');
+            expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation trayInventoryQuantities could not be cleaned up.'
             );
             expect(error.message).to.contain(
-              'Result of operation transplantingAsset could not be cleaned up.'
+              'Result of operation transplantingPlantAsset could not be cleaned up.'
             );
             expect(error.message).to.contain(
               'Result of operation transplantingBedFeetQuantity could not be cleaned up.'
@@ -128,7 +128,7 @@ describe('Error when submitting using the transplanting lib.', () => {
   );
 
   it(
-    'Check error messages when cannot clean up only for soilDistribution',
+    'Check error messages when cannot clean up only for soilDisturbance',
     { retries: 4 },
     () => {
       /*
@@ -175,7 +175,7 @@ describe('Error when submitting using the transplanting lib.', () => {
           })
           .catch((error) => {
             console.log(error.message);
-            expect(error.message).to.contain('Error creating direct seeding.');
+            expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation depthQuantity could not be cleaned up.'
             );

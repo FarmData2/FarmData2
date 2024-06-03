@@ -72,7 +72,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
 
   it('Check the asset--plant', () => {
     // Check the plant asset.
-    cy.wrap(farmosUtil.getPlantAsset(result.transplantingAsset.id)).then(
+    cy.wrap(farmosUtil.getPlantAsset(result.transplantingPlantAsset.id)).then(
       (plantAsset) => {
         expect(plantAsset.type).to.equal('asset--plant');
         expect(plantAsset.attributes.name).to.equal('1950-01-02_BROCCOLI');
@@ -83,7 +83,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
           'taxonomy_term--plant_type'
         );
         expect(plantAsset.relationships.plant_type[0].id).to.equal(
-          result.transplantingAsset.relationships.plant_type[0].id
+          result.transplantingPlantAsset.relationships.plant_type[0].id
         );
 
         expect(plantAsset.relationships.location[0].type).to.equal(
