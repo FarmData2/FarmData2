@@ -1,4 +1,4 @@
-describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
+describe('Example Entry Point: exists and has main page elements.', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -9,11 +9,11 @@ describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
     cy.saveSessionStorage();
   });
 
-  it('Admin can access %ENTRY_POINT_TITLE% form', () => {
+  it('Admin can access Example Entry Point form', () => {
     // Login if running in live farmOS.
     cy.login('admin', 'admin');
     // Go to the entry point page.
-    cy.visit('%DRUPAL_ROUTE%/');
+    cy.visit('fd2_examples/example_entry_point/');
     // Check that the page loads.
     cy.waitForPage();
   });
@@ -27,16 +27,16 @@ describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
    */
   it('Main entry point elements exist', () => {
     cy.login('admin', 'admin');
-    cy.visit('%DRUPAL_ROUTE%/');
+    cy.visit('fd2_examples/example_entry_point/');
     cy.waitForPage();
 
-    cy.get('[data-cy="%ID_PREFIX%"]').should('exist');
-    cy.get('[data-cy="%ID_PREFIX%-card"]').should('be.visible');
-    cy.get('[data-cy="%ID_PREFIX%-header"]').should('be.visible');
-    cy.get('[data-cy="%ID_PREFIX%-header"]').should(
+    cy.get('[data-cy="example-entry-point"]').should('exist');
+    cy.get('[data-cy="example-entry-point-card"]').should('be.visible');
+    cy.get('[data-cy="example-entry-point-header"]').should('be.visible');
+    cy.get('[data-cy="example-entry-point-header"]').should(
       'contain.text',
-      '%ENTRY_POINT_TITLE%'
+      'Example Entry Point'
     );
-    cy.get('[data-cy="%ID_PREFIX%-form"]').should('exist');
+    cy.get('[data-cy="example-entry-point-form"]').should('exist');
   });
 });

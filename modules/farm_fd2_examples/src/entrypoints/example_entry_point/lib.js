@@ -76,10 +76,10 @@ async function submitForm(form) {
     // Run all of the operations in ops as a transaction.
     return await farmosUtil.runTransaction(ops);
   } catch (error) {
-    console.error('%ENTRY_POINT% lib.js:');
+    console.error('example_entry_point lib.js:');
     console.error(error);
 
-    let errorMsg = 'Error creating %ENTRY_POINT_TITLE% records.';
+    let errorMsg = 'Error creating Example Entry Point records.';
 
     for (const key of Object.keys(error.results)) {
       if (error.results[key]) {

@@ -6,8 +6,8 @@
     Use the examples below as a guide when adding your own elements.
   -->
   <div
-    id="%ID_PREFIX%"
-    data-cy="%ID_PREFIX%"
+    id="example-entry-point"
+    data-cy="example-entry-point"
   >
     <!-- 
       The BToaster element provides an anchor for BootstrapVueNext
@@ -16,16 +16,16 @@
       entry point. 
     -->
     <BToaster
-      id="%ID_PREFIX%-toaster"
-      data-cy="%ID_PREFIX%-toaster"
+      id="example-entry-point-toaster"
+      data-cy="example-entry-point-toaster"
     />
     <!-- 
       A BCard element is used to provide all a consistent look and 
       feel across all FarmData2 entry points. 
     -->
     <BCard
-      id="%ID_PREFIX%-card"
-      data-cy="%ID_PREFIX%-card"
+      id="example-entry-point-card"
+      data-cy="example-entry-point-card"
       bg-variant="light"
       header-tag="header"
     >
@@ -35,11 +35,11 @@
       -->
       <template #header>
         <h2
-          id="%ID_PREFIX%-header"
-          data-cy="%ID_PREFIX%-header"
+          id="example-entry-point-header"
+          data-cy="example-entry-point-header"
           class="text-center"
         >
-          %ENTRY_POINT_TITLE%
+          Example Entry Point
         </h2>
       </template>
 
@@ -48,8 +48,8 @@
         components that make up the data entry form for the entry point.
       -->
       <BForm
-        id="%ID_PREFIX%-form"
-        data-cy="%ID_PREFIX%-form"
+        id="example-entry-point-form"
+        data-cy="example-entry-point-form"
       >
         <!--
           Components are added here to build the data collection form 
@@ -62,8 +62,8 @@
 
         <!-- Date -->
         <DateSelector
-          id="%ID_PREFIX%-date"
-          data-cy="%ID_PREFIX%-date"
+          id="example-entry-point-date"
+          data-cy="example-entry-point-date"
           required
           v-model:date="form.date"
           v-bind:showValidityStyling="validity.show"
@@ -88,8 +88,8 @@
         <hr />
         <!-- Comment Box -->
         <CommentBox
-          id="%ID_PREFIX%-comment"
-          data-cy="%ID_PREFIX%-comment"
+          id="example-entry-point-comment"
+          data-cy="example-entry-point-comment"
           v-model:comment="form.comment"
           v-on:valid="
             (valid) => {
@@ -101,8 +101,8 @@
 
         <!-- Submit and Reset Buttons -->
         <SubmitResetButtons
-          id="%ID_PREFIX%-submit-reset"
-          data-cy="%ID_PREFIX%-submit-reset"
+          id="example-entry-point-submit-reset"
+          data-cy="example-entry-point-submit-reset"
           v-bind:enableSubmit="submitEnabled"
           v-bind:enableReset="resetEnabled"
           v-on:ready="createdCount++"
@@ -290,7 +290,7 @@ export default {
          * while the submission is processing.
          */
         uiUtil.showToast(
-          'Submitting %ENTRY_POINT_TITLE%...',
+          'Submitting Example Entry Point...',
           '',
           'top-center',
           'success'
@@ -300,8 +300,8 @@ export default {
          * Use the `submitForm()` function in `lib.js` to build
          * assets, logs and quantities based on the values in `data.form`
          * and submit them to farmOS.  We pass a copy of this.form so
-         * that the tests in %ENTRY_POINT%.submission.e2e.cy.js and
-         * %ENTRY_POINT%.submitError.e2e.cy.js have their own copy that
+         * that the tests in example_entry_point.submission.e2e.cy.js and
+         * example_entry_point.submitError.e2e.cy.js have their own copy that
          * is not modified when the form is reset during testing.
          */
         lib
@@ -316,7 +316,7 @@ export default {
             uiUtil.hideToast();
             uiUtil
               .showToast(
-                '%ENTRY_POINT_TITLE% created.',
+                'Example Entry Point created.',
                 '',
                 'top-center',
                 'success',
@@ -332,12 +332,12 @@ export default {
              * If we get here, the submission failed, so hide the status
              * message and display an error message.
              */
+            uiUtil.hideToast();
             if (!this.errorShown) {
-              uiUtil.hideToast();
               this.errorShowing = true;
               uiUtil
                 .showToast(
-                  'Error creating %ENTRY_POINT_TITLE% records.',
+                  'Error creating Example Entry Point records.',
                   'Check your network connection and try again.',
                   'top-center',
                   'danger',
@@ -426,12 +426,12 @@ export default {
  * practice here to use id selectors (`#`) for the elements 
  * in the entry point.
  */
-#%ID_PREFIX%-date {
+#example-entry-point-date {
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-#%ID_PREFIX%-comment {
+#example-entry-point-comment {
   margin-bottom: 15px;
 }
 </style>

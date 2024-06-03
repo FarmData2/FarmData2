@@ -128,10 +128,8 @@ async function submitForm(formData) {
         ) {
           errorMsg += '\n   Manually delete log or asset with:';
           errorMsg += '\n     name: ' + error.results[key].attributes.name;
-          //errorMsg += '\n     uuid: ' + error.results[key].id;
         } else {
           errorMsg += '\n   May be safely ignored';
-          //errorMsg += '\n     uuid: ' + error.results[key].id;
         }
       }
     }

@@ -87,3 +87,13 @@ soil_disturbance:
   css:
     component:
       style/style.css: {}
+
+example_entry_point:
+  js:
+    example_entry_point/example_entry_point.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}

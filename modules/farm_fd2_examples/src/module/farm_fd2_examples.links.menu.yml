@@ -52,3 +52,9 @@ farm.fd2_examples_soil_disturbance:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_soil_disturbance.content
   weight: 100
+farm.fd2_examples_example_entry_point:
+  title: 'Example Entry Point'
+  description: 'An example of a new entry point created by addEntrypoint.bash.'
+  parent: farm.fd2_examples_main
+  route_name: farm.fd2_examples_example_entry_point.content
+  weight: 100

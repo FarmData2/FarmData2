@@ -31,12 +31,14 @@ describe('%ENTRY_POINT_TITLE%: exists and has main page elements.', () => {
     cy.waitForPage();
 
     cy.get('[data-cy="%ID_PREFIX%"]').should('exist');
-    cy.get('[data-cy="%ID_PREFIX%-card"]').should('be.visible');
-    cy.get('[data-cy="%ID_PREFIX%-header"]').should('be.visible');
-    cy.get('[data-cy="%ID_PREFIX%-header"]').should(
-      'contain.text',
-      '%ENTRY_POINT_TITLE%'
-    );
-    cy.get('[data-cy="%ID_PREFIX%-form"]').should('exist');
+    cy.get('[data-cy="%ID_PREFIX%-header"]')
+      .should('be.visible')
+      .should('contain.text', '%ENTRY_POINT_TITLE%');
+    cy.get('[data-cy="%ID_PREFIX%-text"]')
+      .should('be.visible')
+      .should(
+        'contain.text',
+        'Placeholder content for the %ENTRY_POINT_TITLE% entry point.'
+      );
   });
 });

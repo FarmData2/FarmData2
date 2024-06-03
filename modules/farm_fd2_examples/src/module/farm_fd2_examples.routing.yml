@@ -61,3 +61,10 @@ farm.fd2_examples_soil_disturbance.content:
     _title: 'SoilDisturbance Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_example_entry_point.content:
+  path: '/fd2_examples/example_entry_point'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'Example Entry Point'
+  requirements:
+    _permission: 'access content'
