@@ -1,4 +1,6 @@
 import { lib } from './lib.js';
+import { lib as traySeedingLib } from '../tray_seeding/lib.js';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Error when submitting using the transplanting lib.', () => {
   /*
@@ -7,30 +9,19 @@ describe('Error when submitting using the transplanting lib.', () => {
    * to the lib functions as if it is coming from the tray seeding
    * entry point as a submission.
    */
+  let traySeedingForm = {
+    seedingDate: '1950-01-02',
+    cropName: 'BROCCOLI',
+    locationName: 'CHUAU',
+    trays: 25,
+    traySize: '200',
+    seedsPerCell: 3,
+    comment: 'A comment',
+  };
+
   let form = {
     cropName: 'BROCCOLI',
-    picked: [
-      {
-        trays: 1,
-        data: {
-          log_id: '1',
-          log_uuid: 'ca7b2961-72da-4469-a2f1-af2abfc60082',
-          asset_id: '33',
-          asset_uuid: '0d0c5dd3-8888-4931-9f8c-e2998e7e9557',
-          date: '2019-03-11',
-          user: 'admin',
-          crop: 'BROCCOLI',
-          trays_location: 'CHUAU',
-          asset_locations: 'CHUAU',
-          total_trays: 4,
-          available_trays: 4,
-          tray_size: 128,
-          seeds_per_cell: 1,
-          total_seeds: 512,
-          notes: 'First broccoli tray seeding.',
-        },
-      },
-    ],
+    picked: [],
     transplantingDate: '1950-01-02',
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
@@ -42,6 +33,21 @@ describe('Error when submitting using the transplanting lib.', () => {
     speed: 5,
     comment: 'A comment',
   };
+
+  before(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+
+    cy.wrap(traySeedingLib.submitForm(traySeedingForm), { timeout: 10000 })
+      .then(() => {
+        return cy.wrap(farmosUtil.getSeedlings(traySeedingForm.cropName), {
+          timeout: 10000,
+        });
+      })
+      .then((res) => {
+        form.picked[0] = { trays: 25, data: res[res.length - 1] };
+      });
+  });
 
   beforeEach(() => {
     cy.restoreLocalStorage();
