@@ -11,7 +11,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```Javascript
  * {
  *   parents: [ {asset--plant}, ... ],
- *   transplantingAsset: {asset--plant},
+ *   transplantingPlantAsset: {asset--plant},
  *   trayInventoryQuantities: [ {quantity--standard}, ... ],
  *   bedFeetQuantity: {quantity--standard},
  *   bedWidthQuantity: {quantity--standard},
@@ -20,7 +20,6 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   transplantingLog: {log--activity},
  *   depthQuantity: {quantity--standard},
  *   speedQuantity: {quantity--standard},
- *   areaQuantity: {quantity--standard},
  *   equipmentAssets: [ {asset--equipment}, ... ],
  *   soilDisturbanceLog: {log--activity},
  * }
@@ -94,8 +93,8 @@ export async function submitForm(formData) {
     };
     ops.push(trayInventoryQuantities);
 
-    const transplantingAsset = {
-      name: 'transplantingAsset',
+    const transplantingPlantAsset = {
+      name: 'transplantingPlantAsset',
       do: async (results) => {
         return await farmosUtil.createPlantAsset(
           formData.transplantingDate,
@@ -105,12 +104,12 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        if (results['transplantingLog'] != 'undone') {
-          await farmosUtil.deletePlantAsset(results['transplantingAsset'].id);
-        }
+        await farmosUtil.deletePlantAsset(
+          results['transplantingPlantAsset'].id
+        );
       },
     };
-    ops.push(transplantingAsset);
+    ops.push(transplantingPlantAsset);
 
     const transplantingBedFeetQuantity = {
       name: 'transplantingBedFeetQuantity',
@@ -180,7 +179,7 @@ export async function submitForm(formData) {
           formData.bedFeet * formData.rowsPerBed,
           'Row Feet',
           'FEET',
-          results.transplantingAsset,
+          results.transplantingPlantAsset,
           'increment'
         );
       },
@@ -201,7 +200,7 @@ export async function submitForm(formData) {
           formData.transplantingDate,
           formData.location,
           formData.beds,
-          results.transplantingAsset,
+          results.transplantingPlantAsset,
           [
             results.transplantingBedFeetQuantity,
             results.transplantingBedWidthQuantity,
@@ -253,22 +252,6 @@ export async function submitForm(formData) {
       };
       ops.push(speedQuantity);
 
-      const areaQuantity = {
-        name: 'areaQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'ratio',
-            formData.area,
-            'Area',
-            'PERCENT'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
-        },
-      };
-      ops.push(areaQuantity);
-
       // Get the asset--equipment objects for the chosen equipment
       const equipmentAssets = {
         name: 'equipmentAssets',
@@ -292,12 +275,8 @@ export async function submitForm(formData) {
             formData.location,
             formData.beds,
             ['tillage', 'transplanting'],
-            results.transplantingAsset,
-            [
-              results.depthQuantity,
-              results.speedQuantity,
-              results.areaQuantity,
-            ],
+            results.transplantingPlantAsset,
+            [results.depthQuantity, results.speedQuantity],
             results.equipmentAssets
           );
         },
@@ -316,7 +295,6 @@ export async function submitForm(formData) {
       results['equipmentAssets'] = null;
       results['depthQuantity'] = null;
       results['speedQuantity'] = null;
-      results['areaQuantity'] = null;
       results['activityLog'] = null;
     }
 
@@ -325,7 +303,7 @@ export async function submitForm(formData) {
     console.error('Transplanting: \n' + error.message);
     console.error(error);
 
-    let errorMsg = 'Error creating direct seeding.';
+    let errorMsg = 'Error creating transplanting.';
 
     for (const key of Object.keys(error.results)) {
       if (error.results[key]) {
@@ -348,3 +326,7 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+
+export const lib = {
+  submitForm,
+};

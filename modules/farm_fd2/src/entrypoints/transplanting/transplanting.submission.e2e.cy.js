@@ -1,0 +1,188 @@
+describe('Transplanting: Submission tests', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+
+    cy.login('admin', 'admin');
+    cy.visit('fd2/transplanting/');
+    cy.waitForPage();
+  });
+
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
+
+  function submitForm() {
+    cy.get('[data-cy="date-input"]').clear();
+    cy.get('[data-cy="date-input"]').type('1950-01-02');
+    cy.get('[data-cy="transplanting-picklist"]')
+      .find('[data-cy="selector-input"]')
+      .select('BROCCOLI');
+
+    cy.get(`[data-cy="picklist-quantity-0"]`).select(2);
+
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .click();
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .click();
+
+    cy.get('[data-cy="transplanting-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="transplanting-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .type('200');
+    cy.get('[data-cy="transplanting-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="transplanting-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .type('30');
+    cy.get('[data-cy="transplanting-rows-per-bed"]')
+      .find('[data-cy="selector-input"]')
+      .select('5');
+
+    cy.get(
+      '[data-cy="transplanting-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type('6');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type('5');
+
+    cy.get('[data-cy="comment-input"]').type('test comment');
+    cy.get('[data-cy="comment-input"]').blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+  }
+
+  it('Test successful submission', () => {
+    /**
+     * Setup a spy on the submitForm function in lib.js, the
+     * function that is called when the submit button is clicked.
+     * The spy will be used to check that the argument passed to the
+     * submitForm function contains the expected data from the form.
+     */
+    cy.window().then((win) => {
+      cy.spy(win.lib, 'submitForm').as('submitFormSpy');
+    });
+
+    /*
+     * Fill in the form and click the "Submit" button.
+     */
+    submitForm();
+
+    // Check for the status toast while the form is submitting.
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Submitting transplanting...');
+
+    // Give time for all the records to be created.
+    cy.get('.toast', { timeout: 10000 }).should(
+      'contain.text',
+      'Transplanting created.'
+    );
+
+    /*
+     * Check that the submitForm function was called with the
+     * expected form data.
+     */
+    cy.get('@submitFormSpy').then((spy) => {
+      expect(spy).to.be.calledOnce;
+
+      let formData = spy.getCall(0).args[0];
+      expect(formData.transplantingDate).to.equal('1950-01-02');
+      expect(formData.cropName).to.equal('BROCCOLI');
+      expect(formData.location).to.equal('ALF');
+      expect(formData.bedFeet).to.equal(200);
+      expect(formData.rowsPerBed).to.equal('5');
+      expect(formData.bedWidth).to.equal(30);
+      expect(formData.depth).to.equal(6);
+      expect(formData.speed).to.equal(5);
+      expect(formData.comment).to.equal('test comment');
+    });
+
+    // Check that the "sticky" parts of the form are not reset...
+    cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
+
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'ALF');
+    cy.get('[data-cy="transplanting-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '30');
+    cy.get('[data-cy="transplanting-rows-per-bed"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', '5');
+
+    cy.get(
+      '[data-cy="transplanting-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'Tractor');
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '6.0');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '5.0');
+
+    // Check that the other parts of the form are reset.
+    cy.get('[data-cy="transplanting-picklist"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(0)
+      .should('not.be.checked');
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="picker-options"]')
+      .find('input')
+      .eq(3)
+      .should('not.be.checked');
+    cy.get('[data-cy="transplanting-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '100');
+    cy.get('[data-cy="comment-input"]').should('have.value', '');
+
+    // Finally check that the toast is hidden.
+    cy.get('.toast').should('not.exist');
+  });
+
+  it('Test submission with network error', () => {
+    cy.intercept('POST', '**/api/log/activity', {
+      statusCode: 401,
+    });
+    submitForm();
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Submitting transplanting...');
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Error creating transplanting.');
+    cy.get('.toast', { timeout: 7000 }).should('not.exist');
+  });
+});

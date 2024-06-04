@@ -182,7 +182,7 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:area="form.area"
+              v-bind:includeArea="false"
               v-on:valid="
                 (valid) => {
                   validity.soilDisturbance = valid;
@@ -201,11 +201,6 @@
               v-on:update:speed="
                 (speed) => {
                   form.speed = speed;
-                }
-              "
-              v-on:update:area="
-                (area) => {
-                  form.area = area;
                 }
               "
               v-on:error="
@@ -258,7 +253,7 @@
 
 <script>
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib';
+import { lib } from './lib.js';
 import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
@@ -297,7 +292,6 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: '',
         comment: '',
       },
       validity: {
@@ -332,14 +326,8 @@ export default {
     },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
+    handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
-
-      if (checkedBeds.length == 0) {
-        this.form.area = '';
-      } else {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
-      }
     },
     submit() {
       this.validity.show = true;
@@ -356,7 +344,7 @@ export default {
         );
 
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
             this.reset(true); // keep sticky parts.
@@ -396,7 +384,6 @@ export default {
       this.form.beds = [];
       this.form.cropName = null;
       this.form.bedFeet = 100;
-      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
@@ -422,6 +409,14 @@ export default {
   },
   created() {
     this.createdCount++;
+    if (window.Cypress) {
+      /*
+       * Make the lib containing the submitForm function accessible to the
+       * e2e tests so that the submission test can spy on the submitForm
+       * function to verify that it is receiving the correct information.
+       */
+      document.defaultView.lib = lib;
+    }
   },
 };
 </script>
