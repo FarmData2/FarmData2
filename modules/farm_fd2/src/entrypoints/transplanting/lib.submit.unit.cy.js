@@ -112,6 +112,9 @@ describe('Submission using the transplanting lib.', () => {
     expect(result.trayInventoryQuantities[0].attributes.label).to.equal(
       'Trays'
     );
+    expect(result.trayInventoryQuantities[0].relationships.units.id).to.equal(
+      unitMap.get('TRAYS').id
+    );
     expect(
       result.trayInventoryQuantities[0].attributes.inventory_adjustment
     ).to.equal('decrement');

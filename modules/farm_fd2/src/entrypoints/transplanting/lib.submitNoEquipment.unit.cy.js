@@ -38,6 +38,8 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
   let result = null;
   let fieldMap = null;
   let bedMap = null;
+  let unitMap = null;
+  let categoryMap = null;
 
   before(() => {
     cy.restoreLocalStorage();
@@ -55,6 +57,14 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
       cropToTerm = map;
     });
 
+    cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((map) => {
+      categoryMap = map;
+    });
+
+    cy.wrap(farmosUtil.getUnitToTermMap()).then((map) => {
+      unitMap = map;
+    });
+
     cy.wrap(traySeedingLib.submitForm(traySeedingForm), { timeout: 10000 })
       .then(() => {
         return cy.wrap(farmosUtil.getSeedlings(traySeedingForm.cropName), {
@@ -62,7 +72,10 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
         });
       })
       .then((res) => {
-        form.picked[0] = { trays: 25, data: res[res.length - 1] };
+        form.picked[0] = {
+          trays: traySeedingForm.trays,
+          data: res[res.length - 1],
+        };
         return cy.wrap(lib.submitForm(form), { timeout: 10000 });
       })
       .then((res) => {
@@ -78,6 +91,38 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
   afterEach(() => {
     cy.saveLocalStorage();
     cy.saveSessionStorage();
+  });
+
+  it('Check the parents', () => {
+    expect(result.parents[0].id).to.equal(form.picked[0].data.asset_uuid);
+    expect(result.parents[0].type).to.equal('asset--plant');
+    expect(result.parents[0].attributes.name).to.equal(
+      form.picked[0].data.date + '_' + form.picked[0].data.crop
+    );
+  });
+
+  it('Check the tray inventory quantity--standard assets', () => {
+    expect(result.trayInventoryQuantities[0].attributes.value.decimal).to.equal(
+      form.picked[0].trays
+    );
+    expect(result.trayInventoryQuantities[0].type).to.equal(
+      'quantity--standard'
+    );
+    expect(result.trayInventoryQuantities[0].attributes.measure).to.equal(
+      'count'
+    );
+    expect(result.trayInventoryQuantities[0].attributes.label).to.equal(
+      'Trays'
+    );
+    expect(result.trayInventoryQuantities[0].relationships.units.id).to.equal(
+      unitMap.get('TRAYS').id
+    );
+    expect(
+      result.trayInventoryQuantities[0].attributes.inventory_adjustment
+    ).to.equal('decrement');
+    expect(
+      result.trayInventoryQuantities[0].relationships.inventory_asset.id
+    ).to.equal(form.picked[0].data.asset_uuid);
   });
 
   it('Check the asset--plant', () => {
@@ -99,6 +144,10 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     expect(
       result.transplantingPlantAsset.relationships.plant_type[0].id
     ).to.equal(cropToTerm.get(form.cropName).id);
+
+    expect(result.transplantingPlantAsset.relationships.parent[0].id).to.equal(
+      form.picked[0].data.asset_uuid
+    );
   });
 
   it('Check the bed feet quantity--standard', () => {
@@ -114,6 +163,13 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     expect(result.transplantingBedFeetQuantity.attributes.label).to.equal(
       'Bed Feet'
     );
+    expect(result.transplantingBedFeetQuantity.relationships.units.id).to.equal(
+      unitMap.get('FEET').id
+    );
+    expect(result.transplantingBedFeetQuantity.attributes.inventory_adjustment)
+      .to.be.null;
+    expect(result.transplantingBedFeetQuantity.relationships.inventory_asset).to
+      .be.null;
   });
 
   it('Check the rows/bed quantity--standard', () => {
@@ -129,6 +185,14 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     expect(result.transplantingRowsPerBedQuantity.attributes.label).to.equal(
       'Rows/Bed'
     );
+    expect(
+      result.transplantingRowsPerBedQuantity.relationships.units.id
+    ).to.equal(unitMap.get('ROWS/BED').id);
+    expect(
+      result.transplantingRowsPerBedQuantity.attributes.inventory_adjustment
+    ).to.be.null;
+    expect(result.transplantingRowsPerBedQuantity.relationships.inventory_asset)
+      .to.be.null;
   });
 
   it('Check the row feet quantity--standard', () => {
@@ -144,6 +208,15 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     expect(result.transplantingRowFeetQuantity.attributes.label).to.equal(
       'Row Feet'
     );
+    expect(result.transplantingRowFeetQuantity.relationships.units.id).to.equal(
+      unitMap.get('FEET').id
+    );
+    expect(
+      result.transplantingRowFeetQuantity.attributes.inventory_adjustment
+    ).to.equal('increment');
+    expect(
+      result.transplantingRowFeetQuantity.relationships.inventory_asset.id
+    ).to.equal(result.transplantingPlantAsset.id);
   });
 
   it('Check the bed width quantity--standard', () => {
@@ -159,12 +232,24 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     expect(result.transplantingBedWidthQuantity.attributes.label).to.equal(
       'Bed Width'
     );
+    expect(
+      result.transplantingBedWidthQuantity.relationships.units.id
+    ).to.equal(unitMap.get('INCHES').id);
+    expect(result.transplantingBedWidthQuantity.attributes.inventory_adjustment)
+      .to.be.null;
+    expect(result.transplantingBedWidthQuantity.relationships.inventory_asset)
+      .to.be.null;
   });
 
   it('Check the log--activity', () => {
     expect(result.transplantingLog.attributes.name).to.equal(
       form.transplantingDate + '_xp_' + form.picked[0].data.crop
     );
+    expect(result.transplantingLog.attributes.timestamp).to.contain(
+      form.transplantingDate
+    );
+
+    expect(result.transplantingLog.relationships.location.length).to.equal(3);
     expect(
       fieldMap.get(result.transplantingLog.relationships.location[0].id)
         .attributes.name
@@ -177,8 +262,31 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
       bedMap.get(result.transplantingLog.relationships.location[2].id)
         .attributes.name
     ).to.equal(form.beds[1]);
-  });
 
+    expect(result.transplantingLog.relationships.category[0].id).to.equal(
+      categoryMap.get('transplanting').id
+    );
+
+    expect(result.transplantingLog.relationships.asset[0].id).to.equal(
+      result.transplantingPlantAsset.id
+    );
+    expect(result.transplantingLog.relationships.quantity.length).to.equal(5);
+    expect(result.transplantingLog.relationships.quantity[0].id).to.equal(
+      result.transplantingBedFeetQuantity.id
+    );
+    expect(result.transplantingLog.relationships.quantity[1].id).to.equal(
+      result.transplantingBedWidthQuantity.id
+    );
+    expect(result.transplantingLog.relationships.quantity[2].id).to.equal(
+      result.transplantingRowsPerBedQuantity.id
+    );
+    expect(result.transplantingLog.relationships.quantity[3].id).to.equal(
+      result.transplantingRowFeetQuantity.id
+    );
+    expect(result.transplantingLog.relationships.quantity[4].id).to.equal(
+      result.trayInventoryQuantities[0].id
+    );
+  });
   it('Check soil disturbance activity log not created', () => {
     expect(result.depthQuantity).to.be.null;
     expect(result.speedQuantity).to.be.null;
