@@ -340,7 +340,8 @@ if [ -n "$CYPRESS_GUI" ]; then
   EXIT_CODE=$?
 else
   echo "Running tests headless."
-  npx cypress run --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
+  #script -feqc "npx cypress run --env $CYPRESS_ENV --$CYPRESS_TEST_TYPE --config-file $CYPRESS_CONFIG_FILE" /dev/null
+  npx cypress run --env $CYPRESS_ENV --$CYPRESS_TEST_TYPE --config-file $CYPRESS_CONFIG_FILE
   EXIT_CODE=$?
 fi
 
