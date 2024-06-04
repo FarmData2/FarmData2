@@ -355,12 +355,15 @@ describe('Submission using the transplanting lib.', () => {
       categoryMap.get('transplanting').id
     );
 
-    expect(result.activityLog.relationships.quantity.length).to.equal(2);
+    expect(result.activityLog.relationships.quantity.length).to.equal(3);
     expect(result.activityLog.relationships.quantity[0].id).to.equal(
       result.depthQuantity.id
     );
     expect(result.activityLog.relationships.quantity[1].id).to.equal(
       result.speedQuantity.id
+    );
+    expect(result.activityLog.relationships.quantity[2].id).to.equal(
+      result.transplantingBedFeetQuantity.id
     );
   });
 });
