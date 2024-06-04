@@ -104,11 +104,9 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        if (results['transplantingLog'] != 'undone') {
-          await farmosUtil.deletePlantAsset(
-            results['transplantingPlantAsset'].id
-          );
-        }
+        await farmosUtil.deletePlantAsset(
+          results['transplantingPlantAsset'].id
+        );
       },
     };
     ops.push(transplantingPlantAsset);
