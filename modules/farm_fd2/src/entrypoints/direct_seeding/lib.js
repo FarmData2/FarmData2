@@ -196,7 +196,11 @@ async function submitForm(formData) {
             formData.beds,
             ['tillage', 'seeding_direct'],
             results.plantAsset,
-            [results.depthQuantity, results.speedQuantity],
+            [
+              results.depthQuantity,
+              results.speedQuantity,
+              results.bedFeetQuantity,
+            ],
             equipmentAssets
           );
         },

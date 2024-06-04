@@ -240,12 +240,15 @@ describe('Submission using the direct_seeding lib.', () => {
       categoryMap.get('seeding_direct').id
     );
 
-    expect(results.activityLog.relationships.quantity.length).to.equal(2);
+    expect(results.activityLog.relationships.quantity.length).to.equal(3);
     expect(results.activityLog.relationships.quantity[0].id).to.equal(
       results.depthQuantity.id
     );
     expect(results.activityLog.relationships.quantity[1].id).to.equal(
       results.speedQuantity.id
+    );
+    expect(results.activityLog.relationships.quantity[2].id).to.equal(
+      results.bedFeetQuantity.id
     );
 
     expect(results.activityLog.relationships.equipment.length).to.equal(1);
