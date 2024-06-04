@@ -84,6 +84,7 @@ export default {
   computed: {
     addCropUrl() {
       if (this.canCreateCrop) {
+        farmosUtil.clearCachedCrops();
         return '/admin/structure/taxonomy/manage/plant_type/add';
       } else {
         return null;
