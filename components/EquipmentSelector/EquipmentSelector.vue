@@ -7,13 +7,16 @@
       v-bind:data-cy="'equipment-selector-' + (i + 1)"
       invalidFeedbackText="Equipment must be selected"
       v-bind:label="String(i + 1)"
-      v-bind:addOptionUrl="addEquipmentUrl(i)"
+      v-bind:includeAddButton="
+        i == this.selectedEquipment.length && this.canCreateEquipment
+      "
       v-bind:options="equipmentList"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event, i)"
       v-on:valid="handleValid($event, i)"
+      v-on:add-clicked="handleAddClicked"
     />
   </div>
 </template>
@@ -99,12 +102,9 @@ export default {
     },
   },
   methods: {
-    addEquipmentUrl(i) {
-      if (i == this.selectedEquipment.length && this.canCreateEquipment) {
-        return '/asset/add/equipment';
-      } else {
-        return null;
-      }
+    handleAddClicked() {
+      farmosUtil.clearCachedEquipment();
+      window.location.href = '/asset/add/equipment';
     },
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);

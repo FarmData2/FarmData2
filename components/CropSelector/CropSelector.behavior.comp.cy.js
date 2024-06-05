@@ -12,7 +12,7 @@ describe('Test the CropSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Clicking add crop button goes to the add crop form', () => {
+  it('', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.intercept('GET', '**/taxonomy/manage/plant_type/add', {

@@ -154,4 +154,29 @@ describe('Test the LocationSelector component behavior', () => {
         });
     });
   });
+
+  // it('Clicking add location button goes to the add location form and clears the greenhouses, beds, field cache', () => {
+  //   const readySpy = cy.spy().as('readySpy');
+
+  //   cy.intercept('GET', '**/taxonomy/manage/plant_type/add', {
+  //     statusCode: 200,
+  //     body: 'Add location Form',
+  //   }).as('urlIntercept');
+
+  //   cy.mount(LocationSelector, {
+  //     props: {
+  //       includeGreenhouses: true,
+  //       onReady: readySpy,
+  //       selected: 'CHUAU',
+  //     },
+  //   }).then(({ wrapper }) => {
+  //     cy.get('@readySpy')
+  //       .should('have.been.calledOnce')
+  //       .then(() => {
+  //         cy.get('[data-cy="selector-input"]').should('have.value', 'CHUAU');
+  //         wrapper.setProps({ selected: 'GHANA' });
+  //         cy.get('[data-cy="selector-input"]').should('have.value', 'GHANA');
+  //       });
+  //   });
+  // });
 });

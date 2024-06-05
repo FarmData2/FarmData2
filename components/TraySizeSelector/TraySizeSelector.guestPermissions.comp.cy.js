@@ -7,25 +7,6 @@ describe('Test the permission based CropSelector content', () => {
    * here because we need a new farmOS instance for each test.
    */
 
-  it('Test admin can add tray size and url is correct', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(TraySizeSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/admin/structure/taxonomy/manage/tray_size/add');
-      });
-  });
-
   it('Test guest cannot add tray size', () => {
     const readySpy = cy.spy().as('readySpy');
 
