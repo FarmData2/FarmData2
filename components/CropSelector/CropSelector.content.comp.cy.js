@@ -69,7 +69,6 @@ describe('Test the CropSelector content', () => {
 
   it('Check that props are passed through to the SelectorBase', () => {
     const readySpy = cy.spy().as('readySpy');
-    const addClickedSpy = cy.spy().as('addClickedSpy');
 
     cy.mount(CropSelector, {
       props: {
@@ -77,7 +76,6 @@ describe('Test the CropSelector content', () => {
         showValidityStyling: true,
         selected: 'ARUGULA',
         onReady: readySpy,
-        onAddClicked: addClickedSpy,
       },
     });
 
@@ -93,10 +91,6 @@ describe('Test the CropSelector content', () => {
         cy.get('[data-cy="selector-input"]').should('have.value', 'ARUGULA');
         cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
         cy.get('[data-cy="selector-add-button"]').should('exist');
-
-        // Simulate a click on the add button and check if the event is emitted
-        // cy.get('[data-cy="selector-add-button"]').click();
-        // cy.get('@addClickedSpy').should('have.been.calledOnce');
       });
   });
 });

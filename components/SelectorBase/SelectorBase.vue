@@ -115,18 +115,19 @@
  *
  * ```html
  * <SelectorBase
- *   id="selector"
- *   data-cy="selector"
- *   label="Select"
- *   invalid-feedback-text="Selection cannot be empty."
+ *   id="crop-selector"
+ *   data-cy="crop-selector"
+ *   label="Crop"
+ *   invalidFeedbackText="A crop is required"
+ *   v-bind:options="cropList"
  *   v-bind:required="required"
- *   v-bind:showValidityStyling="validity.showStyling"
- *   v-bind:options="options"
- *   v-bind:addOptionUrl="addOptionUrl"
- *   v-model:selected="form.selected"
- *   v-on:valid="(valid) => (validity.selected = valid)"
- *   v-on:ready="createdCount++"
- * />
+ *   v-bind:selected="selected"
+ *   v-bind:showValidityStyling="showValidityStyling"
+ *   v-on:update:selected="handleUpdateSelected($event)"
+ *   v-on:valid="handleValid($event)"
+ *   v-on:add-clicked="handleAddClicked"
+ *  v-bind:includeAddButton="canCreateCrop"
+ *   />
  * ```
  *
  * ## `data-cy` Attributes
@@ -202,6 +203,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Whether to include the add button.
+     *
+     * If this prop is true, a "+" button is displayed and will emit an add-clicked event when clicked.
+     */
     includeAddButton: {
       type: Boolean,
       default: false,
