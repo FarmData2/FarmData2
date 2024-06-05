@@ -276,7 +276,11 @@ export async function submitForm(formData) {
             formData.beds,
             ['tillage', 'transplanting'],
             results.transplantingPlantAsset,
-            [results.depthQuantity, results.speedQuantity],
+            [
+              results.depthQuantity,
+              results.speedQuantity,
+              results.transplantingBedFeetQuantity,
+            ],
             results.equipmentAssets
           );
         },
