@@ -44,11 +44,11 @@
         </BFormSelect>
         <BInputGroupAppend>
           <BButton
-            v-if="addOptionUrl != null"
+            v-if="includeAddButton"
             id="selector-add-button"
             data-cy="selector-add-button"
             variant="outline-success"
-            v-bind:href="addOptionUrl"
+            v-on:click="$emit('add-clicked')"
             >+</BButton
           >
           <BButton
@@ -146,7 +146,7 @@
 export default {
   name: 'SelectorBase',
   components: {},
-  emits: ['ready', 'update:selected', 'valid'],
+  emits: ['ready', 'update:selected', 'valid', 'add-clicked'],
   props: {
     /**
      * The URL of the form for adding a new option.
@@ -154,10 +154,6 @@ export default {
      * If this prop is `null`, no "+" button will appear on the select.
      * If this prop is set then, a "+" button is displayed and will redirect to the provided URL when clicked.
      */
-    addOptionUrl: {
-      type: String,
-      default: null,
-    },
     /**
      * The text to display if the input is invalid.
      */
@@ -203,6 +199,10 @@ export default {
      * Whether validity styling should appear on the dropdown.
      */
     showValidityStyling: {
+      type: Boolean,
+      default: false,
+    },
+    includeAddButton: {
       type: Boolean,
       default: false,
     },
