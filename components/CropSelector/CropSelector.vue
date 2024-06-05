@@ -98,7 +98,6 @@ export default {
       this.$emit('valid', event);
     },
     handleAddClicked() {
-      console.log('Add button clicked');
       farmosUtil.clearCachedCrops();
       window.location.href = '/admin/structure/taxonomy/manage/plant_type/add';
     },

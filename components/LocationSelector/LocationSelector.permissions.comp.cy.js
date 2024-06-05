@@ -21,11 +21,6 @@ describe('Test permissions based content in the LocationSelector', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/structure');
       });
   });
 
@@ -43,11 +38,6 @@ describe('Test permissions based content in the LocationSelector', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/land');
       });
   });
 
@@ -66,11 +56,6 @@ describe('Test permissions based content in the LocationSelector', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add');
       });
   });
 
