@@ -5,7 +5,7 @@
       data-cy="submit-reset"
       class="grid-container"
     >
-      <BCol class="submit-button-col">
+      <BCol class="submit-button-col d-flex justify-content-start">
         <BButton
           id="submit-button"
           data-cy="submit-button"
@@ -17,7 +17,7 @@
           >Submit</BButton
         >
       </BCol>
-      <BCol class="reset-button-col">
+      <BCol class="reset-button-col d-flex justify-content-end p-0">
         <BButton
           id="reset-button"
           data-cy="reset-button"
@@ -123,6 +123,11 @@ export default {
   gap: 10px;
   align-items: center;
   width: 100%;
+  margin-left: 0 !important;
+}
+
+.submit-button-col {
+  padding-left: 0 !important;
 }
 
 .fd2-submit {
