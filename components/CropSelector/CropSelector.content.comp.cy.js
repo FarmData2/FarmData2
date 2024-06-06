@@ -90,10 +90,7 @@ describe('Test the CropSelector content', () => {
         );
         cy.get('[data-cy="selector-input"]').should('have.value', 'ARUGULA');
         cy.get('[data-cy="selector-input"]').should('have.class', 'is-valid');
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/admin/structure/taxonomy/manage/plant_type/add');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 });

@@ -12,25 +12,6 @@ describe('Test the EquipmentSelector permissions', () => {
     cy.saveSessionStorage();
   });
 
-  it('Admin can add equipment', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(EquipmentSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/equipment');
-      });
-  });
-
   it('Guest cannot add equipment', () => {
     const readySpy = cy.spy().as('readySpy');
 

@@ -130,8 +130,9 @@ describe('Test the default SelectorBase content', () => {
       });
   });
 
-  it('Test addOptionUrl prop', () => {
+  it('Test includeAddButton prop', () => {
     const readySpy = cy.spy().as('readySpy');
+    const addClickedSpy = cy.spy().as('addClickedSpy');
 
     cy.mount(SelectorBase, {
       props: {
@@ -141,6 +142,8 @@ describe('Test the default SelectorBase content', () => {
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         addOptionUrl: 'add/option/url',
         onReady: readySpy,
+        onAddClicked: addClickedSpy,
+        includeAddButton: true,
       },
     });
 
@@ -148,10 +151,8 @@ describe('Test the default SelectorBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', 'add/option/url');
+        cy.get('[data-cy="selector-add-button"]').click();
+        cy.get('@addClickedSpy').should('have.been.calledOnce');
       });
   });
 
