@@ -256,7 +256,7 @@ export default {
               });
           })
           .catch(() => {
-            if (!this.errorShown) {
+            if (!this.errorShowing) {
               uiUtil.hideToast();
               this.errorShowing = true;
               uiUtil

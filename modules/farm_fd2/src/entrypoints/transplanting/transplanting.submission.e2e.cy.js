@@ -93,16 +93,19 @@ describe('Transplanting: Submission tests', () => {
      */
     submitForm();
 
+    // Check that Submit and Reset are disabled while submitting.
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+
     // Check for the status toast while the form is submitting.
     cy.get('.toast')
       .should('be.visible')
       .should('contain.text', 'Submitting transplanting...');
 
     // Give time for all the records to be created.
-    cy.get('.toast', { timeout: 10000 }).should(
-      'contain.text',
-      'Transplanting created.'
-    );
+    cy.get('.toast', { timeout: 10000 })
+      .should('be.visible')
+      .should('contain.text', 'Transplanting created.');
 
     /*
      * Check that the submitForm function was called with the
@@ -168,8 +171,12 @@ describe('Transplanting: Submission tests', () => {
       .should('have.value', '100');
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
-    // Finally check that the toast is hidden.
+    // Check that the toast is hidden.
     cy.get('.toast').should('not.exist');
+
+    // Check that Submit button is re-enabled after submitting.
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 
   it('Test submission with network error', () => {
@@ -177,6 +184,8 @@ describe('Transplanting: Submission tests', () => {
       statusCode: 401,
     });
     submitForm();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
     cy.get('.toast')
       .should('be.visible')
       .should('contain.text', 'Submitting transplanting...');
@@ -184,5 +193,7 @@ describe('Transplanting: Submission tests', () => {
       .should('be.visible')
       .should('contain.text', 'Error creating transplanting.');
     cy.get('.toast', { timeout: 7000 }).should('not.exist');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
 });
