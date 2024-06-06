@@ -317,13 +317,13 @@ export default {
         window.location.href = '/asset/add';
       } else if (this.includeFields && this.canCreateLand) {
         farmosUtil.clearCachedFields();
+        farmosUtil.clearCachedBeds();
         window.location.href = '/asset/add/land';
       } else if (
         (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
         this.canCreateStructure
       ) {
         farmosUtil.clearCachedGreenhouses();
-        farmosUtil.clearCachedBeds();
         window.location.href = '/asset/add/structure';
       } else {
         return null;
