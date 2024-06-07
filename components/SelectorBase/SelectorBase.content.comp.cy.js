@@ -149,7 +149,6 @@ describe('Test the default SelectorBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
-        cy.get('[data-cy="selector-add-button"]');
       });
   });
 
