@@ -44,11 +44,11 @@
         </BFormSelect>
         <BInputGroupAppend>
           <BButton
-            v-if="addOptionUrl != null"
+            v-if="includeAddButton"
             id="selector-add-button"
             data-cy="selector-add-button"
             variant="outline-success"
-            v-bind:href="addOptionUrl"
+            v-on:click="$emit('add-clicked')"
             >+</BButton
           >
           <BButton
@@ -115,18 +115,19 @@
  *
  * ```html
  * <SelectorBase
- *   id="selector"
- *   data-cy="selector"
- *   label="Select"
- *   invalid-feedback-text="Selection cannot be empty."
+ *   id="crop-selector"
+ *   data-cy="crop-selector"
+ *   label="Crop"
+ *   invalidFeedbackText="A crop is required"
+ *   v-bind:options="cropList"
  *   v-bind:required="required"
- *   v-bind:showValidityStyling="validity.showStyling"
- *   v-bind:options="options"
- *   v-bind:addOptionUrl="addOptionUrl"
- *   v-model:selected="form.selected"
- *   v-on:valid="(valid) => (validity.selected = valid)"
- *   v-on:ready="createdCount++"
- * />
+ *   v-bind:selected="selected"
+ *   v-bind:showValidityStyling="showValidityStyling"
+ *   v-on:update:selected="handleUpdateSelected($event)"
+ *   v-on:valid="handleValid($event)"
+ *   v-on:add-clicked="handleAddClicked"
+ *  v-bind:includeAddButton="canCreateCrop"
+ *   />
  * ```
  *
  * ## `data-cy` Attributes
@@ -146,7 +147,7 @@
 export default {
   name: 'SelectorBase',
   components: {},
-  emits: ['ready', 'update:selected', 'valid'],
+  emits: ['ready', 'update:selected', 'valid', 'add-clicked'],
   props: {
     /**
      * The URL of the form for adding a new option.
@@ -154,10 +155,6 @@ export default {
      * If this prop is `null`, no "+" button will appear on the select.
      * If this prop is set then, a "+" button is displayed and will redirect to the provided URL when clicked.
      */
-    addOptionUrl: {
-      type: String,
-      default: null,
-    },
     /**
      * The text to display if the input is invalid.
      */
@@ -203,6 +200,15 @@ export default {
      * Whether validity styling should appear on the dropdown.
      */
     showValidityStyling: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether to include the add button.
+     *
+     * If this prop is true, a "+" button is displayed and will emit an add-clicked event when clicked.
+     */
+    includeAddButton: {
       type: Boolean,
       default: false,
     },

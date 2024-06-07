@@ -5,13 +5,14 @@
       data-cy="location-selector"
       label="Location"
       invalidFeedbackText="A location is required"
-      v-bind:addOptionUrl="addLocationUrl"
       v-bind:options="locations"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleLocationValid($event)"
+      v-bind:includeAddButton="canCreateLocation"
+      v-on:add-clicked="handleAddClicked"
     />
 
     <BAccordion
@@ -186,25 +187,12 @@ export default {
     };
   },
   computed: {
-    addLocationUrl() {
-      // return the appropriate url for land, structure or just asset if both
-      if (
-        this.includeFields &&
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateLand &&
-        this.canCreateStructure
-      ) {
-        return '/asset/add';
-      } else if (this.includeFields && this.canCreateLand) {
-        return '/asset/add/land';
-      } else if (
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateStructure
-      ) {
-        return '/asset/add/structure';
-      } else {
-        return null;
-      }
+    canCreateLocation() {
+      return (
+        (this.includeFields && this.canCreateLand) ||
+        ((this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure)
+      );
     },
     locations() {
       let fieldNames = [];
@@ -313,6 +301,31 @@ export default {
     },
     handleBedsValid(event) {
       this.bedsValid = event;
+    },
+    handleAddClicked() {
+      if (
+        this.includeFields &&
+        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+        this.canCreateLand &&
+        this.canCreateStructure
+      ) {
+        farmosUtil.clearCachedFields();
+        farmosUtil.clearCachedGreenhouses();
+        farmosUtil.clearCachedBeds();
+        window.location.href = '/asset/add';
+      } else if (this.includeFields && this.canCreateLand) {
+        farmosUtil.clearCachedFields();
+        farmosUtil.clearCachedBeds();
+        window.location.href = '/asset/add/land';
+      } else if (
+        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+        this.canCreateStructure
+      ) {
+        farmosUtil.clearCachedGreenhouses();
+        window.location.href = '/asset/add/structure';
+      } else {
+        return null;
+      }
     },
   },
   watch: {

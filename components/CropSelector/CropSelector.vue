@@ -5,13 +5,14 @@
       data-cy="crop-selector"
       label="Crop"
       invalidFeedbackText="A crop is required"
-      v-bind:addOptionUrl="addCropUrl"
       v-bind:options="cropList"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
+      v-on:add-clicked="handleAddClicked"
+      v-bind:includeAddButton="canCreateCrop"
     />
   </div>
 </template>
@@ -81,15 +82,6 @@ export default {
       canCreateCrop: false,
     };
   },
-  computed: {
-    addCropUrl() {
-      if (this.canCreateCrop) {
-        return '/admin/structure/taxonomy/manage/plant_type/add';
-      } else {
-        return null;
-      }
-    },
-  },
   methods: {
     handleUpdateSelected(event) {
       /**
@@ -104,6 +96,10 @@ export default {
        * @property {boolean} event whether the selected crop is valid or not.
        */
       this.$emit('valid', event);
+    },
+    handleAddClicked() {
+      farmosUtil.clearCachedCrops();
+      window.location.href = '/admin/structure/taxonomy/manage/plant_type/add';
     },
   },
   watch: {},

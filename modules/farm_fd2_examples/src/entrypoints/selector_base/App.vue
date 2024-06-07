@@ -14,7 +14,8 @@
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:options="options"
-    v-bind:addOptionUrl="addOptionUrl"
+    v-bind:includeAddButton="includeAddButton"
+    v-on:add-clicked="handleAddClicked"
     v-model:selected="form.selected"
     v-on:valid="(valid) => (validity.selected = valid)"
     v-on:ready="createdCount++"
@@ -58,13 +59,7 @@
             id="add-button-checkbox"
             data-cy="add-button-checkbox"
             switch
-            v-on:change="
-              if (this.addOptionUrl == null) {
-                this.addOptionUrl = 'http://farmos/asset/add';
-              } else {
-                this.addOptionUrl = null;
-              }
-            "
+            v-model="includeAddButton"
           />
         </td>
       </tr>
@@ -123,6 +118,10 @@
         <td>valid</td>
         <td>{{ validity.selected }}</td>
       </tr>
+      <tr>
+        <td>add-clicked</td>
+        <td>{{ addClicked }}</td>
+      </tr>
     </tbody>
   </table>
 
@@ -146,7 +145,7 @@ export default {
     return {
       required: true,
       showAllButton: true,
-      addOptionUrl: null,
+      includeAddButton: false,
       options: ['one', 'two', 'three', 'four', 'five'],
       form: {
         selected: null,
@@ -156,9 +155,21 @@ export default {
         selected: false,
       },
       createdCount: 0,
+      addClicked: false,
     };
   },
-  methods: {},
+  methods: {
+    handleAddClicked() {
+      this.addClicked = true;
+    },
+  },
+  watch: {
+    includeAddButton(newValue) {
+      if (!newValue) {
+        this.addClicked = false;
+      }
+    },
+  },
   computed: {
     pageDoneLoading() {
       return this.createdCount == 2;
@@ -179,7 +190,7 @@ export default {
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
- selector-base-hack {
+selector-base-hack {
   display: none;
 }
 </style>
