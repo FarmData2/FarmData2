@@ -1,7 +1,7 @@
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
-describe('Test the LocationSelector component behavior', () => {
+describe('Test the LocationSelector component behavior for both land (i.e. field or bed) and structures (e.g., greenhouse)', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -12,7 +12,7 @@ describe('Test the LocationSelector component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Clicking add button goes to the add location form and clears the greenhouses, field and bed cache', () => {
+  it('Navigates to the add form and clears greenhouses, fields, and beds cache on add button click', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.intercept('GET', '**/asset/add', {

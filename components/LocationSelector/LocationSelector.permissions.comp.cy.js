@@ -7,7 +7,7 @@ describe('Test permissions based content in the LocationSelector', () => {
    * here because we need a new farmOS instance for each test.
    */
 
-  it('Admin can add structure (i.e. greenhouse) and url is correct', () => {
+  it('Verify that admin can add structure (i.e. greenhouse) by ensuring the add button is available to admin.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -20,11 +20,11 @@ describe('Test permissions based content in the LocationSelector', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Admin can add land (i.e. field or bed) and url is correct', () => {
+  it('Verify that admin can add land (i.e. field or bed) by ensuring the add button is available to admin.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -37,11 +37,11 @@ describe('Test permissions based content in the LocationSelector', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Admin can add both land and structures and url is correct', () => {
+  it('Verify that admin can add both land and structures by ensuring the add button is available to admin.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -55,11 +55,11 @@ describe('Test permissions based content in the LocationSelector', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Guest cannot add land (i.e. field or bed)', () => {
+  it('Verify that guest cannot add land (i.e. field or bed) by ensuring the add button is not available to guest.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.wrap(
@@ -85,7 +85,7 @@ describe('Test permissions based content in the LocationSelector', () => {
     });
   });
 
-  it('Guest cannot add structure (i.e. greenhouse)', () => {
+  it('Verify that guest cannot add structures (e.g., greenhouse) by ensuring the add button is not available to guest.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.wrap(
@@ -111,7 +111,7 @@ describe('Test permissions based content in the LocationSelector', () => {
     });
   });
 
-  it('Guest cannot add both land and structure', () => {
+  it('Verify that guest cannot add both land and structure by ensuring the add button is not available to guest.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.wrap(

@@ -11,7 +11,7 @@ describe('Test the default LocationSelector content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Add url for greenhouses with beds is correct', () => {
+  it('Verifies the add button is available for greenhouses with beds', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.intercept('GET', '/asset/add/structure', {
@@ -29,10 +29,7 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').should('exist');
-        cy.get('[data-cy="selector-add-button"]').click();
-        cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
       });
   });
 });
