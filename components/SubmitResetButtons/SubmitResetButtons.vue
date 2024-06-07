@@ -138,13 +138,4 @@ export default {
   width: 100%;
   max-width: 120px;
 }
-
-@media (max-width: 576px) {
-  .fd2-submit {
-    font-size: 14px;
-  }
-  .fd2-reset {
-    font-size: 14px;
-  }
-}
 </style>
