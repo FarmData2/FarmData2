@@ -37,6 +37,79 @@ describe('Test the soil disturbance activity log functions', () => {
     cy.saveSessionStorage();
   });
 
+  it('Create a soil disturbance activity log for a field with no plant asset', () => {
+    cy.wrap(
+      farmosUtil.createStandardQuantity('length', 7, 'Depth', 'INCHES')
+    ).as('depthQuantity');
+
+    cy.wrap(farmosUtil.createStandardQuantity('rate', 5, 'Speed', 'MPH')).as(
+      'speedQuantity'
+    );
+
+    const equipmentArray = [
+      equipmentMap.get('Tractor'),
+      equipmentMap.get('Planter'),
+    ];
+
+    cy.getAll(['@depthQuantity', '@speedQuantity']).then(
+      ([depthQuantity, speedQuantity]) => {
+        cy.wrap(
+          farmosUtil.createSoilDisturbanceActivityLog(
+            '1999-01-02',
+            'A',
+            [],
+            ['tillage', 'seeding_direct'],
+            null,
+            [depthQuantity, speedQuantity],
+            equipmentArray
+          )
+        ).as('soilLog');
+      }
+    );
+
+    cy.getAll(['@depthQuantity', '@speedQuantity', '@soilLog']).then(
+      ([depthQuantity, speedQuantity, soilLog]) => {
+        cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
+          (result) => {
+            expect(result.type).to.equal('log--activity');
+            expect(result.attributes.name).to.equal('1999-01-02_sd_A');
+            expect(result.attributes.timestamp).to.contain('1999-01-02');
+            expect(result.attributes.status).to.equal('done');
+            expect(result.attributes.is_movement).to.equal(false);
+
+            expect(result.relationships.location[0].id).to.equal(
+              fieldMap.get('A').id
+            );
+            expect(result.relationships.asset).to.be.an('array').that.is.empty;
+
+            expect(result.relationships.category.length).to.equal(2);
+            expect(result.relationships.category[0].id).to.equal(
+              categoryMap.get('tillage').id
+            );
+            expect(result.relationships.category[1].id).to.equal(
+              categoryMap.get('seeding_direct').id
+            );
+
+            expect(result.relationships.quantity.length).to.equal(2);
+            expect(result.relationships.quantity[0].id).to.equal(
+              depthQuantity.id
+            );
+            expect(result.relationships.quantity[1].id).to.equal(
+              speedQuantity.id
+            );
+            expect(result.relationships.equipment.length).to.equal(2);
+            expect(result.relationships.equipment[0].id).to.equal(
+              equipmentArray[0].id
+            );
+            expect(result.relationships.equipment[1].id).to.equal(
+              equipmentArray[1].id
+            );
+          }
+        );
+      }
+    );
+  });
+
   it('Create a soil disturbance activity log for a field', () => {
     cy.wrap(
       farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'testComment')
