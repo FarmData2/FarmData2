@@ -2065,7 +2065,7 @@ export async function createSoilDisturbanceActivityLog(
     },
     relationships: {
       location: locationArray,
-      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      asset: plantAsset ? [{ type: 'asset--plant', id: plantAsset.id }] : [],
       category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,
