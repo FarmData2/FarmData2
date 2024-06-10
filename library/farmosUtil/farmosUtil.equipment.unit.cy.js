@@ -107,6 +107,23 @@ describe('Test the equipment utility functions', () => {
         expect(equipmentMap.get('Seeding Drill')).to.be.undefined;
       }
     );
+
+    cy.wrap(farmosUtil.getEquipmentNameToAssetMap(['Seeding'])).then(
+      (equipmentMap) => {
+        expect(equipmentMap).to.not.be.null;
+        expect(equipmentMap.size).to.equal(4);
+
+        expect(equipmentMap.get('Planter')).to.not.be.null;
+        expect(equipmentMap.get('Planter').type).to.equal('asset--equipment');
+
+        expect(equipmentMap.get('Portable Broadcaster')).to.not.be.null;
+        expect(equipmentMap.get('Portable Broadcaster').type).to.equal(
+          'asset--equipment'
+        );
+
+        expect(equipmentMap.get('Tractor')).to.be.undefined;
+      }
+    );
   });
 
   it('Get the EquipmentIdToAsset map for all equipment', () => {
@@ -156,6 +173,21 @@ describe('Test the equipment utility functions', () => {
             );
 
             const drillId = equipmentNameMap.get('Seeding Drill').id;
+            expect(equipmentIdMap.get(drillId)).to.be.undefined;
+          }
+        );
+        cy.wrap(farmosUtil.getEquipmentIdToAssetMap(['Seeding'])).then(
+          (equipmentIdMap) => {
+            expect(equipmentIdMap).to.not.be.null;
+            expect(equipmentIdMap.size).to.equal(4);
+
+            const tractorId = equipmentNameMap.get('Planter').id;
+            expect(equipmentIdMap.get(tractorId)).to.not.be.null;
+            expect(equipmentIdMap.get(tractorId).type).to.equal(
+              'asset--equipment'
+            );
+
+            const drillId = equipmentNameMap.get('Tractor').id;
             expect(equipmentIdMap.get(drillId)).to.be.undefined;
           }
         );
