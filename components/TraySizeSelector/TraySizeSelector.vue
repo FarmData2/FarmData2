@@ -13,6 +13,7 @@
       v-on:valid="handleValid($event)"
       v-on:add-clicked="handleAddClicked"
       v-bind:includeAddButton="canCreateTraySize"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
@@ -82,6 +83,7 @@ export default {
     return {
       traySizeList: [],
       canCreateTraySize: false,
+      popupUrl: '/admin/structure/taxonomy/manage/tray_size/add',
     };
   },
   computed: {},
@@ -102,7 +104,6 @@ export default {
     },
     handleAddClicked() {
       farmosUtil.clearCachedTraySizes();
-      window.location.href = '/admin/structure/taxonomy/manage/tray_size/add';
     },
   },
   watch: {},

@@ -17,6 +17,7 @@
       v-on:update:selected="handleUpdateSelected($event, i)"
       v-on:valid="handleValid($event, i)"
       v-on:add-clicked="handleAddClicked"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
@@ -90,6 +91,7 @@ export default {
       valid: [null],
       equipmentList: [],
       canCreateEquipment: false,
+      popupUrl: '/asset/add/equipment',
     };
   },
   computed: {
@@ -104,7 +106,6 @@ export default {
   methods: {
     handleAddClicked() {
       farmosUtil.clearCachedEquipment();
-      window.location.href = '/asset/add/equipment';
     },
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);

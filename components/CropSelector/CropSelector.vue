@@ -13,6 +13,7 @@
       v-on:valid="handleValid($event)"
       v-on:add-clicked="handleAddClicked"
       v-bind:includeAddButton="canCreateCrop"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
@@ -80,6 +81,7 @@ export default {
     return {
       cropList: [],
       canCreateCrop: false,
+      popupUrl: '/admin/structure/taxonomy/manage/plant_type/add',
     };
   },
   methods: {
@@ -99,7 +101,6 @@ export default {
     },
     handleAddClicked() {
       farmosUtil.clearCachedCrops();
-      window.location.href = '/admin/structure/taxonomy/manage/plant_type/add';
     },
   },
   watch: {},

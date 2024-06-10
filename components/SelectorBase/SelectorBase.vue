@@ -1,5 +1,36 @@
 <template>
   <div>
+    <div
+      id="overlay"
+      data-cy="overlay"
+      v-if="isPopupVisible"
+      class="overlay"
+      aria-hidden="true"
+    ></div>
+    <div
+      id="popup"
+      data-cy="popup"
+      v-if="isPopupVisible"
+      class="popup"
+    >
+      <span
+        id="closePopup"
+        data-cy="closePopup"
+        class="close-btn"
+        v-on:click="hidePopup"
+        >&times;</span
+      >
+      <iframe
+        id="popupIframe"
+        data-cy="popupIframe"
+        width="100%"
+        height="100%"
+        frameborder="0"
+        v-bind:class="{ hidden: !isLoaded }"
+        v-bind:src="popupSrc"
+        v-on:load="handleIFrameLoad"
+      ></iframe>
+    </div>
     <BFormGroup
       id="selector-group"
       data-cy="selector-group"
@@ -48,7 +79,7 @@
             id="selector-add-button"
             data-cy="selector-add-button"
             variant="outline-success"
-            v-on:click="$emit('add-clicked')"
+            v-on:click="showPopup"
             >+</BButton
           >
           <BButton
@@ -212,11 +243,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * The URL of the form for adding a new option.
+     *
+     * If this prop is `null`, no "+" button will appear on the select.
+     * If this prop is set then, a "+" button is displayed and will redirect to the provided URL when clicked.
+     */
+    popupUrl: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
       optionList: this.options,
       selectedOption: this.selected,
+      isPopupVisible: false,
+      popupSrc: '',
+      isLoaded: false,
     };
   },
   computed: {
@@ -246,6 +290,82 @@ export default {
   methods: {
     handleDelete() {
       this.selectedOption = '';
+    },
+    removeElements(page) {
+      try {
+        page.getElementById('toolbar-administration').remove();
+        page
+          .getElementsByClassName('gin-secondary-toolbar layout-container')[0]
+          .remove();
+        page.getElementsByTagName('header')[0].style.top = 0;
+        page.getElementsByClassName('gin--vertical-toolbar')[0].className = '';
+        page
+          .getElementById('block-farm-powered')
+          .getElementsByTagName('a')[0]
+          .removeAttribute('href');
+      } catch (e) {
+        // couldn't remove elements
+      }
+    },
+    checkValidUrl(iframe) {
+      try {
+        const iframeUrl = iframe.contentWindow.location.href;
+        // prohibits navigating away from the add form
+        if (!iframeUrl.includes(this.popupUrl)) {
+          this.hidePopup();
+        }
+      } catch (e) {
+        this.hidePopup();
+      }
+    },
+    getNewAsset(document) {
+      let result = null;
+      try {
+        result = document
+          .getElementsByClassName('messages-list')[1]
+          .getElementsByClassName('messages__wrapper')[0]
+          .getElementsByClassName(
+            'messages-list__item messages messages--status'
+          )[0]
+          .getElementsByClassName('messages__content')[0]
+          .getElementsByClassName('placeholder')[0].innerText;
+        return result;
+      } catch (e) {
+        // couldn't get result
+        return result;
+      }
+    },
+    showPopup() {
+      this.$emit('add-clicked');
+      this.popupSrc = this.popupUrl;
+      this.isPopupVisible = true;
+    },
+    hidePopup() {
+      this.isPopupVisible = false;
+      this.popupSrc = '';
+    },
+    handleIFrameLoad() {
+      const iframe = document.getElementById('popupIframe');
+
+      // check that the current Url is valid
+      this.checkValidUrl(iframe);
+
+      // show page after removing elements
+      this.removeElements(iframe.contentWindow.document);
+      this.isLoaded = true;
+
+      // when the iframe redirects, hide it
+      iframe.contentWindow.onunload = () => {
+        this.isLoaded = false;
+      };
+
+      // attempts to get & fill-in the newly created asset
+      let result = this.getNewAsset(iframe.contentWindow.document);
+      if (result) {
+        this.hidePopup();
+        this.optionList.push(result.trim());
+        this.$emit('update:selected', result.trim());
+      }
     },
   },
   watch: {
@@ -298,5 +418,37 @@ export default {
 
 #selector-add-button {
   width: 28px;
+}
+/* Style for the popup */
+.popup {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  overflow: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+/* Style for the overlay */
+.overlay {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+/* Style for the close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  border-radius: 20px;
+  cursor: pointer;
 }
 </style>

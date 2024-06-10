@@ -13,6 +13,7 @@
       v-on:valid="handleLocationValid($event)"
       v-bind:includeAddButton="canCreateLocation"
       v-on:add-clicked="handleAddClicked"
+      v-bind:popupUrl="popupUrl"
     />
 
     <BAccordion
@@ -184,6 +185,7 @@ export default {
       bedObjs: [],
       canCreateLand: false,
       canCreateStructure: false,
+      popupUrl: '',
     };
   },
   computed: {
@@ -312,17 +314,14 @@ export default {
         farmosUtil.clearCachedFields();
         farmosUtil.clearCachedGreenhouses();
         farmosUtil.clearCachedBeds();
-        window.location.href = '/asset/add';
       } else if (this.includeFields && this.canCreateLand) {
         farmosUtil.clearCachedFields();
         farmosUtil.clearCachedBeds();
-        window.location.href = '/asset/add/land';
       } else if (
         (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
         this.canCreateStructure
       ) {
         farmosUtil.clearCachedGreenhouses();
-        window.location.href = '/asset/add/structure';
       } else {
         return null;
       }
@@ -376,6 +375,21 @@ export default {
         this.bedObjs = beds;
         this.canCreateLand = createLand;
         this.canCreateStructure = createStructure;
+        if (
+          this.includeFields &&
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateLand &&
+          this.canCreateStructure
+        ) {
+          this.popupUrl = '/asset/add';
+        } else if (this.includeFields && this.canCreateLand) {
+          this.popupUrl = '/asset/add/land';
+        } else if (
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure
+        ) {
+          this.popupUrl = '/asset/add/structure';
+        }
 
         /**
          * The select has been populated with the list of locations and the component is ready to be used.

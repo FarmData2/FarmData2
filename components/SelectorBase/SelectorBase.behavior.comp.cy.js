@@ -113,7 +113,7 @@ describe('Test the SelectorBase behaviors', () => {
       });
   });
 
-  it('Clicking add button goes to the addUrl', () => {
+  it('Clicking add button goes to the addUrl clicking closePopup closes popup', () => {
     const readySpy = cy.spy().as('readySpy');
     const addClickedSpy = cy.spy().as('addClickedSpy');
 
@@ -126,15 +126,34 @@ describe('Test the SelectorBase behaviors', () => {
         includeAddButton: true,
         onAddClicked: addClickedSpy,
         onReady: readySpy,
+        popupUrl: '',
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
+        cy.get('[data-cy="overlay"]').should('not.exist');
+        cy.get('[data-cy="popup"]').should('not.exist');
+        cy.get('[data-cy="closePopup"]').should('not.exist');
+        cy.get('[data-cy="popupIframe"]').should('not.exist');
+
         cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').click();
         cy.get('@addClickedSpy').should('have.been.calledOnce');
+
+        cy.get('[data-cy="overlay"]').should('exist');
+        cy.get('[data-cy="popup"]').should('exist');
+        cy.get('[data-cy="closePopup"]').should('exist');
+        cy.get('[data-cy="popupIframe"]')
+          .should('exist')
+          .should('have.attr', 'src', '');
+
+        cy.get('[data-cy="closePopup"]').click();
+        cy.get('[data-cy="overlay"]').should('not.exist');
+        cy.get('[data-cy="popup"]').should('not.exist');
+        cy.get('[data-cy="closePopup"]').should('not.exist');
+        cy.get('[data-cy="popupIframe"]').should('not.exist');
       });
   });
 });

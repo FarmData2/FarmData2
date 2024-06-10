@@ -215,4 +215,28 @@ describe('Test the SelectorBase component events', () => {
         cy.get('[data-cy="selector-input"]').should('have.value', null);
       });
   });
+
+  it('Emits "add-clicked" add button is clicked', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const addSpy = cy.spy().as('addSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        selected: 'Two',
+        onReady: readySpy,
+        includeAddButton: true,
+        'onAdd-clicked': addSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-add-button"]').click();
+        cy.get('@addSpy').should('have.been.calledOnce');
+      });
+  });
 });
