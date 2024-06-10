@@ -14,21 +14,32 @@ describe('Test the equipment utility functions', () => {
   it('Get the equipment', () => {
     cy.wrap(farmosUtil.getEquipment()).then((equipment) => {
       expect(equipment).to.not.be.null;
-      expect(equipment.length).to.equal(8);
+      expect(equipment.length).to.equal(9);
 
-      expect(equipment[0].attributes.name).to.equal('General');
+      // Category
+      expect(equipment[0].attributes.name).to.equal('Category');
       expect(equipment[0].attributes.notes.value).to.equal(
-        'Equipment used for a variety of operations.'
+        ' Parent of all categories'
       );
       expect(equipment[0].type).to.equal('asset--equipment');
       expect(equipment[0].relationships.parent).to.have.length(0);
 
-      expect(equipment[7].attributes.name).to.equal('Tractor');
-      expect(equipment[7].attributes.notes.value).to.equal(
+      // General
+      expect(equipment[1].attributes.name).to.equal('General');
+      expect(equipment[1].attributes.notes.value).to.equal(
+        'Equipment used for a variety of operations.'
+      );
+      expect(equipment[1].type).to.equal('asset--equipment');
+      expect(equipment[1].relationships.parent).to.have.length(1);
+      expect(equipment[1].relationships.parent[0].id).to.equal(equipment[0].id);
+
+      // Tractor
+      expect(equipment[8].attributes.name).to.equal('Tractor');
+      expect(equipment[8].attributes.notes.value).to.equal(
         'A standard tractor.'
       );
-      expect(equipment[7].type).to.equal('asset--equipment');
-      expect(equipment[7].relationships.parent[0].id).to.equal(equipment[0].id);
+      expect(equipment[8].type).to.equal('asset--equipment');
+      expect(equipment[8].relationships.parent[0].id).to.equal(equipment[1].id);
     });
   });
 
