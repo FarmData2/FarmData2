@@ -101,6 +101,10 @@ echo "  Built."
 
 echo ""
 
+echo "  Building documentation..."
+npm run docs:gen &> /dev/null
+echo "  Documentation built."
+
 echo "  Installing the sample database..."
 bin/installDB.bash > /dev/null
 echo "  Installed."
