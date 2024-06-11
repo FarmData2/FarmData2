@@ -28,8 +28,12 @@ echo "  Created."
 
 echo "  Generating docs for all Components..."
 echo "    Adding Components section to $INDEX_FILE..."
-echo "## Components" >> "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
+{
+  echo "## Components"
+  echo ""
+  echo "| Name | Description |"
+  echo "|------|-------------|"
+} >> "$INDEX_PATH"
 echo "    Added."
 
 safe_cd "$REPO_ROOT_DIR/components"
@@ -54,17 +58,18 @@ for DIR in $DIRS; do                     # Names of the components with a traili
   echo "      Adding link for $COMP_MD_FILE to $INDEX_FILE..."
   DESC_TEXT=$(grep -m 1 -A 1 "/\*\*" "$COMP_VUE_PATH" | tail -1 | cut -d' ' -f3-)
   COMP_MD_LINK="components/$COMP_MD_FILE" # Link is relative to docs.
-  echo "- [$COMP_NAME]($COMP_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
+  echo "| [$COMP_NAME]($COMP_MD_LINK) | $DESC_TEXT |" >> "$INDEX_PATH"
   echo "      Added."
 
   echo "      Adding back links from $COMP_MD_FILE to $INDEX_FILE..."
   TMP_PATH="docs/components/$COMP_NAME.tmp"
-  echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-  # shellcheck disable=SC2129
-  echo "" >> "$TMP_PATH"
-  cat "docs/components/$COMP_MD_FILE" >> "$TMP_PATH"
-  echo "" >> "$TMP_PATH"
-  echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
+  {
+    echo "[[FarmData2 Documentation]](../$INDEX_FILE)"
+    echo ""
+    cat "docs/components/$COMP_MD_FILE"
+    echo ""
+    echo "[[FarmData2 Documentation]](../$INDEX_FILE)"
+  } >> "$TMP_PATH"
   mv -f "$TMP_PATH" "docs/components/$COMP_MD_FILE"
   echo "      Added."
   echo "    Generated."
@@ -74,8 +79,12 @@ echo "  Generated."
 echo "  Generating docs for all libraries..."
 
 echo "    Adding Library section to $INDEX_FILE..."
-echo "## Library" >> "$INDEX_PATH"
-echo "" >> "$INDEX_PATH"
+{
+  echo "## Library"
+  echo ""
+  echo "| Name | Description |"
+  echo "|------|-------------|"
+} >> "$INDEX_PATH"
 echo "    Added."
 
 safe_cd "$REPO_ROOT_DIR/library"
@@ -98,17 +107,18 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
     echo "      Adding link for $LIB_MD_FILE to $INDEX_FILE..."
     DESC_TEXT=$(grep "@description" "$LIB_JS_PATH" | cut -d' ' -f4-)
     LIB_MD_LINK="library/$LIB_MD_FILE" # Link is relative to docs.
-    echo "- [$LIB_NAME]($LIB_MD_LINK) - $DESC_TEXT" >> "$INDEX_PATH"
+    echo "| [$LIB_NAME]($LIB_MD_LINK) | $DESC_TEXT |" >> "$INDEX_PATH"
     echo "      Added."
 
     echo "      Adding back links from $LIB_MD_FILE to $INDEX_FILE..."
     TMP_PATH="docs/library/$LIB_NAME.tmp"
     echo "[[FarmData2 Documentation]](../$INDEX_FILE)" > "$TMP_PATH"
-    # shellcheck disable=SC2129
-    echo "" >> "$TMP_PATH"
-    cat "docs/library/$LIB_MD_FILE" >> "$TMP_PATH"
-    echo "" >> "$TMP_PATH"
-    echo "[[FarmData2 Documentation]](../$INDEX_FILE)" >> "$TMP_PATH"
+    {
+      echo ""
+      cat "docs/library/$LIB_MD_FILE"
+      echo ""
+      echo "[[FarmData2 Documentation]](../$INDEX_FILE)"
+    } >> "$TMP_PATH"
     mv -f "$TMP_PATH" "docs/library/$LIB_MD_FILE"
     echo "      Added."
 
