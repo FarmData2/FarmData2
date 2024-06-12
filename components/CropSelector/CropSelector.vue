@@ -99,8 +99,21 @@ export default {
        */
       this.$emit('valid', event);
     },
-    handleAddClicked() {
+    handleAddClicked(newCrop) {
       farmosUtil.clearCachedCrops();
+      if (newCrop) {
+        this.populate().then(() => {
+          this.handleUpdateSelected(newCrop);
+        });
+      } else {
+        this.populate();
+      }
+    },
+    async populate() {
+      let cropMap = farmosUtil.getCropNameToTermMap();
+      Promise.resolve(cropMap).then((cropMap) => {
+        this.cropList = Array.from(cropMap.keys());
+      });
     },
   },
   watch: {},

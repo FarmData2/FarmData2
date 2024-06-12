@@ -216,7 +216,7 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Emits "add-clicked" add button is clicked', () => {
+  it('Emits "add-clicked" when close is clicked', () => {
     const readySpy = cy.spy().as('readySpy');
     const addSpy = cy.spy().as('addSpy');
 
@@ -228,6 +228,7 @@ describe('Test the SelectorBase component events', () => {
         selected: 'Two',
         onReady: readySpy,
         includeAddButton: true,
+        popupUrl: '',
         'onAdd-clicked': addSpy,
       },
     });
@@ -236,6 +237,7 @@ describe('Test the SelectorBase component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').click();
+        cy.get('[data-cy="closePopup"]').click();
         cy.get('@addSpy').should('have.been.calledOnce');
       });
   });

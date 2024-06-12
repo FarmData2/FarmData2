@@ -102,8 +102,19 @@ export default {
        */
       this.$emit('valid', event);
     },
-    handleAddClicked() {
+    handleAddClicked(newTraySize) {
       farmosUtil.clearCachedTraySizes();
+      this.populate().then(() => {
+        if (newTraySize) {
+          this.handleUpdateSelected(newTraySize);
+        }
+      });
+    },
+    async populate() {
+      let trayMap = farmosUtil.getTraySizeToTermMap();
+      Promise.resolve(trayMap).then((trayMap) => {
+        this.traySizeList = Array.from(trayMap.keys());
+      });
     },
   },
   watch: {},

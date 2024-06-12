@@ -304,7 +304,7 @@ export default {
     handleBedsValid(event) {
       this.bedsValid = event;
     },
-    handleAddClicked() {
+    handleAddClicked(newLocation) {
       if (
         this.includeFields &&
         (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
@@ -322,9 +322,36 @@ export default {
         this.canCreateStructure
       ) {
         farmosUtil.clearCachedGreenhouses();
-      } else {
-        return null;
       }
+      this.populate().then(() => {
+        if (newLocation) {
+          this.handleUpdateSelected(newLocation);
+        }
+      });
+    },
+    async populate() {
+      let fieldMap = null;
+      if (this.includeFields) {
+        fieldMap = farmosUtil.getFieldIdToAssetMap();
+      }
+
+      let greenhouseMap = null;
+      if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
+        greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
+      }
+
+      let beds = null;
+      if (this.allowBedSelection) {
+        beds = farmosUtil.getBeds();
+      }
+
+      Promise.all([fieldMap, greenhouseMap, beds]).then(
+        ([fieldMap, greenhouseMap, beds]) => {
+          this.fieldMap = fieldMap;
+          this.greenhouseMap = greenhouseMap;
+          this.bedObjs = beds;
+        }
+      );
     },
   },
   watch: {

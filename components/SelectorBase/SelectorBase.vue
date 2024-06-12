@@ -336,13 +336,13 @@ export default {
       }
     },
     showPopup() {
-      this.$emit('add-clicked');
       this.popupSrc = this.popupUrl;
       this.isPopupVisible = true;
     },
     hidePopup() {
       this.isPopupVisible = false;
       this.popupSrc = '';
+      this.$emit('add-clicked', null);
     },
     handleIFrameLoad() {
       const iframe = document.getElementById('popupIframe');
@@ -363,8 +363,7 @@ export default {
       let result = this.getNewAsset(iframe.contentWindow.document);
       if (result) {
         this.hidePopup();
-        this.optionList.push(result.trim());
-        this.$emit('update:selected', result.trim());
+        this.$emit('add-clicked', result.trim());
       }
     },
   },

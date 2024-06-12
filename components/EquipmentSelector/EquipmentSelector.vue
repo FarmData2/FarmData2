@@ -104,8 +104,21 @@ export default {
     },
   },
   methods: {
-    handleAddClicked() {
+    handleAddClicked(newEquipment) {
       farmosUtil.clearCachedEquipment();
+      if (newEquipment) {
+        this.populate().then(() => {
+          this.handleUpdateSelected(newEquipment);
+        });
+      } else {
+        this.populate();
+      }
+    },
+    async populate() {
+      let equipmentMap = farmosUtil.getEquipmentNameToAssetMap();
+      Promise.resolve(equipmentMap).then((equipmentMap) => {
+        this.equipmentList = Array.from(equipmentMap.keys());
+      });
     },
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);

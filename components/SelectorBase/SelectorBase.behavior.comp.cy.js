@@ -140,7 +140,6 @@ describe('Test the SelectorBase behaviors', () => {
 
         cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').click();
-        cy.get('@addClickedSpy').should('have.been.calledOnce');
 
         cy.get('[data-cy="overlay"]').should('exist');
         cy.get('[data-cy="popup"]').should('exist');
@@ -150,6 +149,7 @@ describe('Test the SelectorBase behaviors', () => {
           .should('have.attr', 'src', '');
 
         cy.get('[data-cy="closePopup"]').click();
+        cy.get('@addClickedSpy').should('have.been.calledOnce');
         cy.get('[data-cy="overlay"]').should('not.exist');
         cy.get('[data-cy="popup"]').should('not.exist');
         cy.get('[data-cy="closePopup"]').should('not.exist');
