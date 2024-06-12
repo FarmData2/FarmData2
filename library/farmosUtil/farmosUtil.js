@@ -1430,14 +1430,19 @@ export async function getEquipmentNameToAssetMap(categories = []) {
     equipment.map((eq) => [eq.id, eq.attributes.name])
   );
 
+  const categoryParentName = 'Category';
+
   function filter(filtered, eq) {
+    const hasParent = eq.relationships.parent.length != 0;
+    const parentName = hasParent
+      ? parentIdToName.get(eq.relationships.parent[0].id)
+      : null;
+
     if (
-      // If the equipment has a parent
-      // and either the categories list is empty or
-      // the category name of the parent is in the list of categories
-      eq.relationships.parent.length != 0 &&
-      (categories.length == 0 ||
-        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+      eq.attributes.name !== categoryParentName &&
+      parentName !== categoryParentName &&
+      (categories.length === 0 ||
+        (hasParent && categories.includes(parentName)))
     ) {
       filtered.set(eq.attributes.name, eq);
     }
@@ -1473,14 +1478,19 @@ export async function getEquipmentIdToAssetMap(categories = []) {
     equipment.map((eq) => [eq.id, eq.attributes.name])
   );
 
+  const categoryParentName = 'Category';
+
   function filter(filtered, eq) {
+    const hasParent = eq.relationships.parent.length != 0;
+    const parentName = hasParent
+      ? parentIdToName.get(eq.relationships.parent[0].id)
+      : null;
+
     if (
-      // If the equipment has a parent
-      // and either the categories list is empty or
-      // the category name of the parent is in the list of categories
-      eq.relationships.parent.length != 0 &&
-      (categories.length == 0 ||
-        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+      eq.attributes.name !== categoryParentName &&
+      parentName !== categoryParentName &&
+      (categories.length === 0 ||
+        (hasParent && categories.includes(parentName)))
     ) {
       filtered.set(eq.id, eq);
     }
@@ -2055,7 +2065,7 @@ export async function createSoilDisturbanceActivityLog(
     },
     relationships: {
       location: locationArray,
-      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      asset: plantAsset ? [{ type: 'asset--plant', id: plantAsset.id }] : [],
       category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,
