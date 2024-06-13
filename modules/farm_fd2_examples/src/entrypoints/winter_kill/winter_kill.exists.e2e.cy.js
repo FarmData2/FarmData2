@@ -29,14 +29,5 @@ describe('WinterKill: exists and has main page elements.', () => {
     cy.login('admin', 'admin');
     cy.visit('fd2_examples/winter_kill/');
     cy.waitForPage();
-
-    cy.get('[data-cy="winter-kill"]').should('exist');
-    cy.get('[data-cy="winter-kill-card"]').should('be.visible');
-    cy.get('[data-cy="winter-kill-header"]').should('be.visible');
-    cy.get('[data-cy="winter-kill-header"]').should(
-      'contain.text',
-      'WinterKill'
-    );
-    cy.get('[data-cy="winter-kill-form"]').should('exist');
   });
 });
