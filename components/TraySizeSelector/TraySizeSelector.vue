@@ -102,19 +102,27 @@ export default {
        */
       this.$emit('valid', event);
     },
-    handleAddClicked(newTraySize) {
+    async handleAddClicked(newTraySize) {
+      // Clear the cached
       farmosUtil.clearCachedTraySizes();
-      this.populate().then(() => {
-        if (newTraySize) {
-          this.handleUpdateSelected(newTraySize);
-        }
-      });
+
+      // Populate the map and wait for it to complete
+      await this.populate();
+
+      // If a new asset is provided, update the selected
+      if (newTraySize) {
+        this.handleUpdateSelected(newTraySize);
+      }
     },
     async populate() {
-      let trayMap = farmosUtil.getTraySizeToTermMap();
-      Promise.resolve(trayMap).then((trayMap) => {
+      try {
+        let trayMap = await farmosUtil.getTraySizeToTermMap();
+
+        // Update asset list
         this.traySizeList = Array.from(trayMap.keys());
-      });
+      } catch (error) {
+        console.error('Error populating tray map:', error);
+      }
     },
   },
   watch: {},

@@ -99,21 +99,28 @@ export default {
        */
       this.$emit('valid', event);
     },
-    handleAddClicked(newCrop) {
+    async handleAddClicked(newCrop) {
+      // Clear the cached
       farmosUtil.clearCachedCrops();
+
+      // Populate the map and wait for it to complete
+      await this.populate();
+
+      // If a new asset is provided, update the selected
       if (newCrop) {
-        this.populate().then(() => {
-          this.handleUpdateSelected(newCrop);
-        });
-      } else {
-        this.populate();
+        this.handleUpdateSelected(newCrop);
       }
     },
+
     async populate() {
-      let cropMap = farmosUtil.getCropNameToTermMap();
-      Promise.resolve(cropMap).then((cropMap) => {
+      try {
+        let cropMap = await farmosUtil.getCropNameToTermMap();
+
+        // Update asset list
         this.cropList = Array.from(cropMap.keys());
-      });
+      } catch (error) {
+        console.error('Error populating crop map:', error);
+      }
     },
   },
   watch: {},

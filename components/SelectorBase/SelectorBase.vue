@@ -342,7 +342,7 @@ export default {
     hidePopup() {
       this.isPopupVisible = false;
       this.popupSrc = '';
-      this.$emit('add-clicked', null);
+      this.$emit('add-clicked', '');
     },
     handleIFrameLoad() {
       const iframe = document.getElementById('popupIframe');

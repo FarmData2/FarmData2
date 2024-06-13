@@ -304,7 +304,8 @@ export default {
     handleBedsValid(event) {
       this.bedsValid = event;
     },
-    handleAddClicked(newLocation) {
+    async handleAddClicked(newLocation) {
+      // Clear the cached
       if (
         this.includeFields &&
         (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
@@ -323,35 +324,39 @@ export default {
       ) {
         farmosUtil.clearCachedGreenhouses();
       }
-      this.populate().then(() => {
-        if (newLocation) {
-          this.handleUpdateSelected(newLocation);
-        }
-      });
+
+      // Populate the map and wait for it to complete
+      await this.populate();
+
+      // If a new asset is provided, update the selected
+      if (newLocation) {
+        this.handleUpdateSelected(newLocation);
+      }
     },
     async populate() {
-      let fieldMap = null;
-      if (this.includeFields) {
-        fieldMap = farmosUtil.getFieldIdToAssetMap();
-      }
-
-      let greenhouseMap = null;
-      if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
-        greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
-      }
-
-      let beds = null;
-      if (this.allowBedSelection) {
-        beds = farmosUtil.getBeds();
-      }
-
-      Promise.all([fieldMap, greenhouseMap, beds]).then(
-        ([fieldMap, greenhouseMap, beds]) => {
-          this.fieldMap = fieldMap;
-          this.greenhouseMap = greenhouseMap;
-          this.bedObjs = beds;
+      try {
+        let fieldMap = null;
+        if (this.includeFields) {
+          fieldMap = await farmosUtil.getFieldIdToAssetMap();
         }
-      );
+
+        let greenhouseMap = null;
+        if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
+          greenhouseMap = await farmosUtil.getGreenhouseIdToAssetMap();
+        }
+
+        let beds = null;
+        if (this.allowBedSelection) {
+          beds = await farmosUtil.getBeds();
+        }
+
+        // Update asset list
+        this.fieldMap = fieldMap;
+        this.greenhouseMap = greenhouseMap;
+        this.bedObjs = beds;
+      } catch (error) {
+        console.error('Error populating location maps:', error);
+      }
     },
   },
   watch: {

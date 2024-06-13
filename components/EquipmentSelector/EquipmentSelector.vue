@@ -16,7 +16,7 @@
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event, i)"
       v-on:valid="handleValid($event, i)"
-      v-on:add-clicked="handleAddClicked"
+      v-on:add-clicked="handleAddClicked($event, i)"
       v-bind:popupUrl="popupUrl"
     />
   </div>
@@ -104,21 +104,27 @@ export default {
     },
   },
   methods: {
-    handleAddClicked(newEquipment) {
+    async handleAddClicked(newEquipment, i) {
+      // Clear the cached
       farmosUtil.clearCachedEquipment();
+
+      // Populate the map and wait for it to complete
+      await this.populate();
+
+      // If a new asset is provided, update the selected
       if (newEquipment) {
-        this.populate().then(() => {
-          this.handleUpdateSelected(newEquipment);
-        });
-      } else {
-        this.populate();
+        this.handleUpdateSelected(newEquipment, i);
       }
     },
     async populate() {
-      let equipmentMap = farmosUtil.getEquipmentNameToAssetMap();
-      Promise.resolve(equipmentMap).then((equipmentMap) => {
+      try {
+        let equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
+
+        // Update asset list
         this.equipmentList = Array.from(equipmentMap.keys());
-      });
+      } catch (error) {
+        console.error('Error populating equipment map:', error);
+      }
     },
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);
