@@ -135,7 +135,7 @@ describe('Test the default EquipmentSelector content', () => {
 
         cy.get('[data-cy="equipment-selector-1"]')
           .find('[data-cy="selector-option-1"]')
-          .should('have.value', 'General');
+          .should('have.value', 'Planter');
       });
   });
 });
