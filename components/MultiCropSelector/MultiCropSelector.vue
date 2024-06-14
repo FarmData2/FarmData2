@@ -11,7 +11,7 @@
       v-bind:label="String(i + 1)"
       v-bind:id="'crop-selector-' + (i + 1)"
       v-bind:data-cy="'crop-selector-' + (i + 1)"
-      invalidFeedbackText="crop must be selected"
+      invalidFeedbackText="Crop must be selected"
       v-bind:includeAddButton="
         i == this.selectedCrop.length && this.canCreateCrop
       "
@@ -44,7 +44,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *   data-cy="seeding-crop"
  *   v-model:selected="form.crop"
  *   v-bind:showValidityStyling="validity.show"
- *   v-on:valid="validity.crop = $event"
+ *   v-on:valid="(valid) => (validity.selected = valid)"
  *   v-on:ready="createdCount++"
  *   v-on:error="(msg) => showErrorToast('Network Error', msg)"
  * />
