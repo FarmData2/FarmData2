@@ -28,7 +28,7 @@ describe('EquipmentSelector popup test', () => {
       .find('[data-cy="selector-add-button"]')
       .click();
 
-    cy.get('[data-cy="popupIframe"]', { timeout: 10000 })
+    cy.get('[data-cy="selector-popupIframe"]', { timeout: 10000 })
       .should('be.visible')
       .its('0.contentDocument.body', { timeout: 10000 })
       .should('not.be.empty')
@@ -47,7 +47,7 @@ describe('EquipmentSelector popup test', () => {
 
     cy.get('@iframeBody').find('#toolbar-administration').should('not.exist');
 
-    cy.get('[data-cy="closePopup"]').click();
+    cy.get('[data-cy="selector-closePopup"]').click();
   });
 
   it('Form selects new crop', () => {
@@ -56,7 +56,7 @@ describe('EquipmentSelector popup test', () => {
       .find('[data-cy="selector-add-button"]')
       .click();
 
-    cy.get('[data-cy="popupIframe"]', { timeout: 10000 })
+    cy.get('[data-cy="selector-popupIframe"]', { timeout: 10000 })
       .should('be.visible')
       .its('0.contentDocument.body', { timeout: 10000 })
       .should('not.be.empty')
@@ -84,13 +84,15 @@ describe('EquipmentSelector popup test', () => {
       .find('[data-cy="selector-add-button"]')
       .click();
 
-    cy.get('[data-cy="popupIframe"]', { timeout: 10000 }).then(($iframe) => {
-      $iframe.attr('src', 'http://farmos/fd2/tray_seeding');
-    });
+    cy.get('[data-cy="selector-popupIframe"]', { timeout: 10000 }).then(
+      ($iframe) => {
+        $iframe.attr('src', 'http://farmos/fd2/tray_seeding');
+      }
+    );
 
-    cy.get('[data-cy="overlay"]').should('not.exist');
-    cy.get('[data-cy="popup"]').should('not.exist');
-    cy.get('[data-cy="closePopup"]').should('not.exist');
-    cy.get('[data-cy="popupIframe"]').should('not.exist');
+    cy.get('[data-cy="selector-overlay"]').should('not.exist');
+    cy.get('[data-cy="selector-popup"]').should('not.exist');
+    cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+    cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
   });
 });

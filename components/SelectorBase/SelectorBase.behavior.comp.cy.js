@@ -123,7 +123,6 @@ describe('Test the SelectorBase behaviors', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        includeAddButton: true,
         onAddClicked: addClickedSpy,
         onReady: readySpy,
         popupUrl: '',
@@ -133,27 +132,27 @@ describe('Test the SelectorBase behaviors', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="overlay"]').should('not.exist');
-        cy.get('[data-cy="popup"]').should('not.exist');
-        cy.get('[data-cy="closePopup"]').should('not.exist');
-        cy.get('[data-cy="popupIframe"]').should('not.exist');
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
 
         cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').click();
 
-        cy.get('[data-cy="overlay"]').should('exist');
-        cy.get('[data-cy="popup"]').should('exist');
-        cy.get('[data-cy="closePopup"]').should('exist');
-        cy.get('[data-cy="popupIframe"]')
+        cy.get('[data-cy="selector-overlay"]').should('exist');
+        cy.get('[data-cy="selector-popup"]').should('exist');
+        cy.get('[data-cy="selector-closePopup"]').should('exist');
+        cy.get('[data-cy="selector-popupIframe"]')
           .should('exist')
           .should('have.attr', 'src', '');
 
-        cy.get('[data-cy="closePopup"]').click();
+        cy.get('[data-cy="selector-closePopup"]').click();
         cy.get('@addClickedSpy').should('have.been.calledOnce');
-        cy.get('[data-cy="overlay"]').should('not.exist');
-        cy.get('[data-cy="popup"]').should('not.exist');
-        cy.get('[data-cy="closePopup"]').should('not.exist');
-        cy.get('[data-cy="popupIframe"]').should('not.exist');
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
       });
   });
 });

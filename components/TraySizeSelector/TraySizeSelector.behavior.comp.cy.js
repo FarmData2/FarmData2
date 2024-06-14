@@ -12,9 +12,9 @@ describe('Test the TraySizeSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Closing popup clears/repopulates the cache', () => {
+  it('Closing popup via close button does not clear/repopulate the cache', () => {
     const readySpy = cy.spy().as('readySpy');
-    cy.spy(TraySizeSelector.methods, 'populate').as('populateSpy');
+    cy.spy(TraySizeSelector.methods, 'populateTraySizeList').as('populateSpy');
     cy.spy(TraySizeSelector.methods, 'handleAddClicked').as(
       'handleAddClickedSpy'
     );
@@ -31,11 +31,11 @@ describe('Test the TraySizeSelector behaviors', () => {
             .null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.get('[data-cy="closePopup"]').should('exist');
-          cy.get('[data-cy="closePopup"]').click();
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
 
           cy.get('@handleAddClickedSpy').should('be.calledOnce');
-          cy.get('@populateSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
 
           expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.not.be
             .null;

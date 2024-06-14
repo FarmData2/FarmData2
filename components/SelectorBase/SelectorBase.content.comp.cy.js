@@ -37,10 +37,10 @@ describe('Test the default SelectorBase content', () => {
         cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
         cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
         cy.get('[data-cy="selector-add-button"]').should('not.exist');
-        cy.get('[data-cy="overlay"]').should('not.exist');
-        cy.get('[data-cy="popup"]').should('not.exist');
-        cy.get('[data-cy="closePopup"]').should('not.exist');
-        cy.get('[data-cy="popupIframe"]').should('not.exist');
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
         cy.get('[data-cy="selector-delete-button"]').should('not.exist');
         cy.get('[data-cy="selector-invalid-feedback"]').should(
           'contain.text',
@@ -134,7 +134,7 @@ describe('Test the default SelectorBase content', () => {
       });
   });
 
-  it('Test includeAddButton prop', () => {
+  it('Test popupUrl prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(SelectorBase, {
@@ -144,7 +144,7 @@ describe('Test the default SelectorBase content', () => {
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
-        includeAddButton: true,
+        popupUrl: '',
       },
     });
 

@@ -12,7 +12,6 @@
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
       v-on:add-clicked="handleAddClicked"
-      v-bind:includeAddButton="canCreateTraySize"
       v-bind:popupUrl="popupUrl"
     />
   </div>
@@ -83,7 +82,7 @@ export default {
     return {
       traySizeList: [],
       canCreateTraySize: false,
-      popupUrl: '/admin/structure/taxonomy/manage/tray_size/add',
+      popupUrl: null,
     };
   },
   computed: {},
@@ -103,18 +102,20 @@ export default {
       this.$emit('valid', event);
     },
     async handleAddClicked(newTraySize) {
-      // Clear the cached
-      farmosUtil.clearCachedTraySizes();
-
-      // Populate the map and wait for it to complete
-      await this.populate();
-
+      // when the selector emits the add-clicked event
+      // clear the cached locations and repopulate the options
+      // to get the newly created location, then select it
       // If a new asset is provided, update the selected
       if (newTraySize) {
+        // Clear the cached
+        farmosUtil.clearCachedTraySizes();
+
+        // Populate the map and wait for it to complete
+        await this.populateTraySizeList();
         this.handleUpdateSelected(newTraySize);
       }
     },
-    async populate() {
+    async populateTraySizeList() {
       try {
         let trayMap = await farmosUtil.getTraySizeToTermMap();
 
@@ -134,6 +135,10 @@ export default {
       .then(([canCreate, trayMap]) => {
         this.traySizeList = Array.from(trayMap.keys());
         this.canCreateTraySize = canCreate;
+
+        if (this.canCreateTraySize) {
+          this.popupUrl = '/admin/structure/taxonomy/manage/tray_size/add';
+        }
 
         /**
          * The select has been populated with the list of tray sizes and the component is ready to be used.

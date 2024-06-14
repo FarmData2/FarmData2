@@ -11,7 +11,6 @@
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleLocationValid($event)"
-      v-bind:includeAddButton="canCreateLocation"
       v-on:add-clicked="handleAddClicked"
       v-bind:popupUrl="popupUrl"
     />
@@ -185,7 +184,7 @@ export default {
       bedObjs: [],
       canCreateLand: false,
       canCreateStructure: false,
-      popupUrl: '',
+      popupUrl: null,
     };
   },
   computed: {
@@ -305,35 +304,39 @@ export default {
       this.bedsValid = event;
     },
     async handleAddClicked(newLocation) {
-      // Clear the cached
-      if (
-        this.includeFields &&
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateLand &&
-        this.canCreateStructure
-      ) {
-        farmosUtil.clearCachedFields();
-        farmosUtil.clearCachedGreenhouses();
-        farmosUtil.clearCachedBeds();
-      } else if (this.includeFields && this.canCreateLand) {
-        farmosUtil.clearCachedFields();
-        farmosUtil.clearCachedBeds();
-      } else if (
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateStructure
-      ) {
-        farmosUtil.clearCachedGreenhouses();
-      }
-
-      // Populate the map and wait for it to complete
-      await this.populate();
+      // when the selector emits the add-clicked event
+      // clear the cached locations and repopulate the options
+      // to get the newly created location, then select it
 
       // If a new asset is provided, update the selected
       if (newLocation) {
+        // Clear the cached
+        if (
+          this.includeFields &&
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateLand &&
+          this.canCreateStructure
+        ) {
+          farmosUtil.clearCachedFields();
+          farmosUtil.clearCachedGreenhouses();
+          farmosUtil.clearCachedBeds();
+        } else if (this.includeFields && this.canCreateLand) {
+          farmosUtil.clearCachedFields();
+          farmosUtil.clearCachedBeds();
+        } else if (
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure
+        ) {
+          farmosUtil.clearCachedGreenhouses();
+        }
+
+        // Populate the map and wait for it to complete
+        await this.populateLocationList();
+
         this.handleUpdateSelected(newLocation);
       }
     },
-    async populate() {
+    async populateLocationList() {
       try {
         let fieldMap = null;
         if (this.includeFields) {

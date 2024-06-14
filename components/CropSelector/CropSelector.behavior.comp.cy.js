@@ -12,9 +12,9 @@ describe('Test the CropSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Closing popup clears/repopulates the cache', () => {
+  it('Closing popup via close button does not clear cache', () => {
     const readySpy = cy.spy().as('readySpy');
-    cy.spy(CropSelector.methods, 'populate').as('populateSpy');
+    cy.spy(CropSelector.methods, 'populateCropList').as('populateSpy');
     cy.spy(CropSelector.methods, 'handleAddClicked').as('handleAddClickedSpy');
 
     cy.mount(CropSelector, {
@@ -28,11 +28,11 @@ describe('Test the CropSelector behaviors', () => {
           expect(farmosUtil.getFromGlobalVariableCache('crops')).to.not.be.null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.get('[data-cy="closePopup"]').should('exist');
-          cy.get('[data-cy="closePopup"]').click();
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
 
           cy.get('@handleAddClickedSpy').should('be.calledOnce');
-          cy.get('@populateSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
 
           expect(farmosUtil.getFromGlobalVariableCache('crops')).to.not.be.null;
         });
