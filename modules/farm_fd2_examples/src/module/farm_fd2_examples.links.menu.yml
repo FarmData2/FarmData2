@@ -60,7 +60,7 @@ farm.fd2_examples_example_entry_point:
   weight: 100
 farm.fd2_examples_winter_kill:
   title: 'WinterKill'
-  description: 'Example of the use of the WinterKIll Component.'
+  description: 'Example of the use of the WinterKill Component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100

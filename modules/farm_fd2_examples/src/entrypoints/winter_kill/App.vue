@@ -2,8 +2,8 @@
   <div>
     <h3>WinterKill Example</h3>
     <p>
-      The WinterKill component allows the user to specify if a crop seeding will
-      be winter killed.
+      The WinterKill component allows the user to specify if a crop will be
+      winter killed.
     </p>
 
     <hr />

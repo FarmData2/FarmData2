@@ -86,7 +86,7 @@ import dayjs from 'dayjs';
  * winter-kill-group                   | The `BFormGroup` component containing the winter kill checkbox and date input fields.
  * winter-kill-label                   | The `span` component containing the "Winter kill:" label.
  * winter-kill-checkbox                | The `BFormCheckbox` component used to indicate if the crop will be winter killed.
- * winter-kill-date-group              | The `div` component containing the date input fields when the checkbox is selected.
+ * winter-kill-date-group              | The `div` component containing the date input field and its associated elements (e.g., required asterisk, invalid feedback).
  * winter-kill-date-required           | The `sup` element that displays a red asterisk if the date input is required.
  * winter-kill-date-input              | The `BFormInput` component used to select a date.
  * winter-kill-date-invalid-feedback   | The `BFormInvalidFeedback` component that displays an error message when the date is invalid.
@@ -258,10 +258,6 @@ export default {
   grid-template-columns: min-content 1fr;
 }
 
-.grid {
-  gap: 1rem;
-}
-
 #winter-kill-date-group {
   gap: 0.35rem;
 }
@@ -272,10 +268,15 @@ export default {
 
 .form-control-lg {
   padding-top: 0 !important;
+  padding-right: 0.5rem;
   margin-top: 0.25rem;
 }
 
 #winter-kill-date-invalid-feedback {
   grid-column: 2/3;
+}
+
+label {
+  padding: 0;
 }
 </style>
