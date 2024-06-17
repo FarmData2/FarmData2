@@ -2,22 +2,22 @@
   <div>
     <h3>WinterKill Example</h3>
     <p>
-      The WinterKill component allows the user to specify if a cover crop
-      seeding will be winter killed.
+      The WinterKill component allows the user to specify if a crop seeding will
+      be winter killed.
     </p>
 
     <hr />
     <WinterKill
       id="winter-kill-example"
       data-cy="winter-kill-example"
-      :checkboxState="checkboxState"
-      :date="date"
-      :required="required"
-      :showValidityStyling="validity.showStyling"
-      @update:checkboxState="handleUpdateCheckboxState"
-      @update:date="handleUpdateDate"
-      @valid="handleValid"
-      @ready="createdCount++"
+      v-bind:checkboxState="checkboxState"
+      v-bind:date="date"
+      v-bind:required="required"
+      v-bind:showValidityStyling="validity.showStyling"
+      v-on:update:checkboxState="handleUpdateCheckboxState"
+      v-on:update:date="handleUpdateDate"
+      v-on:valid="handleValid"
+      v-on:ready="createdCount++"
     />
     <hr />
 
@@ -31,7 +31,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>required</td>
+          <td>Required for Date</td>
           <td>
             <BFormCheckbox
               id="required-checkbox"
@@ -42,7 +42,7 @@
           </td>
         </tr>
         <tr>
-          <td>showValidityStyling</td>
+          <td>Show Validity Styling</td>
           <td>
             <BFormCheckbox
               id="styling-checkbox"
@@ -58,7 +58,7 @@
             <BButton
               id="toggle-checkbox"
               data-cy="toggle-checkbox"
-              @click="toggleCheckbox"
+              v-on:click="toggleCheckbox"
               variant="outline-primary"
               size="sm"
             >
@@ -72,7 +72,7 @@
             <BButton
               id="next-date"
               data-cy="next-date"
-              @click="incrementDate"
+              v-on:click="incrementDate"
               variant="outline-primary"
               size="sm"
             >
@@ -131,7 +131,7 @@ export default {
       date: '',
       validity: {
         showStyling: false,
-        isValid: false,
+        isValid: true,
       },
       createdCount: 0,
     };
@@ -150,9 +150,11 @@ export default {
         const nextYear = new Date().getFullYear() + 1;
         this.date = dayjs(new Date(nextYear, 0, 1)).format('YYYY-MM-DD');
       }
+      this.updateValidState();
     },
     handleUpdateDate(newDate) {
       this.date = newDate;
+      this.updateValidState();
     },
     handleValid(valid) {
       this.validity.isValid = valid;
@@ -165,15 +167,23 @@ export default {
         const nextYear = new Date().getFullYear() + 1;
         this.date = dayjs(new Date(nextYear, 0, 1)).format('YYYY-MM-DD');
       }
+      this.updateValidState();
     },
     incrementDate() {
       if (this.date) {
         this.date = dayjs(this.date).add(1, 'day').format('YYYY-MM-DD');
+        this.updateValidState();
       }
+    },
+    updateValidState() {
+      const isValid =
+        !this.required || (this.checkboxState && dayjs(this.date).isValid());
+      this.validity.isValid = isValid;
     },
   },
   created() {
     this.createdCount++;
+    this.updateValidState();
   },
 };
 </script>

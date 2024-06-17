@@ -3,13 +3,12 @@
     <BFormGroup
       id="date-group"
       data-cy="date-group"
-      :label="label"
       label-for="date"
       label-cols="auto"
       label-align="end"
     >
       <template v-slot:label>
-        <span data-cy="date-label">{{ label }}:</span>
+        <span data-cy="date-label">Date:</span>
         <sup
           data-cy="date-required"
           v-if="required"
@@ -77,10 +76,6 @@ export default {
   name: 'DateSelector',
   emits: ['ready', 'update:date', 'valid'],
   props: {
-    label: {
-      type: String,
-      default: 'Date',
-    },
     /**
      * The selected date.
      * This prop is watched and changes are relayed to the component's internal state..
