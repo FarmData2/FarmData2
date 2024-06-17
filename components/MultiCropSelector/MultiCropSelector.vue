@@ -1,28 +1,37 @@
 <template>
-  <label
-    data-cy="multi-crop-selector-label"
-    for="crop-selector-container"
-    >Crop(s):</label
+  <div
+    id="multi-crop-selector"
+    data-cy="multi-crop-selector"
   >
-  <div id="crop-selector-container">
-    <SelectorBase
-      v-for="(selectedCrop, i) in ['', ...selectedCrop]"
-      v-bind:key="i"
-      v-bind:label="String(i + 1)"
-      v-bind:id="'crop-selector-' + (i + 1)"
-      v-bind:data-cy="'crop-selector-' + (i + 1)"
-      invalidFeedbackText="Crop must be selected"
-      v-bind:includeAddButton="
-        i == this.selectedCrop.length && this.canCreateCrop
-      "
-      v-bind:options="cropList"
-      v-bind:required="isRequired(i)"
-      v-bind:selected="selected[i]"
-      v-bind:showValidityStyling="showValidityStyling"
-      v-on:update:selected="handleUpdateSelected($event, i)"
-      v-on:valid="handleValid($event, i)"
-      v-on:add-clicked="handleAddClicked"
-    />
+    <label
+      id="multi-crop-selector-label"
+      data-cy="multi-crop-selector-label"
+      for="crop-selector-1"
+      >Crop(s)
+    </label>
+    <div
+      id="crop-selector-container"
+      data-cy="crop-selector-container"
+    >
+      <SelectorBase
+        v-for="(selectedCrop, i) in ['', ...selectedCrop]"
+        v-bind:key="i"
+        v-bind:label="String(i + 1)"
+        v-bind:id="'crop-selector-' + (i + 1)"
+        v-bind:data-cy="'crop-selector-' + (i + 1)"
+        invalidFeedbackText="Crop must be selected"
+        v-bind:includeAddButton="
+          i == this.selectedCrop.length && this.canCreateCrop
+        "
+        v-bind:options="cropList"
+        v-bind:required="isRequired(i)"
+        v-bind:selected="selected[i]"
+        v-bind:showValidityStyling="showValidityStyling"
+        v-on:update:selected="handleUpdateSelected($event, i)"
+        v-on:valid="handleValid($event, i)"
+        v-on:add-clicked="handleAddClicked"
+      />
+    </div>
   </div>
 </template>
 
@@ -172,3 +181,13 @@ export default {
   },
 };
 </script>
+<style scoped>
+#multi-crop-selector {
+  display: flex;
+}
+
+#multi-crop-selector-label {
+  margin-right: 7px;
+  margin-top: 7px;
+}
+</style>
