@@ -306,6 +306,33 @@ export default {
         // couldn't remove elements
       }
     },
+    disableBackgroundElements(disable) {
+      // get the body of the page and remove/restore it from the tab index
+      // and hide/show it for screen readers
+      const element = document.getElementsByTagName('body')[0];
+      if (element) {
+        this.setAttributes(element, disable);
+      }
+    },
+    setAttributes(element, disable) {
+      const stack = [element];
+
+      while (stack.length > 0) {
+        const current = stack.pop();
+
+        if (disable) {
+          current.setAttribute('tabindex', '-1');
+          current.setAttribute('aria-hidden', 'true');
+        } else {
+          current.removeAttribute('tabindex');
+          current.removeAttribute('aria-hidden');
+        }
+
+        for (const child of current.children) {
+          stack.push(child);
+        }
+      }
+    },
     checkValidUrl(iframe) {
       try {
         const iframeUrl = iframe.contentWindow.location.href;
@@ -337,10 +364,12 @@ export default {
       }
     },
     showPopup() {
+      this.disableBackgroundElements(true);
       this.popupSrc = this.popupUrl;
       this.isPopupVisible = true;
     },
     hidePopup(newOption) {
+      this.disableBackgroundElements(false);
       this.isPopupVisible = false;
       this.popupSrc = '';
       /**
