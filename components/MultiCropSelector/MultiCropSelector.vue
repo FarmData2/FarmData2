@@ -14,16 +14,16 @@
       data-cy="crop-selector-container"
     >
       <SelectorBase
-        v-for="(selectedCrop, i) in ['', ...selectedCrop]"
+        v-for="(selectedCrops, i) in ['', ...selectedCrops]"
         v-bind:key="i"
         v-bind:label="String(i + 1)"
         v-bind:id="'crop-selector-' + (i + 1)"
         v-bind:data-cy="'crop-selector-' + (i + 1)"
         invalidFeedbackText="Crop must be selected"
         v-bind:includeAddButton="
-          i == this.selectedCrop.length && this.canCreateCrop
+          i == this.selectedCrops.length && this.canCreateCrop
         "
-        v-bind:options="cropList"
+        v-bind:options="cropsList"
         v-bind:required="isRequired(i)"
         v-bind:selected="selected[i]"
         v-bind:showValidityStyling="showValidityStyling"
@@ -98,9 +98,9 @@ export default {
   },
   data() {
     return {
-      selectedCrop: this.selected,
+      selectedCrops: this.selected,
       valid: [null],
-      cropList: [],
+      cropsList: [],
       canCreateCrop: false,
     };
   },
@@ -119,22 +119,22 @@ export default {
       window.location.href = '/admin/structure/taxonomy/manage/plant_type/add';
     },
     isRequired(i) {
-      return this.required && (i == 0 || i < this.selectedCrop.length - 1);
+      return this.required && (i == 0 || i < this.selectedCrops.length - 1);
     },
     handleUpdateSelected(event, i) {
       if (event === '') {
         // The ith crop was removed.
-        this.selectedCrop.splice(i, 1);
+        this.selectedCrops.splice(i, 1);
         this.valid.splice(i, 1);
       } else {
-        this.selectedCrop[i] = event;
+        this.selectedCrops[i] = event;
       }
 
       /**
        * The selected crop has changed.
        * @property {Array<String>} event the names of the newly selected crop.
        */
-      this.$emit('update:selected', this.selectedCrop);
+      this.$emit('update:selected', this.selectedCrops);
     },
     handleValid(event, i) {
       this.valid[i] = event;
@@ -143,7 +143,7 @@ export default {
   watch: {
     selected: {
       handler() {
-        this.selectedCrop = this.selected;
+        this.selectedCrops = this.selected;
       },
       deep: true,
     },
@@ -161,7 +161,7 @@ export default {
 
     Promise.all([canCreate, cropMap])
       .then(([canCreate, cropMap]) => {
-        this.cropList = Array.from(cropMap.keys());
+        this.cropsList = Array.from(cropMap.keys());
         this.canCreateCrop = canCreate;
 
         /**
