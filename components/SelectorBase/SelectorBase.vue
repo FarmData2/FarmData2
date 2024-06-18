@@ -311,10 +311,10 @@ export default {
         const iframeUrl = iframe.contentWindow.location.href;
         // prohibits navigating away from the add form
         if (!iframeUrl.includes(this.popupUrl)) {
-          this.hidePopup('');
+          this.hidePopup(null);
         }
       } catch (e) {
-        this.hidePopup('');
+        this.hidePopup(null);
       }
     },
     getNewAsset(document) {

@@ -60,9 +60,10 @@
             data-cy="popup-url-button"
             variant="outline-primary"
             size="sm"
-            v-on:click="this.popupUrl = ''"
+            v-on:click="this.popupUrl = 'date_selector'"
+            :disabled="this.popupUrl != null"
           >
-            Empty Url
+            DateSelector URL
           </BButton>
           <BButton
             id="popup-clear-url-button"
@@ -70,6 +71,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.popupUrl = null"
+            :disabled="this.popupUrl == null"
           >
             Clear Url
           </BButton>

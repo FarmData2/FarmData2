@@ -144,7 +144,7 @@ describe('Test the default SelectorBase content', () => {
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
-        popupUrl: '',
+        popupUrl: 'nonNullValue',
       },
     });
 
