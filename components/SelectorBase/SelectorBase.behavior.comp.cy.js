@@ -155,4 +155,44 @@ describe('Test the SelectorBase behaviors', () => {
         cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
       });
   });
+  it('Clicking add button disables background elements and close enables them', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onReady: readySpy,
+        popupUrl: '',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-add-button"]').click();
+
+        cy.get('[data-cy="selector-popupIframe"]')
+          .should('exist')
+          .should('not.have.attr', 'aria-hidden', 'true')
+          .should('not.have.attr', 'tabindex', '-1');
+
+        cy.window().then((window) => {
+          const body = window.document.getElementsByTagName('body')[0];
+          expect(body.getAttribute('tabindex')).to.equal('-1');
+          expect(body.getAttribute('aria-hidden')).to.equal('true');
+        });
+
+        cy.get('[data-cy="selector-closePopup"]').click();
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
+
+        cy.window().then((window) => {
+          const body = window.document.getElementsByTagName('body')[0];
+          expect(body.getAttribute('tabindex')).to.not.equal('-1');
+          expect(body.getAttribute('aria-hidden')).to.not.equal('true');
+        });
+      });
+  });
 });
