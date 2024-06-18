@@ -6,7 +6,7 @@
     <label
       id="multi-crop-selector-label"
       data-cy="multi-crop-selector-label"
-      for="crop-selector-1"
+      for="crop-selector-container"
       >Crop(s)
     </label>
     <div
@@ -185,9 +185,11 @@ export default {
 #multi-crop-selector {
   display: flex;
 }
-
 #multi-crop-selector-label {
   margin-right: 7px;
   margin-top: 7px;
+}
+#crop-selector-container {
+  flex: 1;
 }
 </style>
