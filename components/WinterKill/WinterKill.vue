@@ -232,7 +232,6 @@ export default {
      */
     chosenDate() {
       this.$emit('update:date', this.chosenDate);
-      this.emitValidState();
     },
     /**
      * Watches for changes in the date prop and updates the chosen date.
