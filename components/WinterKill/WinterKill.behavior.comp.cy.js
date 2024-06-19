@@ -11,12 +11,12 @@ describe('Test the WinterKill component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Component reacts to changed checkboxState prop', () => {
+  it('Component reacts to changed picked prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(WinterKill, {
       props: {
-        checkboxState: false,
+        picked: false,
         onReady: readySpy,
       },
     }).then(({ wrapper }) => {
@@ -26,7 +26,7 @@ describe('Test the WinterKill component behavior', () => {
           cy.get('[data-cy="winter-kill-checkbox"]').should('not.be.checked');
           cy.get('[data-cy="winter-kill-date-group"]').should('not.exist');
 
-          wrapper.setProps({ checkboxState: true });
+          wrapper.setProps({ picked: true });
 
           cy.get('[data-cy="winter-kill-checkbox"]').should('be.checked');
           cy.get('[data-cy="winter-kill-date-group"]').should('exist');
@@ -39,7 +39,7 @@ describe('Test the WinterKill component behavior', () => {
 
     cy.mount(WinterKill, {
       props: {
-        checkboxState: true,
+        picked: true,
         date: '1999-01-02',
         onReady: readySpy,
       },
@@ -67,7 +67,7 @@ describe('Test the WinterKill component behavior', () => {
 
     cy.mount(WinterKill, {
       props: {
-        checkboxState: true,
+        picked: true,
         required: true,
         date: 'invalid-date',
         onReady: readySpy,

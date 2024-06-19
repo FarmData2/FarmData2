@@ -10,11 +10,11 @@
     <WinterKill
       id="winter-kill-example"
       data-cy="winter-kill-example"
-      v-bind:checkboxState="checkboxState"
+      v-bind:picked="checkboxState"
       v-bind:date="date"
       v-bind:required="required"
       v-bind:showValidityStyling="validity.showStyling"
-      v-on:update:checkboxState="handleUpdateCheckboxState"
+      v-on:update:picked="handleUpdateCheckboxState"
       v-on:update:date="handleUpdateDate"
       v-on:valid="handleValid"
       v-on:ready="createdCount++"

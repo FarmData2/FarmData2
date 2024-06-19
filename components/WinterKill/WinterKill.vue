@@ -13,12 +13,12 @@
     <div class="grid">
       <BFormCheckbox
         id="winter-kill-checkbox"
-        v-bind:checked="checkboxState"
+        v-model="selectedCheckbox"
         v-on:change="handleCheckboxChange"
         data-cy="winter-kill-checkbox"
         size="lg"
       />
-      <div v-if="checkboxState">
+      <div v-if="selectedCheckbox">
         <div
           id="winter-kill-date-group"
           data-cy="winter-kill-date-group"
@@ -36,7 +36,7 @@
             type="date"
             v-model="chosenDate"
             v-bind:state="validityStyling"
-            v-bind:required="checkboxState && required"
+            v-bind:required="selectedCheckbox && required"
           />
           <BFormInvalidFeedback
             id="winter-kill-date-invalid-feedback"
@@ -68,11 +68,11 @@ import dayjs from 'dayjs';
  * <WinterKill
  *   id="winter-kill-example"
  *   data-cy="winter-kill-example"
- *   v-bind:checkboxState="checkboxState"
+ *   v-bind:picked="picked"
  *   v-bind:date="date"
  *   v-bind:required="required"
  *   v-bind:showValidityStyling="validity.showStyling"
- *   v-on:update:checkboxState="handleUpdateCheckboxState"
+ *   v-on:update:picked="handleUpdateCheckboxState"
  *   v-on:update:date="handleUpdateDate"
  *   v-on:valid="handleValid"
  *   v-on:ready="createdCount++"
@@ -93,14 +93,14 @@ import dayjs from 'dayjs';
  */
 export default {
   name: 'WinterKill',
-  emits: ['ready', 'valid', 'update:checkboxState', 'update:date'],
+  emits: ['ready', 'valid', 'update:picked', 'update:date'],
   props: {
     /**
      * The state of the checkbox indicating if the crop will be winter killed.
      * @type {Boolean}
      * @default false
      */
-    checkboxState: {
+    picked: {
       type: Boolean,
       default: false,
     },
@@ -134,6 +134,7 @@ export default {
   },
   data() {
     return {
+      selectedCheckbox: this.picked,
       chosenDate: this.date,
     };
   },
@@ -183,7 +184,7 @@ export default {
      * @returns {Boolean}
      */
     componentIsValid() {
-      if (!this.checkboxState) {
+      if (!this.selectedCheckbox) {
         return true;
       }
       if (this.required) {
@@ -199,9 +200,10 @@ export default {
      */
     handleCheckboxChange(event) {
       const isChecked = event.target ? event.target.checked : event;
-      this.$emit('update:checkboxState', isChecked);
+      this.selectedCheckbox = isChecked;
+      this.$emit('update:picked', isChecked);
 
-      if (isChecked && !this.date) {
+      if (isChecked && !this.chosenDate) {
         const nextYear = new Date().getFullYear() + 1;
         const defaultDate = dayjs(new Date(nextYear, 0, 1)).format(
           'YYYY-MM-DD'
@@ -237,6 +239,12 @@ export default {
      */
     date() {
       this.chosenDate = this.date;
+    },
+    /**
+     * Watches for changes in the picked prop and updates the selectedCheckbox state.
+     */
+    picked() {
+      this.selectedCheckbox = this.picked;
     },
   },
   created() {
