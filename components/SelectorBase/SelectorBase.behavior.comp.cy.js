@@ -117,6 +117,7 @@ describe('Test the SelectorBase behaviors', () => {
     const readySpy = cy.spy().as('readySpy');
     const addClickedSpy = cy.spy().as('addClickedSpy');
 
+    // when mounting, set the popupUrl to '' to avoid errors when testing
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -158,6 +159,7 @@ describe('Test the SelectorBase behaviors', () => {
   it('Clicking add button disables background elements and close enables them', () => {
     const readySpy = cy.spy().as('readySpy');
 
+    // when mounting, set the popupUrl to '' to avoid errors when testing
     cy.mount(SelectorBase, {
       props: {
         required: true,

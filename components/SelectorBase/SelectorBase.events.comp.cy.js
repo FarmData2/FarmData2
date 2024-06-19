@@ -220,6 +220,7 @@ describe('Test the SelectorBase component events', () => {
     const readySpy = cy.spy().as('readySpy');
     const addSpy = cy.spy().as('addSpy');
 
+    // when mounting, set the popupUrl to '' to avoid errors when testing
     cy.mount(SelectorBase, {
       props: {
         invalidFeedbackText: 'Invalid feedback text.',
