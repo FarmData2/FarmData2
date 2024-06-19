@@ -72,7 +72,7 @@
           data-cy="tray-seeding-trays"
           required
           label="Trays"
-          invalidFeedbackText="Trays must be positive."
+          invalidFeedbackText="Trays must be a positive number."
           v-model:value="form.trays"
           v-bind:showValidityStyling="validity.show"
           v-bind:decimalPlaces="2"
@@ -100,7 +100,7 @@
           data-cy="tray-seeding-seeds"
           required
           label="Seeds/Cell"
-          invalidFeedbackText="Seeds must be positive."
+          invalidFeedbackText="Seeds/Cell must be a positive number."
           v-model:value="form.seedsPerCell"
           v-bind:showValidityStyling="validity.show"
           v-bind:decimalPlaces="0"
@@ -133,8 +133,8 @@
         <SubmitResetButtons
           id="seeding-submit-reset"
           data-cy="seeding-submit-reset"
-          v-bind:enableSubmit="enableSubmit"
-          v-bind:enableReset="enableReset"
+          v-bind:enableSubmit="submitEnabled"
+          v-bind:enableReset="resetEnabled"
           v-on:ready="createdCount++"
           v-on:submit="submit()"
           v-on:reset="reset()"
@@ -162,7 +162,7 @@ import TextDisplay from '@comps/TextDisplay/TextDisplay.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib.js';
+import { lib } from './lib.js';
 
 export default {
   components: {
@@ -196,9 +196,8 @@ export default {
         seedsPerCell: false,
         comment: false,
       },
-      enableSubmit: true,
-      enableReset: true,
-      errorShown: false,
+      submitting: false,
+      errorShowing: false,
       createdCount: 0,
     };
   },
@@ -213,16 +212,25 @@ export default {
     pageDoneLoading() {
       return this.createdCount == 10;
     },
+    submitEnabled() {
+      return !this.validity.show || (this.validToSubmit && !this.submitting);
+    },
+    resetEnabled() {
+      return !this.submitting;
+    },
+    validToSubmit() {
+      return Object.entries(this.validity)
+        .filter(([key]) => key !== 'show')
+        .every((item) => item[1] === true);
+    },
   },
   methods: {
     submit() {
+      this.submitting = true;
       this.validity.show = true;
 
       // If all of the form values are valid...
-      if (Object.values(this.validity).every((item) => item === true)) {
-        this.disableSubmit = true;
-        this.disableReset = true;
-
+      if (this.validToSubmit) {
         uiUtil.showToast(
           'Submitting tray seeding...',
           '',
@@ -231,29 +239,42 @@ export default {
         );
 
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
-            this.reset(true);
-            uiUtil.showToast(
-              'Tray seeding created.',
-              '',
-              'top-center',
-              'success',
-              2
-            );
+            uiUtil
+              .showToast(
+                'Tray seeding created.',
+                '',
+                'top-center',
+                'success',
+                2
+              )
+              .then(() => {
+                this.reset(true);
+                this.submitting = false;
+              });
           })
           .catch(() => {
-            uiUtil.hideToast();
-            this.showErrorToast(
-              'Error creating tray seeding.',
-              'Check your network connection and try again.'
-            );
-            this.enableSubmit = true;
+            if (!this.errorShowing) {
+              uiUtil.hideToast();
+              this.errorShowing = true;
+              uiUtil
+                .showToast(
+                  'Error creating tray seeding.',
+                  'Check your network connection and try again.',
+                  'top-center',
+                  'danger',
+                  5
+                )
+                .then(() => {
+                  this.submitting = false;
+                  this.errorShowing = false;
+                });
+            }
           });
       } else {
-        // Some value is not valid...
-        this.enableSubmit = false;
+        this.submitting = false;
       }
     },
     reset(sticky = false) {
@@ -269,30 +290,15 @@ export default {
       this.form.traySize = null;
       this.form.seedsPerCell = 1;
       this.form.comment = null;
-      this.enableSubmit = true;
-    },
-    showErrorToast(title, message) {
-      if (!this.errorShown) {
-        this.errorShown = true;
-        this.enableSubmit = false;
-        this.enableReset = false;
-
-        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
-      }
     },
   },
-  watch: {
-    validity: {
-      handler() {
-        if (Object.values(this.validity).every((item) => item === true)) {
-          this.enableSubmit = true;
-        }
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   created() {
     this.createdCount++;
+
+    if (window.Cypress) {
+      document.defaultView.lib = lib;
+    }
   },
 };
 </script>

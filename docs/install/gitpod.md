@@ -26,7 +26,9 @@ Use the following steps to create a FarmData2 Development Environment in a _GitP
    1. After another 2-3 minutes the containers will have started and the GitPod Terminal will display information about how to connect to the FarmData2 Development Environment.
       You can connect to the FarmData2 Development Environment in two ways:
       - Connect by using your web browser by clicking the `https` link given in the output and then clicking the "Connect" button on the page that appears. See the [Connect Using Your Web Browser](connecting.md#connect-using-your-web-browser) section for more information.
-      - Connect by using a VNC client by following the instructions in the output. See the [Connect Using a VNC Client](connecting.md#connect-using-a-vnc-client) section for more information.
+      - To connect by using a VNC client:
+         - Visit [Gitpod's guide to create a SSH key](https://www.gitpod.io/docs/configure/user-settings/ssh) and follow the instructions to create and upload a SSH key to Gitpod. This step only needs to be completed once.
+         - Then, follow the instructions in the GitPod Terminal output. See the [Connect Using a VNC Client](connecting.md#connect-using-a-vnc-client) section for more information.
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md)
 1. Visit [your GitPod workspaces](https://gitpod.io/workspaces/)
    - Your "farmdata2" workspace will appear here with a <!-- vale RedHat.DoNotUseTerms = NO : green is associated with the dot -->green<!-- vale RedHat.DoNotUseTerms = YES --> dot to its left, indicating that the workspace is running.

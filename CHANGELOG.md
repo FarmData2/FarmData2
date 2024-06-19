@@ -1,3 +1,72 @@
+## [1.3.0](https://github.com/FarmData2/FarmData2/compare/v1.2.0...v1.3.0) (2024-06-10)
+
+
+### Features
+
+* **comp:** add picklist base component ([#187](https://github.com/FarmData2/FarmData2/issues/187)) ([b67dc11](https://github.com/FarmData2/FarmData2/commit/b67dc11908bd55579b042659c05d73fd025df6f2))
+* **dev:** adds the vue force dev plugin to firefox ([#206](https://github.com/FarmData2/FarmData2/issues/206)) ([ddfa604](https://github.com/FarmData2/FarmData2/commit/ddfa60417c1bb220d10abff3aea3abafabce19bf)), closes [#133](https://github.com/FarmData2/FarmData2/issues/133)
+* **dev:** enables launching dev environment via GitPod ([#236](https://github.com/FarmData2/FarmData2/issues/236)) ([fbaa5d0](https://github.com/FarmData2/FarmData2/commit/fbaa5d0f7060b6d68bc2ff7d7b38cf57441c0cc0)), closes [#77](https://github.com/FarmData2/FarmData2/issues/77) [#4](https://github.com/FarmData2/FarmData2/issues/4)
+* **dev:** improves addEntrypoint.bash script ([#289](https://github.com/FarmData2/FarmData2/issues/289)) ([ce83da6](https://github.com/FarmData2/FarmData2/commit/ce83da69e95e8d9b7e11965fa43892f1da1721f6)), closes [#282](https://github.com/FarmData2/FarmData2/issues/282)
+* **dev:** improves entry point creation and maintainence ([#251](https://github.com/FarmData2/FarmData2/issues/251)) ([2fe30ff](https://github.com/FarmData2/FarmData2/commit/2fe30ff216217c547242db95093d234f6774d209)), closes [#243](https://github.com/FarmData2/FarmData2/issues/243) [#189](https://github.com/FarmData2/FarmData2/issues/189) [#170](https://github.com/FarmData2/FarmData2/issues/170)
+* **docs:** updates the core documentation ([#239](https://github.com/FarmData2/FarmData2/issues/239)) ([726ddb9](https://github.com/FarmData2/FarmData2/commit/726ddb9bfdf67d89368efd5acd3a32ba6bdc3fed)), closes [#4](https://github.com/FarmData2/FarmData2/issues/4) [#5](https://github.com/FarmData2/FarmData2/issues/5) [#6](https://github.com/FarmData2/FarmData2/issues/6) [#7](https://github.com/FarmData2/FarmData2/issues/7) [#8](https://github.com/FarmData2/FarmData2/issues/8) [#237](https://github.com/FarmData2/FarmData2/issues/237) [#240](https://github.com/FarmData2/FarmData2/issues/240)
+* **examples:** adds a BedPicker example ([#176](https://github.com/FarmData2/FarmData2/issues/176)) ([2b13e07](https://github.com/FarmData2/FarmData2/commit/2b13e07e0c4338723fb1b2410ffbb4757e7df338)), closes [#175](https://github.com/FarmData2/FarmData2/issues/175)
+* **examples:** adds a DateSelector example for FD2 Examples ([#172](https://github.com/FarmData2/FarmData2/issues/172)) ([ef81759](https://github.com/FarmData2/FarmData2/commit/ef8175956ca7b4f6324113932d9bba7a6ef5237a)), closes [#171](https://github.com/FarmData2/FarmData2/issues/171)
+* **fd2:** Add transplanting entry point ([#200](https://github.com/FarmData2/FarmData2/issues/200)) ([6352e09](https://github.com/FarmData2/FarmData2/commit/6352e098317337b01b289ffc433ec39ed767b366)), closes [#198](https://github.com/FarmData2/FarmData2/issues/198) [#196](https://github.com/FarmData2/FarmData2/issues/196)
+* **fd2:** submit tray and direct seedings forms as a transaction ([#212](https://github.com/FarmData2/FarmData2/issues/212)) ([8c082ed](https://github.com/FarmData2/FarmData2/commit/8c082edade3af2b6f52dc5dd9c4f22120589e2b8))
+
+
+### Fixes
+
+* builds single css file for each module ([#246](https://github.com/FarmData2/FarmData2/issues/246)) ([5d34d44](https://github.com/FarmData2/FarmData2/commit/5d34d44c4f8b05045b03f2800467e36098f981c2)), closes [#202](https://github.com/FarmData2/FarmData2/issues/202)
+* **comp:** adds prop to SoilDisturbance component to hide area field ([d0a9071](https://github.com/FarmData2/FarmData2/commit/d0a90710812e295d28bf877d55543a6c94e86dd7)), closes [#238](https://github.com/FarmData2/FarmData2/issues/238)
+* **comp:** soil disturbance fix ([#280](https://github.com/FarmData2/FarmData2/issues/280)) ([77ddeea](https://github.com/FarmData2/FarmData2/commit/77ddeea8bf09628e43918bb15dfc901bf3f7f954)), closes [#276](https://github.com/FarmData2/FarmData2/issues/276)
+* **comp:** soil disturbance validity fix ([#278](https://github.com/FarmData2/FarmData2/issues/278)) ([5543724](https://github.com/FarmData2/FarmData2/commit/554372462377d9d6472677167e4c4e98cfcfac49)), closes [#276](https://github.com/FarmData2/FarmData2/issues/276)
+* **dev:** fd2-up.linux.bash GID numbering logic ([#162](https://github.com/FarmData2/FarmData2/issues/162)) ([2b5115e](https://github.com/FarmData2/FarmData2/commit/2b5115e282a59c8ded35fea57a54e35c776fa5fa))
+* **dev:** moves database file to ~/.fd2/ so it persists in docker volume ([#174](https://github.com/FarmData2/FarmData2/issues/174)) ([e01f153](https://github.com/FarmData2/FarmData2/commit/e01f1532114c3e796aa2e4b9fca02b077d34ec18)), closes [#122](https://github.com/FarmData2/FarmData2/issues/122)
+* **dev:** pin in cypress version in package.json ([#257](https://github.com/FarmData2/FarmData2/issues/257)) ([ae12b8c](https://github.com/FarmData2/FarmData2/commit/ae12b8c183e7ffb3961a8960eab1a3ff8965b790))
+* **dev:** updates documentation for submit tests in entry point templates ([#291](https://github.com/FarmData2/FarmData2/issues/291)) ([aefac0a](https://github.com/FarmData2/FarmData2/commit/aefac0aabc008b9554c8dd2a1b0629020028b4fd))
+* **dev:** uses vite to build e2e tests ([#268](https://github.com/FarmData2/FarmData2/issues/268)) ([2f6ec86](https://github.com/FarmData2/FarmData2/commit/2f6ec866879c1e78fa109c9dbf1a05143a4a98c0)), closes [#267](https://github.com/FarmData2/FarmData2/issues/267)
+* **docs:** adds a missing coma to line 27 of README.md ([#253](https://github.com/FarmData2/FarmData2/issues/253)) ([95d0e5d](https://github.com/FarmData2/FarmData2/commit/95d0e5d3591e430ef1029836a2e6a6747d0d4381))
+* **docs:** adds additional documentation for creating an SSH key ([#258](https://github.com/FarmData2/FarmData2/issues/258)) ([cc97767](https://github.com/FarmData2/FarmData2/commit/cc977678c17469c157ea974ce919fd3886e0998e))
+* **docs:** corrected typo in codebase.md ([#254](https://github.com/FarmData2/FarmData2/issues/254)) ([0169dc4](https://github.com/FarmData2/FarmData2/commit/0169dc4b7820f1db525b6d1269e5757c9a662738))
+* **docs:** corrected typos in codebase.md ([#252](https://github.com/FarmData2/FarmData2/issues/252)) ([1861dfd](https://github.com/FarmData2/FarmData2/commit/1861dfd4cad488615537dfa50be91546b2df2468))
+* **examples:** adds control for date prop to DateSelector example ([#173](https://github.com/FarmData2/FarmData2/issues/173)) ([7ae4f0a](https://github.com/FarmData2/FarmData2/commit/7ae4f0a1ae77bf0177d4ca74d5e979f968390d08))
+* **examples:** links the BedPicker example in jsDoc and examples page ([#182](https://github.com/FarmData2/FarmData2/issues/182)) ([25cf07e](https://github.com/FarmData2/FarmData2/commit/25cf07e4e9d865c53974f54fd22d35e014886838))
+* **examples:** moves example entry point to examples main menu ([#293](https://github.com/FarmData2/FarmData2/issues/293)) ([6ddc335](https://github.com/FarmData2/FarmData2/commit/6ddc335dc42d0c409d5f829233e16089e2ba719a))
+* **examples:** tweaks BedPicker example ([#181](https://github.com/FarmData2/FarmData2/issues/181)) ([3469c4a](https://github.com/FarmData2/FarmData2/commit/3469c4a887ab3f66d55a4ddd25344e21c629c915))
+* **examples:** update index of examples ([#294](https://github.com/FarmData2/FarmData2/issues/294)) ([e84b023](https://github.com/FarmData2/FarmData2/commit/e84b023131cc740be146770226430e2232c01d5f)), closes [#259](https://github.com/FarmData2/FarmData2/issues/259)
+* **examples:** uses table for prop and state in DateSelector exammple ([#180](https://github.com/FarmData2/FarmData2/issues/180)) ([eeefdb7](https://github.com/FarmData2/FarmData2/commit/eeefdb76442ed7e0581dedd7c4cf0cd6fe3f7f0b))
+* **fd2:** adds bed awareness to location selection ([#159](https://github.com/FarmData2/FarmData2/issues/159)) ([c46b5a6](https://github.com/FarmData2/FarmData2/commit/c46b5a6741b044075d94969b3da2228009a1c6ed)), closes [#157](https://github.com/FarmData2/FarmData2/issues/157) [#127](https://github.com/FarmData2/FarmData2/issues/127) [#160](https://github.com/FarmData2/FarmData2/issues/160) [#158](https://github.com/FarmData2/FarmData2/issues/158) [#154](https://github.com/FarmData2/FarmData2/issues/154) [#156](https://github.com/FarmData2/FarmData2/issues/156)
+* **fd2:** archives tray seeded plant assets when fully transplanted ([#231](https://github.com/FarmData2/FarmData2/issues/231)) ([7a36c8f](https://github.com/FarmData2/FarmData2/commit/7a36c8feb5de0a549a9a62ee555fdddf9e45a540)), closes [#220](https://github.com/FarmData2/FarmData2/issues/220)
+* **fd2:** clears cashed values when terms/assets added to selectors ([#300](https://github.com/FarmData2/FarmData2/issues/300)) ([f231b6c](https://github.com/FarmData2/FarmData2/commit/f231b6cc49ec396f3522bb32dbe24e28d7d48e29)), closes [#103](https://github.com/FarmData2/FarmData2/issues/103)
+* **fd2:** enforces asset and log naming conventions ([#235](https://github.com/FarmData2/FarmData2/issues/235)) ([c09f998](https://github.com/FarmData2/FarmData2/commit/c09f998987035f66fcbb6e07a47a95f379db32b9)), closes [#208](https://github.com/FarmData2/FarmData2/issues/208)
+* **fd2:** removes area quantity from direct seeding form ([#266](https://github.com/FarmData2/FarmData2/issues/266)) ([f808a5e](https://github.com/FarmData2/FarmData2/commit/f808a5ec8af7eea9e28bd053ec0ef8ecdfc8c104)), closes [#264](https://github.com/FarmData2/FarmData2/issues/264)
+* **fd2:** removes unnecessary quantity deletes ([#232](https://github.com/FarmData2/FarmData2/issues/232)) ([5fb743c](https://github.com/FarmData2/FarmData2/commit/5fb743ca3477e70412c2af3d51311276157472a0)), closes [#218](https://github.com/FarmData2/FarmData2/issues/218)
+* **fd2:** updates crop list after each transplanting ([#230](https://github.com/FarmData2/FarmData2/issues/230)) ([8890076](https://github.com/FarmData2/FarmData2/commit/88900765cb9eed59b99975f4b89aea4b6862585c)), closes [#225](https://github.com/FarmData2/FarmData2/issues/225)
+* **fd2:** updates sticky fields in direct seeding and transplanting forms ([#228](https://github.com/FarmData2/FarmData2/issues/228)) ([0437225](https://github.com/FarmData2/FarmData2/commit/04372256528d409054f4ba2e79729e841831a877)), closes [#224](https://github.com/FarmData2/FarmData2/issues/224) [#226](https://github.com/FarmData2/FarmData2/issues/226)
+* **lib:** adds parent 'Category' asset for all equipment categories ([#303](https://github.com/FarmData2/FarmData2/issues/303)) ([16eaef7](https://github.com/FarmData2/FarmData2/commit/16eaef7edaff189503ba78d299c8667365e41e2b)), closes [#298](https://github.com/FarmData2/FarmData2/issues/298)
+* **lib:** use console.error instead of console.log for errors ([#216](https://github.com/FarmData2/FarmData2/issues/216)) ([e7968c4](https://github.com/FarmData2/FarmData2/commit/e7968c40b8efdfd762988e8123b03a46b7fb1c74)), closes [#210](https://github.com/FarmData2/FarmData2/issues/210)
+* **test:** Direct seeding submission test ([#273](https://github.com/FarmData2/FarmData2/issues/273)) ([b1669f9](https://github.com/FarmData2/FarmData2/commit/b1669f9e15f653adc00df863b450e65aa6d5d15e)), closes [#269](https://github.com/FarmData2/FarmData2/issues/269) [#272](https://github.com/FarmData2/FarmData2/issues/272)
+* **test:** fixes the equipment selector test after new db release ([#304](https://github.com/FarmData2/FarmData2/issues/304)) ([25c331a](https://github.com/FarmData2/FarmData2/commit/25c331aed421fbd06cc429ab3757a6ea61b618fb))
+* **test:** improves direct_seeding.submission.e2e.cy.js tests ([#269](https://github.com/FarmData2/FarmData2/issues/269)) ([d7c1c5b](https://github.com/FarmData2/FarmData2/commit/d7c1c5b7e6eaa044f6c849490ae9013b656699cf)), closes [#170](https://github.com/FarmData2/FarmData2/issues/170)
+* **test:** validates form data in submission e2e test ([#270](https://github.com/FarmData2/FarmData2/issues/270)) ([1695dee](https://github.com/FarmData2/FarmData2/commit/1695deea3467a00bbe1f64c0971bdac9873f2250)), closes [#170](https://github.com/FarmData2/FarmData2/issues/170) [#170](https://github.com/FarmData2/FarmData2/issues/170)
+
+
+### Refactoring
+
+* **fd2:** Generalize transaction ([#214](https://github.com/FarmData2/FarmData2/issues/214)) ([dbc667c](https://github.com/FarmData2/FarmData2/commit/dbc667cf9da7c2d93ce34d11ec8b2cdfbeac17a6)), closes [#213](https://github.com/FarmData2/FarmData2/issues/213)
+* **fd2:** modifies direct seeding App.vue to match new templates ([#285](https://github.com/FarmData2/FarmData2/issues/285)) ([c14fcfc](https://github.com/FarmData2/FarmData2/commit/c14fcfc6412688d53a310ee42d9383208e4eb904)), closes [#27](https://github.com/FarmData2/FarmData2/issues/27)
+* **fd2:** refactors tray seeding App.vue ([#281](https://github.com/FarmData2/FarmData2/issues/281)) ([55a6e1d](https://github.com/FarmData2/FarmData2/commit/55a6e1ded96cdedfd20a5e1cc5372dfdc7d1e854)), closes [#277](https://github.com/FarmData2/FarmData2/issues/277)
+* **fd2:** updates transplanting to match new templates ([#299](https://github.com/FarmData2/FarmData2/issues/299)) ([633fac8](https://github.com/FarmData2/FarmData2/commit/633fac8591874dd9f2bcf7f4cdc4ff5c2507aaec)), closes [#277](https://github.com/FarmData2/FarmData2/issues/277)
+* switches to pgrep for finding servers ([#194](https://github.com/FarmData2/FarmData2/issues/194)) ([47d13ca](https://github.com/FarmData2/FarmData2/commit/47d13ca317d12fbea2a5b66c28ff1b76c78e3730))
+* **test:** simplifies the direct seeding unit tests ([#292](https://github.com/FarmData2/FarmData2/issues/292)) ([1bfdc28](https://github.com/FarmData2/FarmData2/commit/1bfdc2857da3b80f8163c92c07c08e076af3b415))
+* **test:** simplifies the tray seeding unit tests ([#290](https://github.com/FarmData2/FarmData2/issues/290)) ([1fd4c87](https://github.com/FarmData2/FarmData2/commit/1fd4c87889fb34e0dba09cbe8d756237ceb0374d))
+
+
+### Tests
+
+* **comp:** fixes update event test in LocationSelector ([#179](https://github.com/FarmData2/FarmData2/issues/179)) ([b3bc266](https://github.com/FarmData2/FarmData2/commit/b3bc26638a239c838f4460bf9ce2a988c19e2d30))
+
 ## [1.2.0](https://github.com/FarmData2/FarmData2/compare/v1.1.1...v1.2.0) (2024-01-28)
 
 

@@ -19,7 +19,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-export async function submitForm(formData) {
+async function submitForm(formData) {
   try {
     const plantAsset = {
       name: 'plantAsset',
@@ -128,10 +128,8 @@ export async function submitForm(formData) {
         ) {
           errorMsg += '\n   Manually delete log or asset with:';
           errorMsg += '\n     name: ' + error.results[key].attributes.name;
-          //errorMsg += '\n     uuid: ' + error.results[key].id;
         } else {
           errorMsg += '\n   May be safely ignored';
-          //errorMsg += '\n     uuid: ' + error.results[key].id;
         }
       }
     }
@@ -139,3 +137,7 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+
+export const lib = {
+  submitForm,
+};

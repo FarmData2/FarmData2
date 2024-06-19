@@ -182,7 +182,7 @@
               v-bind:equipment="form.equipment"
               v-bind:depth="form.depth"
               v-bind:speed="form.speed"
-              v-bind:area="form.area"
+              v-bind:includeArea="false"
               v-on:valid="
                 (valid) => {
                   validity.soilDisturbance = valid;
@@ -201,11 +201,6 @@
               v-on:update:speed="
                 (speed) => {
                   form.speed = speed;
-                }
-              "
-              v-on:update:area="
-                (area) => {
-                  form.area = area;
                 }
               "
               v-on:error="
@@ -237,8 +232,8 @@
         <SubmitResetButtons
           id="transplanting-submit-reset"
           data-cy="transplanting-submit-reset"
-          v-bind:enableSubmit="enableSubmit"
-          v-bind:enableReset="enableReset"
+          v-bind:enableSubmit="submitEnabled"
+          v-bind:enableReset="resetEnabled"
           v-on:submit="submit()"
           v-on:reset="reset()"
           v-on:ready="createdCount++"
@@ -258,7 +253,7 @@
 
 <script>
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
-import * as lib from './lib';
+import { lib } from './lib.js';
 import dayjs from 'dayjs';
 import TransplantingPicklist from '@comps/TransplantingPicklist/TransplantingPicklist.vue';
 import DateSelector from '@comps/DateSelector/DateSelector.vue';
@@ -282,8 +277,6 @@ export default {
   },
   data() {
     return {
-      enableSubmit: true,
-      enableReset: true,
       rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
       form: {
         cropName: null,
@@ -297,7 +290,6 @@ export default {
         equipment: [],
         depth: 0,
         speed: 0,
-        area: '',
         comment: '',
       },
       validity: {
@@ -311,43 +303,36 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
+      submitting: false,
+      errorShowing: false,
       createdCount: 0,
     };
   },
   computed: {
-    canSubmit() {
-      const required =
-        this.validity.picked &&
-        this.validity.transplantingDate &&
-        this.validity.location &&
-        this.validity.bedFeet &&
-        this.validity.bedWidth &&
-        this.validity.rowsPerBed &&
-        this.validity.soilDisturbance;
-
-      return required;
-    },
     pageDoneLoading() {
       return this.createdCount == 10;
     },
+    submitEnabled() {
+      return !this.validity.show || (this.validToSubmit && !this.submitting);
+    },
+    resetEnabled() {
+      return !this.submitting;
+    },
+    validToSubmit() {
+      return Object.entries(this.validity)
+        .filter(([key]) => key !== 'show')
+        .every((item) => item[1] === true);
+    },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
+    handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
-
-      if (checkedBeds.length == 0) {
-        this.form.area = '';
-      } else {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
-      }
     },
     submit() {
+      this.submitting = true;
       this.validity.show = true;
 
-      if (this.canSubmit) {
-        this.disableSubmit = true;
-        this.disableReset = true;
-
+      if (this.validToSubmit) {
         uiUtil.showToast(
           'Submitting transplanting...',
           '',
@@ -356,28 +341,42 @@ export default {
         );
 
         lib
-          .submitForm(this.form)
+          .submitForm({ ...this.form })
           .then(() => {
             uiUtil.hideToast();
-            this.reset(true); // keep sticky parts.
-            uiUtil.showToast(
-              'Transplanting created.',
-              '',
-              'top-center',
-              'success',
-              2
-            );
+            uiUtil
+              .showToast(
+                'Transplanting created.',
+                '',
+                'top-center',
+                'success',
+                2
+              )
+              .then(() => {
+                this.reset(true);
+                this.submitting = false;
+              });
           })
           .catch(() => {
-            uiUtil.hideToast();
-            this.showErrorToast(
-              'Error creating transplanting.',
-              'Check your network connection and try again.'
-            );
-            this.enableSubmit = true;
+            if (!this.errorShowing) {
+              uiUtil.hideToast();
+              this.errorShowing = true;
+              uiUtil
+                .showToast(
+                  'Error creating transplanting.',
+                  'Check your network connection and try again.',
+                  'top-center',
+                  'danger',
+                  5
+                )
+                .then(() => {
+                  this.submitting = false;
+                  this.errorShowing = false;
+                });
+            }
           });
       } else {
-        this.enableSubmit = false;
+        this.submitting = false;
       }
     },
     reset(sticky = false) {
@@ -396,32 +395,21 @@ export default {
       this.form.beds = [];
       this.form.cropName = null;
       this.form.bedFeet = 100;
-      this.form.area = '';
       this.form.comment = null;
       this.enableSubmit = true;
     },
-    showErrorToast(title, message) {
-      if (!this.errorShown) {
-        this.errorShown = true;
-        this.enableSubmit = false;
-        this.enableReset = false;
-
-        uiUtil.showToast(title, message, 'top-center', 'danger', 5);
-      }
-    },
   },
-  watch: {
-    validity: {
-      handler() {
-        if (this.canSubmit) {
-          this.enableSubmit = true;
-        }
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   created() {
     this.createdCount++;
+    if (window.Cypress) {
+      /*
+       * Make the lib containing the submitForm function accessible to the
+       * e2e tests so that the submission test can spy on the submitForm
+       * function to verify that it is receiving the correct information.
+       */
+      document.defaultView.lib = lib;
+    }
   },
 };
 </script>

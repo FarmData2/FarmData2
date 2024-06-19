@@ -5,13 +5,14 @@
       data-cy="tray-size-selector"
       label="Tray Size"
       invalidFeedbackText="A tray size is required"
-      v-bind:addOptionUrl="addTraySizeUrl"
       v-bind:options="traySizeList"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
+      v-on:add-clicked="handleAddClicked"
+      v-bind:includeAddButton="canCreateTraySize"
     />
   </div>
 </template>
@@ -83,15 +84,7 @@ export default {
       canCreateTraySize: false,
     };
   },
-  computed: {
-    addTraySizeUrl() {
-      if (this.canCreateTraySize) {
-        return '/admin/structure/taxonomy/manage/tray_size/add';
-      } else {
-        return null;
-      }
-    },
-  },
+  computed: {},
   methods: {
     handleUpdateSelected(event) {
       /**
@@ -106,6 +99,10 @@ export default {
        * @property {boolean} event whether the selected tray size is valid or not.
        */
       this.$emit('valid', event);
+    },
+    handleAddClicked() {
+      farmosUtil.clearCachedTraySizes();
+      window.location.href = '/admin/structure/taxonomy/manage/tray_size/add';
     },
   },
   watch: {},

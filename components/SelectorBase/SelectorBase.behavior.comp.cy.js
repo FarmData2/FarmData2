@@ -115,14 +115,7 @@ describe('Test the SelectorBase behaviors', () => {
 
   it('Clicking add button goes to the addUrl', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept(
-      { method: 'GET', url: 'http://farmos', times: 1 },
-      {
-        statusCode: 200,
-        body: 'Add Option Form',
-      }
-    ).as('urlIntercept');
+    const addClickedSpy = cy.spy().as('addClickedSpy');
 
     cy.mount(SelectorBase, {
       props: {
@@ -130,8 +123,9 @@ describe('Test the SelectorBase behaviors', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        includeAddButton: true,
+        onAddClicked: addClickedSpy,
         onReady: readySpy,
-        addOptionUrl: 'http://farmos',
       },
     });
 
@@ -140,7 +134,7 @@ describe('Test the SelectorBase behaviors', () => {
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').click();
-        cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
+        cy.get('@addClickedSpy').should('have.been.calledOnce');
       });
   });
 });

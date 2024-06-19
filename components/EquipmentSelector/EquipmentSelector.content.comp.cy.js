@@ -131,7 +131,7 @@ describe('Test the default EquipmentSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 7);
+          .should('have.length', 9);
 
         cy.get('[data-cy="equipment-selector-1"]')
           .find('[data-cy="selector-option-1"]')

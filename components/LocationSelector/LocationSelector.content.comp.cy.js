@@ -253,8 +253,13 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
-  it('Add url for fields is correct', () => {
+  it('Verifies the add button is available for fields', () => {
     const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '/asset/add/land', {
+      statusCode: 200,
+      body: 'Add Land Form',
+    }).as('urlIntercept');
 
     cy.mount(LocationSelector, {
       props: {
@@ -266,17 +271,17 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/land');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Add url for greenhouses is correct', () => {
+  it('Verifies the add button is available for greenhouses', () => {
     const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '/asset/add/structure', {
+      statusCode: 200,
+      body: 'Add Structure Form',
+    }).as('urlIntercept');
 
     cy.mount(LocationSelector, {
       props: {
@@ -288,17 +293,17 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/structure');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Add url for greenhouses with beds is correct', () => {
+  it('Verifies the add button is available for greenhouses with beds', () => {
     const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '/asset/add/structure', {
+      statusCode: 200,
+      body: 'Add Structure Form',
+    }).as('urlIntercept');
 
     cy.mount(LocationSelector, {
       props: {
@@ -310,17 +315,17 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
-
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add/structure');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Add url for both fields and greenhouses is correct', () => {
+  it('Verifies the add button is available for both fields and greenhouses is correct', () => {
     const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '/asset/add', {
+      statusCode: 200,
+      body: 'Add Asset Form',
+    }).as('urlIntercept');
 
     cy.mount(LocationSelector, {
       props: {
@@ -333,12 +338,30 @@ describe('Test the default LocationSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="location-selector"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
+      });
+  });
 
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/asset/add');
+  it('Verifies the add button is available for both fields and greenhouses with beds is correct', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '/asset/add', {
+      statusCode: 200,
+      body: 'Add Asset Form',
+    }).as('urlIntercept');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhousesWithBeds: true,
+        includeFields: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 });

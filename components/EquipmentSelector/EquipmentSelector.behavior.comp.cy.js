@@ -1,4 +1,5 @@
 import EquipmentSelector from '@comps/EquipmentSelector/EquipmentSelector.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the EquipmentSelector component behavior', () => {
   beforeEach(() => {
@@ -185,5 +186,36 @@ describe('Test the EquipmentSelector component behavior', () => {
           .should('have.value', null);
         cy.get('[data-cy="equipment-selector-4"]').should('not.exist');
       });
+  });
+
+  it('Clicking add equipment button goes to the add equipment form and clears the equipment cache', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.intercept('GET', '**/asset/add/equipment', {
+      statusCode: 200,
+      body: 'Add Equipment Form',
+    }).as('urlIntercept');
+
+    cy.mount(EquipmentSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.not.be
+            .null;
+          cy.get('[data-cy="selector-add-button"]').should('exist');
+          cy.get('[data-cy="selector-add-button"]').click();
+          cy.wait('@urlIntercept')
+            .its('response.statusCode')
+            .should('eq', 200)
+            .then(() => {
+              expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.be
+                .null;
+            });
+        });
+    });
   });
 });

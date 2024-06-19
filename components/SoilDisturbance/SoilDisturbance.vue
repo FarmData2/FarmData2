@@ -54,7 +54,7 @@
     <NumericInput
       id="soil-disturbance-area"
       data-cy="soil-disturbance-area"
-      v-if="form.equipment.length > 0"
+      v-if="form.equipment.length > 0 && includeArea"
       required
       label="Area (%)"
       invalidFeedbackText="Area must be a positive number."
@@ -96,11 +96,34 @@ import NumericInput from '@comps/NumericInput/NumericInput.vue';
  * the equipment used, depth of the disruption, the speed of the disruption and
  * the percentage of the area affected.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/soil_disturbance">The SoilDisturbance Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/soil_disturbance/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <SoilDisturbance
+ *   id="soil-disturbance"
+ *   data-cy="soil-disturbance"
+ *   v-bind:required="required"
+ *   v-model:area="form.area"
+ *   v-model:depth="form.depth"
+ *   v-model:equipment="form.equipment"
+ *   v-bind:includePasses="includePasses"
+ *   v-bind:includeArea="includeArea"
+ *   v-model:speed="form.speed"
+ *   v-model:passes="form.passes"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.soilDisturbance = valid;
+ *     }
+ *   "
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes
@@ -148,6 +171,13 @@ export default {
     equipment: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * Whether to include an input area for the percentage of the selected location that was affected by the soil disturbance.
+     */
+    includeArea: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Whether to include an input area for the number of passes over the area.
@@ -214,20 +244,13 @@ export default {
     isValid() {
       if (this.form.equipment.length === 0) {
         return this.validity.equipment;
-      } else if (!this.includePasses) {
-        return (
-          this.validity.equipment &&
-          this.validity.depth &&
-          this.validity.speed &&
-          this.validity.area
-        );
       } else {
         return (
           this.validity.equipment &&
           this.validity.depth &&
           this.validity.speed &&
-          this.validity.area &&
-          this.validity.passes
+          (!this.includeArea || this.validity.area) &&
+          (!this.includePasses || this.validity.passes)
         );
       }
     },

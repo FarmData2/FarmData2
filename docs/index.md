@@ -1,5 +1,12 @@
 # Index of the FarmData2 Documentation
 
+## Outline
+
+- [Main Documentation Files](#main-documentation-files)
+- [Installation](#installation)
+- [Contributing](#contributing)
+- [FarmData2 Component and Library Documentation](#farmdata2-component-and-library-documentation)
+
 ## Main Documentation Files
 
 - [README.md](../README.md) - the main FarmData2 README.
@@ -10,9 +17,9 @@
 ## Installation
 
 - [INSTALL.md](../INSTALL.md) - starting point for installing the FarmData2 Developer Environment.
-- [GitPod Installation](install/gitpod.md) - guide for installing the FarmData2 Developer Environment on Gitpod.
-- [Local Installation](install/local.md) - guide for installing the FarmData2 Developer Environment on your machine with Docker.
-- [Native Installation](install/native.md) - information about installing the FarmData2 Developer Environment on your machine without Docker.
+  - [GitPod Installation](install/gitpod.md) - guide for installing the FarmData2 Developer Environment on Gitpod.
+  - [Local Installation](install/local.md) - guide for installing the FarmData2 Developer Environment on your machine with Docker.
+  - [Native Installation](install/native.md) - information about installing the FarmData2 Developer Environment on your machine without Docker.
 - [Developer Environment Setup](install/setup.md) - instructions for setting up the FarmData2 Developer Environment after installation.
 - [Connecting to the Developer Environment](install/connecting.md) - instructions for connecting to the FarmData2 Developer Environment with a browser or a VNC client.
 - [Credentials](install/credentials.md) - login credentials for the FarmData2 Developer Environment and its farmOS instance with example data.
@@ -28,3 +35,8 @@
   - [Entry Point Guide](contributing/entry-points.md) - a guide to creating, documenting and testing entry points.
   - [Library Guide](contributing/libraries.md) - a guide to creating, documenting and testing library code.
   - [Infrastructure Guide](contributing/infrastructure.md) - a guide to creating, documenting and testing infrastructure.
+- [Testing Tips](contributing/testingTips.md) - general tips for testing in FarmData2.
+
+## FarmData2 Component and Library Documentation
+
+- [FarmData2 Documentation](FarmData2.md) - API documentation for the FarmData2 custom Vue components and JavaScript libraries.

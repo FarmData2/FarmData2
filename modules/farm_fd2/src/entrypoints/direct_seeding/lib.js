@@ -19,13 +19,12 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   equipment: [ {asset--equipment} ],
  *   depth: {quantity--standard},
  *   speed: {quantity--standard},
- *   area: {quantity--standard},
  *   activityLog: {log--activity},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-export async function submitForm(formData) {
+async function submitForm(formData) {
   try {
     const ops = [];
     const equipmentAssets = [];
@@ -183,22 +182,6 @@ export async function submitForm(formData) {
       };
       ops.push(speedQuantity);
 
-      const areaQuantity = {
-        name: 'areaQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'ratio',
-            formData.area,
-            'Area',
-            'PERCENT'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
-        },
-      };
-      ops.push(areaQuantity);
-
       const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
       for (const equipmentName of formData.equipment) {
         equipmentAssets.push(equipmentMap.get(equipmentName));
@@ -216,7 +199,7 @@ export async function submitForm(formData) {
             [
               results.depthQuantity,
               results.speedQuantity,
-              results.areaQuantity,
+              results.bedFeetQuantity,
             ],
             equipmentAssets
           );
@@ -237,7 +220,6 @@ export async function submitForm(formData) {
       result['equipment'] = null;
       result['depthQuantity'] = null;
       result['speedQuantity'] = null;
-      result['areaQuantity'] = null;
       result['activityLog'] = null;
     }
 
@@ -269,3 +251,6 @@ export async function submitForm(formData) {
     throw Error(errorMsg, error);
   }
 }
+export const lib = {
+  submitForm,
+};

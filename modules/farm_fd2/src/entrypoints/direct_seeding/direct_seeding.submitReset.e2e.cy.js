@@ -65,12 +65,6 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('3');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .type('25');
 
     cy.get('[data-cy="comment-input"]').clear();
     cy.get('[data-cy="comment-input"]').type('Test comment');
@@ -81,22 +75,39 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     populateForm();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="date-input"]').clear();
+
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="date-input"]').type('2020-01-01');
+    cy.get('[data-cy="date-input"]').blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid crop disables submit', () => {
     populateForm({ skipCrop: true });
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="submit-button"]').click();
+
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="direct-seeding-crop"]')
+      .find('[data-cy="selector-input"]')
+      .select('ARUGULA');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid location disables submit', () => {
     populateForm({ skipLocation: true });
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="submit-button"]').click();
+
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="direct-seeding-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('A');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid bed feet disables submit', () => {
@@ -111,6 +122,14 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="direct-seeding-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .type('22');
+    cy.get('[data-cy="direct-seeding-bed-feet"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   it('Invalid bed width disables submit', () => {
@@ -125,6 +144,14 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="direct-seeding-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .type('33');
+    cy.get('[data-cy="direct-seeding-bed-width"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
   // Note: There is no way to make Rows/Bed invalid.
@@ -156,26 +183,6 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
       .find('[data-cy="numeric-input"]')
       .clear();
     cy.get('[data-cy="soil-disturbance-speed"]')
-      .find('[data-cy="numeric-input"]')
-      .blur();
-
-    cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="submit-button"]').should('be.disabled');
-
-    cy.get('[data-cy="equipment-selector-1"]')
-      .find('[data-cy="selector-delete-button"]')
-      .click();
-
-    cy.get('[data-cy="submit-button"]').should('be.enabled');
-  });
-
-  it('Invalid area disables submit if equipment is selected', () => {
-    populateForm();
-    cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .clear();
-    cy.get('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
       .blur();
 
@@ -249,8 +256,5 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '0.0');
-    cy.get('[data-cy="soil-disturbance-area"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '');
   });
 });

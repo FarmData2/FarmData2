@@ -28,7 +28,7 @@
     "tgz:fd2": "tar -C modules/farm_fd2/dist/ -czf modules/farm_fd2/dist/farmdata2.tar.gz farmdata2",
     "zip:fd2": "cd modules/farm_fd2/dist/; zip -r farmdata2.zip farmdata2",
     "docs:gen": "makeDocs.bash",
-    "docs:view": "npx @mryhryki/markdown-preview --file docs/FarmData2.md --port 8082",
+    "docs:view": "npx @mryhryki/markdown-preview --file docs/index.md --port 8082",
     "printlog": "node bin/printFarmosLogs"
   },
   "dependencies": {
@@ -56,6 +56,7 @@
     "conventional-changelog-conventionalcommits": "^7.0.1",
     "cspell": "^6.31.2",
     "cypress": "12.17.4",
+    "cypress-vite": "^1.5.0",
     "docdash": "^2.0.2",
     "eslint": "^8.39.0",
     "eslint-plugin-cypress": "^2.13.3",
