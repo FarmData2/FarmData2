@@ -11,21 +11,91 @@ describe('Test the WinterKill component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Add tests for behavior here', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
+  it('Component reacts to changed checkboxState prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(WinterKill, {
       props: {
+        checkboxState: false,
         onReady: readySpy,
       },
-    });
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="winter-kill-checkbox"]').should('not.be.checked');
+          cy.get('[data-cy="winter-kill-date-group"]').should('not.exist');
 
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {});
+          wrapper.setProps({ checkboxState: true });
+
+          cy.get('[data-cy="winter-kill-checkbox"]').should('be.checked');
+          cy.get('[data-cy="winter-kill-date-group"]').should('exist');
+        });
+    });
+  });
+
+  it('Component reacts to changed date prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(WinterKill, {
+      props: {
+        checkboxState: true,
+        date: '1999-01-02',
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'have.value',
+            '1999-01-02'
+          );
+
+          wrapper.setProps({ date: '1999-01-03' });
+
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'have.value',
+            '1999-01-03'
+          );
+        });
+    });
+  });
+
+  it('Component reacts to changed showValidityStyling prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(WinterKill, {
+      props: {
+        checkboxState: true,
+        required: true,
+        date: 'invalid-date',
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'not.have.class',
+            'is-valid'
+          );
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'not.have.class',
+            'is-invalid'
+          );
+
+          wrapper.setProps({ showValidityStyling: true });
+
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'not.have.class',
+            'is-valid'
+          );
+          cy.get('[data-cy="winter-kill-date-input"]').should(
+            'have.class',
+            'is-invalid'
+          );
+        });
+    });
   });
 });
