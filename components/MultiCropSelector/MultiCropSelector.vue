@@ -20,16 +20,14 @@
         v-bind:id="'crop-selector-' + (i + 1)"
         v-bind:data-cy="'crop-selector-' + (i + 1)"
         invalidFeedbackText="Crop must be selected"
-        v-bind:includeAddButton="
-          i == this.selectedCrops.length && this.canCreateCrop
-        "
         v-bind:options="cropsList"
         v-bind:required="isRequired(i)"
         v-bind:selected="selected[i]"
         v-bind:showValidityStyling="showValidityStyling"
         v-on:update:selected="handleUpdateSelected($event, i)"
         v-on:valid="handleValid($event, i)"
-        v-on:add-clicked="handleAddClicked"
+        v-on:add-clicked="handleAddClicked($event, i)"
+        v-bind:popupUrl="includePopupUrl(i)"
       />
     </div>
   </div>
@@ -102,6 +100,7 @@ export default {
       valid: [null],
       cropsList: [],
       canCreateCrop: false,
+      popupUrl: null,
     };
   },
   computed: {
@@ -114,10 +113,37 @@ export default {
     },
   },
   methods: {
-    handleAddClicked() {
-      farmosUtil.clearCachedCrops();
-      window.location.href = '/admin/structure/taxonomy/manage/plant_type/add';
+    includePopupUrl(i) {
+      // determine if ith selector should have add button
+      if (i == this.selectedCrops.length) {
+        return this.popupUrl;
+      }
+      return null;
     },
+    async handleAddClicked(newCrop, i) {
+      // when the selector emits the add-clicked event
+      // clear the cached crops and repopulate the options
+      // to get the newly created crop, then select it
+
+      // If a new asset is provided, update the selected
+      if (newCrop) {
+        // Clear the cached
+        farmosUtil.clearCachedCrops();
+        // Populate the map and wait for it to complete
+        await this.populateCropList();
+        this.handleUpdateSelected(newCrop, i);
+      }
+    },
+    async populateCropList() {
+      try {
+        let cropMap = await farmosUtil.getCropNameToTermMap();
+        // Update asset list
+        this.cropsList = Array.from(cropMap.keys());
+      } catch (error) {
+        console.error('Error populating crop map:', error);
+      }
+    },
+
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedCrops.length - 1);
     },
@@ -164,6 +190,9 @@ export default {
         this.cropsList = Array.from(cropMap.keys());
         this.canCreateCrop = canCreate;
 
+        if (this.canCreateCrop) {
+          this.popupUrl = '/admin/structure/taxonomy/manage/plant_type/add';
+        }
         /**
          * The select has been populated with the list of crops and the component is ready to be used.
          */
