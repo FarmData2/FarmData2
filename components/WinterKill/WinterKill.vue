@@ -13,9 +13,9 @@
     <div class="grid">
       <BFormCheckbox
         id="winter-kill-checkbox"
+        data-cy="winter-kill-checkbox"
         v-model="selectedCheckbox"
         v-on:change="handleCheckboxChange"
-        data-cy="winter-kill-checkbox"
         size="lg"
       />
       <div v-if="selectedCheckbox">
@@ -25,6 +25,7 @@
           v-bind:class="{ 'full-width': !required }"
         >
           <sup
+            id="winter-kill-date-required"
             data-cy="winter-kill-date-required"
             v-if="required"
             class="text-danger"
@@ -186,18 +187,15 @@ export default {
     componentIsValid() {
       if (!this.selectedCheckbox) {
         return true;
-      }
-      if (this.required) {
+      } else if (this.required) {
         return this.isValid;
+      } else {
+        return true;
       }
-      return true;
     },
   },
   methods: {
-    /**
-     * Handles changes to the checkbox state and updates the date if the checkbox is selected.
-     * @param {Event} event
-     */
+    // Handles changes to the checkbox state and updates the date if the checkbox is selected.
     handleCheckboxChange(event) {
       const isChecked = event.target ? event.target.checked : event;
       this.selectedCheckbox = isChecked;
@@ -212,14 +210,12 @@ export default {
         const defaultDate = dayjs(new Date(nextYear, 0, 1)).format(
           'YYYY-MM-DD'
         );
+        this.chosenDate = defaultDate;
         this.$emit('update:date', defaultDate);
       }
-
       this.emitValidState();
     },
-    /**
-     * Emits the valid state of the component.
-     */
+    // Emits the valid state of the component.
     emitValidState() {
       /**
        * The validity of the component changed.
@@ -261,7 +257,6 @@ export default {
   created() {
     // Emit the initial valid state of the component's value.
     this.emitValidState();
-
     this.$emit('ready');
   },
 };

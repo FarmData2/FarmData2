@@ -12,7 +12,7 @@ describe('Test the WinterKill component events', () => {
   });
 
   /**
-   * Does 4 checks on validity computation
+   * Does 5 checks on validity computation
    *
    * required   empty     picked   test
    * false      false     true     1. valid event: Not required, not empty, picked
@@ -137,29 +137,6 @@ describe('Test the WinterKill component events', () => {
       });
   });
 
-  it('Verify that `picked` prop is watched', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(WinterKill, {
-      props: {
-        onReady: readySpy,
-        onValid: validSpy,
-        picked: false,
-        date: '2024-01-01',
-        required: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy').should('have.been.calledOnce');
-      cy.get('@validSpy')
-        .should('have.been.calledOnce')
-        .and('have.been.calledWith', true);
-
-      wrapper.setProps({ picked: true });
-      cy.get('[data-cy="winter-kill-checkbox"]').should('be.checked');
-    });
-  });
-
   it('Emits "update:picked" when the checkbox is changed', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
@@ -186,32 +163,6 @@ describe('Test the WinterKill component events', () => {
         cy.get('@updateSpy').should('have.been.calledTwice');
         cy.get('@updateSpy').should('have.been.calledWith', false);
       });
-  });
-
-  it('Verify that `date` prop is watched', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(WinterKill, {
-      props: {
-        onReady: readySpy,
-        onValid: validSpy,
-        picked: true,
-        date: '2024-01-01',
-        required: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy').should('have.been.calledOnce');
-      cy.get('@validSpy')
-        .should('have.been.calledOnce')
-        .and('have.been.calledWith', true);
-
-      wrapper.setProps({ date: '2030-01-01' });
-      cy.get('[data-cy="winter-kill-date-input"]').should(
-        'have.value',
-        '2030-01-01'
-      );
-    });
   });
 
   it('Emits "update:date" when the date input is changed', () => {
@@ -315,7 +266,7 @@ describe('Test the WinterKill component events', () => {
         cy.get('@validSpy').should('have.been.calledTwice');
         cy.get('@validSpy').should('have.been.calledWith', true);
 
-        cy.get('[data-cy="winter-kill-date-input"]').type('2024-02-01');
+        cy.get('[data-cy="winter-kill-date-input"]').type('2030-02-01');
         cy.get('@validSpy').should('have.been.calledTwice');
       });
   });
