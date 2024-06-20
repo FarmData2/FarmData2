@@ -69,7 +69,7 @@
             size="sm"
             v-on:click="this.form.selected.pop()"
           >
-            Remove Arugula
+            Remove Last
           </BButton>
         </td>
       </tr>
