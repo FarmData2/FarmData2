@@ -201,6 +201,10 @@ export default {
     handleCheckboxChange(event) {
       const isChecked = event.target ? event.target.checked : event;
       this.selectedCheckbox = isChecked;
+      /**
+       * The state of the checkbox changed.
+       * @property {boolean} event whether the checkbox is checked or not.
+       */
       this.$emit('update:picked', isChecked);
 
       if (isChecked && !this.chosenDate) {
@@ -217,6 +221,10 @@ export default {
      * Emits the valid state of the component.
      */
     emitValidState() {
+      /**
+       * The validity of the component changed.
+       * @property {boolean} event whether the component is valid or not.
+       */
       this.$emit('valid', this.componentIsValid);
     },
   },
@@ -231,6 +239,10 @@ export default {
      * Watches for changes in the chosen date and emits the updated date.
      */
     chosenDate() {
+      /**
+       * The selected date for winter kill changed.
+       * @property {string} event the new date value.
+       */
       this.$emit('update:date', this.chosenDate);
     },
     /**
@@ -250,9 +262,6 @@ export default {
     // Emit the initial valid state of the component's value.
     this.emitValidState();
 
-    /**
-     * The component is ready for use.
-     */
     this.$emit('ready');
   },
 };
