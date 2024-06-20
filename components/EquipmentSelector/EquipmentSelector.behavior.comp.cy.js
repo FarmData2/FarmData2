@@ -188,13 +188,14 @@ describe('Test the EquipmentSelector component behavior', () => {
       });
   });
 
-  it('Clicking add equipment button goes to the add equipment form and clears the equipment cache', () => {
+  it('Closing popup via close button does not clear/repopulate the cache', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept('GET', '**/asset/add/equipment', {
-      statusCode: 200,
-      body: 'Add Equipment Form',
-    }).as('urlIntercept');
+    cy.spy(EquipmentSelector.methods, 'populateEquipmentList').as(
+      'populateSpy'
+    );
+    cy.spy(EquipmentSelector.methods, 'handleAddClicked').as(
+      'handleAddClickedSpy'
+    );
 
     cy.mount(EquipmentSelector, {
       props: {
@@ -208,13 +209,14 @@ describe('Test the EquipmentSelector component behavior', () => {
             .null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.wait('@urlIntercept')
-            .its('response.statusCode')
-            .should('eq', 200)
-            .then(() => {
-              expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.be
-                .null;
-            });
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
+
+          cy.get('@handleAddClickedSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
+
+          expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.not.be
+            .null;
         });
     });
   });

@@ -12,13 +12,10 @@ describe('Test the CropSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Navigates to the add crop form and clears the crop cache on add button click', () => {
+  it('Closing popup via close button does not clear cache', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept('GET', '**/taxonomy/manage/plant_type/add', {
-      statusCode: 200,
-      body: 'Add Crop Form',
-    }).as('urlIntercept');
+    cy.spy(CropSelector.methods, 'populateCropList').as('populateSpy');
+    cy.spy(CropSelector.methods, 'handleAddClicked').as('handleAddClickedSpy');
 
     cy.mount(CropSelector, {
       props: {
@@ -31,12 +28,13 @@ describe('Test the CropSelector behaviors', () => {
           expect(farmosUtil.getFromGlobalVariableCache('crops')).to.not.be.null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.wait('@urlIntercept')
-            .its('response.statusCode')
-            .should('eq', 200)
-            .then(() => {
-              expect(farmosUtil.getFromGlobalVariableCache('crops')).to.be.null;
-            });
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
+
+          cy.get('@handleAddClickedSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
+
+          expect(farmosUtil.getFromGlobalVariableCache('crops')).to.not.be.null;
         });
     });
   });
