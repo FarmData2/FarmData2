@@ -19,6 +19,7 @@ describe('Test the WinterKill component events', () => {
    * false      true      2. valid event: Not required, empty
    * true       false     3. valid event: Required, not empty
    * true       true      4. valid event: Required, empty
+   * true       true      false    5. valid event: Required, empty, not picked
    */
 
   it('1. valid event: Not required, not empty', () => {
@@ -110,6 +111,29 @@ describe('Test the WinterKill component events', () => {
       .then(() => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', false);
+      });
+  });
+
+  it('5. valid event: Required, empty, not picked', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(WinterKill, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        picked: false,
+        date: '',
+        required: true,
+        showValidityStyling: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
