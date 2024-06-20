@@ -12,13 +12,12 @@ describe('Test the TraySizeSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Clicking add tray size button goes to the add tray size form and clears the tray_sizes cache', () => {
+  it('Closing popup via close button does not clear/repopulate the cache', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept('GET', '**/taxonomy/manage/tray_size/add', {
-      statusCode: 200,
-      body: 'Add Tray Size Form',
-    }).as('urlIntercept');
+    cy.spy(TraySizeSelector.methods, 'populateTraySizeList').as('populateSpy');
+    cy.spy(TraySizeSelector.methods, 'handleAddClicked').as(
+      'handleAddClickedSpy'
+    );
 
     cy.mount(TraySizeSelector, {
       props: {
@@ -32,13 +31,14 @@ describe('Test the TraySizeSelector behaviors', () => {
             .null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.wait('@urlIntercept')
-            .its('response.statusCode')
-            .should('eq', 200)
-            .then(() => {
-              expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.be
-                .null;
-            });
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
+
+          cy.get('@handleAddClickedSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
+
+          expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.not.be
+            .null;
         });
     });
   });
