@@ -14,11 +14,11 @@ describe('Test the WinterKill component events', () => {
   /**
    * Does 4 checks on validity computation
    *
-   * required   empty     test
-   * false      false     1. valid event: Not required, not empty
-   * false      true      2. valid event: Not required, empty
-   * true       false     3. valid event: Required, not empty
-   * true       true      4. valid event: Required, empty
+   * required   empty     picked   test
+   * false      false     true     1. valid event: Not required, not empty, picked
+   * false      true      true     2. valid event: Not required, empty, picked
+   * true       false     true     3. valid event: Required, not empty, picked
+   * true       true      true     4. valid event: Required, empty, picked
    * true       true      false    5. valid event: Required, empty, not picked
    */
 
