@@ -50,7 +50,7 @@ describe('EquipmentSelector popup test', () => {
     cy.get('[data-cy="selector-closePopup"]').click();
   });
 
-  it('Form selects new crop', () => {
+  it('Form selects new Equipment', () => {
     cy.get('.accordion-button').click();
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-add-button"]')
