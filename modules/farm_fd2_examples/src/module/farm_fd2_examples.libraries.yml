@@ -98,6 +98,16 @@ example_entry_point:
     component:
       style/style.css: {}
 
+multi_crop_selector:
+  js:
+    multi_crop_selector/multi_crop_selector.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
 winter_kill:
   js:
     winter_kill/winter_kill.js:
