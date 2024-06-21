@@ -107,3 +107,13 @@ multi_crop_selector:
   css:
     component:
       style/style.css: {}
+
+winter_kill:
+  js:
+    winter_kill/winter_kill.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
