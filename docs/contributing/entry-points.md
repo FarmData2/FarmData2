@@ -60,7 +60,7 @@ The "Submit" button provided does not submit any data to the farmOS server. Impl
 When you want to add a new entry point to FarmData2, the following command will generate a new entry point from the entry point template as a starting point for you:
 
 ```bash
-addEntryPoint.bash`
+addEntrypoint.bash
 ```
 
 This command will prompt you for the following information that will be used to create the new entry point:

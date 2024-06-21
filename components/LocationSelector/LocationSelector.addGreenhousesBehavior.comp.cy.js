@@ -12,13 +12,12 @@ describe('Test the LocationSelector component behavior for structures (e.g., gre
     cy.saveSessionStorage();
   });
 
-  it('Navigates to the add form and clears the greenhouses cache on add button click', () => {
+  it('Closing popup via close button does not clear/repopulate the cache', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept('GET', '**/asset/add/structure', {
-      statusCode: 200,
-      body: 'Add location Form',
-    }).as('urlIntercept');
+    cy.spy(LocationSelector.methods, 'populateLocationList').as('populateSpy');
+    cy.spy(LocationSelector.methods, 'handleAddClicked').as(
+      'handleAddClickedSpy'
+    );
 
     cy.mount(LocationSelector, {
       props: {
@@ -35,18 +34,19 @@ describe('Test the LocationSelector component behavior for structures (e.g., gre
           expect(farmosUtil.getFromGlobalVariableCache('greenhouses')).to.not.be
             .null;
           expect(farmosUtil.getFromGlobalVariableCache('beds')).to.be.null;
+
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.wait('@urlIntercept')
-            .its('response.statusCode')
-            .should('eq', 200)
-            .then(() => {
-              expect(farmosUtil.getFromGlobalVariableCache('fields')).to.be
-                .null;
-              expect(farmosUtil.getFromGlobalVariableCache('greenhouses')).to.be
-                .null;
-              expect(farmosUtil.getFromGlobalVariableCache('beds')).to.be.null;
-            });
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
+
+          cy.get('@handleAddClickedSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
+
+          expect(farmosUtil.getFromGlobalVariableCache('fields')).to.be.null;
+          expect(farmosUtil.getFromGlobalVariableCache('greenhouses')).to.not.be
+            .null;
+          expect(farmosUtil.getFromGlobalVariableCache('beds')).to.be.null;
         });
     });
   });

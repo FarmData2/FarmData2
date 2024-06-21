@@ -7,16 +7,14 @@
       v-bind:data-cy="'equipment-selector-' + (i + 1)"
       invalidFeedbackText="Equipment must be selected"
       v-bind:label="String(i + 1)"
-      v-bind:includeAddButton="
-        i == this.selectedEquipment.length && this.canCreateEquipment
-      "
       v-bind:options="equipmentList"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event, i)"
       v-on:valid="handleValid($event, i)"
-      v-on:add-clicked="handleAddClicked"
+      v-on:add-clicked="handleAddClicked($event, i)"
+      v-bind:popupUrl="includePopupUrl(i)"
     />
   </div>
 </template>
@@ -90,6 +88,7 @@ export default {
       valid: [null],
       equipmentList: [],
       canCreateEquipment: false,
+      popupUrl: null,
     };
   },
   computed: {
@@ -102,9 +101,38 @@ export default {
     },
   },
   methods: {
-    handleAddClicked() {
-      farmosUtil.clearCachedEquipment();
-      window.location.href = '/asset/add/equipment';
+    includePopupUrl(i) {
+      // determine if ith selector should have add button
+      if (i == this.selectedEquipment.length) {
+        return this.popupUrl;
+      }
+      return null;
+    },
+    async handleAddClicked(newEquipment, i) {
+      // when the selector emits the add-clicked event
+      // clear the cached equipment and repopulate the options
+      // to get the newly created equipment, then select it
+
+      // If a new asset is provided, update the selected
+      if (newEquipment) {
+        // Clear the cached
+        farmosUtil.clearCachedEquipment();
+
+        // Populate the map and wait for it to complete
+        await this.populateEquipmentList();
+
+        this.handleUpdateSelected(newEquipment, i);
+      }
+    },
+    async populateEquipmentList() {
+      try {
+        let equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
+
+        // Update asset list
+        this.equipmentList = Array.from(equipmentMap.keys());
+      } catch (error) {
+        console.error('Error populating equipment map:', error);
+      }
     },
     isRequired(i) {
       return this.required && (i == 0 || i < this.selectedEquipment.length - 1);
@@ -152,6 +180,9 @@ export default {
         this.canCreateEquipment = canCreate;
         this.equipmentList = Array.from(equipmentMap.keys());
 
+        if (this.canCreateEquipment) {
+          this.popupUrl = '/asset/add/equipment';
+        }
         //Emit the initial valid state of the component's value.
         //this.$emit('valid', this.isValid);
 
