@@ -48,3 +48,10 @@ farm.fd2_transplanting.content:
     _title: 'Transplanting'
   requirements:
     _permission: 'access content,update any plant asset,create activity log,create standard quantity'
+farm.fd2_cover_crop_seeding.content:
+  path: '/fd2/cover_crop_seeding'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
+    _title: 'Cover Crop Seeding'
+  requirements:
+    _permission: 'access content,create plant asset,create seeding log,create standard quantity,create activity log'
