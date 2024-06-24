@@ -454,6 +454,7 @@ export default {
   margin-top: 0px !important;
 }
 
+#cover-crop-seeding-crops,
 #cover-crop-seeding-location,
 #cover-crop-seeding-seed-incorporation-accordion {
   margin-top: 8px !important;

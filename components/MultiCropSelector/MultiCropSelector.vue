@@ -1,14 +1,18 @@
 <template>
-  <div
+  <BFormGroup
     id="multi-crop-selector"
     data-cy="multi-crop-selector"
+    label-cols="auto"
+    label-align="end"
   >
-    <label
-      id="multi-crop-selector-label"
-      data-cy="multi-crop-selector-label"
-      for="crop-selector-container"
-      >Crop(s)
-    </label>
+    <template v-slot:label>
+      <span
+        id="multi-crop-selector-label"
+        data-cy="multi-crop-selector-label"
+        >Crop(s)</span
+      >
+    </template>
+
     <div
       id="crop-selector-container"
       data-cy="crop-selector-container"
@@ -30,7 +34,7 @@
         v-bind:popupUrl="includePopupUrl(i)"
       />
     </div>
-  </div>
+  </BFormGroup>
 </template>
 
 <script>
@@ -210,15 +214,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-#multi-crop-selector {
-  display: flex;
-}
-#multi-crop-selector-label {
-  margin-right: 7px;
-  margin-top: 7px;
-}
-#crop-selector-container {
-  flex: 1;
-}
-</style>
