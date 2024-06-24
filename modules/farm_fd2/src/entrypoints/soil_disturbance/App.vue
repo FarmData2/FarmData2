@@ -58,12 +58,14 @@
           v-on:ready="createdCount++"
         />
 
+        <!-- Termination Event -->
         <BFormGroup
           id="termination-event-group"
           data-cy="termination-event-group"
           label-for="termination-event-checkbox"
           label-cols="auto"
           label-align="end"
+          v-if="this.checkPlantsAtLocation()"
         >
           <template v-slot:label>
             <span
@@ -163,6 +165,7 @@ import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 export default {
   components: {
@@ -215,6 +218,11 @@ export default {
     },
   },
   methods: {
+    checkPlantsAtLocation() {
+      return (
+        farmosUtil.getPlantAssets(this.form.location, this.form.beds) != []
+      );
+    },
     handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
     },

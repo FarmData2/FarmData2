@@ -1645,6 +1645,96 @@ export async function getPlantAsset(plantAssetId) {
 }
 
 /**
+ * Get the plant assets at the specified location.
+ *
+ * @param {string} locationName the name of the location.
+ * @param {string[]} [checkedBeds=[]] the beds to look for.
+ * @param {boolean} [isInGround=true] look for plants in the ground.
+ * @param {boolean} [isInTrays=true] look for plants in trays.
+ * @return {Object} the plant assets at the specified location.
+ * @throws {Error} if unable to fetch the plant assets.
+ *
+ * @category Plant
+ */
+export async function getPlantAssets(
+  locationName,
+  checkedBeds = [],
+  isInTrays = true,
+  isInGround = true
+) {
+  const farm = await getFarmOSInstance();
+
+  // If both isInTrays and isInGround are false, return null
+  if (!isInTrays && !isInGround) {
+    return [];
+  }
+
+  // Get the map of field names to field assets
+  const fieldNameToAssetMap = await getFieldNameToAssetMap();
+  const bedNameToAssetMap = await getBedNameToAssetMap();
+
+  // Find the field asset that matches the location name
+  const fieldAsset = fieldNameToAssetMap.get(locationName);
+  if (!fieldAsset) {
+    return [];
+  }
+
+  // Fetch all plant assets
+  const plantAssets = await farm.asset.fetch({
+    filter: { type: 'asset--plant' },
+  });
+
+  // Filter and check each plant asset
+  const matchingPlantAssetIds = [];
+  for (const plantAsset of plantAssets.data) {
+    const locations = plantAsset.relationships.location;
+
+    // Check if the plant asset has the status "active"
+    if (plantAsset.attributes.status !== 'active') {
+      continue;
+    }
+
+    let addToResults = false;
+
+    if (isInTrays && isInGround) {
+      addToResults = true;
+    } else if (isInTrays && !isInGround) {
+      if (plantAsset.attributes.inventory) {
+        addToResults = true;
+      }
+    } else if (!isInTrays && isInGround) {
+      if (!plantAsset.attributes.inventory) {
+        addToResults = true;
+      }
+    }
+
+    if (addToResults) {
+      // Check if the first location (field) matches
+      console.log(locations);
+      if (locations.length > 0 && locations[0].id === fieldAsset.id) {
+        if (checkedBeds.length === 0) {
+          // If no beds to check, add the plant asset ID to the result array
+          matchingPlantAssetIds.push(plantAsset.id);
+        } else {
+          // Check if all checked beds are in the locations
+          const bedIds = locations.slice(1).map((location) => location.id);
+          const allBedsMatch = checkedBeds.every((bedName) => {
+            const bedAsset = bedNameToAssetMap.get(bedName);
+            return bedAsset && bedIds.includes(bedAsset.id);
+          });
+          if (allBedsMatch) {
+            matchingPlantAssetIds.push(plantAsset.id);
+          }
+        }
+      }
+    }
+  }
+
+  // Return the array of matching plant asset IDs
+  return matchingPlantAssetIds;
+}
+
+/**
  * Delete the plant asset with the specified id.
  *
  * @param {string} plantAssetId the id of the plant asset.
