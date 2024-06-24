@@ -1,34 +1,35 @@
 <template>
-  <div
-    id="multi-crop-selector"
-    data-cy="multi-crop-selector"
-  >
-    <label
-      id="multi-crop-selector-label"
-      data-cy="multi-crop-selector-label"
-      for="crop-selector-container"
-      >Crop(s)
-    </label>
+  <div>
     <div
-      id="crop-selector-container"
-      data-cy="crop-selector-container"
+      id="multi-crop-selector"
+      data-cy="multi-crop-selector"
     >
-      <SelectorBase
-        v-for="(selectedCrops, i) in ['', ...selectedCrops]"
-        v-bind:key="i"
-        v-bind:label="String(i + 1)"
-        v-bind:id="'crop-selector-' + (i + 1)"
-        v-bind:data-cy="'crop-selector-' + (i + 1)"
-        invalidFeedbackText="Crop must be selected"
-        v-bind:options="cropsList"
-        v-bind:required="isRequired(i)"
-        v-bind:selected="selected[i]"
-        v-bind:showValidityStyling="showValidityStyling"
-        v-on:update:selected="handleUpdateSelected($event, i)"
-        v-on:valid="handleValid($event, i)"
-        v-on:add-clicked="handleAddClicked($event, i)"
-        v-bind:popupUrl="includePopupUrl(i)"
-      />
+      <label
+        id="multi-crop-selector-label"
+        data-cy="multi-crop-selector-label"
+        >Crop(s)</label
+      >
+      <div
+        id="crop-selector-container"
+        data-cy="crop-selector-container"
+      >
+        <SelectorBase
+          v-for="(selectedCrops, i) in ['', ...selectedCrops]"
+          v-bind:key="i"
+          v-bind:label="String(i + 1)"
+          v-bind:id="'crop-selector-' + (i + 1)"
+          v-bind:data-cy="'crop-selector-' + (i + 1)"
+          invalidFeedbackText="Crop must be selected"
+          v-bind:options="cropsList"
+          v-bind:required="isRequired(i)"
+          v-bind:selected="selected[i]"
+          v-bind:showValidityStyling="showValidityStyling"
+          v-on:update:selected="handleUpdateSelected($event, i)"
+          v-on:valid="handleValid($event, i)"
+          v-on:add-clicked="handleAddClicked($event, i)"
+          v-bind:popupUrl="includePopupUrl(i)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -210,15 +211,36 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 #multi-crop-selector {
-  display: flex;
+  display: block;
+  width: 100%;
+  background-color: #ffff;
+  border-style: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  box-shadow: none !important;
+  margin-top: 8px !important;
 }
+
 #multi-crop-selector-label {
-  margin-right: 7px;
-  margin-top: 7px;
+  display: block;
+  text-align: center;
+  color: #212529;
+  font-size: 1.15rem;
+  font-weight: 350;
+  border-bottom: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
 }
 #crop-selector-container {
-  flex: 1;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  padding-top: 8px;
 }
 </style>
