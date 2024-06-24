@@ -28,13 +28,16 @@ async function submitForm(formData) {
     const archivedPlants = {
       name: 'archivedPlants',
       do: async () => {
-        let archivedPlants = [];
-        for (const plantID of formData.terminatedPlants) {
-          archivedPlants.push(
-            await farmosUtil.archivePlantAsset(plantID, true)
-          );
+        if (formData.termination) {
+          let archivedPlants = [];
+          for (const plantID of formData.terminatedPlants) {
+            archivedPlants.push(
+              await farmosUtil.archivePlantAsset(plantID, true)
+            );
+          }
+          return archivedPlants;
         }
-        return archivedPlants;
+        return null;
       },
       undo: async () => {
         for (const plantID of formData.terminatedPlants) {
