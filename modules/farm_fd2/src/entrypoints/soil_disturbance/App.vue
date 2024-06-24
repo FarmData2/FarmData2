@@ -54,6 +54,7 @@
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="(checkedBeds) => handleBedsUpdate(checkedBeds)"
+          v-on:update:selected="(location) => handleLocationUpdate(location)"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
@@ -65,7 +66,7 @@
           label-for="termination-event-checkbox"
           label-cols="auto"
           label-align="end"
-          v-if="this.checkPlantsAtLocation()"
+          v-if="this.plantsAtLocation"
         >
           <template v-slot:label>
             <span
@@ -182,6 +183,7 @@ export default {
         location: null,
         beds: [],
         termination: false,
+        terminatedPlants: [],
         equipment: [],
         depth: 0,
         speed: 0,
@@ -199,6 +201,7 @@ export default {
       submitting: false,
       errorShowing: false,
       createdCount: 0,
+      plantsAtLocation: false,
     };
   },
   computed: {
@@ -218,13 +221,27 @@ export default {
     },
   },
   methods: {
-    checkPlantsAtLocation() {
-      return (
-        farmosUtil.getPlantAssets(this.form.location, this.form.beds) != []
-      );
+    async checkPlantsAtLocation() {
+      try {
+        let results = await farmosUtil.getPlantAssets(
+          this.form.location,
+          this.form.beds
+        );
+        this.form.terminatedPlants = results;
+        this.plantsAtLocation = results.length > 0;
+      } catch (error) {
+        console.error('Error fetching plant assets:', error);
+        this.form.terminatedPlants = [];
+        this.plantsAtLocation = false;
+      }
+    },
+    handleLocationUpdate(location) {
+      this.form.location = location;
+      this.checkPlantsAtLocation();
     },
     handleBedsUpdate(checkedBeds) {
       this.form.beds = checkedBeds;
+      this.checkPlantsAtLocation();
     },
     submit() {
       this.submitting = true;

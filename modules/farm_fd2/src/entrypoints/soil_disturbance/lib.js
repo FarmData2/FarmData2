@@ -1,19 +1,8 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 /**
- * TODO:
- *  - create the operation objects necessary to create the
- *    logs, assets and quantities needed by the form.
- *  - push each operation object to `ops`.
- *  - Update the JSDoc comments on the `submitForm` function below.
- *  - Complete the tasks in the TODO comments in the template below.
- *  - Delete the TODO comments.
- *  - Delete this comment block.
- */
-
-/**
  * Create the farmOS records (asset, quantities and log) to represent
- * ... TODO: update the description ....
+ * a soil disturbance
  *
  * @param {Object} form the form containing the data from the entry point.
  * @returns {Promise} a promise that resolves when the records are successfully created.
@@ -21,62 +10,130 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * were sent to the server.  This object has the following properties:
  * ```Javascript
  * {
- *   ... TODO: add attribute names and types. For example...
- *   sampleOp: {log--seeding},
+ *   equipment: [ {asset--equipment} ],
+ *   archivedPlants: [ {asset--plant} ],
+ *   depth: {quantity--standard},
+ *   speed: {quantity--standard},
+ *   area: {quantity--standard},
+ *   activityLog: [ {log--activity} ],
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-async function submitForm(form) {
+async function submitForm(formData) {
   try {
     let ops = [];
+    const equipmentAssets = [];
 
-    /*
-     * This sampleOP creates a plant asset to illustrate how an operation works.
-     *
-     * TODO: Delete or customize this sampleOp and add new operations that
-     *       create the logs, assets and quantities needed by the new entry point.
-     *
-     *       See:
-     *         - the `modules/farm_fd2/src/entrypoints/tray_seeding/lib.js`
-     *           file for examples of using operation objects to create
-     *           logs, assets and quantities.
-     *
-     *         - the documentation for the `runTransaction` function in
-     *           `libraries/farmosUtil.js` for detailed information about
-     *           the operation objects.
-     */
-    const sampleOp = {
-      name: 'sampleOp',
+    const archivedPlants = {
+      name: 'archivedPlants',
       do: async () => {
-        /*
-         * Add a little delay here so to be sure the e2e tests have
-         * enough time to see the "Submitting" toast.  Production
-         * operations should not include this.
-         */
-        await new Promise((r) => setTimeout(r, 2000));
+        let archivedPlants = [];
+        for (const plantID of formData.terminatedPlants) {
+          archivedPlants.push(
+            await farmosUtil.archivePlantAsset(plantID, true)
+          );
+        }
+        return archivedPlants;
+      },
+      undo: async () => {
+        for (const plantID of formData.terminatedPlants) {
+          await farmosUtil.archivePlantAsset(plantID, false);
+        }
+      },
+    };
+    ops.push(archivedPlants);
 
-        /*
-         * Create and return the asset, log or quantity for
-         * this operation using the functions in farmosUtil.
-         */
-        return await farmosUtil.createPlantAsset(
-          form.date,
-          'ZUCCHINI', // Just for sampleOp because crop not in App.vue form.
-          form.comment
+    const depthQuantity = {
+      name: 'depthQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'length',
+          formData.depth,
+          'Depth',
+          'INCHES'
         );
       },
       undo: async (results) => {
-        await farmosUtil.deletePlantAsset(results['sampleOp'].id);
+        await farmosUtil.deleteStandardQuantity(results['depthQuantity'].id);
       },
     };
-    // Add the operation to the ops for the transaction.
-    ops.push(sampleOp);
+    ops.push(depthQuantity);
 
-    // Run all of the operations in ops as a transaction.
-    return await farmosUtil.runTransaction(ops);
+    const speedQuantity = {
+      name: 'speedQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'rate',
+          formData.speed,
+          'Speed',
+          'MPH'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['speedQuantity'].id);
+      },
+    };
+    ops.push(speedQuantity);
+
+    const areaQuantity = {
+      name: 'areaQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'ratio',
+          formData.area,
+          'Area',
+          'PERCENT'
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
+      },
+    };
+    ops.push(areaQuantity);
+
+    const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
+    for (const equipmentName of formData.equipment) {
+      equipmentAssets.push(equipmentMap.get(equipmentName));
+    }
+
+    const activityLog = {
+      name: 'activityLog',
+      do: async (results) => {
+        let logs = [];
+        for (let i = 0; i < formData.passes; i++) {
+          logs.push(
+            await farmosUtil.createSoilDisturbanceActivityLog(
+              formData.date,
+              formData.location,
+              formData.beds,
+              ['tillage'],
+              results.archivedPlants,
+              [
+                results.depthQuantity,
+                results.speedQuantity,
+                results.areaQuantity,
+              ],
+              equipmentAssets
+            )
+          );
+        }
+        return logs;
+      },
+      undo: async (results) => {
+        for (const log of results['activityLog']) {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(log.id);
+        }
+      },
+    };
+    ops.push(activityLog);
+
+    const result = await farmosUtil.runTransaction(ops);
+    result['equipment'] = equipmentAssets;
+
+    return result;
   } catch (error) {
-    console.error('soil_disturbance lib.js:');
+    console.error('SoilDisturbance: \n' + error.message);
     console.error(error);
 
     let errorMsg = 'Error creating Soil Disturbance records.';

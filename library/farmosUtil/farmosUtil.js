@@ -1710,7 +1710,6 @@ export async function getPlantAssets(
 
     if (addToResults) {
       // Check if the first location (field) matches
-      console.log(locations);
       if (locations.length > 0 && locations[0].id === fieldAsset.id) {
         if (checkedBeds.length === 0) {
           // If no beds to check, add the plant asset ID to the result array
@@ -2155,7 +2154,11 @@ export async function createSoilDisturbanceActivityLog(
     },
     relationships: {
       location: locationArray,
-      asset: plantAsset ? [{ type: 'asset--plant', id: plantAsset.id }] : [],
+      asset: Array.isArray(plantAsset)
+        ? plantAsset.map((asset) => ({ type: 'asset--plant', id: asset.id }))
+        : plantAsset
+        ? [{ type: 'asset--plant', id: plantAsset.id }]
+        : [],
       category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,
