@@ -1,40 +1,37 @@
 <template>
-  <BFormGroup
-    id="multi-crop-selector"
-    data-cy="multi-crop-selector"
-    label-cols="auto"
-    label-align="end"
-  >
-    <template v-slot:label>
-      <span
+  <div>
+    <div
+      id="multi-crop-selector"
+      data-cy="multi-crop-selector"
+    >
+      <label
         id="multi-crop-selector-label"
         data-cy="multi-crop-selector-label"
-        >Crop(s)</span
+        >Crop(s)</label
       >
-    </template>
-
-    <div
-      id="crop-selector-container"
-      data-cy="crop-selector-container"
-    >
-      <SelectorBase
-        v-for="(selectedCrops, i) in ['', ...selectedCrops]"
-        v-bind:key="i"
-        v-bind:label="String(i + 1)"
-        v-bind:id="'crop-selector-' + (i + 1)"
-        v-bind:data-cy="'crop-selector-' + (i + 1)"
-        invalidFeedbackText="Crop must be selected"
-        v-bind:options="cropsList"
-        v-bind:required="isRequired(i)"
-        v-bind:selected="selected[i]"
-        v-bind:showValidityStyling="showValidityStyling"
-        v-on:update:selected="handleUpdateSelected($event, i)"
-        v-on:valid="handleValid($event, i)"
-        v-on:add-clicked="handleAddClicked($event, i)"
-        v-bind:popupUrl="includePopupUrl(i)"
-      />
+      <div
+        id="crop-selector-container"
+        data-cy="crop-selector-container"
+      >
+        <SelectorBase
+          v-for="(selectedCrops, i) in ['', ...selectedCrops]"
+          v-bind:key="i"
+          v-bind:label="String(i + 1)"
+          v-bind:id="'crop-selector-' + (i + 1)"
+          v-bind:data-cy="'crop-selector-' + (i + 1)"
+          invalidFeedbackText="Crop must be selected"
+          v-bind:options="cropsList"
+          v-bind:required="isRequired(i)"
+          v-bind:selected="selected[i]"
+          v-bind:showValidityStyling="showValidityStyling"
+          v-on:update:selected="handleUpdateSelected($event, i)"
+          v-on:valid="handleValid($event, i)"
+          v-on:add-clicked="handleAddClicked($event, i)"
+          v-bind:popupUrl="includePopupUrl(i)"
+        />
+      </div>
     </div>
-  </BFormGroup>
+  </div>
 </template>
 
 <script>
@@ -214,3 +211,36 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#multi-crop-selector {
+  display: block;
+  width: 100%;
+  background-color: #ffff;
+  border-style: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  box-shadow: none !important;
+  margin-top: 8px !important;
+}
+
+#multi-crop-selector-label {
+  display: block;
+  text-align: center;
+  color: #212529;
+  font-size: 1.15rem;
+  font-weight: 350;
+  border-bottom: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+#crop-selector-container {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  padding-top: 8px;
+}
+</style>

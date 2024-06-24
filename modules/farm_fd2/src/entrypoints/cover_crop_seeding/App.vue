@@ -78,8 +78,6 @@
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
         />
 
-        <hr />
-
         <NumericInput
           id="cover-crop-seeding-area-seeded"
           data-cy="cover-crop-seeding-area-seeded"
@@ -113,8 +111,6 @@
           "
           v-on:ready="createdCount++"
         />
-
-        <hr class="small-top" />
 
         <BAccordion
           flush
@@ -233,8 +229,6 @@
             />
           </BAccordionItem>
         </BAccordion>
-
-        <hr />
 
         <CommentBox
           id="cover-crop-seeding-comment"
@@ -454,12 +448,14 @@ export default {
   margin-top: 0px !important;
 }
 
-#cover-crop-seeding-crops,
 #cover-crop-seeding-location,
 #cover-crop-seeding-seed-incorporation-accordion {
   margin-top: 8px !important;
 }
 
+#cover-crop-seeding-winter-kill {
+  margin-bottom: 2px;
+}
 #cover-crop-seeding-area-seeded {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -471,6 +467,7 @@ export default {
 }
 
 #cover-crop-seeding-comment {
+  margin-top: 8px;
   margin-bottom: 15px;
 }
 </style>
