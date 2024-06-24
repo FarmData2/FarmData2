@@ -17,10 +17,69 @@ describe('Cover Crop Seeding: Submission tests', () => {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
 
-    /*
-     * TODO: Add code to fill in values for other fields as they
-     *       are added to the input form.
-     */
+    cy.get('[data-cy="location-selector"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="picker-group"]').find('input').eq(0).check();
+    cy.get('[data-cy="picker-group"]').find('input').eq(2).check();
+
+    cy.get('[data-cy="crop-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('ARUGULA');
+    cy.get('[data-cy="crop-selector-2"]')
+      .find('[data-cy="selector-input"]')
+      .select('BEAN');
+
+    cy.get('[data-cy="winter-kill-checkbox"]').check();
+    cy.get('[data-cy="winter-kill-date-input"]').type('1951-01-02');
+
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type('1');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
+
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Portable Broadcaster');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type('3');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type('4');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -77,23 +136,35 @@ describe('Cover Crop Seeding: Submission tests', () => {
 
       let formData = spy.getCall(0).args[0];
       expect(formData.date).to.equal('1950-01-02');
-      /*
-       * TODO: Add checks for the other parts of the formData
-       *       as they are added to the input form.
-       */
+      expect(formData.location).to.equal('ALF');
+      expect(formData.beds).to.have.length(2);
+      expect(formData.beds[0]).to.equal('ALF-1');
+      expect(formData.beds[1]).to.equal('ALF-3');
+      expect(formData.areaSeeded).to.equal(50);
+      expect(formData.winterKill).to.equal(true);
+      expect(formData.winterKillDate).to.equal('1951-01-02');
+
+      expect(formData.seedApplicationEquipment).to.have.length(1);
+      expect(formData.seedApplicationEquipment[0]).to.equal('Tractor');
+      expect(formData.seedApplicationDepth).to.equal(1);
+      expect(formData.seedApplicationSpeed).to.equal(2);
+
+      expect(formData.seedIncorporationEquipment).to.have.length(1);
+      expect(formData.seedIncorporationEquipment[0]).to.equal(
+        'Portable Broadcaster'
+      );
+      expect(formData.seedIncorporationDepth).to.equal(3);
+      expect(formData.seedIncorporationSpeed).to.equal(4);
+
       expect(formData.comment).to.equal('test comment');
     });
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
 
-    // Check that the other parts of the form are reset.
-    cy.get('[data-cy="comment-input"]').should('have.value', '');
+    cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
-    /*
-     * TODO: Add checks above to ensure that newly added parts of the
-     *       form are reset.
-     */
+    // Check that the other parts of the form are reset.
 
     // Check that the success toast is hidden.
     cy.get('.toast').should('not.exist');
