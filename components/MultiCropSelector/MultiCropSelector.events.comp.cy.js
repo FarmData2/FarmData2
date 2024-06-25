@@ -94,6 +94,36 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
+  it('Emits valid false when prop changed to contain no selections', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(MultiCropSelector, {
+      props: {
+        onReady: readySpy,
+        onValid: validSpy,
+        required: true,
+        selected: ['BROCCOLI', 'ARUGULA'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        })
+        .then(() => {
+          /*
+           * Without extra then here, the wrapper.setProps usually executes before
+           * the cy.get() above, causing the test to fail.
+           */
+          wrapper.setProps({ selected: [] });
+          cy.get('@validSpy').should('have.been.calledTwice');
+          cy.get('@validSpy').should('have.been.calledWith', false);
+        });
+    });
+  });
+
   it('Emits "update:selected" when first selection is changed', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
