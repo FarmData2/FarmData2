@@ -174,64 +174,72 @@ describe('Test the Soil Disturbance lib submission', () => {
 
   Cypress._.times(2, (i) => {
     it('Check the soil disturbance log--activity ' + (i + 1), () => {
-      expect(results.activityLog.length).to.equal(form.passes);
+      //expect(results.activityLog.length).to.equal(form.passes);
 
       //check first log
-      expect(results.activityLog[i].type).to.equal('log--activity');
-      expect(results.activityLog[i].attributes.name).to.equal(
+      expect(results['activityLog' + i].type).to.equal('log--activity');
+      expect(results['activityLog' + i].attributes.name).to.equal(
         form.date + '_sd_' + form.location
       );
-      expect(results.activityLog[i].attributes.timestamp).to.contain(form.date);
+      expect(results['activityLog' + i].attributes.timestamp).to.contain(
+        form.date
+      );
 
       // check locations
-      expect(results.activityLog[i].relationships.location.length).to.equal(3);
-      expect(results.activityLog[i].relationships.location[0].id).to.equal(
+      expect(results['activityLog' + i].relationships.location.length).to.equal(
+        3
+      );
+      expect(results['activityLog' + i].relationships.location[0].id).to.equal(
         fieldMap.get(form.location).id
       );
-      expect(results.activityLog[i].relationships.location[1].id).to.equal(
+      expect(results['activityLog' + i].relationships.location[1].id).to.equal(
         bedMap.get(form.beds[0]).id
       );
-      expect(results.activityLog[i].relationships.location[2].id).to.equal(
+      expect(results['activityLog' + i].relationships.location[2].id).to.equal(
         bedMap.get(form.beds[1]).id
       );
 
       // check plant assets
-      expect(results.activityLog[i].relationships.asset).to.have.length(
+      expect(results['activityLog' + i].relationships.asset).to.have.length(
         form.terminatedPlants.length
       );
-      expect(results.activityLog[i].relationships.asset[0].id).to.equal(
+      expect(results['activityLog' + i].relationships.asset[0].id).to.equal(
         results.archivedPlants[0].id
       );
-      expect(results.activityLog[i].relationships.asset[1].id).to.equal(
+      expect(results['activityLog' + i].relationships.asset[1].id).to.equal(
         results.archivedPlants[1].id
       );
 
       // check category
-      expect(results.activityLog[i].relationships.category.length).to.equal(1);
-      expect(results.activityLog[i].relationships.category[0].id).to.equal(
+      expect(results['activityLog' + i].relationships.category.length).to.equal(
+        1
+      );
+      expect(results['activityLog' + i].relationships.category[0].id).to.equal(
         categoryMap.get('tillage').id
       );
 
       // check quantities
-      expect(results.activityLog[i].relationships.quantity.length).to.equal(3);
-      expect(results.activityLog[i].relationships.quantity[0].id).to.equal(
+      expect(results['activityLog' + i].relationships.quantity.length).to.equal(
+        3
+      );
+      expect(results['activityLog' + i].relationships.quantity[0].id).to.equal(
         results.depthQuantity.id
       );
-      expect(results.activityLog[i].relationships.quantity[1].id).to.equal(
+      expect(results['activityLog' + i].relationships.quantity[1].id).to.equal(
         results.speedQuantity.id
       );
-      expect(results.activityLog[i].relationships.quantity[2].id).to.equal(
+      expect(results['activityLog' + i].relationships.quantity[2].id).to.equal(
         results.areaQuantity.id
       );
 
       // check equipment
-      expect(results.activityLog[i].relationships.equipment.length).to.equal(
-        form.equipment.length
-      );
-      expect(results.activityLog[i].relationships.equipment[0].id).to.equal(
+      expect(
+        results['activityLog' + i].relationships.equipment.length
+      ).to.equal(form.equipment.length);
+      expect(results['activityLog' + i].relationships.equipment[0].id).to.equal(
         equipmentMap.get(form.equipment[0]).id
       );
-      expect(results.activityLog[i].relationships.equipment[1].id).to.equal(
+      expect(results['activityLog' + i].relationships.equipment[1].id).to.equal(
         equipmentMap.get(form.equipment[1]).id
       );
     });

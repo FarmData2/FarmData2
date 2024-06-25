@@ -15,7 +15,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   depth: {quantity--standard},
  *   speed: {quantity--standard},
  *   area: {quantity--standard},
- *   activityLog: [ {log--activity} ],
+ *   activityLog(i): {log--activity},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
@@ -100,36 +100,66 @@ async function submitForm(formData) {
       equipmentAssets.push(equipmentMap.get(equipmentName));
     }
 
-    const activityLog = {
-      name: 'activityLog',
-      do: async (results) => {
-        let logs = [];
-        for (let i = 0; i < formData.passes; i++) {
-          logs.push(
-            await farmosUtil.createSoilDisturbanceActivityLog(
-              formData.date,
-              formData.location,
-              formData.beds,
-              ['tillage'],
-              results.archivedPlants,
-              [
-                results.depthQuantity,
-                results.speedQuantity,
-                results.areaQuantity,
-              ],
-              equipmentAssets
-            )
+    // const activityLog = {
+    //   name: 'activityLog',
+    //   do: async (results) => {
+    //     let logs = [];
+    //     for (let i = 0; i < formData.passes; i++) {
+    //       logs.push(
+    //         await farmosUtil.createSoilDisturbanceActivityLog(
+    //           formData.date,
+    //           formData.location,
+    //           formData.beds,
+    //           ['tillage'],
+    //           results.archivedPlants,
+    //           [
+    //             results.depthQuantity,
+    //             results.speedQuantity,
+    //             results.areaQuantity,
+    //           ],
+    //           equipmentAssets
+    //         )
+    //       );
+    //     }
+    //     return logs;
+    //   },
+    //   undo: async (results) => {
+    //     console.log('tried to delete activity log');
+    //     if (results['activityLog']) {
+    //       for (const log of results['activityLog']) {
+    //         await farmosUtil.deleteSoilDisturbanceActivityLog(log.id);
+    //       }
+    //     }
+    //   },
+    // };
+    // ops.push(activityLog);
+
+    for (let i = 0; i < formData.passes; i++) {
+      const activityLog = {
+        name: 'activityLog' + i,
+        do: async (results) => {
+          return await farmosUtil.createSoilDisturbanceActivityLog(
+            formData.date,
+            formData.location,
+            formData.beds,
+            ['tillage'],
+            results.archivedPlants,
+            [
+              results.depthQuantity,
+              results.speedQuantity,
+              results.areaQuantity,
+            ],
+            equipmentAssets
           );
-        }
-        return logs;
-      },
-      undo: async (results) => {
-        for (const log of results['activityLog']) {
-          await farmosUtil.deleteSoilDisturbanceActivityLog(log.id);
-        }
-      },
-    };
-    ops.push(activityLog);
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(
+            results['activityLog' + i].id
+          );
+        },
+      };
+      ops.push(activityLog);
+    }
 
     const result = await farmosUtil.runTransaction(ops);
     result['equipment'] = equipmentAssets;

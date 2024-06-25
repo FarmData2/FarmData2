@@ -1,96 +1,145 @@
-// import { lib } from './lib';
+import { lib } from './lib';
+import { lib as directSeedingLib } from '../direct_seeding/lib.js';
 
-// describe('Test the Soil Disturbance lib submission error', () => {
-//   /*
-//    * TODO: Create a form object that has the same format as the
-//    *       data.form object used in the entry point.
-//    *
-//    *       This will be passed to the lib functions as if it is
-//    *       coming from the entry point as a submission.
-//    */
-//   let form = {
-//     seedingDate: '1950-01-02',
-//     comment: 'A comment',
-//   };
+describe('Test the Soil Disturbance lib submission error', () => {
+  let directSeedingBroccoli = {
+    seedingDate: '1950-01-02',
+    cropName: 'BROCCOLI',
+    locationName: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    bedFeet: 100,
+    rowsPerBed: '3',
+    bedWidth: 60,
+    equipment: ['Tractor'],
+    depth: 6,
+    speed: 5,
+    comment: 'A comment',
+  };
 
-//   beforeEach(() => {
-//     cy.restoreLocalStorage();
-//     cy.restoreSessionStorage();
-//   });
+  let directSeedingBean = {
+    seedingDate: '1950-01-02',
+    cropName: 'BEAN',
+    locationName: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    bedFeet: 100,
+    rowsPerBed: '3',
+    bedWidth: 60,
+    equipment: ['Tractor'],
+    depth: 6,
+    speed: 5,
+    comment: 'A comment',
+  };
 
-//   afterEach(() => {
-//     cy.saveLocalStorage();
-//     cy.saveSessionStorage();
-//   });
+  let form = {
+    date: '1950-01-02',
+    location: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    termination: true,
+    terminatedPlants: [],
+    equipment: ['Tractor', 'Rake'],
+    depth: 5,
+    speed: 6,
+    passes: 2,
+    area: 100,
+    comment: 'A comment',
+  };
 
-//   it(
-//     'Soil Disturbance: records are deleted if there is a submission error',
-//     { retries: 4 },
-//     () => {
-//       /*
-//        * TODO: Modify the API path below to create a error on submission of the
-//        *       last asset, log or quantity that is created by %ENTRY_POINT%/lib.js.
-//        *       At that point all other records should have been created and thus
-//        *       should also all be deleted by their operation's `undo` function when
-//        *       the error occurs.
-//        *
-//        *       For examples, see the lib.submitError.unit.cy.js files in:
-//        *         - modules/farm_fd2/src/entrypoints/tray_seeding
-//        *         - modules/farm_fd2/src/entrypoints/direct_seeding
-//        */
-//       cy.intercept('POST', '**/api/asset/*', {
-//         statusCode: 401,
-//       });
+  before(() => {
+    cy.wrap(directSeedingLib.submitForm(directSeedingBroccoli), {
+      timeout: 10000,
+    })
+      .then((resultsBroccoli) => {
+        form.terminatedPlants.push(resultsBroccoli.plantAsset.id);
+        return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
+          timeout: 10000,
+        });
+      })
+      .then((resultsBean) => {
+        form.terminatedPlants.push(resultsBean.plantAsset.id);
+      });
+  });
 
-//       /*
-//        * TODO: Create an intercept with a spy for each of the endpoints
-//        *       where records are being deleted to count the number of deletions
-//        *       that occur.  We'll then check that each spy was called the
-//        *       appropriate number of times.  Note that this doesn't actually check
-//        *       the database, but it does tell us that the API requests was made
-//        *       which gives reasonably high confidence that everything worked.
-//        *
-//        *       For examples, see the lib.submitError.unit.cy.js files in:
-//        *         - modules/farm_fd2/src/entrypoints/tray_seeding
-//        *         - modules/farm_fd2/src/entrypoints/direct_seeding
-//        */
-//       let plantAssetDeletes = 0;
-//       cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
-//         plantAssetDeletes++;
-//         req.reply({
-//           statusCode: 401,
-//         });
-//       });
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
 
-//       cy.wrap(
-//         lib
-//           .submitForm(form)
-//           .then(() => {
-//             // Shouldn't run because submitForm throws an error.
-//             throw new Error('The submission should have failed.');
-//           })
-//           .catch((error) => {
-//             expect(error.message).to.contain(
-//               'Error creating Soil Disturbance records.'
-//             );
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
 
-//             /*
-//              * TODO: Add checks for each of the intercept spies to check
-//              *       that the correct number of logs, assets, and quantities
-//              *       were deleted.
-//              *
-//              *       Note: In this example the plant asset was not created in the
-//              *             farmOS database due to the error caused by the intercept.
-//              *             Thus, it will not be deleted either.
-//              *
-//              *       For examples, see the lib.submitError.unit.cy.js files in:
-//              *         - modules/farm_fd2/src/entrypoints/tray_seeding
-//              *         - modules/farm_fd2/src/entrypoints/direct_seeding
-//              */
-//             expect(plantAssetDeletes).to.equal(0);
-//           }),
-//         { timeout: 10000 }
-//       );
-//     }
-//   );
-// });
+  it(
+    'Soil Disturbance: records are deleted if there is a submission error',
+    { retries: 0 },
+    () => {
+      // Counter to track the number of activity logs
+      let postRequestCount = 0;
+
+      cy.intercept('POST', '**/api/log/activity', (req) => {
+        postRequestCount += 1;
+        if (postRequestCount === 2) {
+          // On the second request, modify the response to have a status code of 401
+          req.reply({
+            statusCode: 401,
+          });
+        } else {
+          // Continue with the request normally for other requests
+          req.continue();
+        }
+      });
+
+      let plantAssetPatch = 0;
+      cy.intercept('PATCH', '**/api/asset/plant/*', (req) => {
+        plantAssetPatch += 1;
+        req.continue();
+      });
+
+      let standardQuantityDeletes = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        standardQuantityDeletes++;
+        req.continue();
+      });
+
+      let activityLogDeletes = 0;
+      cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
+        activityLogDeletes++;
+        req.continue();
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            // Shouldn't run because submitForm throws an error.
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain(
+              'Error creating Soil Disturbance records.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation archivedPlants could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation depthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation speedQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation areaQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation activityLog0 could not be cleaned up.'
+            );
+
+            expect(plantAssetPatch).to.equal(4);
+            expect(standardQuantityDeletes).to.equal(3);
+            expect(activityLogDeletes).to.equal(1);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
+});
