@@ -131,11 +131,11 @@ describe('Test the default EquipmentSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 9);
+          .should('have.length', 14);
 
         cy.get('[data-cy="equipment-selector-1"]')
           .find('[data-cy="selector-option-1"]')
-          .should('have.value', 'Planter');
+          .should('have.value', 'Bed Shaper');
       });
   });
 });
