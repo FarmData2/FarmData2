@@ -164,6 +164,9 @@ export default {
         // The ith crop was removed.
         this.selectedCrops.splice(i, 1);
         this.valid.splice(i, 1);
+        if (this.selectedCrops.length == 0) {
+          this.valid[0] = !this.required;
+        }
       } else {
         this.selectedCrops[i] = event;
       }

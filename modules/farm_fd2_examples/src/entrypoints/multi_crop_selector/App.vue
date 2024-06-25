@@ -13,7 +13,11 @@
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:selected="form.selected"
-    v-on:valid="(valid) => (validity.selected = valid)"
+    v-on:valid="
+      (valid) => {
+        validity.selected = valid;
+      }
+    "
     v-on:ready="createdCount++"
     v-on:error="(msg) => showErrorToast('Network Error', msg)"
   />
