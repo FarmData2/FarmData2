@@ -1,122 +1,111 @@
-// import { lib } from './lib';
-// import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+import { lib } from './lib';
+import { lib as directSeedingLib } from '../direct_seeding/lib.js';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-// describe('Test the Soil Disturbance lib submission', () => {
-//   /*
-//    * TODO: Create a form object that has the same format as the
-//    *       data.form object used in the entry point.
-//    *
-//    *       This will be passed to the lib functions as if it is
-//    *       coming from the entry point as a submission.
-//    */
-//   let form = {
-//     date: '1950-01-02',
-//     crop: 'ZUCCHINI', // Not in the sample form, but needed for testing
-//     comment: 'A comment',
-//   };
+describe('Test the Soil Disturbance lib submission', () => {
+  let directSeedingBroccoli = {
+    seedingDate: '1950-01-02',
+    cropName: 'BROCCOLI',
+    locationName: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    bedFeet: 100,
+    rowsPerBed: '3',
+    bedWidth: 60,
+    equipment: ['Tractor'],
+    depth: 6,
+    speed: 5,
+    comment: 'A comment',
+  };
 
-//   let results = null;
-//   let cropMap = null;
-//   before(() => {
-//     /*
-//      * TODO: Load any maps or other data from the API that will be needed
-//      *       by the tests.
-//      *
-//      *       For examples, see the before() function in lib.submit.unit.cy.js in:
-//      *         - modules/farm_fd2/src/entrypoints/tray_seeding
-//      *         - modules/farm_fd2/src/entrypoints/direct_seeding
-//      */
-//     cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
-//       cropMap = map;
-//     });
+  let directSeedingBean = {
+    seedingDate: '1950-01-02',
+    cropName: 'BEAN',
+    locationName: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    bedFeet: 100,
+    rowsPerBed: '3',
+    bedWidth: 60,
+    equipment: ['Tractor'],
+    depth: 6,
+    speed: 5,
+    comment: 'A comment',
+  };
 
-//     /*
-//      * Submit the form using lib.submitForm from farmosUtil to create
-//      * all the logs, assets and quantities needed to represent a
-//      * Soil Disturbance.
-//      */
-//     cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((submitted) => {
-//       /*
-//        * submitted (and results) is an object containing the log, asset and
-//        * quantity objects that were submitted to farmOS by the lib.submitForm
-//        * function. These objects are not the actual objects that exist in the
-//        * farmOS database, they are the objects sent to farmOS to ask it to create
-//        * the logs, assets and quantities in its database. The tests below will
-//        * check that each of the objects in results contains the expected data
-//        * from the form that was submitted.
-//        *
-//        * Note checking the results (and not the database objects) here is sufficient
-//        * because:
-//        *   - The *.submission.e2e.cy.js test checks that the correct data
-//        *     is passed from the user interface to the submitForm function.
-//        *   - Checking the results here confirms that lib.submitForm has passed the
-//        *     correct form data to the farmosUtil library functions that create the
-//        *     logs, assets and quantities in the farmOS database.
-//        *   - The tests for the farmosUtil library functions confirm that they
-//        *     create the correct objects in the farmOS database for the data that
-//        *     they are given.
-//        *   - We trust that farmOS then handles the additional aspects of creating
-//        *     the logs, assets and quantities correctly. For example, if we create a
-//        *     log with a movement, we check that the log references the correct asset.
-//        *     But we do not check that the location of the asset has been updated.
-//        */
-//       results = submitted;
-//     });
-//   });
+  let form = {
+    date: '1950-01-02',
+    location: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    termination: true,
+    terminatedPlants: [],
+    equipment: ['Tractor', 'Rake'],
+    depth: 5,
+    speed: 6,
+    passes: 2,
+    area: 100,
+    comment: 'A comment',
+  };
 
-//   beforeEach(() => {
-//     cy.restoreLocalStorage();
-//     cy.restoreSessionStorage();
-//   });
+  let results = null;
+  let cropMap = null;
+  before(() => {
+    cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
+      cropMap = map;
+    });
+    cy.wrap(directSeedingLib.submitForm(directSeedingBroccoli), {
+      timeout: 10000,
+    })
+      .then((resultsBroccoli) => {
+        form.terminatedPlants.push(resultsBroccoli.plantAsset.id);
+        // console.log(results.plantAsset.id);
+        // console.log(farmosUtil.getPlantAssets('ALF', ['ALF-1', 'ALF-3']));
+        return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
+          timeout: 10000,
+        });
+      })
+      .then((resultsBean) => {
+        form.terminatedPlants.push(resultsBean.plantAsset.id);
+        // console.log(results2.plantAsset.id);
+        // console.log(farmosUtil.getPlantAssets('ALF', ['ALF-1', 'ALF-3']));
+        //console.log(form);
+        return cy.wrap(lib.submitForm(form), { timeout: 10000 });
+      })
+      .then((submitted) => {
+        results = submitted;
+        //console.log(results);
+      });
+  });
 
-//   afterEach(() => {
-//     cy.saveLocalStorage();
-//     cy.saveSessionStorage();
-//   });
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+  });
 
-//   /*
-//    * TODO: Adapt this test and add others as necessary. There should be
-//    *       One test for each log, asset and quantity that is created by
-//    *       the lib.submitForm function. Generally, this will be one test
-//    *       for each operation in lib.submitForm.
-//    *
-//    *       The goal of each test is to ensure that the lib.js operation has
-//    *       passed the correct form data to the farmosUtil function that is
-//    *       creating the log, asset or quantity.
-//    *
-//    *       For example, the sampleOp creates a plant asset. The documentation
-//    *       for the farmosUtil.createPlantAsset function shows it accepts arguments
-//    *       for the date, cropName, comment and parents. Thus, the test will
-//    *       check the parts of the results object that use those parameters to
-//    *       confirm that they agree with what is expected based on the form data
-//    *       that was submitted.
-//    *
-//    *       See examples of tests in the lib.submit.unit.cy.js files in:
-//    *         - modules/farm_fd2/src/entrypoints/tray_seeding
-//    *         - modules/farm_fd2/src/entrypoints/direct_seeding
-//    */
-//   it('Soil Disturbance: Placeholder checks the sampleOp result', () => {
-//     /*
-//      * Check to be sure we get a plant asset.  This confirms that the lib.js
-//      * operation called the correct function.
-//      */
-//     expect(results.sampleOp.type).to.equal('asset--plant');
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
 
-//     /*
-//      * Check the parts of the result that use the parameters that
-//      * the lib.js operation passed to the farmosUtil.createPlantAsset
-//      * function. It is only necessary to do enough checks to be sure
-//      * that every parameter was passed correctly.  Tests for the
-//      * farmosUtil functions confirm that they create the correct log,
-//      * asset, or quantity in the farmOS database.
-//      */
-//     expect(results.sampleOp.attributes.name).to.equal(
-//       form.date + '_' + form.crop
-//     );
-//     expect(results.sampleOp.attributes.notes.value).to.equal(form.comment);
-//     expect(results.sampleOp.relationships.plant_type[0].id).to.equal(
-//       cropMap.get(form.crop).id
-//     );
-//     expect(results.sampleOp.relationships.parent).to.have.length(0);
-//   });
-// });
+  it('Check archived asset--plant(s)', () => {
+    expect(results.archivedPlants).to.have.length(2);
+    // check BROCCOLI
+    expect(results.archivedPlants[0].id).to.equal(form.terminatedPlants[0]);
+    expect(results.archivedPlants[0].type).to.equal('asset--plant');
+    expect(results.archivedPlants[0].attributes.name).to.equal(
+      directSeedingBroccoli.seedingDate + '_' + directSeedingBroccoli.cropName
+    );
+    expect(results.archivedPlants[0].attributes.status).to.equal('archived');
+    expect(results.archivedPlants[0].relationships.plant_type[0].id).to.equal(
+      cropMap.get(directSeedingBroccoli.cropName).id
+    );
+    // check BEAN
+    expect(results.archivedPlants[1].id).to.equal(form.terminatedPlants[1]);
+    expect(results.archivedPlants[1].type).to.equal('asset--plant');
+    expect(results.archivedPlants[1].attributes.name).to.equal(
+      directSeedingBean.seedingDate + '_' + directSeedingBean.cropName
+    );
+    expect(results.archivedPlants[1].attributes.status).to.equal('archived');
+    expect(results.archivedPlants[1].relationships.plant_type[0].id).to.equal(
+      cropMap.get(directSeedingBean.cropName).id
+    );
+  });
+});

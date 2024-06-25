@@ -18,13 +18,6 @@ describe('Soil Disturbance: exists and has main page elements.', () => {
     cy.waitForPage();
   });
 
-  /*
-   * Additional tests here should check to ensure that only appropriate users
-   * have access to the page.
-   *
-   * See modules/farm_fd2/src/entrypoints/tray_seeding/tray_seeding.exists.e2e.cy.js
-   * for an examples.
-   */
   it('Main entry point elements exist', () => {
     cy.login('admin', 'admin');
     cy.visit('fd2/soil_disturbance/');
@@ -38,5 +31,17 @@ describe('Soil Disturbance: exists and has main page elements.', () => {
       'Soil Disturbance'
     );
     cy.get('[data-cy="soil-disturbance-form"]').should('exist');
+  });
+
+  it('Check that guest cannot access soil disturbance form', () => {
+    /*
+     * Skip this test if we are not running from the live farmOS
+     * server.
+     */
+    cy.skipOn('localhost');
+
+    cy.login('guest', 'farmdata2');
+    cy.visit({ url: 'fd2/soil_disturbance/', failOnStatusCode: false });
+    cy.get('.page-title').should('contain.text', 'Access denied');
   });
 });

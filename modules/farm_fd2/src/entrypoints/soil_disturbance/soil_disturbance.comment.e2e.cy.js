@@ -22,6 +22,8 @@
 //   });
 
 //   it('Comment component should be empty', () => {
-//     cy.get('[data-cy="comment-input"]').should('have.text', '');
+//     cy.get('[data-cy="soil-disturbance-comment"]')
+//       .find('[data-cy="comment-input"]')
+//       .should('have.text', '');
 //   });
 // });
