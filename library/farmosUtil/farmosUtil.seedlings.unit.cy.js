@@ -18,7 +18,7 @@ describe('Test the getSeedlings function', () => {
   it('Get all seedling information.', () => {
     cy.wrap(farmosUtil.getSeedlings()).then((seedlings) => {
       expect(seedlings).to.not.be.null;
-      expect(seedlings.length).to.equal(25);
+      expect(seedlings.length).to.equal(27);
 
       const first = seedlings[0];
       expect(first.log_id).to.not.be.undefined;
@@ -37,22 +37,22 @@ describe('Test the getSeedlings function', () => {
       expect(first.total_seeds).to.equal(4 * 128);
       expect(first.notes).to.equal('First broccoli tray seeding.');
 
-      const last = seedlings[24];
-      expect(last.log_id).to.not.be.undefined;
-      expect(last.log_uuid).to.not.be.undefined;
-      expect(last.asset_id).to.not.be.undefined;
-      expect(last.asset_uuid).to.not.be.undefined;
-      expect(last.date).to.equal('2019-08-29');
-      expect(last.user).to.equal('admin');
-      expect(last.crop).to.equal('LETTUCE-ICEBERG');
-      expect(last.trays_location).to.equal('CHUAU');
-      expect(last.asset_locations).to.equal('CHUAU');
-      expect(last.total_trays).to.equal(2);
-      expect(last.available_trays).to.equal(2);
-      expect(last.tray_size).to.equal(128);
-      expect(last.seeds_per_cell).to.equal(1);
-      expect(last.total_seeds).to.equal(2 * 128);
-      expect(last.notes).to.equal('Last lettuce tray seeding.');
+      const another = seedlings[24];
+      expect(another.log_id).to.not.be.undefined;
+      expect(another.log_uuid).to.not.be.undefined;
+      expect(another.asset_id).to.not.be.undefined;
+      expect(another.asset_uuid).to.not.be.undefined;
+      expect(another.date).to.equal('2019-08-29');
+      expect(another.user).to.equal('admin');
+      expect(another.crop).to.equal('LETTUCE-ICEBERG');
+      expect(another.trays_location).to.equal('CHUAU');
+      expect(another.asset_locations).to.equal('CHUAU');
+      expect(another.total_trays).to.equal(2);
+      expect(another.available_trays).to.equal(2);
+      expect(another.tray_size).to.equal(128);
+      expect(another.seeds_per_cell).to.equal(1);
+      expect(another.total_seeds).to.equal(2 * 128);
+      expect(another.notes).to.equal('Last lettuce tray seeding.');
     });
   });
 
