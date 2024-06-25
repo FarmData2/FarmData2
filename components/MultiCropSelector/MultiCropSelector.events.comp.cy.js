@@ -94,7 +94,7 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
-  it.only('Emits valid false when prop changed to contain no selections', () => {
+  it('Emits valid false when prop changed to contain no selections', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
