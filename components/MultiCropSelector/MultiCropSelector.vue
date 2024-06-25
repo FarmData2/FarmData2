@@ -44,25 +44,36 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * is selected another dropdown appears to allow the user to select
  * another crop.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/multi_crop_selector">The MultiCropSelector Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/multi_crop_selector/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <MultiCropSelector
- *   id="seeding-crop"
- *   data-cy="seeding-crop"
- *   v-model:selected="form.crop"
- *   v-bind:showValidityStyling="validity.show"
- *   v-on:valid="(valid) => (validity.selected = valid)"
- *   v-on:ready="createdCount++"
- *   v-on:error="(msg) => showErrorToast('Network Error', msg)"
+ *  id="multi-crop-selector"
+ *  data-cy="multi-crop-selector"
+ *  invalid-feedback-text="Selection cannot be empty."
+ *  v-bind:required="required"
+ *  v-bind:showValidityStyling="validity.showStyling"
+ *  v-bind:selected="form.selected"
+ *  v-on:valid="(valid) => (validity.selected = valid)"
+ *  v-on:ready="createdCount++"
+ *  v-on:error="(msg) => showErrorToast('Network Error', msg)"
  * />
  * ```
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name         | Description
- * -----------------------| -----------
- * `crop-selector-i` | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
+ * Attribute Name              | Description
+ * ----------------------------| -----------
+ * multi-crop-selector         | The container div for the MultiCropSelector component.
+ * multi-crop-selector-label   | The label element for the crop selector.
+ * crop-selector-container     | The container div for the individual crop selectors.
+ * crop-selector-i             | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
  */
 export default {
   name: 'MultiCropSelector',
