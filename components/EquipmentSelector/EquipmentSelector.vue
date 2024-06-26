@@ -146,6 +146,10 @@ export default {
         this.selectedEquipment[i] = event;
       }
 
+      if (this.selectedEquipment.length == 0) {
+        this.valid[0] = !this.required;
+      }
+
       /**
        * The selected equipment has changed.
        * @property {Array<String>} event the names of the newly selected equipment.
