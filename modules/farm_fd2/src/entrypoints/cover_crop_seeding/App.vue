@@ -78,6 +78,8 @@
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
         />
 
+        <hr />
+
         <NumericInput
           id="cover-crop-seeding-area-seeded"
           data-cy="cover-crop-seeding-area-seeded"
@@ -89,6 +91,7 @@
           v-bind:decimalPlaces="0"
           v-bind:incDecValues="[1, 10]"
           v-bind:minValue="1"
+          v-bind:maxValue="100"
           v-on:valid="
             (valid) => {
               validity.areaSeeded = valid;
@@ -104,6 +107,16 @@
           v-model:date="form.winterKillDate"
           v-model:picked="form.winterKill"
           v-bind:showValidityStyling="validity.show"
+          v-on:update:picked="
+            (picked) => {
+              form.winterKill = picked;
+            }
+          "
+          v-on:update:date="
+            (date) => {
+              form.winterKillDate = date;
+            }
+          "
           v-on:valid="
             (valid) => {
               validity.winterKill = valid;
@@ -111,6 +124,8 @@
           "
           v-on:ready="createdCount++"
         />
+
+        <hr class="small-top" />
 
         <BAccordion
           flush
@@ -230,6 +245,8 @@
           </BAccordionItem>
         </BAccordion>
 
+        <hr />
+
         <CommentBox
           id="cover-crop-seeding-comment"
           data-cy="cover-crop-seeding-comment"
@@ -295,7 +312,7 @@ export default {
         location: null,
         crops: [],
         beds: [],
-        areaSeeded: '',
+        areaSeeded: 100,
         winterKill: false,
         winterKillDate: null,
         seedApplicationEquipment: [],
@@ -346,7 +363,7 @@ export default {
       if (totalBeds > 0 && checkedBeds.length > 0) {
         this.form.areaSeeded = (checkedBeds.length / totalBeds) * 100;
       } else {
-        this.form.areaSeeded = '';
+        this.form.areaSeeded = 100;
       }
     },
     submit() {
@@ -408,7 +425,7 @@ export default {
         this.form.date = dayjs().format('YYYY-MM-DD');
         this.form.beds = [];
         this.form.crops = [];
-        this.form.areaSeeded = '';
+        this.form.areaSeeded = 100;
         this.form.winterKill = false;
         this.form.winterKillDate = null;
         this.seedApplicationAccordionOpen = false;
@@ -453,9 +470,6 @@ export default {
   margin-top: 8px !important;
 }
 
-#cover-crop-seeding-winter-kill {
-  margin-bottom: 2px;
-}
 #cover-crop-seeding-area-seeded {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -467,7 +481,6 @@ export default {
 }
 
 #cover-crop-seeding-comment {
-  margin-top: 8px;
   margin-bottom: 15px;
 }
 </style>
