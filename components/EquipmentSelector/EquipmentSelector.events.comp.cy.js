@@ -94,6 +94,57 @@ describe('Test the EquipmentSelector component events', () => {
       });
   });
 
+  it('Emits valid false when required and prop changed to contain no selections', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(EquipmentSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        onValid: validSpy,
+        selected: ['Tractor', 'Planter'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        })
+        .then(() => {
+          wrapper.setProps({ selected: [] });
+          cy.get('@validSpy').should('have.been.calledTwice');
+          cy.get('@validSpy').should('have.been.calledWith', false);
+        });
+    });
+  });
+
+  it('Emits valid true when not required and prop changed to contain no selections', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(EquipmentSelector, {
+      props: {
+        required: false,
+        onReady: readySpy,
+        onValid: validSpy,
+        selected: ['Tractor', 'Planter'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        })
+        .then(() => {
+          wrapper.setProps({ selected: [] });
+          cy.get('@validSpy').should('have.been.called');
+        });
+    });
+  });
+
   it('Emits "update:selected" when first selection is changed', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
