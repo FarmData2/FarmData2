@@ -18,13 +18,14 @@ describe('Cover Crop Seeding: exists and has main page elements.', () => {
     cy.waitForPage();
   });
 
-  /*
-   * Additional tests here should check to ensure that only appropriate users
-   * have access to the page.
-   *
-   * See modules/farm_fd2/src/entrypoints/tray_seeding/tray_seeding.exists.e2e.cy.js
-   * for an examples.
-   */
+  it('Check that guest cannot access cover crop seeding form', () => {
+    cy.skipOn('localhost');
+
+    cy.login('guest', 'farmdata2');
+    cy.visit({ url: 'fd2/cover_crop_seeding/', failOnStatusCode: false });
+    cy.get('.page-title').should('contain.text', 'Access denied');
+  });
+
   it('Main entry point elements exist', () => {
     cy.login('admin', 'admin');
     cy.visit('fd2/cover_crop_seeding/');

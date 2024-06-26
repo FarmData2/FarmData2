@@ -91,6 +91,7 @@
           v-bind:decimalPlaces="0"
           v-bind:incDecValues="[1, 10]"
           v-bind:minValue="1"
+          v-bind:maxValue="100"
           v-on:valid="
             (valid) => {
               validity.areaSeeded = valid;
@@ -106,6 +107,16 @@
           v-model:date="form.winterKillDate"
           v-model:picked="form.winterKill"
           v-bind:showValidityStyling="validity.show"
+          v-on:update:picked="
+            (picked) => {
+              form.winterKill = picked;
+            }
+          "
+          v-on:update:date="
+            (date) => {
+              form.winterKillDate = date;
+            }
+          "
           v-on:valid="
             (valid) => {
               validity.winterKill = valid;
@@ -301,7 +312,7 @@ export default {
         location: null,
         crops: [],
         beds: [],
-        areaSeeded: '',
+        areaSeeded: 100,
         winterKill: false,
         winterKillDate: null,
         seedApplicationEquipment: [],
@@ -352,7 +363,7 @@ export default {
       if (totalBeds > 0 && checkedBeds.length > 0) {
         this.form.areaSeeded = (checkedBeds.length / totalBeds) * 100;
       } else {
-        this.form.areaSeeded = '';
+        this.form.areaSeeded = 100;
       }
     },
     submit() {
@@ -414,7 +425,7 @@ export default {
         this.form.date = dayjs().format('YYYY-MM-DD');
         this.form.beds = [];
         this.form.crops = [];
-        this.form.areaSeeded = '';
+        this.form.areaSeeded = 100;
         this.form.winterKill = false;
         this.form.winterKillDate = null;
         this.seedApplicationAccordionOpen = false;
