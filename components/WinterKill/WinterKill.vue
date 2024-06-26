@@ -5,6 +5,7 @@
     label-for="winter-kill-checkbox"
     label-cols="auto"
     label-align="end"
+    :state="componentIsValid"
   >
     <template v-slot:label>
       <span data-cy="winter-kill-label">Winter kill:</span>
@@ -212,6 +213,9 @@ export default {
         );
         this.chosenDate = defaultDate;
         this.$emit('update:date', defaultDate);
+      } else if (!isChecked) {
+        this.chosenDate = '';
+        this.$emit('update:date', '');
       }
       this.emitValidState();
     },
