@@ -1717,11 +1717,11 @@ export async function getPlantAssets(
         } else {
           // Check if all checked beds are in the locations
           const bedIds = locations.slice(1).map((location) => location.id);
-          const allBedsMatch = checkedBeds.every((bedName) => {
+          const someBedsMatch = checkedBeds.some((bedName) => {
             const bedAsset = bedNameToAssetMap.get(bedName);
             return bedAsset && bedIds.includes(bedAsset.id);
           });
-          if (allBedsMatch) {
+          if (someBedsMatch) {
             matchingPlantAssetIds.push(plantAsset.id);
           }
         }

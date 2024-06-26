@@ -1,6 +1,22 @@
 import * as farmosUtil from './farmosUtil.js';
 
 describe('Test the bed utility functions', () => {
+  let bedMap = null;
+  let fieldMap = null;
+  let greenHouseMap = null;
+
+  before(() => {
+    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
+      bedMap = map;
+    });
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
+      fieldMap = map;
+    });
+    cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((map) => {
+      greenHouseMap = map;
+    });
+  });
+
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -12,102 +28,112 @@ describe('Test the bed utility functions', () => {
   });
 
   it('Check that returned plant assets are active', () => {
-    const locationName = 'SomeField';
-    const checkedBeds = ['SomeBed1', 'SomeBed2'];
+    const locationName = 'ALF';
+    const checkedBeds = ['ALF-1', 'ALF-2'];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, Beds: ${checkedBeds}, Plant Asset IDs: ${plantAssetIds}`
-        );
-
-        if (plantAssetIds.length > 0) {
-          plantAssetIds.forEach((id) => {
-            cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
-              expect(asset.attributes.status).to.equal('active');
-            });
+        plantAssetIds.forEach((id) => {
+          cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
+            expect(asset.attributes.status).to.equal('active');
           });
-        }
+        });
       }
     );
   });
 
   it('Get plant assets for a specific field and bed', () => {
-    const locationName = 'SomeField';
-    const checkedBeds = ['SomeBed1', 'SomeBed2'];
+    const locationName = 'ALF';
+    const checkedBeds = ['ALF-1', 'ALF-2'];
+    const locIds = [
+      fieldMap.get('ALF').id,
+      bedMap.get('ALF-1').id,
+      bedMap.get('ALF-2').id,
+    ];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, Beds: ${checkedBeds}, Plant Asset IDs: ${plantAssetIds}`
-        );
-
-        expect(plantAssetIds).to.be.an('array');
-        if (plantAssetIds.length > 0) {
-          plantAssetIds.forEach((id) => expect(id).to.be.a('string'));
-        }
+        plantAssetIds.forEach((id) => {
+          cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
+            const plantLocIds = asset.relationships.location.map(
+              (loc) => loc.id
+            );
+            const containsLocation = plantLocIds.some((plantLocId) => {
+              return locIds.includes(plantLocId);
+            });
+            expect(containsLocation).to.equal(true);
+          });
+        });
       }
     );
   });
 
   it('Get plant assets for a specific field without beds', () => {
-    const locationName = 'SomeField';
+    const locationName = 'A';
+    const locIds = [fieldMap.get('A').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName)).then((plantAssetIds) => {
-      console.log(
-        `Location: ${locationName}, Plant Asset IDs: ${plantAssetIds}`
-      );
-
-      expect(plantAssetIds).to.be.an('array');
-      if (plantAssetIds.length > 0) {
-        plantAssetIds.forEach((id) => expect(id).to.be.a('string'));
-      }
+      plantAssetIds.forEach((id) => {
+        cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
+          const plantLocIds = asset.relationships.location.map((loc) => loc.id);
+          const containsLocation = plantLocIds.some((plantLocId) => {
+            return locIds.includes(plantLocId);
+          });
+          expect(containsLocation).to.equal(true);
+        });
+      });
     });
   });
 
   it('Get plant assets in trays only', () => {
-    const locationName = 'SomeField';
+    const locationName = 'JASMINE';
+    const locIds = [greenHouseMap.get('JASMINE').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], true, false)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, In Trays Only, Plant Asset IDs: ${plantAssetIds}`
-        );
-
-        expect(plantAssetIds).to.be.an('array');
-        if (plantAssetIds.length > 0) {
-          plantAssetIds.forEach((id) => expect(id).to.be.a('string'));
-        }
+        plantAssetIds.forEach((id) => {
+          cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
+            expect(asset.attributes.inventory).to.equal(true);
+            const plantLocIds = asset.relationships.location.map(
+              (loc) => loc.id
+            );
+            const containsLocation = plantLocIds.some((plantLocId) => {
+              return locIds.includes(plantLocId);
+            });
+            expect(containsLocation).to.equal(true);
+          });
+        });
       }
     );
   });
 
   it('Get plant assets in ground only', () => {
-    const locationName = 'SomeField';
+    const locationName = 'JASMINE';
+    const locIds = [greenHouseMap.get('JASMINE').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], false, true)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, In Ground Only, Plant Asset IDs: ${plantAssetIds}`
-        );
-
-        expect(plantAssetIds).to.be.an('array');
-        if (plantAssetIds.length > 0) {
-          plantAssetIds.forEach((id) => expect(id).to.be.a('string'));
-        }
+        plantAssetIds.forEach((id) => {
+          cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
+            expect(asset.attributes.inventory).to.not.equal(true);
+            const plantLocIds = asset.relationships.location.map(
+              (loc) => loc.id
+            );
+            const containsLocation = plantLocIds.some((plantLocId) => {
+              return locIds.includes(plantLocId);
+            });
+            expect(containsLocation).to.equal(true);
+          });
+        });
       }
     );
   });
 
   it('Get plant assets with both inTrays and inGround set to false', () => {
-    const locationName = 'SomeField';
+    const locationName = 'JASMINE';
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], false, false)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, Both In Trays and In Ground False, Plant Asset IDs: ${plantAssetIds}`
-        );
-
         expect(plantAssetIds).to.be.an('array').that.is.empty;
       }
     );
@@ -117,24 +143,16 @@ describe('Test the bed utility functions', () => {
     const locationName = 'NonExistentField';
 
     cy.wrap(farmosUtil.getPlantAssets(locationName)).then((plantAssetIds) => {
-      console.log(
-        `Location: ${locationName}, Plant Asset IDs: ${plantAssetIds}`
-      );
-
       expect(plantAssetIds).to.be.an('array').that.is.empty;
     });
   });
 
   it('Get plant assets with no matching beds', () => {
-    const locationName = 'SomeField';
+    const locationName = 'JASMINE';
     const checkedBeds = ['NonExistentBed1', 'NonExistentBed2'];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
       (plantAssetIds) => {
-        console.log(
-          `Location: ${locationName}, Beds: ${checkedBeds}, Plant Asset IDs: ${plantAssetIds}`
-        );
-
         expect(plantAssetIds).to.be.an('array').that.is.empty;
       }
     );
