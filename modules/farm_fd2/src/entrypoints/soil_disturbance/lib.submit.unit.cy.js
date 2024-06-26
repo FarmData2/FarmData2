@@ -83,22 +83,16 @@ describe('Test the Soil Disturbance lib submission', () => {
     })
       .then((resultsBroccoli) => {
         form.terminatedPlants.push(resultsBroccoli.plantAsset.id);
-        // console.log(results.plantAsset.id);
-        // console.log(farmosUtil.getPlantAssets('ALF', ['ALF-1', 'ALF-3']));
         return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
           timeout: 10000,
         });
       })
       .then((resultsBean) => {
         form.terminatedPlants.push(resultsBean.plantAsset.id);
-        // console.log(results2.plantAsset.id);
-        // console.log(farmosUtil.getPlantAssets('ALF', ['ALF-1', 'ALF-3']));
-        //console.log(form);
         return cy.wrap(lib.submitForm(form), { timeout: 10000 });
       })
       .then((submitted) => {
         results = submitted;
-        //console.log(results);
       });
   });
 
@@ -136,46 +130,58 @@ describe('Test the Soil Disturbance lib submission', () => {
     );
   });
 
-  it('Check the depth quantity--standard', () => {
-    expect(results.depthQuantity.type).to.equal('quantity--standard');
-    expect(results.depthQuantity.attributes.measure).to.equal('length');
-    expect(results.depthQuantity.attributes.value.decimal).to.equal(form.depth);
-    expect(results.depthQuantity.attributes.label).to.equal('Depth');
-    expect(results.depthQuantity.relationships.units.id).to.equal(
-      unitMap.get('INCHES').id
-    );
-    expect(results.depthQuantity.relationships.inventory_asset).to.be.null;
-    expect(results.depthQuantity.attributes.inventory_adjustment).to.be.null;
-  });
-
-  it('Check the speed quantity--standard', () => {
-    expect(results.speedQuantity.type).to.equal('quantity--standard');
-    expect(results.speedQuantity.attributes.measure).to.equal('rate');
-    expect(results.speedQuantity.attributes.value.decimal).to.equal(form.speed);
-    expect(results.speedQuantity.attributes.label).to.equal('Speed');
-    expect(results.speedQuantity.relationships.units.id).to.equal(
-      unitMap.get('MPH').id
-    );
-    expect(results.speedQuantity.relationships.inventory_asset).to.be.null;
-    expect(results.speedQuantity.attributes.inventory_adjustment).to.be.null;
-  });
-
-  it('Check the area quantity--standard', () => {
-    expect(results.areaQuantity.type).to.equal('quantity--standard');
-    expect(results.areaQuantity.attributes.measure).to.equal('ratio');
-    expect(results.areaQuantity.attributes.value.decimal).to.equal(form.area);
-    expect(results.areaQuantity.attributes.label).to.equal('Area');
-    expect(results.areaQuantity.relationships.units.id).to.equal(
-      unitMap.get('PERCENT').id
-    );
-    expect(results.areaQuantity.relationships.inventory_asset).to.be.null;
-    expect(results.areaQuantity.attributes.inventory_adjustment).to.be.null;
-  });
-
   Cypress._.times(2, (i) => {
-    it('Check the soil disturbance log--activity ' + (i + 1), () => {
-      //expect(results.activityLog.length).to.equal(form.passes);
+    it('Check the depth quantity--standard ' + i, () => {
+      expect(results['depthQuantity' + i].type).to.equal('quantity--standard');
+      expect(results['depthQuantity' + i].attributes.measure).to.equal(
+        'length'
+      );
+      expect(results['depthQuantity' + i].attributes.value.decimal).to.equal(
+        form.depth
+      );
+      expect(results['depthQuantity' + i].attributes.label).to.equal('Depth');
+      expect(results['depthQuantity' + i].relationships.units.id).to.equal(
+        unitMap.get('INCHES').id
+      );
+      expect(results['depthQuantity' + i].relationships.inventory_asset).to.be
+        .null;
+      expect(results['depthQuantity' + i].attributes.inventory_adjustment).to.be
+        .null;
+    });
 
+    it('Check the speed quantity--standard ' + i, () => {
+      expect(results['speedQuantity' + i].type).to.equal('quantity--standard');
+      expect(results['speedQuantity' + i].attributes.measure).to.equal('rate');
+      expect(results['speedQuantity' + i].attributes.value.decimal).to.equal(
+        form.speed
+      );
+      expect(results['speedQuantity' + i].attributes.label).to.equal('Speed');
+      expect(results['speedQuantity' + i].relationships.units.id).to.equal(
+        unitMap.get('MPH').id
+      );
+      expect(results['speedQuantity' + i].relationships.inventory_asset).to.be
+        .null;
+      expect(results['speedQuantity' + i].attributes.inventory_adjustment).to.be
+        .null;
+    });
+
+    it('Check the area quantity--standard ' + i, () => {
+      expect(results['areaQuantity' + i].type).to.equal('quantity--standard');
+      expect(results['areaQuantity' + i].attributes.measure).to.equal('ratio');
+      expect(results['areaQuantity' + i].attributes.value.decimal).to.equal(
+        form.area
+      );
+      expect(results['areaQuantity' + i].attributes.label).to.equal('Area');
+      expect(results['areaQuantity' + i].relationships.units.id).to.equal(
+        unitMap.get('PERCENT').id
+      );
+      expect(results['areaQuantity' + i].relationships.inventory_asset).to.be
+        .null;
+      expect(results['areaQuantity' + i].attributes.inventory_adjustment).to.be
+        .null;
+    });
+
+    it('Check the soil disturbance log--activity ' + i, () => {
       //check first log
       expect(results['activityLog' + i].type).to.equal('log--activity');
       expect(results['activityLog' + i].attributes.name).to.equal(
@@ -223,13 +229,13 @@ describe('Test the Soil Disturbance lib submission', () => {
         3
       );
       expect(results['activityLog' + i].relationships.quantity[0].id).to.equal(
-        results.depthQuantity.id
+        results['depthQuantity' + i].id
       );
       expect(results['activityLog' + i].relationships.quantity[1].id).to.equal(
-        results.speedQuantity.id
+        results['speedQuantity' + i].id
       );
       expect(results['activityLog' + i].relationships.quantity[2].id).to.equal(
-        results.areaQuantity.id
+        results['areaQuantity' + i].id
       );
 
       // check equipment

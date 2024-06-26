@@ -12,9 +12,9 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * {
  *   equipment: [ {asset--equipment} ],
  *   archivedPlants: [ {asset--plant} ],
- *   depth: {quantity--standard},
- *   speed: {quantity--standard},
- *   area: {quantity--standard},
+ *   depth(i): {quantity--standard},
+ *   speed(i): {quantity--standard},
+ *   area(i): {quantity--standard},
  *   activityLog(i): {log--activity},
  * }
  * ```
@@ -47,94 +47,65 @@ async function submitForm(formData) {
     };
     ops.push(archivedPlants);
 
-    const depthQuantity = {
-      name: 'depthQuantity',
-      do: async () => {
-        return await farmosUtil.createStandardQuantity(
-          'length',
-          formData.depth,
-          'Depth',
-          'INCHES'
-        );
-      },
-      undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['depthQuantity'].id);
-      },
-    };
-    ops.push(depthQuantity);
-
-    const speedQuantity = {
-      name: 'speedQuantity',
-      do: async () => {
-        return await farmosUtil.createStandardQuantity(
-          'rate',
-          formData.speed,
-          'Speed',
-          'MPH'
-        );
-      },
-      undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['speedQuantity'].id);
-      },
-    };
-    ops.push(speedQuantity);
-
-    const areaQuantity = {
-      name: 'areaQuantity',
-      do: async () => {
-        return await farmosUtil.createStandardQuantity(
-          'ratio',
-          formData.area,
-          'Area',
-          'PERCENT'
-        );
-      },
-      undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['areaQuantity'].id);
-      },
-    };
-    ops.push(areaQuantity);
-
     const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
     for (const equipmentName of formData.equipment) {
       equipmentAssets.push(equipmentMap.get(equipmentName));
     }
 
-    // const activityLog = {
-    //   name: 'activityLog',
-    //   do: async (results) => {
-    //     let logs = [];
-    //     for (let i = 0; i < formData.passes; i++) {
-    //       logs.push(
-    //         await farmosUtil.createSoilDisturbanceActivityLog(
-    //           formData.date,
-    //           formData.location,
-    //           formData.beds,
-    //           ['tillage'],
-    //           results.archivedPlants,
-    //           [
-    //             results.depthQuantity,
-    //             results.speedQuantity,
-    //             results.areaQuantity,
-    //           ],
-    //           equipmentAssets
-    //         )
-    //       );
-    //     }
-    //     return logs;
-    //   },
-    //   undo: async (results) => {
-    //     console.log('tried to delete activity log');
-    //     if (results['activityLog']) {
-    //       for (const log of results['activityLog']) {
-    //         await farmosUtil.deleteSoilDisturbanceActivityLog(log.id);
-    //       }
-    //     }
-    //   },
-    // };
-    // ops.push(activityLog);
-
     for (let i = 0; i < formData.passes; i++) {
+      const depthQuantity = {
+        name: 'depthQuantity' + i,
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'length',
+            formData.depth,
+            'Depth',
+            'INCHES'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['depthQuantity' + i].id
+          );
+        },
+      };
+      ops.push(depthQuantity);
+
+      const speedQuantity = {
+        name: 'speedQuantity' + i,
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'rate',
+            formData.speed,
+            'Speed',
+            'MPH'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['speedQuantity' + i].id
+          );
+        },
+      };
+      ops.push(speedQuantity);
+
+      const areaQuantity = {
+        name: 'areaQuantity' + i,
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'ratio',
+            formData.area,
+            'Area',
+            'PERCENT'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['areaQuantity' + i].id
+          );
+        },
+      };
+      ops.push(areaQuantity);
       const activityLog = {
         name: 'activityLog' + i,
         do: async (results) => {
@@ -145,9 +116,9 @@ async function submitForm(formData) {
             ['tillage'],
             results.archivedPlants,
             [
-              results.depthQuantity,
-              results.speedQuantity,
-              results.areaQuantity,
+              results['depthQuantity' + i],
+              results['speedQuantity' + i],
+              results['areaQuantity' + i],
             ],
             equipmentAssets
           );

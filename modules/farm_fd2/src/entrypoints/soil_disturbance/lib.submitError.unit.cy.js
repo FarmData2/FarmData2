@@ -87,25 +87,25 @@ describe('Test the Soil Disturbance lib submission error', () => {
           // Continue with the request normally for other requests
           req.continue();
         }
-      });
+      }).as('actPost');
 
       let plantAssetPatch = 0;
       cy.intercept('PATCH', '**/api/asset/plant/*', (req) => {
         plantAssetPatch += 1;
         req.continue();
-      });
+      }).as('plantPatch');
 
       let standardQuantityDeletes = 0;
       cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
         standardQuantityDeletes++;
         req.continue();
-      });
+      }).as('quantDelete');
 
       let activityLogDeletes = 0;
       cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
         activityLogDeletes++;
         req.continue();
-      });
+      }).as('actDelete');
 
       cy.wrap(
         lib
@@ -122,20 +122,29 @@ describe('Test the Soil Disturbance lib submission error', () => {
               'Result of operation archivedPlants could not be cleaned up.'
             );
             expect(error.message).to.contain(
-              'Result of operation depthQuantity could not be cleaned up.'
+              'Result of operation depthQuantity0 could not be cleaned up.'
             );
             expect(error.message).to.contain(
-              'Result of operation speedQuantity could not be cleaned up.'
+              'Result of operation speedQuantity0 could not be cleaned up.'
             );
             expect(error.message).to.contain(
-              'Result of operation areaQuantity could not be cleaned up.'
+              'Result of operation areaQuantity0 could not be cleaned up.'
             );
             expect(error.message).to.contain(
               'Result of operation activityLog0 could not be cleaned up.'
             );
+            expect(error.message).to.contain(
+              'Result of operation depthQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation speedQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation areaQuantity1 could not be cleaned up.'
+            );
 
             expect(plantAssetPatch).to.equal(4);
-            expect(standardQuantityDeletes).to.equal(3);
+            expect(standardQuantityDeletes).to.equal(6);
             expect(activityLogDeletes).to.equal(1);
           }),
         { timeout: 10000 }
