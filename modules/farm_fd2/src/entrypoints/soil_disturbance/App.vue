@@ -206,7 +206,7 @@ export default {
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 4;
+      return this.createdCount == 6;
     },
     submitEnabled() {
       return !this.validity.show || (this.validToSubmit && !this.submitting);
