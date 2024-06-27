@@ -86,14 +86,14 @@ describe('Test the bed utility functions', () => {
   });
 
   it('Get plant assets in trays only', () => {
-    const locationName = 'JASMINE';
-    const locIds = [greenHouseMap.get('JASMINE').id];
+    const locationName = 'CHUAU';
+    const locIds = [greenHouseMap.get('CHUAU').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], true, false)).then(
       (plantAssetIds) => {
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
-            expect(asset.attributes.inventory).to.equal(true);
+            expect(asset.attributes.inventory[0].units).to.equal('TRAYS');
             const plantLocIds = asset.relationships.location.map(
               (loc) => loc.id
             );
@@ -108,14 +108,14 @@ describe('Test the bed utility functions', () => {
   });
 
   it('Get plant assets in ground only', () => {
-    const locationName = 'JASMINE';
-    const locIds = [greenHouseMap.get('JASMINE').id];
+    const locationName = 'CHUAU';
+    const locIds = [greenHouseMap.get('CHUAU').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], false, true)).then(
       (plantAssetIds) => {
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
-            expect(asset.attributes.inventory).to.not.equal(true);
+            expect(asset.attributes.inventory[0].units).to.not.equal('TRAYS');
             const plantLocIds = asset.relationships.location.map(
               (loc) => loc.id
             );

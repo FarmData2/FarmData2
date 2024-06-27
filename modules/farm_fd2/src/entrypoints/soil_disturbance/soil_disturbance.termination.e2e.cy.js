@@ -54,7 +54,8 @@ describe('Direct Seeding: Termination event group', () => {
     //invalid
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
-      .select('CHUAU');
+      .select('ALF');
+    cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
     cy.get('[data-cy="termination-event-group"]').should('not.exist');
     cy.get('[data-cy="termination-event-checkbox"]').should('not.exist');
     cy.get('[data-cy="termination-event-label"]').should('not.exist');
@@ -72,7 +73,8 @@ describe('Direct Seeding: Termination event group', () => {
     //invalid
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
-      .select('CHUAU');
+      .select('ALF');
+    cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
     cy.get('[data-cy="termination-event-group"]').should('not.exist');
     cy.get('[data-cy="termination-event-checkbox"]').should('not.exist');
     cy.get('[data-cy="termination-event-label"]').should('not.exist');

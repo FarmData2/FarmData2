@@ -1671,11 +1671,19 @@ export async function getPlantAssets(
 
   // Get the map of field names to field assets
   const fieldNameToAssetMap = await getFieldNameToAssetMap();
+  const greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
   const bedNameToAssetMap = await getBedNameToAssetMap();
 
   // Find the field asset that matches the location name
   const fieldAsset = fieldNameToAssetMap.get(locationName);
-  if (!fieldAsset) {
+  const greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
+  let locationAsset = null;
+
+  if (greenhouseAsset) {
+    locationAsset = greenhouseAsset;
+  } else if (fieldAsset) {
+    locationAsset = fieldAsset;
+  } else {
     return [];
   }
 
@@ -1699,18 +1707,18 @@ export async function getPlantAssets(
     if (isInTrays && isInGround) {
       addToResults = true;
     } else if (isInTrays && !isInGround) {
-      if (plantAsset.attributes.inventory) {
+      if (plantAsset.attributes.inventory[0].units === 'TRAYS') {
         addToResults = true;
       }
     } else if (!isInTrays && isInGround) {
-      if (!plantAsset.attributes.inventory) {
+      if (plantAsset.attributes.inventory[0].units !== 'TRAYS') {
         addToResults = true;
       }
     }
 
     if (addToResults) {
       // Check if the first location (field) matches
-      if (locations.length > 0 && locations[0].id === fieldAsset.id) {
+      if (locations.length > 0 && locations[0].id === locationAsset.id) {
         if (checkedBeds.length === 0) {
           // If no beds to check, add the plant asset ID to the result array
           matchingPlantAssetIds.push(plantAsset.id);

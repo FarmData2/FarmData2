@@ -225,7 +225,9 @@ export default {
       try {
         let results = await farmosUtil.getPlantAssets(
           this.form.location,
-          this.form.beds
+          this.form.beds,
+          false,
+          true
         );
         this.form.terminatedPlants = results;
         this.plantsAtLocation = results.length > 0;
