@@ -305,8 +305,8 @@ export default {
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
-        this.form.passes = null;
-        this.form.area = null;
+        this.form.passes = 1;
+        this.form.area = 100;
         this.form.comment = null;
       }
 

@@ -1,84 +1,227 @@
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
-// describe('Soil Disturbance: Submit/Reset Buttons component', () => {
-//   beforeEach(() => {
-//     cy.restoreLocalStorage();
-//     cy.restoreSessionStorage();
+describe('Soil Disturbance: Submit/Reset Buttons component', () => {
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
 
-//     cy.login('admin', 'admin');
-//     cy.visit('fd2/soil_disturbance/');
+    cy.login('admin', 'admin');
+    cy.visit('fd2/soil_disturbance/');
 
-//     cy.waitForPage();
-//   });
+    cy.waitForPage();
+  });
 
-//   afterEach(() => {
-//     cy.saveLocalStorage();
-//     cy.saveSessionStorage();
-//   });
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
 
-//   it('Buttons exist, are visible, and are enabled', () => {
-//     cy.get('[data-cy="submit-button"]')
-//       .should('be.visible')
-//       .should('be.enabled');
-//     cy.get('[data-cy="reset-button"]')
-//       .should('be.visible')
-//       .should('be.enabled');
-//   });
+  it('Buttons exist, are visible, and are enabled', () => {
+    cy.get('[data-cy="submit-button"]')
+      .should('be.visible')
+      .should('be.enabled');
+    cy.get('[data-cy="reset-button"]')
+      .should('be.visible')
+      .should('be.enabled');
+  });
 
-//   function populateForm() {
-//     cy.get('[data-cy="date-input"]').type(dayjs().format('1999-01-02'));
+  function populateForm({ skipLocation = false, skipEquipment = false } = {}) {
+    cy.get('[data-cy="date-input"]').clear();
+    cy.get('[data-cy="date-input"]').type('1950-01-02');
+    if (!skipLocation) {
+      cy.get('[data-cy="soil-disturbance-location"]')
+        .find('[data-cy="selector-input"]')
+        .select('ALF');
+      cy.get('[data-cy="picker-options"]').find('input').eq(2).check();
+      cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
+    }
+    if (!skipEquipment) {
+      cy.get('[data-cy="equipment-selector-1"]')
+        .find('[data-cy="selector-input"]')
+        .select('Tractor');
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-depth"]')
+        .clear();
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-depth"]')
+        .type(5);
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-speed"]')
+        .clear();
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-speed"]')
+        .type(6);
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-passes"]')
+        .clear();
+      cy.get('[data-cy="soil-disturbance-equipment-form"]')
+        .find('[data-cy="soil-disturbance-passes"]')
+        .type(3);
+    }
+    cy.get('[data-cy="comment-input"]').type('This is a comment');
+    cy.get('[data-cy="comment-input"]').blur();
+  }
 
-//     /*
-//      * TODO: Populate additional elements of the form with valid values.
-//      */
+  it('Invalid date disables submit', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
 
-//     cy.get('[data-cy="comment-input"]').type('This is a comment');
-//     cy.get('[data-cy="comment-input"]').blur();
-//   }
+    cy.get('[data-cy="date-input"]').clear();
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
 
-//   it('Invalid date disables submit', () => {
-//     populateForm();
-//     cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="date-input"]').type('1950-01-02');
+    cy.get('[data-cy="date-input"]').blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
 
-//     cy.get('[data-cy="date-input"]').clear();
-//     cy.get('[data-cy="submit-button"]').click();
-//     cy.get('[data-cy="submit-button"]').should('be.disabled');
+  it('Invalid location disables submit', () => {
+    populateForm({ skipLocation: true });
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
 
-//     cy.get('[data-cy="date-input"]').type('2020-01-01');
-//     cy.get('[data-cy="date-input"]').blur();
-//     cy.get('[data-cy="submit-button"]').should('be.enabled');
-//   });
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
 
-//   /*
-//    * TODO: Add tests for each component that can prevent submission.
-//    * Each test should:
-//    *   - populate the form with valid values.
-//    *   - invalidate the element being tested.
-//    *   - click submit.
-//    *   - check that the submit button has been disabled.
-//    *   - make the element valid.
-//    *   - check that the submit button has been enabled.
-//    *
-//    * Use the "Invalid date disables submit" test above as an example.
-//    */
+  it('Invalid depth disables submit', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
 
-//   it('Reset button resets form', () => {
-//     populateForm();
-//     cy.get('[data-cy="reset-button"]').click();
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .type(6);
+    cy.get('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
 
-//     cy.get('[data-cy="date-input"]').should(
-//       'have.value',
-//       dayjs().format('YYYY-MM-DD')
-//     );
+  it('Invalid speed disables submit', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
 
-//     /*
-//      * TODO: Add additional tests to check that all other components
-//      * are reset here. Note that this is not a sticky reset so all
-//      * components should be reset to their default values.
-//      */
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .type(6);
+    cy.get('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
 
-//     cy.get('[data-cy="comment-input"]').should('have.value', '');
+  it('Invalid area disables submit', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
 
-//     cy.get('[data-cy="submit-button"]').should('be.enabled');
-//   });
-// });
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .type(6);
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Invalid passes disables submit', () => {
+    populateForm();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type(6);
+    cy.get('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Equipment selection validation', () => {
+    populateForm({ skipEquipment: true });
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Reset button resets form', () => {
+    populateForm();
+    cy.get('[data-cy="reset-button"]').click();
+
+    cy.get('[data-cy="date-input"]').should(
+      'have.value',
+      dayjs().format('YYYY-MM-DD')
+    );
+
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '100');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '1');
+
+    cy.get('[data-cy="comment-input"]').should('have.value', '');
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+});
