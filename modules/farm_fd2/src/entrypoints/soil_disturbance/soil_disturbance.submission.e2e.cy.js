@@ -1,138 +1,179 @@
-// describe('Soil Disturbance: Submission tests', () => {
-//   beforeEach(() => {
-//     cy.restoreLocalStorage();
-//     cy.restoreSessionStorage();
+import { lib as directSeedingLib } from '../direct_seeding/lib.js';
+//import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-//     cy.login('admin', 'admin');
-//     cy.visit('fd2/soil_disturbance/');
-//     cy.waitForPage();
-//   });
+describe('Soil Disturbance: Submission tests', () => {
+  let directSeedingBroccoli = {
+    seedingDate: '1950-01-02',
+    cropName: 'BROCCOLI',
+    locationName: 'ALF',
+    beds: ['ALF-3', 'ALF-4'],
+    bedFeet: 100,
+    rowsPerBed: '3',
+    bedWidth: 60,
+    equipment: ['Tractor'],
+    depth: 6,
+    speed: 5,
+    comment: 'A comment',
+  };
+  let createdPlantAsset = null;
 
-//   afterEach(() => {
-//     cy.saveLocalStorage();
-//     cy.saveSessionStorage();
-//   });
+  before(() => {
+    cy.wrap(directSeedingLib.submitForm(directSeedingBroccoli), {
+      timeout: 10000,
+    }).then((resultsBroccoli) => {
+      createdPlantAsset = resultsBroccoli.plantAsset;
+    });
+  });
 
-//   function submitForm() {
-//     cy.get('[data-cy="date-input"]').clear();
-//     cy.get('[data-cy="date-input"]').type('1950-01-02');
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
 
-//     /*
-//      * TODO: Add code to fill in values for other fields as they
-//      *       are added to the input form.
-//      */
+    cy.login('admin', 'admin');
+    cy.visit('fd2/soil_disturbance/');
+    cy.waitForPage();
+  });
 
-//     cy.get('[data-cy="comment-input"]').type('test comment');
-//     cy.get('[data-cy="comment-input"]').blur();
+  afterEach(() => {
+    cy.saveLocalStorage();
+    cy.saveSessionStorage();
+  });
 
-//     cy.get('[data-cy="submit-button"]').click();
-//   }
+  function submitForm() {
+    cy.get('[data-cy="date-input"]').clear();
+    cy.get('[data-cy="date-input"]').type('1950-01-02');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="picker-options"]').find('input').eq(2).check();
+    cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
+    cy.get('[data-cy="termination-event-checkbox"]').click();
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .type(5);
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .type(6);
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .clear();
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .type(2);
+    cy.get('[data-cy="comment-input"]').type('test comment');
+    cy.get('[data-cy="comment-input"]').blur();
 
-//   /*
-//    * The goal of this test is to check that:
-//    *   - The submit function in App.vue passes the correct data from the
-//    *     form to the lib.submit function.
-//    *   - That the submit function displays appropriate "toast" messages
-//    *     for the user during the submission.
-//    *   - That the submit and reset buttons are disabled while the form is
-//    *     being submitted and that they are re-enabled after the submission
-//    *     is complete.
-//    *   - That the form is reset after the submission is complete.
-//    */
-//   it('Test successful submission', () => {
-//     /*
-//      * Setup a spy for the lib.submitForm function.  This will allow
-//      * us to check that the form passed to that function from the
-//      * submit function in App.uve is correct.
-//      */
-//     cy.window().then((win) => {
-//       cy.spy(win.lib, 'submitForm').as('submitFormSpy');
-//     });
+    cy.get('[data-cy="submit-button"]').click();
+  }
 
-//     /*
-//      * Fill in the form and click the "Submit" button.
-//      */
-//     submitForm();
+  it('Test successful submission', () => {
+    /*
+     * Setup a spy for the lib.submitForm function.  This will allow
+     * us to check that the form passed to that function from the
+     * submit function in App.uve is correct.
+     */
+    cy.window().then((win) => {
+      cy.spy(win.lib, 'submitForm').as('submitFormSpy');
+    });
 
-//     // Check that Submit and Reset are disabled while submitting.
-//     cy.get('[data-cy="submit-button"]').should('be.disabled');
-//     cy.get('[data-cy="reset-button"]').should('be.disabled');
+    /*
+     * Fill in the form and click the "Submit" button.
+     */
+    submitForm();
 
-//     // Check for the status toast while the form is submitting.
-//     cy.get('.toast')
-//       .should('be.visible')
-//       .should('contain.text', 'Submitting Soil Disturbance...');
+    // Check that Submit and Reset are disabled while submitting.
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
 
-//     /*
-//      * Give time for all the records to be created and then check
-//      * for the toast indicating that the submission was successful.
-//      */
-//     cy.get('.toast', { timeout: 10000 })
-//       .should('be.visible')
-//       .should('contain.text', 'Soil Disturbance created.');
+    // Check for the status toast while the form is submitting.
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Submitting Soil Disturbance...');
 
-//     // Check that submitForm was called with the correct data.
-//     cy.get('@submitFormSpy').then((spy) => {
-//       expect(spy).to.be.calledOnce;
+    /*
+     * Give time for all the records to be created and then check
+     * for the toast indicating that the submission was successful.
+     */
+    cy.get('.toast', { timeout: 10000 })
+      .should('be.visible')
+      .should('contain.text', 'Soil Disturbance created.');
 
-//       let formData = spy.getCall(0).args[0];
-//       expect(formData.date).to.equal('1950-01-02');
-//       /*
-//        * TODO: Add checks for the other parts of the formData
-//        *       as they are added to the input form.
-//        */
-//       expect(formData.comment).to.equal('test comment');
-//     });
+    // Check that submitForm was called with the correct data.
+    cy.get('@submitFormSpy').then((spy) => {
+      expect(spy).to.be.calledOnce;
 
-//     // Check that the "sticky" parts of the form are not reset...
-//     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
+      let formData = spy.getCall(0).args[0];
+      expect(formData.date).to.equal('1950-01-02');
+      expect(formData.location).to.equal('ALF');
+      expect(formData.beds[0]).to.equal('ALF-3');
+      expect(formData.beds[1]).to.equal('ALF-4');
+      expect(formData.termination).to.equal(true);
+      expect(formData.terminatedPlants).to.have.length(1);
+      expect(formData.terminatedPlants[0]).to.equal(createdPlantAsset.id);
+      expect(formData.equipment).to.have.length(1);
+      expect(formData.equipment[0]).to.equal('Tractor');
+      expect(formData.depth).to.equal(5);
+      expect(formData.speed).to.equal(6);
+      expect(formData.passes).to.equal(2);
+      expect(formData.area).to.equal(100);
+      expect(formData.comment).to.equal('test comment');
+    });
 
-//     // Check that the other parts of the form are reset.
-//     cy.get('[data-cy="comment-input"]').should('have.value', '');
+    // Check that the "sticky" parts of the form are not reset...
+    cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null); // non-sticky
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'Tractor');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '5.0');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '6.0');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 2);
+    cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
-//     /*
-//      * TODO: Add checks above to ensure that newly added parts of the
-//      *       form are reset.
-//      */
+    // Check that the success toast is hidden.
+    cy.get('.toast').should('not.exist');
 
-//     // Check that the success toast is hidden.
-//     cy.get('.toast').should('not.exist');
+    // Check that Submit button is re-enabled after submitting.
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
+  });
 
-//     // Check that Submit button is re-enabled after submitting.
-//     cy.get('[data-cy="submit-button"]').should('be.enabled');
-//     cy.get('[data-cy="reset-button"]').should('be.enabled');
-//   });
+  it('Test submission with network error', () => {
+    cy.intercept('POST', '**/api/log/activity', {
+      statusCode: 401,
+    });
+    submitForm();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Submitting Soil Disturbance...');
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Error creating Soil Disturbance records.');
+    cy.get('.toast', { timeout: 7000 }).should('not.exist');
 
-//   /*
-//    * The goal of this test is to check that the form behaves correctly
-//    * when the lib.submitForm function throws an error. This includes
-//    * checking that:
-//    *   - That the submit function displays appropriate "toast" messages
-//    *     for the user during the submission.
-//    *   - That the submit and reset buttons are disabled while the form is
-//    *     being submitted and that they are re-enabled after the submission
-//    *     is complete.
-//    */
-//   it('Test submission with network error', () => {
-//     cy.intercept('**/api/**/*', {
-//       statusCode: 401,
-//     });
-
-//     submitForm();
-
-//     cy.get('[data-cy="submit-button"]').should('be.disabled');
-//     cy.get('[data-cy="reset-button"]').should('be.disabled');
-
-//     cy.get('.toast')
-//       .should('be.visible')
-//       .should('contain.text', 'Submitting Soil Disturbance...');
-
-//     cy.get('.toast')
-//       .should('be.visible')
-//       .should('contain.text', 'Error creating Soil Disturbance records.');
-//     cy.get('.toast', { timeout: 7000 }).should('not.exist');
-
-//     cy.get('[data-cy="submit-button"]').should('be.enabled');
-//     cy.get('[data-cy="reset-button"]').should('be.enabled');
-//   });
-// });
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
+  });
+});
