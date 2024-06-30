@@ -117,3 +117,13 @@ winter_kill:
   css:
     component:
       style/style.css: {}
+
+multi_selector_base:
+  js:
+    multi_selector_base/multi_selector_base.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}

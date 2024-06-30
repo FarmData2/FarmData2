@@ -70,3 +70,9 @@ farm.fd2_examples_winter_kill:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
+farm.fd2_examples_multi_selector_base:
+  title: 'MultiSelectorBase Example'
+  description: 'Example for use of MultiSelectorBase component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_multi_selector_base.content
+  weight: 100
