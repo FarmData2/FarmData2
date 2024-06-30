@@ -1689,18 +1689,16 @@ export async function getPlantAssets(
 
   // Fetch all plant assets
   const plantAssets = await farm.asset.fetch({
-    filter: { type: 'asset--plant' },
+    filter: {
+      type: 'asset--plant',
+      status: 'active',
+    },
   });
 
   // Filter and check each plant asset
   const matchingPlantAssetIds = [];
   for (const plantAsset of plantAssets.data) {
     const locations = plantAsset.relationships.location;
-
-    // Check if the plant asset has the status "active"
-    if (plantAsset.attributes.status !== 'active') {
-      continue;
-    }
 
     let addToResults = false;
 
