@@ -12,6 +12,7 @@
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event, i)"
+      v-on:add-clicked="handleAddClicked($event)"
       v-on:valid="handleValid($event, i)"
       v-bind:popupUrl="includePopupUrl(i)"
     />
@@ -24,7 +25,7 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 export default {
   name: 'MultiSelectorBase',
   components: { SelectorBase },
-  emits: ['update:selected', 'valid', 'error', 'ready'],
+  emits: ['update:selected', 'add-clicked', 'valid', 'error', 'ready'],
   props: {
     invalidFeedbackText: {
       type: String,
@@ -68,6 +69,9 @@ export default {
     },
     isRequired(i) {
       return this.required && i === 0 && this.selectedItems.length < 2;
+    },
+    handleAddClicked(event) {
+      this.$emit('add-clicked', event);
     },
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {

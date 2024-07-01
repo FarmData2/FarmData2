@@ -13,21 +13,18 @@
         id="crop-selector-container"
         data-cy="crop-selector-container"
       >
-        <SelectorBase
-          v-for="(selectedCrops, i) in ['', ...selectedCrops]"
-          v-bind:key="i"
-          v-bind:label="String(i + 1)"
-          v-bind:id="'crop-selector-' + (i + 1)"
-          v-bind:data-cy="'crop-selector-' + (i + 1)"
-          invalidFeedbackText="Crop must be selected"
-          v-bind:options="cropsList"
-          v-bind:required="isRequired(i)"
-          v-bind:selected="selected[i]"
+        <MultiSelectorBase
+          id="multi-crop-selector"
+          data-cy="multi-crop-selector"
+          invalidFeedbackText="One crop must be selected"
+          v-bind:required="required"
           v-bind:showValidityStyling="showValidityStyling"
-          v-on:update:selected="handleUpdateSelected($event, i)"
-          v-on:valid="handleValid($event, i)"
-          v-on:add-clicked="handleAddClicked($event, i)"
-          v-bind:popupUrl="includePopupUrl(i)"
+          v-bind:options="cropsList"
+          v-bind:selected="selectedCrops"
+          v-on:update:selected="handleUpdateSelected()"
+          v-on:add-clicked="handleAddClicked($event)"
+          v-on:valid="handleValid($event)"
+          v-bind:popupUrl="popupUrl"
         />
       </div>
     </div>
@@ -35,7 +32,7 @@
 </template>
 
 <script>
-import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -77,7 +74,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  */
 export default {
   name: 'MultiCropSelector',
-  components: { SelectorBase },
+  components: { MultiSelectorBase },
   emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
@@ -109,7 +106,7 @@ export default {
   data() {
     return {
       selectedCrops: this.selected,
-      valid: [null],
+      valid: null,
       cropsList: [],
       canCreateCrop: false,
       popupUrl: null,
@@ -117,22 +114,11 @@ export default {
   },
   computed: {
     isValid() {
-      /*
-       * The whole list will be valid if the first
-       * SelectorBase has a valid value.
-       */
-      return this.valid[0];
+      return this.valid;
     },
   },
   methods: {
-    includePopupUrl(i) {
-      // determine if ith selector should have add button
-      if (i == this.selectedCrops.length) {
-        return this.popupUrl;
-      }
-      return null;
-    },
-    async handleAddClicked(newCrop, i) {
+    async handleAddClicked(newCrop) {
       // when the selector emits the add-clicked event
       // clear the cached crops and repopulate the options
       // to get the newly created crop, then select it
@@ -143,7 +129,8 @@ export default {
         farmosUtil.clearCachedCrops();
         // Populate the map and wait for it to complete
         await this.populateCropList();
-        this.handleUpdateSelected(newCrop, i);
+        this.selectedCrops.push(newCrop);
+        this.handleUpdateSelected();
       }
     },
     async populateCropList() {
@@ -155,30 +142,15 @@ export default {
         console.error('Error populating crop map:', error);
       }
     },
-
-    isRequired(i) {
-      return this.required && i == 0 && this.selectedCrops.length < 2;
+    handleValid(event) {
+      this.valid = event;
     },
-    handleUpdateSelected(event, i) {
-      if (event === '') {
-        // The ith crop was removed.
-        this.selectedCrops.splice(i, 1);
-        this.valid.splice(i, 1);
-        if (this.selectedCrops.length == 0) {
-          this.valid[0] = !this.required;
-        }
-      } else {
-        this.selectedCrops[i] = event;
-      }
-
+    handleUpdateSelected() {
       /**
-       * The selected crop has changed.
-       * @property {Array<String>} event the names of the newly selected crop.
+       * The selected crops have changed.
+       * @property {Array<String>} event the names of the newly selected crops.
        */
       this.$emit('update:selected', this.selectedCrops);
-    },
-    handleValid(event, i) {
-      this.valid[i] = event;
     },
   },
   watch: {
@@ -231,9 +203,6 @@ export default {
   display: block;
   width: 100%;
   background-color: #ffff;
-  border-style: solid !important;
-  border-width: var(--bs-border-width) !important;
-  border-color: var(--bs-border-color-translucent) !important;
   box-shadow: none !important;
   margin-top: 8px !important;
 }

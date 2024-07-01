@@ -192,4 +192,30 @@ describe('Test the MultiSelectorBase component events', () => {
         cy.get('@updateSpy').should('have.been.calledWith', ['one', 'two']);
       });
   });
+
+  it('Emits "add-clicked" forwarded from SelectorBase with new option', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const addSpy = cy.spy().as('addSpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        selected: ['one'],
+        onReady: readySpy,
+        'onAdd-clicked': addSpy,
+        options: ['one', 'two', 'three'],
+        popupUrl: '', // when mounting, set the popupUrl to '' to avoid errors when testing
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-add-button"]')
+          .click();
+        cy.get('[data-cy="selector-closePopup"]').click();
+        cy.get('@addSpy').should('have.been.calledOnce');
+        cy.get('@addSpy').should('have.been.with', null);
+      });
+  });
 });

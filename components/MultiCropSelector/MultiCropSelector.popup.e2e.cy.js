@@ -14,7 +14,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Crop plus button exists, is visible, is enabled', () => {
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .should('exist')
       .should('be.visible')
@@ -22,7 +22,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form removes links', () => {
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -49,7 +49,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form selects new crop', () => {
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -70,13 +70,13 @@ describe('EquipmentSelector popup test', () => {
       .should('be.visible') // Ensure the submit button is visible
       .click();
 
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]', { timeout: 10000 })
       .should('have.value', 'NewCrop');
   });
 
   it('Form checks Url', () => {
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 

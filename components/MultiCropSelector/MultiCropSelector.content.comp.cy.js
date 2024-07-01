@@ -23,8 +23,8 @@ describe('Test the default MultiCropSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="crop-selector-1"]').should('exist');
-        cy.get('[data-cy="crop-selector-2"]').should('not.exist');
+        cy.get('[data-cy="selector-1"]').should('exist');
+        cy.get('[data-cy="selector-2"]').should('not.exist');
       });
   });
 
@@ -70,30 +70,30 @@ describe('Test the default MultiCropSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="crop-selector-1"]').should('exist');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]').should('exist');
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-add-button"]')
           .should('not.exist');
 
-        cy.get('[data-cy="crop-selector-2"]').should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]').should('exist');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-add-button"]')
           .should('exist');
 
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-required"]')
           .should('not.exist');
 
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', 'BROCCOLI');
       });
@@ -114,42 +114,42 @@ describe('Test the default MultiCropSelector content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         // no items => required and no delete
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('exist');
         // one item => required and no delete
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .select('BROCCOLI');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-required"]')
           .should('not.exist');
         // two items => not required and delete
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
           .select('BROCCOLI');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('exist');
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('not.exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-delete-button"]')
           .should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-required"]')
           .should('not.exist');
       });
@@ -189,7 +189,7 @@ describe('Test the default MultiCropSelector content', () => {
           .find('option')
           .should('have.length', 29);
 
-        cy.get('[data-cy="crop-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-option-1"]')
           .should('have.value', 'ARUGULA');
       });
