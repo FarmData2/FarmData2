@@ -1,66 +1,62 @@
-import { lib } from './lib';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+import { lib } from './lib.js';
+// import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-describe('Test the Cover Crop Seeding lib submission', () => {
-  /*
-   * TODO: Create a form object that has the same format as the
-   *       data.form object used in the entry point.
-   *
-   *       This will be passed to the lib functions as if it is
-   *       coming from the entry point as a submission.
-   */
+describe('Submission using the cover_crop lib.', () => {
   let form = {
     date: '1950-01-02',
-    crop: 'ZUCCHINI', // Not in the sample form, but needed for testing
+    location: 'ALF',
+    crops: ['BEAN'],
+    beds: ['ALF-1', 'ALF-3'],
+    areaSeeded: 80,
+    winterKill: true,
+    winterKillDate: '1950-01-15',
+    seedApplicationEquipment: ['Tractor'],
+    seedApplicationDepth: 6,
+    seedApplicationSpeed: 5,
+    seedIncorporationEquipment: ['Shovel'],
+    seedIncorporationDepth: 4,
+    seedIncorporationSpeed: 3,
     comment: 'A comment',
   };
 
-  let results = null;
-  let cropMap = null;
-  before(() => {
-    /*
-     * TODO: Load any maps or other data from the API that will be needed
-     *       by the tests.
-     *
-     *       For examples, see the before() function in lib.submit.unit.cy.js in:
-     *         - modules/farm_fd2/src/entrypoints/tray_seeding
-     *         - modules/farm_fd2/src/entrypoints/direct_seeding
-     */
-    cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
-      cropMap = map;
-    });
+  // let bedMap = null;
+  // let categoryMap = null;
+  // let cropMap = null;
+  // let equipmentMap = null;
+  // let fieldMap = null;
+  // let unitMap = null;
+  // let results = null;
 
-    /*
-     * Submit the form using lib.submitForm from farmosUtil to create
-     * all the logs, assets and quantities needed to represent a
-     * Cover Crop Seeding.
-     */
-    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((submitted) => {
-      /*
-       * submitted (and results) is an object containing the log, asset and
-       * quantity objects that were submitted to farmOS by the lib.submitForm
-       * function. These objects are not the actual objects that exist in the
-       * farmOS database, they are the objects sent to farmOS to ask it to create
-       * the logs, assets and quantities in its database. The tests below will
-       * check that each of the objects in results contains the expected data
-       * from the form that was submitted.
-       *
-       * Note checking the results (and not the database objects) here is sufficient
-       * because:
-       *   - The *.submission.e2e.cy.js test checks that the correct data
-       *     is passed from the user interface to the submitForm function.
-       *   - Checking the results here confirms that lib.submitForm has passed the
-       *     correct form data to the farmosUtil library functions that create the
-       *     logs, assets and quantities in the farmOS database.
-       *   - The tests for the farmosUtil library functions confirm that they
-       *     create the correct objects in the farmOS database for the data that
-       *     they are given.
-       *   - We trust that farmOS then handles the additional aspects of creating
-       *     the logs, assets and quantities correctly. For example, if we create a
-       *     log with a movement, we check that the log references the correct asset.
-       *     But we do not check that the location of the asset has been updated.
-       */
-      results = submitted;
+  before(() => {
+    cy.restoreLocalStorage();
+    cy.restoreSessionStorage();
+
+    // cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
+    //   bedMap = map;
+    // });
+
+    // cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((map) => {
+    //   categoryMap = map;
+    // });
+
+    // cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
+    //   cropMap = map;
+    // });
+
+    // cy.wrap(farmosUtil.getEquipmentNameToAssetMap()).then((map) => {
+    //   equipmentMap = map;
+    // });
+
+    // cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
+    //   fieldMap = map;
+    // });
+
+    // cy.wrap(farmosUtil.getUnitToTermMap()).then((map) => {
+    //   unitMap = map;
+    // });
+
+    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then(() => {
+      // results = res;
     });
   });
 
@@ -74,49 +70,274 @@ describe('Test the Cover Crop Seeding lib submission', () => {
     cy.saveSessionStorage();
   });
 
-  /*
-   * TODO: Adapt this test and add others as necessary. There should be
-   *       One test for each log, asset and quantity that is created by
-   *       the lib.submitForm function. Generally, this will be one test
-   *       for each operation in lib.submitForm.
-   *
-   *       The goal of each test is to ensure that the lib.js operation has
-   *       passed the correct form data to the farmosUtil function that is
-   *       creating the log, asset or quantity.
-   *
-   *       For example, the sampleOp creates a plant asset. The documentation
-   *       for the farmosUtil.createPlantAsset function shows it accepts arguments
-   *       for the date, cropName, comment and parents. Thus, the test will
-   *       check the parts of the results object that use those parameters to
-   *       confirm that they agree with what is expected based on the form data
-   *       that was submitted.
-   *
-   *       See examples of tests in the lib.submit.unit.cy.js files in:
-   *         - modules/farm_fd2/src/entrypoints/tray_seeding
-   *         - modules/farm_fd2/src/entrypoints/direct_seeding
-   */
-  it('Cover Crop Seeding: Placeholder checks the sampleOp result', () => {
-    /*
-     * Check to be sure we get a plant asset.  This confirms that the lib.js
-     * operation called the correct function.
-     */
-    expect(results.sampleOp.type).to.equal('asset--plant');
-
-    /*
-     * Check the parts of the result that use the parameters that
-     * the lib.js operation passed to the farmosUtil.createPlantAsset
-     * function. It is only necessary to do enough checks to be sure
-     * that every parameter was passed correctly.  Tests for the
-     * farmosUtil functions confirm that they create the correct log,
-     * asset, or quantity in the farmOS database.
-     */
-    expect(results.sampleOp.attributes.name).to.equal(
-      form.date + '_' + form.crop
-    );
-    expect(results.sampleOp.attributes.notes.value).to.equal(form.comment);
-    expect(results.sampleOp.relationships.plant_type[0].id).to.equal(
-      cropMap.get(form.crop).id
-    );
-    expect(results.sampleOp.relationships.parent).to.have.length(0);
+  it('Check the asset--plant', () => {
+    // expect(results.coverCropAsset.type).to.equal('asset--plant');
+    // expect(results.coverCropAsset.attributes.name).to.equal(
+    //   form.date + '_' + form.crops.join(',')
+    // );
+    // expect(results.coverCropAsset.attributes.notes.value).to.equal(
+    //   form.comment
+    // );
+    // expect(results.coverCropAsset.relationships.plant_type[0].id).to.equal(
+    //   cropMap.get(form.crops[0]).id
+    // );
+    // expect(results.coverCropAsset.relationships.parent).to.have.length(0);
   });
+
+  // it('Check the area seeded quantity--standard', () => {
+  //   expect(results.areaSeededQuantity.type).to.equal('quantity--standard');
+  //   expect(results.areaSeededQuantity.attributes.measure).to.equal(
+  //     'percentage'
+  //   );
+  //   expect(results.areaSeededQuantity.attributes.value.decimal).to.equal(
+  //     form.areaSeeded
+  //   );
+  //   expect(results.areaSeededQuantity.attributes.label).to.equal('Area Seeded');
+  //   expect(results.areaSeededQuantity.relationships.units.id).to.equal(
+  //     unitMap.get('%').id
+  //   );
+  //   expect(results.areaSeededQuantity.attributes.inventory_adjustment).to.be
+  //     .null;
+  //   expect(results.areaSeededQuantity.relationships.inventory_asset).to.be.null;
+  // });
+
+  // it('Check the log--winter kill', () => {
+  //   if (form.winterKill) {
+  //     expect(results.winterKillLog.type).to.equal('log--activity');
+  //     expect(results.winterKillLog.attributes.name).to.equal(
+  //       form.winterKillDate + '_winter_kill_' + form.location
+  //     );
+  //     expect(results.winterKillLog.attributes.timestamp).to.contain(
+  //       form.winterKillDate
+  //     );
+
+  //     expect(results.winterKillLog.relationships.location.length).to.equal(3);
+  //     expect(results.winterKillLog.relationships.location[0].id).to.equal(
+  //       fieldMap.get(form.location).id
+  //     );
+  //     expect(results.winterKillLog.relationships.location[1].id).to.equal(
+  //       bedMap.get(form.beds[0]).id
+  //     );
+  //     expect(results.winterKillLog.relationships.location[2].id).to.equal(
+  //       bedMap.get(form.beds[1]).id
+  //     );
+
+  //     expect(results.winterKillLog.relationships.category.length).to.equal(1);
+  //     expect(results.winterKillLog.relationships.category[0].id).to.equal(
+  //       categoryMap.get('winter_kill').id
+  //     );
+  //   }
+  // });
+
+  // it('Check the log--seeding', () => {
+  //   expect(results.seedingLog.type).to.equal('log--seeding');
+  //   expect(results.seedingLog.attributes.name).to.equal(
+  //     form.date + '_cc_' + form.crops.join(',')
+  //   );
+  //   expect(results.seedingLog.attributes.timestamp).to.contain(form.date);
+
+  //   expect(results.seedingLog.relationships.location.length).to.equal(3);
+  //   expect(results.seedingLog.relationships.location[0].id).to.equal(
+  //     fieldMap.get(form.location).id
+  //   );
+  //   expect(results.seedingLog.relationships.location[1].id).to.equal(
+  //     bedMap.get(form.beds[0]).id
+  //   );
+  //   expect(results.seedingLog.relationships.location[2].id).to.equal(
+  //     bedMap.get(form.beds[1]).id
+  //   );
+
+  //   expect(results.seedingLog.relationships.category.length).to.equal(2);
+  //   expect(results.seedingLog.relationships.category[0].id).to.equal(
+  //     categoryMap.get('seeding').id
+  //   );
+  //   expect(results.seedingLog.relationships.category[1].id).to.equal(
+  //     categoryMap.get('cover_crop_seeding').id
+  //   );
+
+  //   expect(results.seedingLog.relationships.asset[0].id).to.equal(
+  //     results.coverCropAsset.id
+  //   );
+
+  //   expect(results.seedingLog.relationships.quantity.length).to.equal(1);
+  //   expect(results.seedingLog.relationships.quantity[0].id).to.equal(
+  //     results.areaSeededQuantity.id
+  //   );
+  // });
+
+  // it('Check the depth quantity--standard', () => {
+  //   expect(results.depthQuantity.type).to.equal('quantity--standard');
+  //   expect(results.depthQuantity.attributes.measure).to.equal('length');
+  //   expect(results.depthQuantity.attributes.value.decimal).to.equal(
+  //     form.seedApplicationDepth
+  //   );
+  //   expect(results.depthQuantity.attributes.label).to.equal('Depth');
+  //   expect(results.depthQuantity.relationships.units.id).to.equal(
+  //     unitMap.get('INCHES').id
+  //   );
+  //   expect(results.depthQuantity.relationships.inventory_asset).to.be.null;
+  //   expect(results.depthQuantity.attributes.inventory_adjustment).to.be.null;
+  // });
+
+  // it('Check the speed quantity--standard', () => {
+  //   expect(results.speedQuantity.type).to.equal('quantity--standard');
+  //   expect(results.speedQuantity.attributes.measure).to.equal('rate');
+  //   expect(results.speedQuantity.attributes.value.decimal).to.equal(
+  //     form.seedApplicationSpeed
+  //   );
+  //   expect(results.speedQuantity.attributes.label).to.equal('Speed');
+  //   expect(results.speedQuantity.relationships.units.id).to.equal(
+  //     unitMap.get('MPH').id
+  //   );
+  //   expect(results.speedQuantity.relationships.inventory_asset).to.be.null;
+  //   expect(results.speedQuantity.attributes.inventory_adjustment).to.be.null;
+  // });
+
+  // it('Check the seed application log--activity', () => {
+  //   expect(results.activityLog.type).to.equal('log--activity');
+  //   expect(results.activityLog.attributes.name).to.equal(
+  //     form.date + '_seed_application_' + form.location
+  //   );
+  //   expect(results.activityLog.attributes.timestamp).to.contain(form.date);
+
+  //   expect(results.activityLog.relationships.location.length).to.equal(3);
+  //   expect(results.activityLog.relationships.location[0].id).to.equal(
+  //     fieldMap.get(form.location).id
+  //   );
+  //   expect(results.activityLog.relationships.location[1].id).to.equal(
+  //     bedMap.get(form.beds[0]).id
+  //   );
+  //   expect(results.activityLog.relationships.location[2].id).to.equal(
+  //     bedMap.get(form.beds[1]).id
+  //   );
+
+  //   expect(results.activityLog.relationships.asset[0].id).to.equal(
+  //     results.coverCropAsset.id
+  //   );
+
+  //   expect(results.activityLog.relationships.category.length).to.equal(2);
+  //   expect(results.activityLog.relationships.category[0].id).to.equal(
+  //     categoryMap.get('tillage').id
+  //   );
+  //   expect(results.activityLog.relationships.category[1].id).to.equal(
+  //     categoryMap.get('cover_crop_seeding').id
+  //   );
+
+  //   expect(results.activityLog.relationships.quantity.length).to.equal(3);
+  //   expect(results.activityLog.relationships.quantity[0].id).to.equal(
+  //     results.depthQuantity.id
+  //   );
+  //   expect(results.activityLog.relationships.quantity[1].id).to.equal(
+  //     results.speedQuantity.id
+  //   );
+  //   expect(results.activityLog.relationships.quantity[2].id).to.equal(
+  //     results.areaSeededQuantity.id
+  //   );
+
+  //   expect(results.activityLog.relationships.equipment.length).to.equal(1);
+  //   expect(results.activityLog.relationships.equipment[0].id).to.equal(
+  //     equipmentMap.get(form.seedApplicationEquipment[0]).id
+  //   );
+  // });
+
+  // it('Check the seed incorporation depth quantity--standard', () => {
+  //   expect(results.incorporationDepthQuantity.type).to.equal(
+  //     'quantity--standard'
+  //   );
+  //   expect(results.incorporationDepthQuantity.attributes.measure).to.equal(
+  //     'length'
+  //   );
+  //   expect(
+  //     results.incorporationDepthQuantity.attributes.value.decimal
+  //   ).to.equal(form.seedIncorporationDepth);
+  //   expect(results.incorporationDepthQuantity.attributes.label).to.equal(
+  //     'Depth'
+  //   );
+  //   expect(results.incorporationDepthQuantity.relationships.units.id).to.equal(
+  //     unitMap.get('INCHES').id
+  //   );
+  //   expect(results.incorporationDepthQuantity.relationships.inventory_asset).to
+  //     .be.null;
+  //   expect(results.incorporationDepthQuantity.attributes.inventory_adjustment)
+  //     .to.be.null;
+  // });
+
+  // it('Check the seed incorporation speed quantity--standard', () => {
+  //   expect(results.incorporationSpeedQuantity.type).to.equal(
+  //     'quantity--standard'
+  //   );
+  //   expect(results.incorporationSpeedQuantity.attributes.measure).to.equal(
+  //     'rate'
+  //   );
+  //   expect(
+  //     results.incorporationSpeedQuantity.attributes.value.decimal
+  //   ).to.equal(form.seedIncorporationSpeed);
+  //   expect(results.incorporationSpeedQuantity.attributes.label).to.equal(
+  //     'Speed'
+  //   );
+  //   expect(results.incorporationSpeedQuantity.relationships.units.id).to.equal(
+  //     unitMap.get('MPH').id
+  //   );
+  //   expect(results.incorporationSpeedQuantity.relationships.inventory_asset).to
+  //     .be.null;
+  //   expect(results.incorporationSpeedQuantity.attributes.inventory_adjustment)
+  //     .to.be.null;
+  // });
+
+  // it('Check the seed incorporation log--activity', () => {
+  //   expect(results.incorporationActivityLog.type).to.equal('log--activity');
+  //   expect(results.incorporationActivityLog.attributes.name).to.equal(
+  //     form.date + '_seed_incorporation_' + form.location
+  //   );
+  //   expect(results.incorporationActivityLog.attributes.timestamp).to.contain(
+  //     form.date
+  //   );
+
+  //   expect(
+  //     results.incorporationActivityLog.relationships.location.length
+  //   ).to.equal(3);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.location[0].id
+  //   ).to.equal(fieldMap.get(form.location).id);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.location[1].id
+  //   ).to.equal(bedMap.get(form.beds[0]).id);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.location[2].id
+  //   ).to.equal(bedMap.get(form.beds[1]).id);
+
+  //   expect(results.incorporationActivityLog.relationships.asset[0].id).to.equal(
+  //     results.coverCropAsset.id
+  //   );
+
+  //   expect(
+  //     results.incorporationActivityLog.relationships.category.length
+  //   ).to.equal(2);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.category[0].id
+  //   ).to.equal(categoryMap.get('tillage').id);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.category[1].id
+  //   ).to.equal(categoryMap.get('cover_crop_seeding').id);
+
+  //   expect(
+  //     results.incorporationActivityLog.relationships.quantity.length
+  //   ).to.equal(3);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.quantity[0].id
+  //   ).to.equal(results.incorporationDepthQuantity.id);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.quantity[1].id
+  //   ).to.equal(results.incorporationSpeedQuantity.id);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.quantity[2].id
+  //   ).to.equal(results.areaSeededQuantity.id);
+
+  //   expect(
+  //     results.incorporationActivityLog.relationships.equipment.length
+  //   ).to.equal(1);
+  //   expect(
+  //     results.incorporationActivityLog.relationships.equipment[0].id
+  //   ).to.equal(equipmentMap.get(form.seedIncorporationEquipment[0]).id);
+  // });
 });

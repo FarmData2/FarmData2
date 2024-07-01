@@ -73,8 +73,7 @@ describe('Cover Crop Seeding: WinterKill Component', () => {
 
     cy.get('[data-cy="cover-crop-seeding-winter-kill"]')
       .find('[data-cy="winter-kill-date-input"]')
-      .should('exist')
-      .clear();
+      .should('exist');
 
     cy.get('[data-cy="cover-crop-seeding-winter-kill"]')
       .find('[data-cy="winter-kill-checkbox"]')

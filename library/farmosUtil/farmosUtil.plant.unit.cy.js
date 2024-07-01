@@ -67,6 +67,24 @@ describe('Test the plant asset functions', () => {
     });
   });
 
+  it('Create a plant asset with multiple crop names', () => {
+    const cropNames = ['ARUGULA', 'LETTUCE'];
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-03', cropNames, 'testComment'))
+      .then((plantAsset) => {
+        cy.wrap(farmosUtil.getPlantAsset(plantAsset.id));
+      })
+      .then((result) => {
+        expect(result.attributes.name).to.equal('1999-01-03_ARUGULA_LETTUCE');
+        expect(result.attributes.status).to.equal('active');
+        expect(result.attributes.notes.value).to.equal('testComment');
+        cropNames.forEach((cropName, index) => {
+          expect(result.relationships.plant_type[index].id).to.equal(
+            cropMap.get(cropName).id
+          );
+        });
+      });
+  });
+
   it('Error creating plant asset', { retries: 4 }, () => {
     cy.intercept('POST', '**/api/asset/plant', {
       statusCode: 401,

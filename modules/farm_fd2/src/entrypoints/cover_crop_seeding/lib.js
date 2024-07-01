@@ -1,88 +1,272 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 /**
- * TODO:
- *  - create the operation objects necessary to create the
- *    logs, assets and quantities needed by the form.
- *  - push each operation object to `ops`.
- *  - Update the JSDoc comments on the `submitForm` function below.
- *  - Complete the tasks in the TODO comments in the template below.
- *  - Delete the TODO comments.
- *  - Delete this comment block.
- */
-
-/**
  * Create the farmOS records (asset, quantities and log) to represent
- * ... TODO: update the description ....
+ * a cover crop seeding
  *
- * @param {Object} form the form containing the data from the entry point.
+ * @param {Object} formData the form data from the cover crop seeding form.
  * @returns {Promise} a promise that resolves when the records are successfully created.
  * The returned value is an object containing the asset, quantities and log that
  * were sent to the server.  This object has the following properties:
  * ```Javascript
  * {
- *   ... TODO: add attribute names and types. For example...
- *   sampleOp: {log--seeding},
+ *   plantAsset: {asset--plant},
+ *   areaSeededQuantity: {quantity--standard},
+ *   seedingLog: {log--seeding},
+ *   winterKillLog: {log--activity},
+ *   seedApplicationDepthQuantity: {quantity--standard},
+ *   seedApplicationSpeedQuantity: {quantity--standard},
+ *   seedApplicationActivityLog: {log--activity},
+ *   seedIncorporationDepthQuantity: {quantity--standard},
+ *   seedIncorporationSpeedQuantity: {quantity--standard},
+ *   seedIncorporationActivityLog: {log--activity},
+ *   seedApplicationEquipment: [ {asset--equipment} ],
+ *   seedIncorporationEquipment: [ {asset--equipment} ],
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
  */
-async function submitForm(form) {
+async function submitForm(formData) {
   try {
     let ops = [];
+    const seedApplicationEquipmentAssets = [];
+    const seedIncorporationEquipmentAssets = [];
+    const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
 
-    /*
-     * This sampleOP creates a plant asset to illustrate how an operation works.
-     *
-     * TODO: Delete or customize this sampleOp and add new operations that
-     *       create the logs, assets and quantities needed by the new entry point.
-     *
-     *       See:
-     *         - the `modules/farm_fd2/src/entrypoints/tray_seeding/lib.js`
-     *           file for examples of using operation objects to create
-     *           logs, assets and quantities.
-     *
-     *         - the documentation for the `runTransaction` function in
-     *           `libraries/farmosUtil.js` for detailed information about
-     *           the operation objects.
-     */
-    const sampleOp = {
-      name: 'sampleOp',
+    const plantAsset = {
+      name: 'plantAsset',
       do: async () => {
-        /*
-         * Add a little delay here so to be sure the e2e tests have
-         * enough time to see the "Submitting" toast.  Production
-         * operations should not include this.
-         */
-        await new Promise((r) => setTimeout(r, 2000));
-
-        /*
-         * Create and return the asset, log or quantity for
-         * this operation using the functions in farmosUtil.
-         */
         return await farmosUtil.createPlantAsset(
-          form.date,
-          'ZUCCHINI', // Just for sampleOp because crop not in App.vue form.
-          form.comment
+          formData.date,
+          formData.crops,
+          formData.comment
         );
       },
       undo: async (results) => {
-        await farmosUtil.deletePlantAsset(results['sampleOp'].id);
+        await farmosUtil.deletePlantAsset(results['plantAsset'].id);
       },
     };
-    // Add the operation to the ops for the transaction.
-    ops.push(sampleOp);
+    ops.push(plantAsset);
 
-    // Run all of the operations in ops as a transaction.
-    return await farmosUtil.runTransaction(ops);
+    const areaSeededQuantity = {
+      name: 'areaSeededQuantity',
+      do: async () => {
+        return await farmosUtil.createStandardQuantity(
+          'ratio',
+          formData.areaSeeded,
+          'Area Seeded',
+          'PERCENT'
+        );
+      },
+      undo: async (results) => {
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['areaSeededQuantity'].id
+          );
+        }
+      },
+    };
+    ops.push(areaSeededQuantity);
+
+    if (formData.winterKill) {
+      const winterKillLog = {
+        name: 'winterKillLog',
+        do: async (results) => {
+          return await farmosUtil.createWinterKillActivityLog(
+            formData.winterKillDate,
+            formData.location,
+            formData.beds,
+            results.plantAsset
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteWinterKillActivityLog(
+            results['winterKillLog'].id
+          );
+        },
+      };
+      ops.push(winterKillLog);
+    }
+
+    const seedingLog = {
+      name: 'seedingLog',
+      do: async (results) => {
+        return await farmosUtil.createSeedingLog(
+          formData.date,
+          formData.location,
+          formData.beds,
+          ['seeding', 'seeding_cover_crop'],
+          results.plantAsset,
+          [results.areaSeededQuantity]
+        );
+      },
+      undo: async (results) => {
+        await farmosUtil.deleteSeedingLog(results['seedingLog'].id);
+      },
+    };
+    ops.push(seedingLog);
+
+    if (formData.seedApplicationEquipment.length > 0) {
+      const seedApplicationDepthQuantity = {
+        name: 'seedApplicationDepthQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'length',
+            formData.seedApplicationDepth,
+            'Depth',
+            'INCHES'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedApplicationDepthQuantity'].id
+          );
+        },
+      };
+      ops.push(seedApplicationDepthQuantity);
+
+      const seedApplicationSpeedQuantity = {
+        name: 'seedApplicationSpeedQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'rate',
+            formData.seedApplicationSpeed,
+            'Speed',
+            'MPH'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedApplicationSpeedQuantity'].id
+          );
+        },
+      };
+      ops.push(seedApplicationSpeedQuantity);
+
+      for (const equipmentName of formData.seedApplicationEquipment) {
+        seedApplicationEquipmentAssets.push(equipmentMap.get(equipmentName));
+      }
+
+      const seedApplicationActivityLog = {
+        name: 'SeedApplicationActivityLog',
+        do: async (results) => {
+          return await farmosUtil.createSoilDisturbanceActivityLog(
+            formData.date,
+            formData.location,
+            formData.beds,
+            ['tillage', 'seeding_cover_crop'],
+            results.coverCropAsset,
+            [
+              results.seedApplicationDepthQuantity,
+              results.seedApplicationSpeedQuantity,
+              results.areaSeededQuantity,
+            ],
+            seedApplicationEquipmentAssets
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(
+            results['SeedApplicationActivityLog'].id
+          );
+        },
+      };
+      ops.push(seedApplicationActivityLog);
+    }
+
+    if (formData.seedIncorporationEquipment.length > 0) {
+      const seedIncorporationDepthQuantity = {
+        name: 'seedIncorporationDepthQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'length',
+            formData.seedIncorporationDepth,
+            'Depth',
+            'INCHES'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedIncorporationDepthQuantity'].id
+          );
+        },
+      };
+      ops.push(seedIncorporationDepthQuantity);
+
+      const seedIncorporationSpeedQuantity = {
+        name: 'seedIncorporationSpeedQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'rate',
+            formData.seedIncorporationSpeed,
+            'Speed',
+            'MPH'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedIncorporationSpeedQuantity'].id
+          );
+        },
+      };
+      ops.push(seedIncorporationSpeedQuantity);
+
+      for (const equipmentName of formData.seedIncorporationEquipment) {
+        seedIncorporationEquipmentAssets.push(equipmentMap.get(equipmentName));
+      }
+
+      const seedIncorporationActivityLog = {
+        name: 'seedIncorporationActivityLog',
+        do: async (results) => {
+          return await farmosUtil.createSoilDisturbanceActivityLog(
+            formData.date,
+            formData.location,
+            formData.beds,
+            ['tillage', 'seeding_cover_crop'],
+            results.coverCropAsset,
+            [
+              results.seedIncorporationDepthQuantity,
+              results.seedIncorporationSpeedQuantity,
+              results.areaSeededQuantity,
+            ],
+            seedIncorporationEquipmentAssets
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteSoilDisturbanceActivityLog(
+            results['seedIncorporationActivityLog'].id
+          );
+        },
+      };
+      ops.push(seedIncorporationActivityLog);
+    }
+
+    const result = await farmosUtil.runTransaction(ops);
+    if (seedApplicationEquipmentAssets.length > 0) {
+      result['seedApplicationEquipment'] = seedApplicationEquipmentAssets;
+    } else {
+      result['seedApplicationEquipment'] = null;
+      result['seedApplicationDepthQuantity'] = null;
+      result['seedApplicationSpeedQuantity'] = null;
+      result['seedApplicationActivityLog'] = null;
+    }
+    if (seedIncorporationEquipmentAssets.length > 0) {
+      result['seedIncorporationEquipment'] = seedIncorporationEquipmentAssets;
+    } else {
+      result['seedIncorporationEquipment'] = null;
+      result['seedIncorporationDepthQuantity'] = null;
+      result['seedIncorporationSpeedQuantity'] = null;
+      result['seedIncorporationActivityLog'] = null;
+    }
+
+    return result;
   } catch (error) {
-    console.error('cover_crop_seeding lib.js:');
+    console.error('CoverCropSeeding: \n' + error.message);
     console.error(error);
 
-    let errorMsg = 'Error creating Cover Crop Seeding records.';
+    let errorMsg = 'Error creating cover crop seeding records.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (
@@ -91,8 +275,10 @@ async function submitForm(form) {
         ) {
           errorMsg += '\n   Manually delete log or asset with:';
           errorMsg += '\n     name: ' + error.results[key].attributes.name;
+          // errorMsg += '\n     uuid: ' + error.results[key].id;
         } else {
           errorMsg += '\n   May be safely ignored';
+          // errorMsg += '\n     uuid: ' + error.results[key].id;
         }
       }
     }
