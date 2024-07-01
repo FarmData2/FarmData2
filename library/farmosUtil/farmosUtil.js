@@ -1663,21 +1663,37 @@ export async function getPlantAssets(
   isInGround = true
 ) {
   const farm = await getFarmOSInstance();
+  let bedNameToAssetMap = null;
+  let greenhouseNameToAssetMap = null;
+  let fieldNameToAssetMap = null;
+  let fieldAsset = null;
+  let greenhouseAsset = null;
+  let locationAsset = null;
 
   // If both isInTrays and isInGround are false, return null
   if (!isInTrays && !isInGround) {
     return [];
+  } else if (!isInGround) {
+    // not in ground (i.e. only in trays)
+    // location must be a greenhouse
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+  } else {
+    // not sure about location:
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+    fieldNameToAssetMap = await getFieldNameToAssetMap();
   }
 
-  // Get the map of field names to field assets
-  const fieldNameToAssetMap = await getFieldNameToAssetMap();
-  const greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
-  const bedNameToAssetMap = await getBedNameToAssetMap();
+  if (checkedBeds.length > 0) {
+    bedNameToAssetMap = await getBedNameToAssetMap();
+  }
 
   // Find the field asset that matches the location name
-  const fieldAsset = fieldNameToAssetMap.get(locationName);
-  const greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
-  let locationAsset = null;
+  if (fieldNameToAssetMap) {
+    fieldAsset = fieldNameToAssetMap.get(locationName);
+  }
+  if (greenhouseNameToAssetMap) {
+    greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
+  }
 
   if (greenhouseAsset) {
     locationAsset = greenhouseAsset;
@@ -2115,7 +2131,7 @@ export async function deleteSeedingLog(seedingLogId) {
  * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `tillage`.
- * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
+ * @param {Object} [plantAsset=null] the plant asset or array of assets (i.e. `asset--plant`) affected by the disturbance.
  * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
  * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
  * @returns {Object} the new activity log.

@@ -66,7 +66,7 @@
           label-for="termination-event-checkbox"
           label-cols="auto"
           label-align="end"
-          v-if="this.plantsAtLocation"
+          v-if="plantsAtLocation"
         >
           <template v-slot:label>
             <span
@@ -183,7 +183,7 @@ export default {
         location: null,
         beds: [],
         termination: false,
-        terminatedPlants: [],
+        affectedPlants: [],
         equipment: [],
         depth: 0,
         speed: 0,
@@ -201,10 +201,12 @@ export default {
       submitting: false,
       errorShowing: false,
       createdCount: 0,
-      plantsAtLocation: false,
     };
   },
   computed: {
+    plantsAtLocation() {
+      return this.form.affectedPlants.length > 0;
+    },
     pageDoneLoading() {
       return this.createdCount == 6;
     },
@@ -229,12 +231,10 @@ export default {
           false,
           true
         );
-        this.form.terminatedPlants = results;
-        this.plantsAtLocation = results.length > 0;
+        this.form.affectedPlants = results;
       } catch (error) {
         console.error('Error fetching plant assets:', error);
-        this.form.terminatedPlants = [];
-        this.plantsAtLocation = false;
+        this.form.affectedPlants = [];
       }
     },
     handleLocationUpdate(location) {

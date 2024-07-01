@@ -36,7 +36,7 @@ describe('Test the Soil Disturbance lib submission', () => {
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
     termination: true,
-    terminatedPlants: [],
+    affectedPlants: [],
     equipment: ['Tractor', 'Rake'],
     depth: 5,
     speed: 6,
@@ -82,13 +82,13 @@ describe('Test the Soil Disturbance lib submission', () => {
       timeout: 10000,
     })
       .then((resultsBroccoli) => {
-        form.terminatedPlants.push(resultsBroccoli.plantAsset.id);
+        form.affectedPlants.push(resultsBroccoli.plantAsset.id);
         return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
           timeout: 10000,
         });
       })
       .then((resultsBean) => {
-        form.terminatedPlants.push(resultsBean.plantAsset.id);
+        form.affectedPlants.push(resultsBean.plantAsset.id);
         return cy.wrap(lib.submitForm(form), { timeout: 10000 });
       })
       .then((submitted) => {
@@ -106,26 +106,26 @@ describe('Test the Soil Disturbance lib submission', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check archived asset--plant(s)', () => {
-    expect(results.archivedPlants).to.have.length(form.terminatedPlants.length);
+  it('Check affected asset--plant(s)', () => {
+    expect(results.affectedPlants).to.have.length(form.affectedPlants.length);
     // check BROCCOLI
-    expect(results.archivedPlants[0].id).to.equal(form.terminatedPlants[0]);
-    expect(results.archivedPlants[0].type).to.equal('asset--plant');
-    expect(results.archivedPlants[0].attributes.name).to.equal(
+    expect(results.affectedPlants[0].id).to.equal(form.affectedPlants[0]);
+    expect(results.affectedPlants[0].type).to.equal('asset--plant');
+    expect(results.affectedPlants[0].attributes.name).to.equal(
       directSeedingBroccoli.seedingDate + '_' + directSeedingBroccoli.cropName
     );
-    expect(results.archivedPlants[0].attributes.status).to.equal('archived');
-    expect(results.archivedPlants[0].relationships.plant_type[0].id).to.equal(
+    expect(results.affectedPlants[0].attributes.status).to.equal('archived');
+    expect(results.affectedPlants[0].relationships.plant_type[0].id).to.equal(
       cropMap.get(directSeedingBroccoli.cropName).id
     );
     // check BEAN
-    expect(results.archivedPlants[1].id).to.equal(form.terminatedPlants[1]);
-    expect(results.archivedPlants[1].type).to.equal('asset--plant');
-    expect(results.archivedPlants[1].attributes.name).to.equal(
+    expect(results.affectedPlants[1].id).to.equal(form.affectedPlants[1]);
+    expect(results.affectedPlants[1].type).to.equal('asset--plant');
+    expect(results.affectedPlants[1].attributes.name).to.equal(
       directSeedingBean.seedingDate + '_' + directSeedingBean.cropName
     );
-    expect(results.archivedPlants[1].attributes.status).to.equal('archived');
-    expect(results.archivedPlants[1].relationships.plant_type[0].id).to.equal(
+    expect(results.affectedPlants[1].attributes.status).to.equal('archived');
+    expect(results.affectedPlants[1].relationships.plant_type[0].id).to.equal(
       cropMap.get(directSeedingBean.cropName).id
     );
   });
@@ -207,13 +207,13 @@ describe('Test the Soil Disturbance lib submission', () => {
 
       // check plant assets
       expect(results['activityLog' + i].relationships.asset).to.have.length(
-        form.terminatedPlants.length
+        form.affectedPlants.length
       );
       expect(results['activityLog' + i].relationships.asset[0].id).to.equal(
-        results.archivedPlants[0].id
+        results.affectedPlants[0].id
       );
       expect(results['activityLog' + i].relationships.asset[1].id).to.equal(
-        results.archivedPlants[1].id
+        results.affectedPlants[1].id
       );
 
       // check category

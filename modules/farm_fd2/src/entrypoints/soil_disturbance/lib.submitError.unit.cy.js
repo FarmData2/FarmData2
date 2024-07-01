@@ -35,7 +35,7 @@ describe('Test the Soil Disturbance lib submission error', () => {
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
     termination: true,
-    terminatedPlants: [],
+    affectedPlants: [],
     equipment: ['Tractor', 'Rake'],
     depth: 5,
     speed: 6,
@@ -49,13 +49,13 @@ describe('Test the Soil Disturbance lib submission error', () => {
       timeout: 10000,
     })
       .then((resultsBroccoli) => {
-        form.terminatedPlants.push(resultsBroccoli.plantAsset.id);
+        form.affectedPlants.push(resultsBroccoli.plantAsset.id);
         return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
           timeout: 10000,
         });
       })
       .then((resultsBean) => {
-        form.terminatedPlants.push(resultsBean.plantAsset.id);
+        form.affectedPlants.push(resultsBean.plantAsset.id);
       });
   });
 
@@ -119,7 +119,7 @@ describe('Test the Soil Disturbance lib submission error', () => {
               'Error creating Soil Disturbance records.'
             );
             expect(error.message).to.contain(
-              'Result of operation archivedPlants could not be cleaned up.'
+              'Result of operation affectedPlants could not be cleaned up.'
             );
             expect(error.message).to.contain(
               'Result of operation depthQuantity0 could not be cleaned up.'

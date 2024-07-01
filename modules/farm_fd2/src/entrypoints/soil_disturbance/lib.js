@@ -7,11 +7,12 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * @param {Object} form the form containing the data from the entry point.
  * @returns {Promise} a promise that resolves when the records are successfully created.
  * The returned value is an object containing the asset, quantities and log that
- * were sent to the server.  This object has the following properties:
+ * were sent to the server.  This object has the properties shown below
+ * where i indicates passes:
  * ```Javascript
  * {
  *   equipment: [ {asset--equipment} ],
- *   archivedPlants: [ {asset--plant} ],
+ *   affectedPlants: [ {asset--plant} ],
  *   depth(i): {quantity--standard},
  *   speed(i): {quantity--standard},
  *   area(i): {quantity--standard},
@@ -25,27 +26,32 @@ async function submitForm(formData) {
     let ops = [];
     const equipmentAssets = [];
 
-    const archivedPlants = {
-      name: 'archivedPlants',
+    const affectedPlants = {
+      name: 'affectedPlants',
       do: async () => {
+        let affectedPlants = [];
         if (formData.termination) {
-          let archivedPlants = [];
-          for (const plantID of formData.terminatedPlants) {
-            archivedPlants.push(
+          for (const plantID of formData.affectedPlants) {
+            affectedPlants.push(
               await farmosUtil.archivePlantAsset(plantID, true)
             );
           }
-          return archivedPlants;
+        } else {
+          for (const plantID of formData.affectedPlants) {
+            affectedPlants.push(await farmosUtil.getPlantAsset(plantID));
+          }
         }
-        return null;
+        return affectedPlants;
       },
       undo: async () => {
-        for (const plantID of formData.terminatedPlants) {
-          await farmosUtil.archivePlantAsset(plantID, false);
+        if (formData.termination) {
+          for (const plantID of formData.affectedPlants) {
+            await farmosUtil.archivePlantAsset(plantID, false);
+          }
         }
       },
     };
-    ops.push(archivedPlants);
+    ops.push(affectedPlants);
 
     const equipmentMap = await farmosUtil.getEquipmentNameToAssetMap();
     for (const equipmentName of formData.equipment) {
@@ -106,6 +112,7 @@ async function submitForm(formData) {
         },
       };
       ops.push(areaQuantity);
+
       const activityLog = {
         name: 'activityLog' + i,
         do: async (results) => {
@@ -114,7 +121,7 @@ async function submitForm(formData) {
             formData.location,
             formData.beds,
             formData.termination ? ['tillage', 'termination'] : ['tillage'],
-            results.archivedPlants,
+            results.affectedPlants,
             [
               results['depthQuantity' + i],
               results['speedQuantity' + i],

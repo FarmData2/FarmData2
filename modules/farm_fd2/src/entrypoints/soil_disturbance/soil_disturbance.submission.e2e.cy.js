@@ -117,8 +117,8 @@ describe('Soil Disturbance: Submission tests', () => {
       expect(formData.beds[0]).to.equal('ALF-3');
       expect(formData.beds[1]).to.equal('ALF-4');
       expect(formData.termination).to.equal(true);
-      expect(formData.terminatedPlants).to.have.length(1);
-      expect(formData.terminatedPlants[0]).to.equal(createdPlantAsset.id);
+      expect(formData.affectedPlants).to.have.length(1);
+      expect(formData.affectedPlants[0]).to.equal(createdPlantAsset.id);
       expect(formData.equipment).to.have.length(1);
       expect(formData.equipment[0]).to.equal('Tractor');
       expect(formData.depth).to.equal(5);
