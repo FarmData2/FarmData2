@@ -1705,11 +1705,11 @@ export async function getPlantAssets(
     if (isInTrays && isInGround) {
       addToResults = true;
     } else if (isInTrays && !isInGround) {
-      if (plantAsset.attributes.inventory[0].units === 'TRAYS') {
+      if (getAssetInventory(plantAsset, 'count', 'TRAYS')) {
         addToResults = true;
       }
     } else if (!isInTrays && isInGround) {
-      if (plantAsset.attributes.inventory[0].units !== 'TRAYS') {
+      if (getAssetInventory(plantAsset, 'length', 'FEET')) {
         addToResults = true;
       }
     }

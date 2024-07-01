@@ -1,6 +1,6 @@
 import * as farmosUtil from './farmosUtil.js';
 
-describe('Test the bed utility functions', () => {
+describe('Test the getPlantAssets function', () => {
   let bedMap = null;
   let fieldMap = null;
   let greenHouseMap = null;
@@ -33,6 +33,7 @@ describe('Test the bed utility functions', () => {
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
       (plantAssetIds) => {
+        expect(plantAssetIds).to.have.length.greaterThan(0);
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
             expect(asset.attributes.status).to.equal('active');
@@ -53,6 +54,7 @@ describe('Test the bed utility functions', () => {
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
       (plantAssetIds) => {
+        expect(plantAssetIds).to.have.length.greaterThan(0);
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
             const plantLocIds = asset.relationships.location.map(
@@ -73,6 +75,7 @@ describe('Test the bed utility functions', () => {
     const locIds = [fieldMap.get('A').id];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName)).then((plantAssetIds) => {
+      expect(plantAssetIds).to.have.length.greaterThan(0);
       plantAssetIds.forEach((id) => {
         cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
           const plantLocIds = asset.relationships.location.map((loc) => loc.id);
@@ -91,6 +94,7 @@ describe('Test the bed utility functions', () => {
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], true, false)).then(
       (plantAssetIds) => {
+        expect(plantAssetIds).to.have.length.greaterThan(0);
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
             expect(asset.attributes.inventory[0].units).to.equal('TRAYS');
@@ -113,6 +117,7 @@ describe('Test the bed utility functions', () => {
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, [], false, true)).then(
       (plantAssetIds) => {
+        expect(plantAssetIds).to.have.length.greaterThan(0);
         plantAssetIds.forEach((id) => {
           cy.wrap(farmosUtil.getPlantAsset(id)).then((asset) => {
             expect(asset.attributes.inventory[0].units).to.not.equal('TRAYS');
