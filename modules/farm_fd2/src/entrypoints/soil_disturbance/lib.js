@@ -109,11 +109,15 @@ async function submitForm(formData) {
       const activityLog = {
         name: 'activityLog' + i,
         do: async (results) => {
+          let activities = ['tillage'];
+          if (formData.termination) {
+            activities.push('termination');
+          }
           return await farmosUtil.createSoilDisturbanceActivityLog(
             formData.date,
             formData.location,
             formData.beds,
-            ['tillage'],
+            activities,
             results.archivedPlants,
             [
               results['depthQuantity' + i],

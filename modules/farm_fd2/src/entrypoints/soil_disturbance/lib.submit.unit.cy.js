@@ -218,10 +218,13 @@ describe('Test the Soil Disturbance lib submission', () => {
 
       // check category
       expect(results['activityLog' + i].relationships.category.length).to.equal(
-        1
+        2
       );
       expect(results['activityLog' + i].relationships.category[0].id).to.equal(
         categoryMap.get('tillage').id
+      );
+      expect(results['activityLog' + i].relationships.category[1].id).to.equal(
+        categoryMap.get('termination').id
       );
 
       // check quantities
