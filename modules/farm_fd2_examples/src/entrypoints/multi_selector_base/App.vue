@@ -13,7 +13,7 @@
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:selected="form.selected"
-    v-bind:optionsList="optionsList"
+    v-bind:options="options"
     v-bind:popupUrl="popupUrl"
     v-on:valid="
       (valid) => {
@@ -96,7 +96,7 @@
         </td>
       </tr>
       <tr>
-        <td>optionsList</td>
+        <td>options</td>
         <td>
           <BButton
             id="add-option-button"
@@ -104,11 +104,11 @@
             variant="outline-primary"
             size="sm"
             v-on:click="
-              index = this.optionsList.indexOf('six');
+              index = this.options.indexOf('six');
               if (index > -1) {
-                this.optionsList.splice(index, 1);
+                this.options.splice(index, 1);
               } else {
-                this.optionsList.push('six');
+                this.options.push('six');
               }
             "
           >
@@ -166,7 +166,7 @@ export default {
         selected: false,
       },
       createdCount: 0,
-      optionsList: ['one', 'two', 'three', 'four', 'five'],
+      options: ['one', 'two', 'three', 'four', 'five'],
       popupUrl: null,
     };
   },
@@ -192,7 +192,7 @@ export default {
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
-selector-base-hack {
+multi-selector-base-hack {
   display: none;
 }
 </style>

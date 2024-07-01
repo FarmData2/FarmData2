@@ -1,7 +1,6 @@
-import EquipmentSelector from '@comps/EquipmentSelector/EquipmentSelector.vue';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 
-describe('Test the EquipmentSelector component behavior', () => {
+describe('Test the MultiSelectorBase component behavior', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -15,31 +14,32 @@ describe('Test the EquipmentSelector component behavior', () => {
   it('Check selected prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(EquipmentSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
-        selected: ['Tractor'],
+        selected: ['one'],
+        options: ['one', 'two', 'three', 'four', 'five'],
       },
     }).then(({ wrapper }) => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          cy.get('[data-cy="equipment-selector-1"]')
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
-            .should('have.value', 'Tractor');
+            .should('have.value', 'one');
         })
         .then(() => {
           /*
            * Without extra then here, the wrapper.setProps usually executes before
            * the cy.get() above, causing the test to fail.
            */
-          wrapper.setProps({ selected: ['Planter', 'Tractor'] });
-          cy.get('[data-cy="equipment-selector-1"]')
+          wrapper.setProps({ selected: ['one', 'two'] });
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
-            .should('have.value', 'Planter');
-          cy.get('[data-cy="equipment-selector-2"]')
+            .should('have.value', 'one');
+          cy.get('[data-cy="selector-2"]')
             .find('[data-cy="selector-input"]')
-            .should('have.value', 'Tractor');
+            .should('have.value', 'two');
         });
     });
   });
@@ -47,39 +47,41 @@ describe('Test the EquipmentSelector component behavior', () => {
   it('Making selections adds another selector', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(EquipmentSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
+        options: ['one', 'two', 'three', 'four', 'five'],
+        popupUrl: 'nonEmptyUrl',
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-2"]').should('not.exist');
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-2"]').should('not.exist');
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-add-button"]')
           .should('exist');
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
-          .select('Tractor');
+          .select('one');
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-add-button"]')
           .should('not.exist');
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .should('exist');
 
-        cy.get('[data-cy="equipment-selector-2"]').should('exist');
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]').should('exist');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-add-button"]')
           .should('exist');
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-delete-button"]')
           .should('not.exist');
       });
@@ -88,136 +90,106 @@ describe('Test the EquipmentSelector component behavior', () => {
   it('Delete button can remove first selection', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(EquipmentSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
-        selected: ['Planter', 'Seeding Drill', 'Tractor'],
+        selected: ['one', 'two', 'three'],
+        options: ['one', 'two', 'three', 'four', 'five'],
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Planter');
-        cy.get('[data-cy="equipment-selector-2"]')
+          .should('have.value', 'one');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Seeding Drill');
-        cy.get('[data-cy="equipment-selector-3"]')
+          .should('have.value', 'two');
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Tractor');
-        cy.get('[data-cy="equipment-selector-4"]')
+          .should('have.value', 'three');
+        cy.get('[data-cy="selector-4"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', null);
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-delete-button"]')
           .click();
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Seeding Drill');
-        cy.get('[data-cy="equipment-selector-2"]')
+          .should('have.value', 'two');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Tractor');
-        cy.get('[data-cy="equipment-selector-3"]')
+          .should('have.value', 'three');
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', null);
-        cy.get('[data-cy="equipment-selector-4"]').should('not.exist');
+        cy.get('[data-cy="selector-4"]').should('not.exist');
       });
   });
 
   it('Delete button can remove last selection', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(EquipmentSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
-        selected: ['Planter', 'Seeding Drill', 'Tractor'],
+        selected: ['one', 'two', 'three'],
+        options: ['one', 'two', 'three', 'four', 'five'],
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-3"]')
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-delete-button"]')
           .click();
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Planter');
-        cy.get('[data-cy="equipment-selector-2"]')
+          .should('have.value', 'one');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Seeding Drill');
-        cy.get('[data-cy="equipment-selector-3"]')
+          .should('have.value', 'two');
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', null);
-        cy.get('[data-cy="equipment-selector-4"]').should('not.exist');
+        cy.get('[data-cy="selector-4"]').should('not.exist');
       });
   });
 
   it('Delete button can remove a middle selection', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.mount(EquipmentSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
-        selected: ['Planter', 'Seeding Drill', 'Tractor'],
+        selected: ['one', 'two', 'three'],
+        options: ['one', 'two', 'three', 'four', 'five'],
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-delete-button"]')
           .click();
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Planter');
-        cy.get('[data-cy="equipment-selector-2"]')
+          .should('have.value', 'one');
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
-          .should('have.value', 'Tractor');
-        cy.get('[data-cy="equipment-selector-3"]')
+          .should('have.value', 'three');
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', null);
-        cy.get('[data-cy="equipment-selector-4"]').should('not.exist');
+        cy.get('[data-cy="selector-4"]').should('not.exist');
       });
-  });
-
-  it('Closing popup via close button does not clear/repopulate the cache', () => {
-    const readySpy = cy.spy().as('readySpy');
-    cy.spy(EquipmentSelector.methods, 'populateEquipmentList').as(
-      'populateSpy'
-    );
-    cy.spy(EquipmentSelector.methods, 'handleAddClicked').as(
-      'handleAddClickedSpy'
-    );
-
-    cy.mount(EquipmentSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.not.be
-            .null;
-          cy.get('[data-cy="selector-add-button"]').should('exist');
-          cy.get('[data-cy="selector-add-button"]').click();
-          cy.get('[data-cy="selector-closePopup"]').should('exist');
-          cy.get('[data-cy="selector-closePopup"]').click();
-
-          cy.get('@handleAddClickedSpy').should('be.calledOnce');
-          cy.get('@populateSpy').should('not.be.called');
-
-          expect(farmosUtil.getFromGlobalVariableCache('equipment')).to.not.be
-            .null;
-        });
-    });
   });
 });

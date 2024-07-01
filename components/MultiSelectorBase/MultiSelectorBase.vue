@@ -7,7 +7,7 @@
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:options="optionsList"
+      v-bind:options="options"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -42,7 +42,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    optionsList: {
+    options: {
       type: Array,
       default: () => [],
     },
