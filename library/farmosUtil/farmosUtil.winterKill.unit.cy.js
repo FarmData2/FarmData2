@@ -86,6 +86,71 @@ describe('Test the winter kill activity log functions', () => {
     );
   });
 
+  it('Create a winter kill log for multiple cover crops', () => {
+    cy.wrap(
+      farmosUtil.createPlantAsset(
+        '1999-12-15',
+        ['BEAN', 'CARROT'],
+        'testing winter kill'
+      )
+    ).as('winterKillAsset');
+
+    // Create the winter kill log.
+    cy.get('@winterKillAsset').then((winterKillAsset) => {
+      cy.wrap(
+        farmosUtil.createWinterKillActivityLog(
+          '1999-12-15',
+          'ALF',
+          ['ALF-1', 'ALF-2'],
+          winterKillAsset
+        )
+      ).as('winterKillLog');
+    });
+
+    // Read the winter kill log so we get the one on the server.
+    cy.get('@winterKillLog').then((winterKillLog) => {
+      cy.wrap(farmosUtil.getWinterKillActivityLog(winterKillLog.id)).as(
+        'readWinterKillLog'
+      );
+    });
+
+    // Check the winter kill log
+    cy.getAll(['@readWinterKillLog', '@winterKillAsset']).then(
+      ([winterKillLog, winterKillAsset]) => {
+        console.log(winterKillLog);
+        console.log(winterKillAsset);
+        expect(winterKillLog.attributes.name).to.equal(
+          '1999-12-15_wk_BEAN_CARROT'
+        );
+        expect(winterKillLog.attributes.timestamp).to.contain('1999-12-15');
+        expect(winterKillLog.type).to.equal('log--activity');
+        expect(winterKillLog.attributes.status).to.equal('done');
+        expect(winterKillLog.attributes.is_movement).to.equal(true);
+
+        expect(winterKillLog.relationships.location).to.have.length(3);
+        expect(winterKillLog.relationships.location[0].id).to.equal(
+          fieldMap.get('ALF').id
+        );
+        expect(winterKillLog.relationships.location[1].id).to.equal(
+          bedMap.get('ALF-1').id
+        );
+        expect(winterKillLog.relationships.location[2].id).to.equal(
+          bedMap.get('ALF-2').id
+        );
+
+        expect(winterKillLog.relationships.asset).to.have.length(1);
+        expect(winterKillLog.relationships.asset[0].id).to.equal(
+          winterKillAsset.id
+        );
+
+        expect(winterKillLog.relationships.category).to.have.length(1);
+        expect(winterKillLog.relationships.category[0].id).to.equal(
+          categoryMap.get('termination').id
+        );
+      }
+    );
+  });
+
   it('Error creating a winter kill log', { retries: 4 }, () => {
     cy.intercept('POST', '**/api/log/activity', {
       statusCode: 401,

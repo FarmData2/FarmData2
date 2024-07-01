@@ -148,14 +148,14 @@ async function submitForm(formData) {
       }
 
       const seedApplicationActivityLog = {
-        name: 'SeedApplicationActivityLog',
+        name: 'seedApplicationActivityLog',
         do: async (results) => {
           return await farmosUtil.createSoilDisturbanceActivityLog(
             formData.date,
             formData.location,
             formData.beds,
             ['tillage', 'seeding_cover_crop'],
-            results.coverCropAsset,
+            results.plantAsset,
             [
               results.seedApplicationDepthQuantity,
               results.seedApplicationSpeedQuantity,
@@ -166,7 +166,7 @@ async function submitForm(formData) {
         },
         undo: async (results) => {
           await farmosUtil.deleteSoilDisturbanceActivityLog(
-            results['SeedApplicationActivityLog'].id
+            results['seedApplicationActivityLog'].id
           );
         },
       };
@@ -222,7 +222,7 @@ async function submitForm(formData) {
             formData.location,
             formData.beds,
             ['tillage', 'seeding_cover_crop'],
-            results.coverCropAsset,
+            results.plantAsset,
             [
               results.seedIncorporationDepthQuantity,
               results.seedIncorporationSpeedQuantity,

@@ -1944,8 +1944,10 @@ export async function createSeedingLog(
   } else if (logCategories.includes('seeding_cover_crop')) {
     logName += '_cs_';
   }
-  logName += cropIdToNameMap.get(plantAsset.relationships.plant_type[0].id)
-    .attributes.name;
+
+  logName += plantAsset.relationships.plant_type
+    .map((crop) => cropIdToNameMap.get(crop.id).attributes.name)
+    .join('_');
 
   const seedingLogData = {
     type: 'log--seeding',
@@ -2327,8 +2329,9 @@ export async function createWinterKillActivityLog(
   const logName =
     dayjs(winterKillDate).format('YYYY-MM-DD') +
     '_wk_' +
-    cropIdToTermMap.get(plantAsset.relationships.plant_type[0].id).attributes
-      .name;
+    plantAsset.relationships.plant_type
+      .map((crop) => cropIdToTermMap.get(crop.id).attributes.name)
+      .join('_');
 
   const activityLogData = {
     type: 'log--activity',
