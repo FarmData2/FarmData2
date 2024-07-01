@@ -1,8 +1,8 @@
 <template>
   <div>
     <div
-      id="multi-crop-selector"
-      data-cy="multi-crop-selector"
+      id="multi-crop-selector-main"
+      data-cy="multi-crop-selector-main"
     >
       <label
         id="multi-crop-selector-label"
@@ -10,8 +10,8 @@
         >Crop(s)</label
       >
       <div
-        id="crop-selector-container"
-        data-cy="crop-selector-container"
+        id="multi-crop-selector-container"
+        data-cy="multi-crop-selector-container"
       >
         <MultiSelectorBase
           id="multi-crop-selector"
@@ -199,12 +199,15 @@ export default {
 </script>
 
 <style scoped>
-#multi-crop-selector {
+#multi-crop-selector-main {
   display: block;
   width: 100%;
   background-color: #ffff;
   box-shadow: none !important;
   margin-top: 8px !important;
+  border-style: solid !important;
+  border-width: var(--bs-border-width) !important;
+  border-color: var(--bs-border-color-translucent) !important;
 }
 
 #multi-crop-selector-label {
