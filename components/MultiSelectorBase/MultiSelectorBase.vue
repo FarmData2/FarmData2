@@ -70,7 +70,7 @@ export default {
       return this.required && i === 0 && this.selectedItems.length < 2;
     },
     handleUpdateSelected(event, i) {
-      if (event === '') {
+      if (event === '' || event === null) {
         this.selectedItems.splice(i, 1);
         this.valid.splice(i, 1);
       } else {
