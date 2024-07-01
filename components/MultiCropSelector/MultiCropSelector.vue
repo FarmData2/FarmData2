@@ -70,7 +70,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * multi-crop-selector         | The container div for the MultiCropSelector component.
  * multi-crop-selector-label   | The label element for the crop selector.
  * crop-selector-container     | The container div for the individual crop selectors.
- * crop-selector-i             | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
+ * multi-crop-selector         | The `MultiSelectorBase` component.
  */
 export default {
   name: 'MultiCropSelector',
@@ -162,8 +162,8 @@ export default {
     },
     isValid() {
       /**
-       * The validity of the selected crop changed.
-       * @property {boolean} event whether the selected crop is valid or not.
+       * The validity of the multi crop selector changed.
+       * @property {boolean} event whether the selected crops are valid or not.
        */
       this.$emit('valid', this.isValid);
     },

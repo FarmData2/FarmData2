@@ -21,7 +21,45 @@
 
 <script>
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
-
+/**
+ * A component for selecting multiple items. It initially displays a single
+ * dropdown.  When an item is selected another dropdown appears to allow
+ * the user to select another item.
+ *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/multi_selector_base">The MultiSelectorBase Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/multi_selector_base/App.vue">App.vue</a>
+ *
+ * ## Usage Example
+ *
+ * ```html
+  <MultiSelectorBase
+    id="multi-selector-base"
+    data-cy="multi-selector-base"
+    invalid-feedback-text="Selection cannot be empty."
+    v-bind:required="required"
+    v-bind:showValidityStyling="validity.showStyling"
+    v-bind:selected="form.selected"
+    v-bind:options="options"
+    v-bind:popupUrl="popupUrl"
+    v-on:valid="
+      (valid) => {
+        validity.selected = valid;
+      }
+    "
+    v-on:ready="createdCount++"
+    v-on:error="(msg) => showErrorToast('Network Error', msg)"
+  />
+ * ```
+ *
+ * ## `data-cy` Attributes
+ *
+ * Attribute Name              | Description
+ * ----------------------------| -----------
+ * `selector-i` | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
+ */
 export default {
   name: 'MultiSelectorBase',
   components: { SelectorBase },
@@ -71,6 +109,13 @@ export default {
       return this.required && i === 0 && this.selectedItems.length < 2;
     },
     handleAddClicked(event) {
+      /**
+       * The add button was clicked. This event is emitted with whatever
+       * payload arrived from the selector base component. The purpose
+       * of this is to relay the information to the parent component
+       * which handles add-clicked
+       * @property {String} event the payload from SelectorBase
+       */
       this.$emit('add-clicked', event);
     },
     handleUpdateSelected(event, i) {
@@ -84,7 +129,10 @@ export default {
       if (this.selectedItems.length === 0) {
         this.valid[0] = !this.required;
       }
-
+      /**
+       * The selected items have changed.
+       * @property {Array<String>} event the names of the newly selected items.
+       */
       this.$emit('update:selected', this.selectedItems);
     },
     handleValid(event, i) {
@@ -99,10 +147,17 @@ export default {
       deep: true,
     },
     isValid() {
+      /**
+       * The validity of the selected item changed.
+       * @property {boolean} event whether the selected item is valid or not.
+       */
       this.$emit('valid', this.isValid);
     },
   },
   created() {
+    /**
+     * The component is ready to be used.
+     */
     this.$emit('ready');
   },
 };
