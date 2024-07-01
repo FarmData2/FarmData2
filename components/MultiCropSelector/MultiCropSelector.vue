@@ -20,7 +20,7 @@
           v-bind:required="required"
           v-bind:showValidityStyling="showValidityStyling"
           v-bind:options="cropsList"
-          v-bind:selected="selectedCrops"
+          v-bind:selected="selected"
           v-on:update:selected="handleUpdateSelected()"
           v-on:add-clicked="handleAddClicked($event)"
           v-on:valid="handleValid($event)"

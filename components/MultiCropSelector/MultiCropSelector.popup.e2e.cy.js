@@ -1,4 +1,4 @@
-describe('EquipmentSelector popup test', () => {
+describe('MultiCropSelector popup test', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();

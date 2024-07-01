@@ -180,7 +180,7 @@ describe('Test the EquipmentSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
           .select('Planter');
         cy.get('@updateSpy').should('have.been.calledOnce');

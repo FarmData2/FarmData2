@@ -4,7 +4,7 @@ describe('EquipmentSelector popup test', () => {
     cy.restoreSessionStorage();
 
     cy.login('admin', 'admin');
-    cy.visit('/fd2/direct_seeding/');
+    cy.visit('/fd2_examples/multi_crop_selector');
     cy.waitForPage();
   });
 
@@ -14,8 +14,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Equipment plus button exists, is visible, is enabled', () => {
-    cy.get('.accordion-button').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .should('exist')
       .should('be.visible')
@@ -23,8 +22,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form removes links', () => {
-    cy.get('.accordion-button').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -51,8 +49,7 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form selects new Equipment', () => {
-    cy.get('.accordion-button').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -73,14 +70,13 @@ describe('EquipmentSelector popup test', () => {
       .should('be.visible') // Ensure the submit button is visible
       .click();
 
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]', { timeout: 10000 })
       .should('have.value', 'NewEquipment');
   });
 
   it('Form checks Url', () => {
-    cy.get('.accordion-button').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
