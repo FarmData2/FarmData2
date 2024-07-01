@@ -153,7 +153,7 @@ describe('Test the getPlantAssets function', () => {
   });
 
   it('Get plant assets with no matching beds', () => {
-    const locationName = 'JASMINE';
+    const locationName = 'CHUAU';
     const checkedBeds = ['NonExistentBed1', 'NonExistentBed2'];
 
     cy.wrap(farmosUtil.getPlantAssets(locationName, checkedBeds)).then(
