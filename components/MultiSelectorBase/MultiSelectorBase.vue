@@ -113,7 +113,7 @@ export default {
        * The add button was clicked. This event is emitted with whatever
        * payload arrived from the selector base component. The purpose
        * of this is to relay the information to the parent component
-       * which handles add-clicked
+       * which handles add-clicked event
        * @property {String} event the payload from SelectorBase
        */
       this.$emit('add-clicked', event);

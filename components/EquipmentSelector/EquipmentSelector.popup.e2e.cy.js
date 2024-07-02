@@ -4,7 +4,7 @@ describe('EquipmentSelector popup test', () => {
     cy.restoreSessionStorage();
 
     cy.login('admin', 'admin');
-    cy.visit('/fd2_examples/multi_crop_selector');
+    cy.visit('/fd2/direct_seeding');
     cy.waitForPage();
   });
 
@@ -14,7 +14,9 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Equipment plus button exists, is visible, is enabled', () => {
-    cy.get('[data-cy="selector-1"]')
+    cy.get('[data-cy="direct-seeding-soil-disturbance-accordion"').click();
+    cy.get('[data-cy="soil-disturbance-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .should('exist')
       .should('be.visible')
@@ -22,7 +24,9 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form removes links', () => {
-    cy.get('[data-cy="selector-1"]')
+    cy.get('[data-cy="direct-seeding-soil-disturbance-accordion"').click();
+    cy.get('[data-cy="soil-disturbance-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -49,7 +53,9 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form selects new Equipment', () => {
-    cy.get('[data-cy="selector-1"]')
+    cy.get('[data-cy="direct-seeding-soil-disturbance-accordion"').click();
+    cy.get('[data-cy="soil-disturbance-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
@@ -76,7 +82,9 @@ describe('EquipmentSelector popup test', () => {
   });
 
   it('Form checks Url', () => {
-    cy.get('[data-cy="selector-1"]')
+    cy.get('[data-cy="direct-seeding-soil-disturbance-accordion"').click();
+    cy.get('[data-cy="soil-disturbance-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-add-button"]')
       .click();
 
