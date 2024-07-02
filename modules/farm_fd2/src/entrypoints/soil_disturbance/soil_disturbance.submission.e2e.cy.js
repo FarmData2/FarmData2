@@ -1,6 +1,10 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Soil Disturbance: Submission tests', () => {
+  before(() => {
+    cy.task('initDB');
+  });
+
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
