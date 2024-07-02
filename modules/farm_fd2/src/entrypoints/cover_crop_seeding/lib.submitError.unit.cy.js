@@ -1,17 +1,28 @@
-// import { lib } from './lib';
+import { lib } from './lib.js';
 
-describe('Test the Cover Crop Seeding lib submission error', () => {
+describe('Error when submitting using the cover_crop lib.', () => {
   /*
-   * TODO: Create a form object that has the same format as the
-   *       data.form object used in the entry point.
-   *
-   *       This will be passed to the lib functions as if it is
-   *       coming from the entry point as a submission.
+   * Create a form object that has the same format as the data.form
+   * object used in the cover_crop entry point. This will be passed
+   * to the lib functions as if it is coming from the cover crop
+   * entry point as a submission.
    */
-  // let form = {
-  //   seedingDate: '1950-01-02',
-  //   comment: 'A comment',
-  // };
+  let form = {
+    date: '1950-01-02',
+    crops: ['BEAN', 'CARROT'],
+    location: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    areaSeeded: 50,
+    seedApplicationEquipment: ['Tractor'],
+    seedIncorporationEquipment: ['Rake'],
+    seedApplicationDepth: 6,
+    seedApplicationSpeed: 5,
+    seedIncorporationDepth: 8,
+    seedIncorporationSpeed: 3,
+    winterKill: true,
+    winterKillDate: '1950-12-31',
+    comment: 'A comment',
+  };
 
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -23,71 +34,189 @@ describe('Test the Cover Crop Seeding lib submission error', () => {
     cy.saveSessionStorage();
   });
 
-  it(
-    'Cover Crop Seeding: records are deleted if there is a submission error',
-    { retries: 4 },
-    () => {
-      //   /*
-      //    * TODO: Modify the API path below to create a error on submission of the
-      //    *       last asset, log or quantity that is created by %ENTRY_POINT%/lib.js.
-      //    *       At that point all other records should have been created and thus
-      //    *       should also all be deleted by their operation's `undo` function when
-      //    *       the error occurs.
-      //    *
-      //    *       For examples, see the lib.submitError.unit.cy.js files in:
-      //    *         - modules/farm_fd2/src/entrypoints/tray_seeding
-      //    *         - modules/farm_fd2/src/entrypoints/direct_seeding
-      //    */
-      //   cy.intercept('POST', '**/api/asset/*', {
-      //     statusCode: 401,
-      //   });
-      //   /*
-      //    * TODO: Create an intercept with a spy for each of the endpoints
-      //    *       where records are being deleted to count the number of deletions
-      //    *       that occur.  We'll then check that each spy was called the
-      //    *       appropriate number of times.  Note that this doesn't actually check
-      //    *       the database, but it does tell us that the API requests was made
-      //    *       which gives reasonably high confidence that everything worked.
-      //    *
-      //    *       For examples, see the lib.submitError.unit.cy.js files in:
-      //    *         - modules/farm_fd2/src/entrypoints/tray_seeding
-      //    *         - modules/farm_fd2/src/entrypoints/direct_seeding
-      //    */
-      //   let plantAssetDeletes = 0;
-      //   cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
-      //     plantAssetDeletes++;
-      //     req.reply({
-      //       statusCode: 401,
-      //     });
-      //   });
-      //   cy.wrap(
-      //     lib
-      //       .submitForm(form)
-      //       .then(() => {
-      //         // Shouldn't run because submitForm throws an error.
-      //         throw new Error('The submission should have failed.');
-      //       })
-      //       .catch((error) => {
-      //         expect(error.message).to.contain(
-      //           'Error creating Cover Crop Seeding records.'
-      //         );
-      //         /*
-      //          * TODO: Add checks for each of the intercept spies to check
-      //          *       that the correct number of logs, assets, and quantities
-      //          *       were deleted.
-      //          *
-      //          *       Note: In this example the plant asset was not created in the
-      //          *             farmOS database due to the error caused by the intercept.
-      //          *             Thus, it will not be deleted either.
-      //          *
-      //          *       For examples, see the lib.submitError.unit.cy.js files in:
-      //          *         - modules/farm_fd2/src/entrypoints/tray_seeding
-      //          *         - modules/farm_fd2/src/entrypoints/direct_seeding
-      //          */
-      //         expect(plantAssetDeletes).to.equal(0);
-      //       }),
-      //     { timeout: 10000 }
-      //   );
-    }
-  );
+  it('Check error messages when cannot clean up', { retries: 4 }, () => {
+    // Counter to track the number of POST requests
+    let postRequestCount = 0;
+
+    // Intercept POST requests to the endpoint
+    cy.intercept('POST', '**/api/log/activity', (req) => {
+      postRequestCount += 1;
+      if (postRequestCount === 3) {
+        // On the third request, modify the response to have a status code of 401
+        req.reply({
+          statusCode: 401,
+        });
+      } else {
+        // Continue with the request normally for other requests
+        req.continue();
+      }
+    });
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 401,
+      });
+    });
+
+    let seedingLogDeletes = 0;
+    cy.intercept('DELETE', '**/api/log/seeding/*', (req) => {
+      seedingLogDeletes++;
+      req.reply({
+        statusCode: 401,
+      });
+    });
+
+    let plantAssetDeletes = 0;
+    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+      plantAssetDeletes++;
+      req.reply({
+        statusCode: 401,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          console.log(error.message);
+          expect(error.message).to.contain(
+            'Error creating cover crop seeding records.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation plantAsset could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation areaSeededQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedingLog could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedApplicationDepthQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedApplicationSpeedQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedIncorporationDepthQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedIncorporationSpeedQuantity could not be cleaned up.'
+          );
+
+          expect(standardQuantityDeletes).to.equal(5);
+          expect(seedingLogDeletes).to.equal(1);
+          expect(plantAssetDeletes).to.equal(1);
+        }),
+      { timeout: 10000 }
+    );
+  });
+
+  it('Check quantities deleted explicitly if seeding log not created', () => {
+    cy.intercept('POST', '**/api/log/seeding', {
+      statusCode: 401,
+    });
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    let plantAssetDeletes = 0;
+    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+      plantAssetDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('seedApplicationDepthQuantity');
+          expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
+          expect(error.message).not.to.contain(
+            'seedIncorporationDepthQuantity'
+          );
+          expect(error.message).not.to.contain(
+            'seedIncorporationSpeedQuantity'
+          );
+          expect(standardQuantityDeletes).to.equal(1);
+          expect(plantAssetDeletes).to.equal(1);
+        })
+    );
+  });
+
+  it('Check quantities not deleted explicitly if seeding log created and deleted', () => {
+    // Counter to track the number of POST requests
+    let postRequestCount = 0;
+
+    // Intercept POST requests to the endpoint
+    cy.intercept('POST', '**/api/log/activity', (req) => {
+      postRequestCount += 1;
+      if (postRequestCount === 3) {
+        // On the third request, modify the response to have a status code of 401
+        req.reply({
+          statusCode: 401,
+        });
+      } else {
+        // Continue with the request normally for other requests
+        req.continue();
+      }
+    });
+
+    let seedingLogDeletes = 0;
+    cy.intercept('POST', '**/api/log/seeding', () => {
+      seedingLogDeletes++;
+    });
+
+    let standardQuantityDeletes = 0;
+    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+      standardQuantityDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    let plantAssetDeletes = 0;
+    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
+      plantAssetDeletes++;
+      req.reply({
+        statusCode: 200,
+      });
+    });
+
+    cy.wrap(
+      lib
+        .submitForm(form)
+        .then(() => {
+          throw new Error('The submission should have failed.');
+        })
+        .catch((error) => {
+          expect(error.message).not.to.contain('seedApplicationDepthQuantity');
+          expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
+          expect(error.message).not.to.contain(
+            'seedIncorporationDepthQuantity'
+          );
+          expect(error.message).not.to.contain(
+            'seedIncorporationSpeedQuantity'
+          );
+          expect(standardQuantityDeletes).to.equal(4);
+          expect(seedingLogDeletes).to.equal(1);
+          expect(plantAssetDeletes).to.equal(1);
+        })
+    );
+  });
 });

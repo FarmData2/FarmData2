@@ -12,8 +12,8 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * {
  *   plantAsset: {asset--plant},
  *   areaSeededQuantity: {quantity--standard},
- *   seedingLog: {log--seeding},
  *   winterKillLog: {log--activity},
+ *   seedingLog: {log--seeding},
  *   seedApplicationDepthQuantity: {quantity--standard},
  *   seedApplicationSpeedQuantity: {quantity--standard},
  *   seedApplicationActivityLog: {log--activity},
