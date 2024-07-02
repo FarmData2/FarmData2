@@ -208,7 +208,7 @@ export default {
       return this.form.affectedPlants.length > 0;
     },
     pageDoneLoading() {
-      return this.createdCount == 6;
+      return this.createdCount === 6;
     },
     submitEnabled() {
       return !this.validity.show || (this.validToSubmit && !this.submitting);

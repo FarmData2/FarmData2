@@ -1,30 +1,6 @@
-import { lib as directSeedingLib } from '../direct_seeding/lib.js';
-//import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Soil Disturbance: Submission tests', () => {
-  let directSeedingBroccoli = {
-    seedingDate: '1950-01-02',
-    cropName: 'BROCCOLI',
-    locationName: 'ALF',
-    beds: ['ALF-3', 'ALF-4'],
-    bedFeet: 100,
-    rowsPerBed: '3',
-    bedWidth: 60,
-    equipment: ['Tractor'],
-    depth: 6,
-    speed: 5,
-    comment: 'A comment',
-  };
-  let createdPlantAsset = null;
-
-  before(() => {
-    cy.wrap(directSeedingLib.submitForm(directSeedingBroccoli), {
-      timeout: 10000,
-    }).then((resultsBroccoli) => {
-      createdPlantAsset = resultsBroccoli.plantAsset;
-    });
-  });
-
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -39,14 +15,38 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.saveSessionStorage();
   });
 
+  function checkPlantLocation(plantIds) {
+    let locationIds = [];
+
+    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
+      locationIds.push(map.get('ALF-1').id);
+      locationIds.push(map.get('ALF-2').id);
+    });
+    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
+      locationIds.push(map.get('ALF').id);
+    });
+
+    for (const plantId of plantIds) {
+      cy.wrap(farmosUtil.getPlantAsset(plantId)).then((plantAsset) => {
+        const locations = plantAsset.relationships.location;
+        // Check if at least one location ID is in the locationIds array
+        const locationFound = locations.some((location) =>
+          locationIds.includes(location.id)
+        );
+        // Assert that the location is found
+        expect(locationFound).to.be.true;
+      });
+    }
+  }
+
   function submitForm() {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .select('ALF');
-    cy.get('[data-cy="picker-options"]').find('input').eq(2).check();
-    cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
+    cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
+    cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
     cy.get('[data-cy="termination-event-checkbox"]').click();
     cy.get('[data-cy="equipment-selector-1"]')
       .find('[data-cy="selector-input"]')
@@ -74,6 +74,25 @@ describe('Soil Disturbance: Submission tests', () => {
 
     cy.get('[data-cy="submit-button"]').click();
   }
+
+  it('Test submission with network error', () => {
+    cy.intercept('POST', '**/api/log/activity', {
+      statusCode: 401,
+    });
+    submitForm();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+    cy.get('[data-cy="reset-button"]').should('be.disabled');
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Submitting Soil Disturbance...');
+    cy.get('.toast')
+      .should('be.visible')
+      .should('contain.text', 'Error creating Soil Disturbance records.');
+    cy.get('.toast', { timeout: 7000 }).should('not.exist');
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="reset-button"]').should('be.enabled');
+  });
 
   it('Test successful submission', () => {
     /*
@@ -114,11 +133,12 @@ describe('Soil Disturbance: Submission tests', () => {
       let formData = spy.getCall(0).args[0];
       expect(formData.date).to.equal('1950-01-02');
       expect(formData.location).to.equal('ALF');
-      expect(formData.beds[0]).to.equal('ALF-3');
-      expect(formData.beds[1]).to.equal('ALF-4');
+      expect(formData.beds[0]).to.equal('ALF-1');
+      expect(formData.beds[1]).to.equal('ALF-2');
       expect(formData.termination).to.equal(true);
-      expect(formData.affectedPlants).to.have.length(1);
-      expect(formData.affectedPlants[0]).to.equal(createdPlantAsset.id);
+      expect(formData.affectedPlants).to.have.length(2);
+      // check that the affectedPlants are correct
+      checkPlantLocation(formData.affectedPlants);
       expect(formData.equipment).to.have.length(1);
       expect(formData.equipment[0]).to.equal('Tractor');
       expect(formData.depth).to.equal(5);
@@ -154,25 +174,6 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.get('.toast').should('not.exist');
 
     // Check that Submit button is re-enabled after submitting.
-    cy.get('[data-cy="submit-button"]').should('be.enabled');
-    cy.get('[data-cy="reset-button"]').should('be.enabled');
-  });
-
-  it('Test submission with network error', () => {
-    cy.intercept('POST', '**/api/log/activity', {
-      statusCode: 401,
-    });
-    submitForm();
-    cy.get('[data-cy="submit-button"]').should('be.disabled');
-    cy.get('[data-cy="reset-button"]').should('be.disabled');
-    cy.get('.toast')
-      .should('be.visible')
-      .should('contain.text', 'Submitting Soil Disturbance...');
-    cy.get('.toast')
-      .should('be.visible')
-      .should('contain.text', 'Error creating Soil Disturbance records.');
-    cy.get('.toast', { timeout: 7000 }).should('not.exist');
-
     cy.get('[data-cy="submit-button"]').should('be.enabled');
     cy.get('[data-cy="reset-button"]').should('be.enabled');
   });
