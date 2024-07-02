@@ -1709,6 +1709,7 @@ export async function getPlantAssets(
       type: 'asset--plant',
       status: 'active',
     },
+    limit: Infinity,
   });
 
   // Filter and check each plant asset
