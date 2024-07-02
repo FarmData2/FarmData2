@@ -49,4 +49,30 @@ describe('Soil Disturbance: Equipment Component', () => {
       .find('[data-cy="soil-disturbance-passes"]')
       .should('be.visible');
   });
+
+  it('Equipment and numeric fields are required', () => {
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-required"]')
+      .should('be.visible');
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-required"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-required"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-required"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-required"]')
+      .should('be.visible');
+  });
 });
