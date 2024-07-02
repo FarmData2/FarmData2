@@ -65,26 +65,53 @@ export default {
   components: { SelectorBase },
   emits: ['update:selected', 'add-clicked', 'valid', 'error', 'ready'],
   props: {
+    /**
+     * The text to display if the input is invalid.
+     */
     invalidFeedbackText: {
       type: String,
       default: 'Selection must be made',
     },
+    /**
+     * Whether a value for the multi-selector is required or not.
+     */
     required: {
       type: Boolean,
       default: false,
     },
+    /**
+     * The name(s) of the selected item(s) as an array.
+     *
+     * This prop is watched and changes are relayed to the component's internal state.
+     */
     selected: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Whether validity styling should appear on the dropdown.
+     */
     showValidityStyling: {
       type: Boolean,
       default: false,
     },
+    /**
+     * The list of options for the dropdown.
+     *
+     * The options shown will update if the prop is set to a new array.
+     *
+     * However, the options shown will not change if only the contents of the array are changed.
+     */
     options: {
       type: Array,
       default: () => [],
     },
+    /**
+     * The URL of the form for adding a new option.
+     *
+     * If this prop is `null`, no "+" button will appear on the select.
+     * If this prop is set then, a "+" button is displayed and will redirect to the provided URL when clicked.
+     */
     popupUrl: {
       type: String,
       default: null,
