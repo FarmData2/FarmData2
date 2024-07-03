@@ -1649,6 +1649,118 @@ export async function getPlantAsset(plantAssetId) {
 }
 
 /**
+ * Get the plant assets at the specified location.
+ *
+ * @param {string} locationName the name of the location.
+ * @param {string[]} [checkedBeds=[]] the beds to look for.
+ * @param {boolean} [isInGround=true] look for plants in the ground.
+ * @param {boolean} [isInTrays=true] look for plants in trays.
+ * @return {Object} the plant assets at the specified location.
+ * @throws {Error} if unable to fetch the plant assets.
+ *
+ * @category Plant
+ */
+export async function getPlantAssets(
+  locationName,
+  checkedBeds = [],
+  isInTrays = true,
+  isInGround = true
+) {
+  const farm = await getFarmOSInstance();
+  let bedNameToAssetMap = null;
+  let greenhouseNameToAssetMap = null;
+  let fieldNameToAssetMap = null;
+  let fieldAsset = null;
+  let greenhouseAsset = null;
+  let locationAsset = null;
+
+  // If both isInTrays and isInGround are false, return null
+  if (!isInTrays && !isInGround) {
+    return [];
+  } else if (!isInGround) {
+    // not in ground (i.e. only in trays)
+    // location must be a greenhouse
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+  } else {
+    // not sure about location:
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+    fieldNameToAssetMap = await getFieldNameToAssetMap();
+  }
+
+  if (checkedBeds.length > 0) {
+    bedNameToAssetMap = await getBedNameToAssetMap();
+  }
+
+  // Find the field asset that matches the location name
+  if (fieldNameToAssetMap) {
+    fieldAsset = fieldNameToAssetMap.get(locationName);
+  }
+  if (greenhouseNameToAssetMap) {
+    greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
+  }
+
+  if (greenhouseAsset) {
+    locationAsset = greenhouseAsset;
+  } else if (fieldAsset) {
+    locationAsset = fieldAsset;
+  } else {
+    return [];
+  }
+
+  // Fetch all plant assets
+  const plantAssets = await farm.asset.fetch({
+    filter: {
+      type: 'asset--plant',
+      status: 'active',
+    },
+    limit: Infinity,
+  });
+
+  // Filter and check each plant asset
+  const matchingPlantAssetIds = [];
+  for (const plantAsset of plantAssets.data) {
+    const locations = plantAsset.relationships.location;
+
+    let addToResults = false;
+
+    if (isInTrays && isInGround) {
+      addToResults = true;
+    } else if (isInTrays) {
+      if (getAssetInventory(plantAsset, 'count', 'TRAYS')) {
+        addToResults = true;
+      }
+    } else if (isInGround) {
+      if (getAssetInventory(plantAsset, 'length', 'FEET')) {
+        addToResults = true;
+      }
+    }
+
+    if (addToResults) {
+      // Check if the first location (field) matches
+      if (locations.length > 0 && locations[0].id === locationAsset.id) {
+        if (checkedBeds.length === 0) {
+          // If no beds to check, add the plant asset ID to the result array
+          matchingPlantAssetIds.push(plantAsset.id);
+        } else {
+          // Check if all checked beds are in the locations
+          const bedIds = locations.slice(1).map((location) => location.id);
+          const someBedsMatch = checkedBeds.some((bedName) => {
+            const bedAsset = bedNameToAssetMap.get(bedName);
+            return bedAsset && bedIds.includes(bedAsset.id);
+          });
+          if (someBedsMatch) {
+            matchingPlantAssetIds.push(plantAsset.id);
+          }
+        }
+      }
+    }
+  }
+
+  // Return the array of matching plant asset IDs
+  return matchingPlantAssetIds;
+}
+
+/**
  * Delete the plant asset with the specified id.
  *
  * @param {string} plantAssetId the id of the plant asset.
@@ -2026,7 +2138,7 @@ export async function deleteSeedingLog(seedingLogId) {
  * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `tillage`.
- * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
+ * @param {Object} [plantAsset=null] the plant asset or array of assets (i.e. `asset--plant`) affected by the disturbance.
  * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
  * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
  * @returns {Object} the new activity log.
@@ -2041,7 +2153,8 @@ export async function createSoilDisturbanceActivityLog(
   logCategories,
   plantAsset = null,
   quantities = [],
-  equipment = []
+  equipment = [],
+  comment = ''
 ) {
   const locationArray = await getPlantingLocationObjects([
     locationName,
@@ -2068,10 +2181,15 @@ export async function createSoilDisturbanceActivityLog(
       timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
       purchase_date: dayjs(disturbanceDate).format(),
+      notes: { value: comment },
     },
     relationships: {
       location: locationArray,
-      asset: plantAsset ? [{ type: 'asset--plant', id: plantAsset.id }] : [],
+      asset: Array.isArray(plantAsset)
+        ? plantAsset.map((asset) => ({ type: 'asset--plant', id: asset.id }))
+        : plantAsset
+        ? [{ type: 'asset--plant', id: plantAsset.id }]
+        : [],
       category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,

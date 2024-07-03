@@ -40,3 +40,9 @@ farm.fd2_cover_crop_seeding:
   parent: farm.fd2_seeding
   route_name: farm.fd2_cover_crop_seeding.content
   weight: 100
+farm.fd2_soil_disturbance:
+  title: 'Soil Disturbance'
+  description: 'Data entry form for recording soil disturbance.'
+  parent: farm.fd2_soil
+  route_name: farm.fd2_soil_disturbance.content
+  weight: 100

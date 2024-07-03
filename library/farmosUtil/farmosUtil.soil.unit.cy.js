@@ -61,7 +61,8 @@ describe('Test the soil disturbance activity log functions', () => {
             ['tillage', 'seeding_direct'],
             null,
             [depthQuantity, speedQuantity],
-            equipmentArray
+            equipmentArray,
+            'a comment'
           )
         ).as('soilLog');
       }
@@ -75,6 +76,7 @@ describe('Test the soil disturbance activity log functions', () => {
             expect(result.attributes.name).to.equal('1999-01-02_sd_A');
             expect(result.attributes.timestamp).to.contain('1999-01-02');
             expect(result.attributes.status).to.equal('done');
+            expect(result.attributes.notes.value).to.equal('a comment');
             expect(result.attributes.is_movement).to.equal(false);
 
             expect(result.relationships.location[0].id).to.equal(
@@ -138,7 +140,8 @@ describe('Test the soil disturbance activity log functions', () => {
             ['tillage', 'seeding_direct'],
             plantAsset,
             [depthQuantity, speedQuantity],
-            equipmentArray
+            equipmentArray,
+            'a comment'
           )
         ).as('soilLog');
       }
@@ -156,6 +159,7 @@ describe('Test the soil disturbance activity log functions', () => {
           expect(result.attributes.name).to.equal('1999-01-02_sd_A');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
+          expect(result.attributes.notes.value).to.equal('a comment');
           expect(result.attributes.is_movement).to.equal(false);
 
           expect(result.relationships.location[0].id).to.equal(
@@ -215,7 +219,8 @@ describe('Test the soil disturbance activity log functions', () => {
             ['tillage', 'seeding_direct'],
             plantAsset,
             [depthQuantity, speedQuantity],
-            equipmentArray
+            equipmentArray,
+            'a comment'
           )
         ).as('soilLog');
       }
@@ -233,6 +238,7 @@ describe('Test the soil disturbance activity log functions', () => {
           expect(result.attributes.name).to.equal('1999-01-02_sd_CHUAU');
           expect(result.attributes.timestamp).to.contain('1999-01-02');
           expect(result.attributes.status).to.equal('done');
+          expect(result.attributes.notes.value).to.equal('a comment');
           expect(result.attributes.is_movement).to.equal(false);
 
           expect(result.relationships.location.length).to.equal(3);

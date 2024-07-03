@@ -99,6 +99,62 @@ describe('Test the default MultiCropSelector content', () => {
       });
   });
 
+  it('Check required prop', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(MultiCropSelector, {
+      props: {
+        required: true,
+        onReady: readySpy,
+        selected: [],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // no items => required and no delete
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-required"]')
+          .should('exist');
+        // one item => required and no delete
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-input"]')
+          .select('BROCCOLI');
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-required"]')
+          .should('exist');
+        cy.get('[data-cy="crop-selector-2"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="crop-selector-2"]')
+          .find('[data-cy="selector-required"]')
+          .should('not.exist');
+        // two items => not required and delete
+        cy.get('[data-cy="crop-selector-2"]')
+          .find('[data-cy="selector-input"]')
+          .select('BROCCOLI');
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('exist');
+        cy.get('[data-cy="crop-selector-1"]')
+          .find('[data-cy="selector-required"]')
+          .should('not.exist');
+        cy.get('[data-cy="crop-selector-2"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('exist');
+        cy.get('[data-cy="crop-selector-2"]')
+          .find('[data-cy="selector-required"]')
+          .should('not.exist');
+      });
+  });
+
   it('Check showValidityStyling prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
