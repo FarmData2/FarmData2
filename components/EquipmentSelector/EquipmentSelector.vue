@@ -135,7 +135,7 @@ export default {
       }
     },
     isRequired(i) {
-      return this.required && (i == 0 || i < this.selectedEquipment.length - 1);
+      return this.required && i == 0 && this.selectedEquipment.length < 2;
     },
     handleUpdateSelected(event, i) {
       if (event === '') {
