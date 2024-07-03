@@ -2,7 +2,7 @@
   <div>
     <SelectorBase
       v-for="(item, i) in ['', ...selectedItems]"
-      v-bind:key="i"
+      v-bind:key="i + 'extra' + keyExtra"
       v-bind:id="'selector-' + (i + 1)"
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
@@ -58,7 +58,7 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
  *
  * Attribute Name              | Description
  * ----------------------------| -----------
- * `selector-i` | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
+ * `selector-i`                | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
  */
 export default {
   name: 'MultiSelectorBase',
@@ -121,6 +121,7 @@ export default {
     return {
       selectedItems: this.selected,
       valid: [null],
+      keyExtra: 0,
     };
   },
   computed: {
@@ -149,6 +150,7 @@ export default {
       if (event === '' || event === null) {
         this.selectedItems.splice(i, 1);
         this.valid.splice(i, 1);
+        this.keyExtra++;
       } else {
         this.selectedItems[i] = event;
       }
