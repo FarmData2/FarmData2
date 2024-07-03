@@ -2147,7 +2147,8 @@ export async function createSoilDisturbanceActivityLog(
   logCategories,
   plantAsset = null,
   quantities = [],
-  equipment = []
+  equipment = [],
+  comment = ''
 ) {
   const locationArray = await getPlantingLocationObjects([
     locationName,
@@ -2174,6 +2175,7 @@ export async function createSoilDisturbanceActivityLog(
       timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
       purchase_date: dayjs(disturbanceDate).format(),
+      notes: { value: comment },
     },
     relationships: {
       location: locationArray,

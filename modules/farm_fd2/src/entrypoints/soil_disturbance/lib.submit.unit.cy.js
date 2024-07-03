@@ -143,7 +143,7 @@ function runTest(terminationValue) {
       );
     });
 
-    Cypress._.times(2, (i) => {
+    Cypress._.times(form.passes, (i) => {
       it('Check the depth quantity--standard ' + i, () => {
         expect(results['depthQuantity' + i].type).to.equal(
           'quantity--standard'
@@ -203,13 +203,15 @@ function runTest(terminationValue) {
       });
 
       it('Check the soil disturbance log--activity ' + i, () => {
-        //check first log
         expect(results['activityLog' + i].type).to.equal('log--activity');
         expect(results['activityLog' + i].attributes.name).to.equal(
           form.date + '_sd_' + form.location
         );
         expect(results['activityLog' + i].attributes.timestamp).to.contain(
           form.date
+        );
+        expect(results['activityLog' + i].attributes.notes.value).to.equal(
+          'Pass ' + (i + 1) + ' of ' + form.passes + '. ' + form.comment
         );
 
         // check locations

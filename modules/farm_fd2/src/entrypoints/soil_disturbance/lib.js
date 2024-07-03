@@ -127,7 +127,13 @@ async function submitForm(formData) {
               results['speedQuantity' + i],
               results['areaQuantity' + i],
             ],
-            equipmentAssets
+            equipmentAssets,
+            'Pass ' +
+              (i + 1) +
+              ' of ' +
+              formData.passes +
+              '. ' +
+              formData.comment
           );
         },
         undo: async (results) => {
@@ -140,6 +146,7 @@ async function submitForm(formData) {
     }
 
     const result = await farmosUtil.runTransaction(ops);
+    console.log(result);
     result['equipment'] = equipmentAssets;
 
     return result;
