@@ -279,6 +279,9 @@ async function submitForm(formData) {
     }
 
     const result = await farmosUtil.runTransaction(ops);
+    if (!formData.winterKill) {
+      result['winterKillLog'] = null;
+    }
     if (seedApplicationEquipmentAssets.length > 0) {
       result['seedApplicationEquipment'] = seedApplicationEquipmentAssets;
     } else {
