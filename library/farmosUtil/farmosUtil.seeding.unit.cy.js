@@ -183,7 +183,7 @@ describe('Test the seeding log functions', () => {
     });
   });
 
-  it('Create a cover crop seeding log with multiple crops', () => {
+  it('Create a seeding log with multiple crops', () => {
     cy.wrap(
       farmosUtil.createPlantAsset(
         '1999-01-02',

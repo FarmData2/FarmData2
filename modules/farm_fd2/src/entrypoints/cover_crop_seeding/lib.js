@@ -16,12 +16,14 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   seedingLog: {log--seeding},
  *   seedApplicationDepthQuantity: {quantity--standard},
  *   seedApplicationSpeedQuantity: {quantity--standard},
+ *   seedApplicationAreaQuantity: {quantity--standard},
+ *   seedApplicationEquipment: [ {asset--equipment} ],
  *   seedApplicationActivityLog: {log--activity},
  *   seedIncorporationDepthQuantity: {quantity--standard},
  *   seedIncorporationSpeedQuantity: {quantity--standard},
- *   seedIncorporationActivityLog: {log--activity},
- *   seedApplicationEquipment: [ {asset--equipment} ],
+ *   seedIncorporationAreaQuantity: {quantity--standard},
  *   seedIncorporationEquipment: [ {asset--equipment} ],
+ *   seedIncorporationActivityLog: {log--activity},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
@@ -143,6 +145,24 @@ async function submitForm(formData) {
       };
       ops.push(seedApplicationSpeedQuantity);
 
+      const seedApplicationAreaQuantity = {
+        name: 'seedApplicationAreaQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'ratio',
+            formData.areaSeeded,
+            'Area Seeded for Seed Application',
+            'PERCENT'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedApplicationAreaQuantity'].id
+          );
+        },
+      };
+      ops.push(seedApplicationAreaQuantity);
+
       for (const equipmentName of formData.seedApplicationEquipment) {
         seedApplicationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
@@ -159,7 +179,7 @@ async function submitForm(formData) {
             [
               results.seedApplicationDepthQuantity,
               results.seedApplicationSpeedQuantity,
-              results.areaSeededQuantity,
+              results.seedApplicationAreaQuantity,
             ],
             seedApplicationEquipmentAssets
           );
@@ -210,6 +230,24 @@ async function submitForm(formData) {
       };
       ops.push(seedIncorporationSpeedQuantity);
 
+      const seedIncorporationAreaQuantity = {
+        name: 'seedIncorporationAreaQuantity',
+        do: async () => {
+          return await farmosUtil.createStandardQuantity(
+            'ratio',
+            formData.areaSeeded,
+            'Area Seeded for Seed Incorporation',
+            'PERCENT'
+          );
+        },
+        undo: async (results) => {
+          await farmosUtil.deleteStandardQuantity(
+            results['seedIncorporationAreaQuantity'].id
+          );
+        },
+      };
+      ops.push(seedIncorporationAreaQuantity);
+
       for (const equipmentName of formData.seedIncorporationEquipment) {
         seedIncorporationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
@@ -226,7 +264,7 @@ async function submitForm(formData) {
             [
               results.seedIncorporationDepthQuantity,
               results.seedIncorporationSpeedQuantity,
-              results.areaSeededQuantity,
+              results.seedIncorporationAreaQuantity,
             ],
             seedIncorporationEquipmentAssets
           );
@@ -247,6 +285,7 @@ async function submitForm(formData) {
       result['seedApplicationEquipment'] = null;
       result['seedApplicationDepthQuantity'] = null;
       result['seedApplicationSpeedQuantity'] = null;
+      result['seedApplicationAreaQuantity'] = null;
       result['seedApplicationActivityLog'] = null;
     }
     if (seedIncorporationEquipmentAssets.length > 0) {
@@ -255,6 +294,7 @@ async function submitForm(formData) {
       result['seedIncorporationEquipment'] = null;
       result['seedIncorporationDepthQuantity'] = null;
       result['seedIncorporationSpeedQuantity'] = null;
+      result['seedIncorporationAreaQuantity'] = null;
       result['seedIncorporationActivityLog'] = null;
     }
 

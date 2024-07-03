@@ -54,8 +54,6 @@ describe('Test the winter kill activity log functions', () => {
     // Check the winter kill log
     cy.getAll(['@readWinterKillLog', '@winterKillAsset']).then(
       ([winterKillLog, winterKillAsset]) => {
-        console.log(winterKillLog);
-        console.log(winterKillAsset);
         expect(winterKillLog.attributes.name).to.equal('1999-12-15_wk_BEAN');
         expect(winterKillLog.attributes.timestamp).to.contain('1999-12-15');
         expect(winterKillLog.type).to.equal('log--activity');
@@ -117,8 +115,6 @@ describe('Test the winter kill activity log functions', () => {
     // Check the winter kill log
     cy.getAll(['@readWinterKillLog', '@winterKillAsset']).then(
       ([winterKillLog, winterKillAsset]) => {
-        console.log(winterKillLog);
-        console.log(winterKillAsset);
         expect(winterKillLog.attributes.name).to.equal(
           '1999-12-15_wk_BEAN_CARROT'
         );

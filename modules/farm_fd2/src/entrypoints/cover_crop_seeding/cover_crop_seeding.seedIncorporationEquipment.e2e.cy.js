@@ -62,9 +62,17 @@ describe('Cover Crop Seeding: Seed Incorporation Equipment Component', () => {
       .find('[data-cy="selector-input"]')
       .select('Tractor');
 
-    cy.get('[data-cy="soil-disturbance-depth"]').should('be.visible');
-    cy.get('[data-cy="soil-disturbance-speed"]').should('be.visible');
-    cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
-    cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"] [data-cy="soil-disturbance-depth"]'
+    ).should('be.visible');
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"] [data-cy="soil-disturbance-speed"]'
+    ).should('be.visible');
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"] [data-cy="soil-disturbance-area"]'
+    ).should('not.exist');
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"] [data-cy="soil-disturbance-passes"]'
+    ).should('not.exist');
   });
 });

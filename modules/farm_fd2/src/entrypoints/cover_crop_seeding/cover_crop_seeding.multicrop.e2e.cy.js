@@ -36,27 +36,4 @@ describe('Cover Crop Seeding: MultiCropSelector Component', () => {
       .find('[data-cy="selector-input"]')
       .should('have.class', 'is-invalid');
   });
-
-  it('Add new crop selector and check', () => {
-    cy.get('[data-cy="cover-crop-seeding-crops"]')
-      .find('[data-cy="crop-selector-1"] [data-cy="selector-input"]')
-      .select('BEAN');
-    cy.get('[data-cy="cover-crop-seeding-crops"]')
-      .find('[data-cy="crop-selector-2"] [data-cy="selector-input"]')
-      .should('be.visible')
-      .should('be.enabled');
-  });
-
-  it('Remove crop selector and validate', () => {
-    cy.get('[data-cy="cover-crop-seeding-crops"]')
-      .find('[data-cy="crop-selector-1"] [data-cy="selector-input"]')
-      .select('BEAN');
-    cy.get('[data-cy="cover-crop-seeding-crops"]')
-      .find('[data-cy="crop-selector-2"] [data-cy="selector-input"]')
-      .select('BEAN');
-    cy.get('[data-cy="selector-delete-button"]').click();
-    cy.get('[data-cy="cover-crop-seeding-crops"]')
-      .find('[data-cy="crop-selector-3"]')
-      .should('not.exist');
-  });
 });

@@ -100,6 +100,9 @@ describe('Error when submitting using the cover_crop lib.', () => {
             'Result of operation seedApplicationDepthQuantity could not be cleaned up.'
           );
           expect(error.message).to.contain(
+            'Result of operation seedApplicationAreaQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
             'Result of operation seedApplicationSpeedQuantity could not be cleaned up.'
           );
           expect(error.message).to.contain(
@@ -108,8 +111,11 @@ describe('Error when submitting using the cover_crop lib.', () => {
           expect(error.message).to.contain(
             'Result of operation seedIncorporationSpeedQuantity could not be cleaned up.'
           );
+          expect(error.message).to.contain(
+            'Result of operation seedIncorporationAreaQuantity could not be cleaned up.'
+          );
 
-          expect(standardQuantityDeletes).to.equal(5);
+          expect(standardQuantityDeletes).to.equal(7);
           expect(seedingLogDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
         }),
@@ -147,12 +153,14 @@ describe('Error when submitting using the cover_crop lib.', () => {
         .catch((error) => {
           expect(error.message).not.to.contain('seedApplicationDepthQuantity');
           expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
+          expect(error.message).not.to.contain('seedApplicationAreaQuantity');
           expect(error.message).not.to.contain(
             'seedIncorporationDepthQuantity'
           );
           expect(error.message).not.to.contain(
             'seedIncorporationSpeedQuantity'
           );
+          expect(error.message).not.to.contain('seedIncorporationAreaQuantity');
           expect(standardQuantityDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
         })
@@ -207,13 +215,15 @@ describe('Error when submitting using the cover_crop lib.', () => {
         .catch((error) => {
           expect(error.message).not.to.contain('seedApplicationDepthQuantity');
           expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
+          expect(error.message).not.to.contain('seedApplicationAreaQuantity');
           expect(error.message).not.to.contain(
             'seedIncorporationDepthQuantity'
           );
           expect(error.message).not.to.contain(
             'seedIncorporationSpeedQuantity'
           );
-          expect(standardQuantityDeletes).to.equal(4);
+          expect(error.message).not.to.contain('seedIncorporationAreaQuantity');
+          expect(standardQuantityDeletes).to.equal(6);
           expect(seedingLogDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
         })

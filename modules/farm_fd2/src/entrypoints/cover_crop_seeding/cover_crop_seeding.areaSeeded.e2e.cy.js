@@ -31,6 +31,15 @@ describe('Cover Crop Seeding: Area Seeded Component', () => {
   });
 
   it('Area Seeded has correct increment/decrement buttons.', () => {
+    // Verify that the large increment/decrement buttons are not shown
+    cy.get('[data-cy="cover-crop-seeding-area-seeded"]')
+      .find('[data-cy="numeric-decrease-lg"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-area-seeded"]')
+      .find('[data-cy="numeric-increase-lg"]')
+      .should('not.exist');
+
+    // Test the medium and small increment/decrement buttons
     cy.get('[data-cy="cover-crop-seeding-area-seeded"]')
       .find('[data-cy="numeric-decrease-md"]')
       .click();

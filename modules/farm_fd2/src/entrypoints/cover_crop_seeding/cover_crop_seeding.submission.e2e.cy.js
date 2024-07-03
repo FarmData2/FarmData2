@@ -185,7 +185,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
    *     is complete.
    */
   it('Test submission with network error', () => {
-    cy.intercept('**/api/**/*', {
+    cy.intercept('**/api/log/activity', {
       statusCode: 401,
     });
 
