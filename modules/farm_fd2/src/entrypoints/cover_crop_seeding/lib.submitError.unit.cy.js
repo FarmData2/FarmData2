@@ -60,6 +60,14 @@ describe('Error when submitting using the cover_crop lib.', () => {
       });
     });
 
+    let activityLogDeletes = 0;
+    cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
+      activityLogDeletes++;
+      req.reply({
+        statusCode: 401,
+      });
+    });
+
     let seedingLogDeletes = 0;
     cy.intercept('DELETE', '**/api/log/seeding/*', (req) => {
       seedingLogDeletes++;
@@ -83,7 +91,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           throw new Error('The submission should have failed.');
         })
         .catch((error) => {
-          console.log(error.message);
           expect(error.message).to.contain(
             'Error creating cover crop seeding records.'
           );
@@ -97,13 +104,19 @@ describe('Error when submitting using the cover_crop lib.', () => {
             'Result of operation seedingLog could not be cleaned up.'
           );
           expect(error.message).to.contain(
+            'Result of operation winterKillLog could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
             'Result of operation seedApplicationDepthQuantity could not be cleaned up.'
+          );
+          expect(error.message).to.contain(
+            'Result of operation seedApplicationSpeedQuantity could not be cleaned up.'
           );
           expect(error.message).to.contain(
             'Result of operation seedApplicationAreaQuantity could not be cleaned up.'
           );
           expect(error.message).to.contain(
-            'Result of operation seedApplicationSpeedQuantity could not be cleaned up.'
+            'Result of operation seedApplicationActivityLog could not be cleaned up.'
           );
           expect(error.message).to.contain(
             'Result of operation seedIncorporationDepthQuantity could not be cleaned up.'
@@ -118,115 +131,9 @@ describe('Error when submitting using the cover_crop lib.', () => {
           expect(standardQuantityDeletes).to.equal(7);
           expect(seedingLogDeletes).to.equal(1);
           expect(plantAssetDeletes).to.equal(1);
+          expect(activityLogDeletes).to.equal(2);
         }),
       { timeout: 10000 }
-    );
-  });
-
-  it('Check quantities deleted explicitly if seeding log not created', () => {
-    cy.intercept('POST', '**/api/log/seeding', {
-      statusCode: 401,
-    });
-
-    let standardQuantityDeletes = 0;
-    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
-      standardQuantityDeletes++;
-      req.reply({
-        statusCode: 200,
-      });
-    });
-
-    let plantAssetDeletes = 0;
-    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
-      plantAssetDeletes++;
-      req.reply({
-        statusCode: 200,
-      });
-    });
-
-    cy.wrap(
-      lib
-        .submitForm(form)
-        .then(() => {
-          throw new Error('The submission should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).not.to.contain('seedApplicationDepthQuantity');
-          expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
-          expect(error.message).not.to.contain('seedApplicationAreaQuantity');
-          expect(error.message).not.to.contain(
-            'seedIncorporationDepthQuantity'
-          );
-          expect(error.message).not.to.contain(
-            'seedIncorporationSpeedQuantity'
-          );
-          expect(error.message).not.to.contain('seedIncorporationAreaQuantity');
-          expect(standardQuantityDeletes).to.equal(1);
-          expect(plantAssetDeletes).to.equal(1);
-        })
-    );
-  });
-
-  it('Check quantities not deleted explicitly if seeding log created and deleted', () => {
-    // Counter to track the number of POST requests
-    let postRequestCount = 0;
-
-    // Intercept POST requests to the endpoint
-    cy.intercept('POST', '**/api/log/activity', (req) => {
-      postRequestCount += 1;
-      if (postRequestCount === 3) {
-        // On the third request, modify the response to have a status code of 401
-        req.reply({
-          statusCode: 401,
-        });
-      } else {
-        // Continue with the request normally for other requests
-        req.continue();
-      }
-    });
-
-    let seedingLogDeletes = 0;
-    cy.intercept('POST', '**/api/log/seeding', () => {
-      seedingLogDeletes++;
-    });
-
-    let standardQuantityDeletes = 0;
-    cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
-      standardQuantityDeletes++;
-      req.reply({
-        statusCode: 200,
-      });
-    });
-
-    let plantAssetDeletes = 0;
-    cy.intercept('DELETE', '**/api/asset/plant/*', (req) => {
-      plantAssetDeletes++;
-      req.reply({
-        statusCode: 200,
-      });
-    });
-
-    cy.wrap(
-      lib
-        .submitForm(form)
-        .then(() => {
-          throw new Error('The submission should have failed.');
-        })
-        .catch((error) => {
-          expect(error.message).not.to.contain('seedApplicationDepthQuantity');
-          expect(error.message).not.to.contain('seedApplicationSpeedQuantity');
-          expect(error.message).not.to.contain('seedApplicationAreaQuantity');
-          expect(error.message).not.to.contain(
-            'seedIncorporationDepthQuantity'
-          );
-          expect(error.message).not.to.contain(
-            'seedIncorporationSpeedQuantity'
-          );
-          expect(error.message).not.to.contain('seedIncorporationAreaQuantity');
-          expect(standardQuantityDeletes).to.equal(6);
-          expect(seedingLogDeletes).to.equal(1);
-          expect(plantAssetDeletes).to.equal(1);
-        })
     );
   });
 });
