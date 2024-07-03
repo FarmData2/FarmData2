@@ -157,7 +157,7 @@ export default {
     },
 
     isRequired(i) {
-      return this.required && i == 0 && this.selectedCrops.length < 2;
+      return this.required && (i == 0 || i < this.selectedCrops.length - 1);
     },
     handleUpdateSelected(event, i) {
       if (event === '') {
