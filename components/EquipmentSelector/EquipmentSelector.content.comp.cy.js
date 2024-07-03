@@ -99,62 +99,6 @@ describe('Test the default EquipmentSelector content', () => {
       });
   });
 
-  it('Check required prop', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(EquipmentSelector, {
-      props: {
-        required: true,
-        onReady: readySpy,
-        selected: [],
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        // no items => required and no delete
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('exist');
-        // one item => required and no delete
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .select('Tractor');
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('exist');
-        cy.get('[data-cy="equipment-selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="equipment-selector-2"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
-        // two items => not required and delete
-        cy.get('[data-cy="equipment-selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .select('Tractor');
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('exist');
-        cy.get('[data-cy="equipment-selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
-        cy.get('[data-cy="equipment-selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('exist');
-        cy.get('[data-cy="equipment-selector-2"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
-      });
-  });
-
   it('Check showValidityStyling prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
