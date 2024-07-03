@@ -146,7 +146,6 @@ async function submitForm(formData) {
     }
 
     const result = await farmosUtil.runTransaction(ops);
-    console.log(result);
     result['equipment'] = equipmentAssets;
 
     return result;

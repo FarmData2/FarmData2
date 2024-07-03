@@ -148,7 +148,7 @@ describe('Soil Disturbance: Submission tests', () => {
       expect(formData.depth).to.equal(5);
       expect(formData.speed).to.equal(6);
       expect(formData.passes).to.equal(2);
-      expect(formData.area).to.equal(100);
+      expect(formData.area).to.equal(50);
       expect(formData.comment).to.equal('test comment');
     });
 
@@ -172,6 +172,10 @@ describe('Soil Disturbance: Submission tests', () => {
       .find('[data-cy="soil-disturbance-passes"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', 2);
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 100); // non-sticky (related to location)
     cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
     // Check that the success toast is hidden.

@@ -53,7 +53,9 @@
           v-bind:pickedBeds="form.beds"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:update:beds="(checkedBeds) => handleBedsUpdate(checkedBeds)"
+          v-on:update:beds="
+            (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
+          "
           v-on:update:selected="(location) => handleLocationUpdate(location)"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
@@ -241,9 +243,13 @@ export default {
       this.form.location = location;
       this.checkPlantsAtLocation();
     },
-    handleBedsUpdate(checkedBeds) {
+    handleBedsUpdate(checkedBeds, totalBeds) {
       this.form.beds = checkedBeds;
-      this.checkPlantsAtLocation();
+      if (totalBeds > 0 && checkedBeds.length > 0) {
+        this.form.area = (checkedBeds.length / totalBeds) * 100;
+      } else {
+        this.form.area = 100;
+      }
     },
     submit() {
       this.submitting = true;
@@ -306,12 +312,12 @@ export default {
         this.form.depth = 0;
         this.form.speed = 0;
         this.form.passes = 1;
-        this.form.area = 100;
         this.form.comment = null;
       }
 
       this.form.location = null;
       this.form.beds = [];
+      this.form.area = 100;
     },
   },
   watch: {},

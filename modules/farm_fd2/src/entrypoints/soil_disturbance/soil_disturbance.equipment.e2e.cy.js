@@ -75,4 +75,34 @@ describe('Soil Disturbance: Equipment Component', () => {
       .find('[data-cy="numeric-required"]')
       .should('be.visible');
   });
+
+  it('Updating beds updates area', () => {
+    cy.get('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 100);
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 100);
+    cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
+    cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 50);
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('A');
+    cy.get('[data-cy="soil-disturbance-equipment-form"]')
+      .find('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 100);
+  });
 });
