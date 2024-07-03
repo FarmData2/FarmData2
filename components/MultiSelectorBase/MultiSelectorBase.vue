@@ -121,7 +121,7 @@ export default {
     return {
       selectedItems: this.selected,
       valid: [null],
-      keyExtra: 0,
+      keyExtra: 0, //used for refreshing SelectorBase
     };
   },
   computed: {
@@ -151,6 +151,15 @@ export default {
         this.selectedItems.splice(i, 1);
         this.valid.splice(i, 1);
         this.keyExtra++;
+        /**
+         * We set the key attribute of SelectorBase using keyExtra. When the selectedItems
+         * list is spliced (during a delete), we change keyExtra, thus changing the key,
+         * which causes the SelectorBase to refresh.
+         * Solves the issue of the selectedOption property of SelectorBase not updating.
+         *
+         * see for more details:
+         * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
+         */
       } else {
         this.selectedItems[i] = event;
       }
