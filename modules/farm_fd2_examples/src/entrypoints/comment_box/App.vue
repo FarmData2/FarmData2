@@ -59,7 +59,7 @@
     </thead>
     <tbody>
       <tr>
-        <td>comment</td>
+        <td>update:comment</td>
         <td>{{ form.comment }}</td>
       </tr>
       <tr>
