@@ -58,6 +58,16 @@ soil:
     component:
       style/style.css: {}
 
+cover_crop_seeding:
+  js:
+    cover_crop_seeding/cover_crop_seeding.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
 soil_disturbance:
   js:
     soil_disturbance/soil_disturbance.js:
