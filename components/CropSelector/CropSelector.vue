@@ -28,7 +28,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/crop_selector">The BedPicker Example</a>
+ * <a href="http://farmos/fd2_examples/crop_selector">The CropSelector Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/crop_selector/App.vue">App.vue</a>
  *
