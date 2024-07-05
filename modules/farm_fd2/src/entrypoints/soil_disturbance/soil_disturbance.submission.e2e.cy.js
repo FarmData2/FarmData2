@@ -52,7 +52,8 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
     cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
     cy.get('[data-cy="termination-event-checkbox"]').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
@@ -157,7 +158,8 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null); // non-sticky
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Tractor');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')

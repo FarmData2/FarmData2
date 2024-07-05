@@ -55,7 +55,8 @@ describe('Transplanting: Submission tests', () => {
     cy.get(
       '[data-cy="transplanting-soil-disturbance-accordion-title"]'
     ).click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="soil-disturbance-depth"]')
@@ -142,7 +143,8 @@ describe('Transplanting: Submission tests', () => {
     cy.get(
       '[data-cy="transplanting-soil-disturbance-accordion-title"]'
     ).click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Tractor');
     cy.get('[data-cy="soil-disturbance-depth"]')
