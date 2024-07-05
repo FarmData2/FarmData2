@@ -183,6 +183,42 @@ describe('Test the seeding log functions', () => {
     });
   });
 
+  it('Create a seeding log with multiple crops', () => {
+    cy.wrap(
+      farmosUtil.createPlantAsset(
+        '1999-01-02',
+        ['BEAN', 'CARROT'],
+        'testComment'
+      )
+    ).as('plantAsset');
+
+    cy.wrap(
+      farmosUtil.createStandardQuantity('count', 7, 'testLabel', 'TRAYS')
+    ).as('quantity');
+
+    cy.getAll(['@plantAsset', '@quantity']).then(([plantAsset, quantity]) => {
+      cy.wrap(
+        farmosUtil.createSeedingLog(
+          '01/02/1999',
+          'CHUAU',
+          [],
+          ['seeding', 'seeding_cover_crop'],
+          plantAsset,
+          [quantity]
+        )
+      ).as('seedingLog');
+    });
+
+    cy.get('@seedingLog').then((seedingLog) => {
+      cy.wrap(farmosUtil.getSeedingLog(seedingLog.id)).then((result) => {
+        expect(result.attributes.timestamp).to.contain('1999-01-02');
+        expect(result.attributes.purchase_date).to.contain('1999-01-02');
+
+        expect(result.attributes.name).to.equal('1999-01-02_cs_BEAN_CARROT');
+      });
+    });
+  });
+
   it('Error creating seeding log', { retries: 4 }, () => {
     cy.intercept('POST', '**/api/log/seeding', {
       statusCode: 401,
