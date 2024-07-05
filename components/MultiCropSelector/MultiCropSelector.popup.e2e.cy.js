@@ -35,7 +35,8 @@ describe('MultiCropSelector popup test', () => {
       .should('be.visible') // Ensure the submit button is visible
       .click();
 
-    cy.get('[data-cy="selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]', { timeout: 10000 })
       .should('have.value', 'NewCrop');
   });
