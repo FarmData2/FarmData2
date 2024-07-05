@@ -40,6 +40,7 @@ describe('SelectorBase popup test', () => {
   });
 
   it('Form checks Url', () => {
+    cy.get('[data-cy="popup-url-button"]').click();
     cy.get('[data-cy="selector-add-button"]').click();
 
     cy.get('[data-cy="selector-popupIframe"]', { timeout: 10000 }).then(
