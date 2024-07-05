@@ -76,9 +76,12 @@ describe('Test the winter kill activity log functions', () => {
           winterKillAsset.id
         );
 
-        expect(winterKillLog.relationships.category).to.have.length(1);
+        expect(winterKillLog.relationships.category).to.have.length(2);
         expect(winterKillLog.relationships.category[0].id).to.equal(
           categoryMap.get('termination').id
+        );
+        expect(winterKillLog.relationships.category[1].id).to.equal(
+          categoryMap.get('seeding_cover_crop').id
         );
       }
     );
@@ -139,9 +142,12 @@ describe('Test the winter kill activity log functions', () => {
           winterKillAsset.id
         );
 
-        expect(winterKillLog.relationships.category).to.have.length(1);
+        expect(winterKillLog.relationships.category).to.have.length(2);
         expect(winterKillLog.relationships.category[0].id).to.equal(
           categoryMap.get('termination').id
+        );
+        expect(winterKillLog.relationships.category[1].id).to.equal(
+          categoryMap.get('seeding_cover_crop').id
         );
       }
     );

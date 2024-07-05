@@ -2441,7 +2441,10 @@ export async function createWinterKillActivityLog(
     locationName,
     ...bedNames,
   ]);
-  const logCategoriesArray = await getLogCategoryObjects(['termination']);
+  const logCategoriesArray = await getLogCategoryObjects([
+    'termination',
+    'seeding_cover_crop',
+  ]);
 
   const cropIdToTermMap = await getCropIdToTermMap();
   const logName =
