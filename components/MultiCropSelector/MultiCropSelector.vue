@@ -67,7 +67,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * Attribute Name              | Description
  * ----------------------------| -----------
- * multi-crop-selector         | The container div for the MultiCropSelector component.
+ * multi-crop-selector-main    | The container div for the MultiCropSelector component.
  * multi-crop-selector-label   | The label element for the crop selector.
  * crop-selector-container     | The container div for the individual crop selectors.
  * multi-crop-selector         | The `MultiSelectorBase` component.

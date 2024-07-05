@@ -139,9 +139,9 @@ export default {
     handleAddClicked(event) {
       /**
        * The add button was clicked. This event is emitted with whatever
-       * payload arrived from the selector base component. The purpose
-       * of this is to relay the information to the parent component
-       * which handles add-clicked event
+       * payload arrived from the SelectorBase component. The purpose
+       * of this is to relay the information to the child component
+       * which handles the add-clicked event
        * @property {String} event the payload from SelectorBase
        */
       this.$emit('add-clicked', event);
@@ -152,9 +152,9 @@ export default {
         this.valid.splice(i, 1);
         this.keyExtra++;
         /**
-         * We set the key attribute of SelectorBase using keyExtra. When the selectedItems
-         * list is spliced (during a delete), we change keyExtra, thus changing the key,
-         * which causes the SelectorBase to refresh.
+         * We set the key attribute of SelectorBase using keyExtra. When the selectedItems list is
+         * spliced(during a delete), we change keyExtra, thus changing every SelectorBase key, causing
+         * the SelectorBase to refresh causing their selectedOption property to update.
          * Solves the issue of the selectedOption property of SelectorBase not updating.
          *
          * see for more details:

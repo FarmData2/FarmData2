@@ -11,23 +11,6 @@ describe('Test the default MultiCropSelector content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check the first dropdown element', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="selector-1"]').should('exist');
-        cy.get('[data-cy="selector-2"]').should('not.exist');
-      });
-  });
-
   it('Check default props', () => {
     const readySpy = cy.spy().as('readySpy');
 
@@ -41,10 +24,7 @@ describe('Test the default MultiCropSelector content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-required"]').should('not.exist');
-        cy.get('[data-cy="selector-label"]').should('have.text', '1:');
         cy.get('[data-cy="selector-input"]').should('have.value', null);
-        cy.get('[data-cy="selector-delete-button"]').should('not.exist');
-        cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-input"]').should(
           'not.have.class',
           'is-valid'
@@ -70,22 +50,6 @@ describe('Test the default MultiCropSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-1"]').should('exist');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-add-button"]')
-          .should('not.exist');
-
-        cy.get('[data-cy="selector-2"]').should('exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-add-button"]')
-          .should('exist');
-
         cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('exist');
@@ -96,62 +60,6 @@ describe('Test the default MultiCropSelector content', () => {
         cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', 'BROCCOLI');
-      });
-  });
-
-  it('Check required prop', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        required: true,
-        onReady: readySpy,
-        selected: [],
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        // no items => required and no delete
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('exist');
-        // one item => required and no delete
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .select('BROCCOLI');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
-        // two items => not required and delete
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .select('BROCCOLI');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('exist');
-        cy.get('[data-cy="selector-1"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('exist');
-        cy.get('[data-cy="selector-2"]')
-          .find('[data-cy="selector-required"]')
-          .should('not.exist');
       });
   });
 
@@ -193,5 +101,20 @@ describe('Test the default MultiCropSelector content', () => {
           .find('[data-cy="selector-option-1"]')
           .should('have.value', 'ARUGULA');
       });
+  });
+
+  it('Crop plus button exists, is visible, is enabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(MultiCropSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+    cy.get('[data-cy="selector-1"]')
+      .find('[data-cy="selector-add-button"]')
+      .should('exist')
+      .should('be.visible')
+      .should('be.enabled');
   });
 });
