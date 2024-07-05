@@ -71,7 +71,7 @@ farm.fd2_examples_winter_kill:
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
 farm.fd2_examples_crop_selector:
-  title: 'CropSelector Example'
+  title: 'CropSelector'
   description: 'Example of the use of the CropSelector component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_crop_selector.content
