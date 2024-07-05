@@ -117,3 +117,13 @@ winter_kill:
   css:
     component:
       style/style.css: {}
+
+location_selector:
+  js:
+    location_selector/location_selector.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
