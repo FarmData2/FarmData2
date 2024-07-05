@@ -71,7 +71,7 @@ farm.fd2_examples_winter_kill:
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
 farm.fd2_examples_comment_box:
-  title: 'CommentBox Example'
+  title: 'CommentBox'
   description: 'Example of the use of the CommentBox component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_comment_box.content
