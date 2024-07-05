@@ -5,6 +5,9 @@
       <a href="bed_picker">BedPicker</a>: A component for picking multiple beds.
     </li>
     <li>
+      <a href="comment_box">CommentBox</a>: A component for writing a comment.
+    </li>
+    <li>
       <a href="date_selector">DateSelector</a>: A component for selecting a
       date.
     </li>
