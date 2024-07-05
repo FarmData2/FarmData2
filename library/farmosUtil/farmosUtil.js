@@ -1577,7 +1577,7 @@ export async function runTransaction(operations) {
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
  * @param {string} date the date on which the plant asset was created.
- * @param {string} cropName the name of the crop to associate with the plant asset.
+ * @param {string|string[]} cropName - The name of the crop(s) to associate with the plant asset.
  * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
  * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
  * @return {Object} the new plant asset.
@@ -1599,7 +1599,16 @@ export async function createPlantAsset(
     parentArray.push({ type: 'asset--plant', id: parent.id });
   }
 
-  const assetName = date + '_' + cropName;
+  const assetName =
+    date + '_' + (Array.isArray(cropName) ? cropName.join('_') : cropName);
+
+  // Determine plant types
+  const plantTypes = Array.isArray(cropName)
+    ? cropName.map((name) => ({
+        type: 'taxonomy_term--plant_type',
+        id: cropMap.get(name).id,
+      }))
+    : [{ type: 'taxonomy_term--plant_type', id: cropMap.get(cropName).id }];
 
   // create an asset--plant
   const plantAsset = farm.asset.create({
@@ -1610,12 +1619,7 @@ export async function createPlantAsset(
       notes: { value: comment },
     },
     relationships: {
-      plant_type: [
-        {
-          type: 'taxonomy_term--plant_type',
-          id: cropMap.get(cropName).id,
-        },
-      ],
+      plant_type: plantTypes,
       parent: parentArray,
     },
   });
@@ -2052,8 +2056,10 @@ export async function createSeedingLog(
   } else if (logCategories.includes('seeding_cover_crop')) {
     logName += '_cs_';
   }
-  logName += cropIdToNameMap.get(plantAsset.relationships.plant_type[0].id)
-    .attributes.name;
+
+  logName += plantAsset.relationships.plant_type
+    .map((crop) => cropIdToNameMap.get(crop.id).attributes.name)
+    .join('_');
 
   const seedingLogData = {
     type: 'log--seeding',
@@ -2409,6 +2415,107 @@ export async function getTraySeededCropNames() {
     console.error(error.message);
     console.error(error);
     throw new Error('Unable to fetch tray seeded crop names.', error);
+  }
+}
+
+/**
+ * Create a new activity log (`log--activity`) for a winter kill.
+ *
+ * @param {string} winterKillDate the date the crop will be winter killed.
+ * @param {string} locationName the location to of the crops that will be winter killed.
+ * This must be the name of a field or greenhouse with beds.
+ * @param {Array<string>} bedNames the names of the bed(s) that will be winter killed.
+ * Can be empty if location does not contain beds or no beds were selected.
+ * @param {Object} plantAsset the plant asset representing the cover crops.
+ * @returns {Object} the new activity log.
+ *
+ * @category termination
+ */
+export async function createWinterKillActivityLog(
+  winterKillDate,
+  locationName,
+  bedNames = [],
+  plantAsset
+) {
+  const locationsArray = await getPlantingLocationObjects([
+    locationName,
+    ...bedNames,
+  ]);
+  const logCategoriesArray = await getLogCategoryObjects([
+    'termination',
+    'seeding_cover_crop',
+  ]);
+
+  const cropIdToTermMap = await getCropIdToTermMap();
+  const logName =
+    dayjs(winterKillDate).format('YYYY-MM-DD') +
+    '_wk_' +
+    plantAsset.relationships.plant_type
+      .map((crop) => cropIdToTermMap.get(crop.id).attributes.name)
+      .join('_');
+
+  const activityLogData = {
+    type: 'log--activity',
+    attributes: {
+      name: logName,
+      timestamp: dayjs(winterKillDate).format(),
+      status: 'done',
+      is_movement: true,
+      purchase_date: dayjs(winterKillDate).format(),
+    },
+    relationships: {
+      location: locationsArray,
+      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      category: logCategoriesArray,
+    },
+  };
+
+  const farm = await getFarmOSInstance();
+  const activityLog = farm.log.create(activityLogData);
+  await farm.log.send(activityLog);
+
+  return activityLog;
+}
+
+/**
+ * Get the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the winter kill activity log to get.
+ * @returns the winter kill activity log with the specified id.
+ *
+ * @category termination
+ */
+export async function getWinterKillActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.log.fetch({
+    filter: { type: 'log--activity', id: activityLogId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the winter kill activity log.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the winter kill activity log.
+ *
+ * @category termination
+ */
+export async function deleteWinterKillActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.log.delete('activity', activityLogId);
+    return result;
+  } catch (error) {
+    console.error('deleteWinterKillActivityLog:');
+    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error(error.message);
+    console.error(error);
+    throw error;
   }
 }
 
