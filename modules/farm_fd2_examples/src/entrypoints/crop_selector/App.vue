@@ -59,6 +59,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = 'ARUGULA'"
+            v-bind:disabled="this.form.selected == 'ARUGULA'"
           >
             Select Arugula
           </BButton>
@@ -68,6 +69,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = ''"
+            v-bind:disabled="this.form.selected == ''"
           >
             Clear
           </BButton>
