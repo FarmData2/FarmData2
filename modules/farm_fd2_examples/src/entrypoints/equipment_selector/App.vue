@@ -72,6 +72,10 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected.pop()"
+            v-bind:disabled="
+              !(this.form.selected.length > 1 && this.required) &&
+              !(!this.required && this.form.selected.length > 0)
+            "
           >
             Remove Last
           </BButton>
