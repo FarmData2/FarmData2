@@ -1,4 +1,5 @@
 import TraySizeSelector from '@comps/TraySizeSelector/TraySizeSelector.vue';
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 describe('Test the TraySizeSelector behaviors', () => {
   beforeEach(() => {
@@ -11,13 +12,12 @@ describe('Test the TraySizeSelector behaviors', () => {
     cy.saveSessionStorage();
   });
 
-  it('Clicking add tray size button goes to the add tray size form', () => {
+  it('Closing popup via close button does not clear/repopulate the cache', () => {
     const readySpy = cy.spy().as('readySpy');
-
-    cy.intercept('GET', '**/taxonomy/manage/tray_size/add', {
-      statusCode: 200,
-      body: 'Add Tray Size Form',
-    }).as('urlIntercept');
+    cy.spy(TraySizeSelector.methods, 'populateTraySizeList').as('populateSpy');
+    cy.spy(TraySizeSelector.methods, 'handleAddClicked').as(
+      'handleAddClickedSpy'
+    );
 
     cy.mount(TraySizeSelector, {
       props: {
@@ -27,9 +27,18 @@ describe('Test the TraySizeSelector behaviors', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
+          expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.not.be
+            .null;
           cy.get('[data-cy="selector-add-button"]').should('exist');
           cy.get('[data-cy="selector-add-button"]').click();
-          cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
+          cy.get('[data-cy="selector-closePopup"]').should('exist');
+          cy.get('[data-cy="selector-closePopup"]').click();
+
+          cy.get('@handleAddClickedSpy').should('be.calledOnce');
+          cy.get('@populateSpy').should('not.be.called');
+
+          expect(farmosUtil.getFromGlobalVariableCache('tray_sizes')).to.not.be
+            .null;
         });
     });
   });

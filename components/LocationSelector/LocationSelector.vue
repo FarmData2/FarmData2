@@ -5,13 +5,14 @@
       data-cy="location-selector"
       label="Location"
       invalidFeedbackText="A location is required"
-      v-bind:addOptionUrl="addLocationUrl"
       v-bind:options="locations"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleLocationValid($event)"
+      v-on:add-clicked="handleAddClicked"
+      v-bind:popupUrl="popupUrl"
     />
 
     <BAccordion
@@ -183,28 +184,16 @@ export default {
       bedObjs: [],
       canCreateLand: false,
       canCreateStructure: false,
+      popupUrl: null,
     };
   },
   computed: {
-    addLocationUrl() {
-      // return the appropriate url for land, structure or just asset if both
-      if (
-        this.includeFields &&
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateLand &&
-        this.canCreateStructure
-      ) {
-        return '/asset/add';
-      } else if (this.includeFields && this.canCreateLand) {
-        return '/asset/add/land';
-      } else if (
-        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-        this.canCreateStructure
-      ) {
-        return '/asset/add/structure';
-      } else {
-        return null;
-      }
+    canCreateLocation() {
+      return (
+        (this.includeFields && this.canCreateLand) ||
+        ((this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure)
+      );
     },
     locations() {
       let fieldNames = [];
@@ -314,6 +303,64 @@ export default {
     handleBedsValid(event) {
       this.bedsValid = event;
     },
+    async handleAddClicked(newLocation) {
+      // when the selector emits the add-clicked event
+      // clear the cached locations and repopulate the options
+      // to get the newly created location, then select it
+
+      // If a new asset is provided, update the selected
+      if (newLocation) {
+        // Clear the cached
+        if (
+          this.includeFields &&
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateLand &&
+          this.canCreateStructure
+        ) {
+          farmosUtil.clearCachedFields();
+          farmosUtil.clearCachedGreenhouses();
+          farmosUtil.clearCachedBeds();
+        } else if (this.includeFields && this.canCreateLand) {
+          farmosUtil.clearCachedFields();
+          farmosUtil.clearCachedBeds();
+        } else if (
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure
+        ) {
+          farmosUtil.clearCachedGreenhouses();
+        }
+
+        // Populate the map and wait for it to complete
+        await this.populateLocationList();
+
+        this.handleUpdateSelected(newLocation);
+      }
+    },
+    async populateLocationList() {
+      try {
+        let fieldMap = null;
+        if (this.includeFields) {
+          fieldMap = await farmosUtil.getFieldIdToAssetMap();
+        }
+
+        let greenhouseMap = null;
+        if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
+          greenhouseMap = await farmosUtil.getGreenhouseIdToAssetMap();
+        }
+
+        let beds = null;
+        if (this.allowBedSelection) {
+          beds = await farmosUtil.getBeds();
+        }
+
+        // Update asset list
+        this.fieldMap = fieldMap;
+        this.greenhouseMap = greenhouseMap;
+        this.bedObjs = beds;
+      } catch (error) {
+        console.error('Error populating location maps:', error);
+      }
+    },
   },
   watch: {
     selectedBeds() {
@@ -363,6 +410,21 @@ export default {
         this.bedObjs = beds;
         this.canCreateLand = createLand;
         this.canCreateStructure = createStructure;
+        if (
+          this.includeFields &&
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateLand &&
+          this.canCreateStructure
+        ) {
+          this.popupUrl = '/asset/add';
+        } else if (this.includeFields && this.canCreateLand) {
+          this.popupUrl = '/asset/add/land';
+        } else if (
+          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+          this.canCreateStructure
+        ) {
+          this.popupUrl = '/asset/add/structure';
+        }
 
         /**
          * The select has been populated with the list of locations and the component is ready to be used.

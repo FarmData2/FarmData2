@@ -7,7 +7,7 @@ describe('Test the permission based CropSelector content', () => {
    * here because we need a new farmOS instance for each test.
    */
 
-  it('Admin can add crops and url is correct', () => {
+  it('Verify admin can add crops by checking the existence of the add button', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(CropSelector, {
@@ -20,14 +20,11 @@ describe('Test the permission based CropSelector content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', '/admin/structure/taxonomy/manage/plant_type/add');
+        cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
 
-  it('Guest can not add crops', () => {
+  it('Verify guest cannot add crops by checking the existence of the add button', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.wrap(

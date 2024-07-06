@@ -21,10 +21,28 @@ farm.fd2_direct_seeding:
   description: 'Data entry form for recording a direct seeding.'
   parent: farm.fd2_seeding
   route_name: farm.fd2_direct_seeding.content
-  weight: 110
+  weight: 100
+farm.fd2_soil:
+  title: 'Soil'
+  description: 'FarmData2 features for soil.'
+  parent: farm.fd2_main
+  route_name: farm.fd2_soil.content
+  weight: 100
 farm.fd2_transplanting:
   title: 'Transplanting'
   description: 'Data entry form for recording transplantings.'
   parent: farm.fd2_main
   route_name: farm.fd2_transplanting.content
+  weight: 100
+farm.fd2_cover_crop_seeding:
+  title: 'Cover Crop Seeding'
+  description: 'Data entry form for recording a cover crop seeding.'
+  parent: farm.fd2_seeding
+  route_name: farm.fd2_cover_crop_seeding.content
+  weight: 100
+farm.fd2_soil_disturbance:
+  title: 'Soil Disturbance'
+  description: 'Data entry form for recording soil disturbance.'
+  parent: farm.fd2_soil
+  route_name: farm.fd2_soil_disturbance.content
   weight: 100

@@ -37,6 +37,10 @@ describe('Test the default SelectorBase content', () => {
         cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
         cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
         cy.get('[data-cy="selector-add-button"]').should('not.exist');
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
         cy.get('[data-cy="selector-delete-button"]').should('not.exist');
         cy.get('[data-cy="selector-invalid-feedback"]').should(
           'contain.text',
@@ -130,7 +134,7 @@ describe('Test the default SelectorBase content', () => {
       });
   });
 
-  it('Test addOptionUrl prop', () => {
+  it('Test popupUrl prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(SelectorBase, {
@@ -139,8 +143,8 @@ describe('Test the default SelectorBase content', () => {
         invalidFeedbackText: 'Invalid feedback text.',
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        addOptionUrl: 'add/option/url',
         onReady: readySpy,
+        popupUrl: 'nonNullValue',
       },
     });
 
@@ -148,10 +152,6 @@ describe('Test the default SelectorBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
-        cy.get('[data-cy="selector-add-button"]')
-          .should('have.attr', 'href')
-          .then((href) => href)
-          .should('eq', 'add/option/url');
       });
   });
 

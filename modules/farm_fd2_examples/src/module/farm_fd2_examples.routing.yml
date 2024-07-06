@@ -68,3 +68,24 @@ farm.fd2_examples_example_entry_point.content:
     _title: 'Example Entry Point'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_multi_crop_selector.content:
+  path: '/fd2_examples/multi_crop_selector'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'MultiCropSelector Example'
+  requirements:
+    _permission: 'access content'
+farm.fd2_examples_winter_kill.content:
+  path: '/fd2_examples/winter_kill'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'WinterKill Example'
+  requirements:
+    _permission: 'access content'
+farm.fd2_examples_comment_box.content:
+  path: '/fd2_examples/comment_box'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'CommentBox Example'
+  requirements:
+    _permission: 'access content'

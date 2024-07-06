@@ -34,6 +34,13 @@ farm.fd2_direct_seeding.content:
     _title: 'Direct Seeding'
   requirements:
     _permission: 'access content,create plant asset,create seeding log,create standard quantity,create activity log'
+farm.fd2_soil.content:
+  path: '/fd2/soil'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
+    _title: 'Soil'
+  requirements:
+    _permission: 'access content'
 farm.fd2_transplanting.content:
   path: '/fd2/transplanting'
   defaults:
@@ -41,3 +48,17 @@ farm.fd2_transplanting.content:
     _title: 'Transplanting'
   requirements:
     _permission: 'access content,update any plant asset,create activity log,create standard quantity'
+farm.fd2_cover_crop_seeding.content:
+  path: '/fd2/cover_crop_seeding'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
+    _title: 'Cover Crop Seeding'
+  requirements:
+    _permission: 'access content,create plant asset,create seeding log,create standard quantity,create activity log'
+farm.fd2_soil_disturbance.content:
+  path: '/fd2/soil_disturbance'
+  defaults:
+    _controller: '\Drupal\farm_fd2\Controller\FD2_Controller::content'
+    _title: 'Soil Disturbance'
+  requirements:
+    _permission: 'access content,create standard quantity,create activity log'

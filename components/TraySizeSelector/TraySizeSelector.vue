@@ -5,13 +5,14 @@
       data-cy="tray-size-selector"
       label="Tray Size"
       invalidFeedbackText="A tray size is required"
-      v-bind:addOptionUrl="addTraySizeUrl"
       v-bind:options="traySizeList"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
+      v-on:add-clicked="handleAddClicked"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
@@ -81,17 +82,10 @@ export default {
     return {
       traySizeList: [],
       canCreateTraySize: false,
+      popupUrl: null,
     };
   },
-  computed: {
-    addTraySizeUrl() {
-      if (this.canCreateTraySize) {
-        return '/admin/structure/taxonomy/manage/tray_size/add';
-      } else {
-        return null;
-      }
-    },
-  },
+  computed: {},
   methods: {
     handleUpdateSelected(event) {
       /**
@@ -107,6 +101,30 @@ export default {
        */
       this.$emit('valid', event);
     },
+    async handleAddClicked(newTraySize) {
+      // when the selector emits the add-clicked event
+      // clear the cached locations and repopulate the options
+      // to get the newly created location, then select it
+      // If a new asset is provided, update the selected
+      if (newTraySize) {
+        // Clear the cached
+        farmosUtil.clearCachedTraySizes();
+
+        // Populate the map and wait for it to complete
+        await this.populateTraySizeList();
+        this.handleUpdateSelected(newTraySize);
+      }
+    },
+    async populateTraySizeList() {
+      try {
+        let trayMap = await farmosUtil.getTraySizeToTermMap();
+
+        // Update asset list
+        this.traySizeList = Array.from(trayMap.keys());
+      } catch (error) {
+        console.error('Error populating tray map:', error);
+      }
+    },
   },
   watch: {},
   created() {
@@ -117,6 +135,10 @@ export default {
       .then(([canCreate, trayMap]) => {
         this.traySizeList = Array.from(trayMap.keys());
         this.canCreateTraySize = canCreate;
+
+        if (this.canCreateTraySize) {
+          this.popupUrl = '/admin/structure/taxonomy/manage/tray_size/add';
+        }
 
         /**
          * The select has been populated with the list of tray sizes and the component is ready to be used.

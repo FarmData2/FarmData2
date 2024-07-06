@@ -72,7 +72,7 @@
           data-cy="tray-seeding-trays"
           required
           label="Trays"
-          invalidFeedbackText="Trays must be positive."
+          invalidFeedbackText="Trays must be a positive number."
           v-model:value="form.trays"
           v-bind:showValidityStyling="validity.show"
           v-bind:decimalPlaces="2"
@@ -100,7 +100,7 @@
           data-cy="tray-seeding-seeds"
           required
           label="Seeds/Cell"
-          invalidFeedbackText="Seeds must be positive."
+          invalidFeedbackText="Seeds/Cell must be a positive number."
           v-model:value="form.seedsPerCell"
           v-bind:showValidityStyling="validity.show"
           v-bind:decimalPlaces="0"
@@ -256,7 +256,7 @@ export default {
               });
           })
           .catch(() => {
-            if (!this.errorShown) {
+            if (!this.errorShowing) {
               uiUtil.hideToast();
               this.errorShowing = true;
               uiUtil

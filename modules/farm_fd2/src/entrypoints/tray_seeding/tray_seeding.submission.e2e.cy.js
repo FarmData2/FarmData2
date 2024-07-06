@@ -75,10 +75,9 @@ describe('Tray Seeding: Submission tests', () => {
       .should('contain.text', 'Submitting tray seeding...');
 
     // Give time for all the records to be created.
-    cy.get('.toast', { timeout: 10000 }).should(
-      'contain.text',
-      'Tray seeding created.'
-    );
+    cy.get('.toast', { timeout: 10000 })
+      .should('be.visible')
+      .should('contain.text', 'Tray seeding created.');
 
     /*
      * Check that the submitForm function was called with the

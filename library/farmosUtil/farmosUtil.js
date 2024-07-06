@@ -1430,14 +1430,19 @@ export async function getEquipmentNameToAssetMap(categories = []) {
     equipment.map((eq) => [eq.id, eq.attributes.name])
   );
 
+  const categoryParentName = 'Category';
+
   function filter(filtered, eq) {
+    const hasParent = eq.relationships.parent.length != 0;
+    const parentName = hasParent
+      ? parentIdToName.get(eq.relationships.parent[0].id)
+      : null;
+
     if (
-      // If the equipment has a parent
-      // and either the categories list is empty or
-      // the category name of the parent is in the list of categories
-      eq.relationships.parent.length != 0 &&
-      (categories.length == 0 ||
-        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+      eq.attributes.name !== categoryParentName &&
+      parentName !== categoryParentName &&
+      (categories.length === 0 ||
+        (hasParent && categories.includes(parentName)))
     ) {
       filtered.set(eq.attributes.name, eq);
     }
@@ -1473,14 +1478,19 @@ export async function getEquipmentIdToAssetMap(categories = []) {
     equipment.map((eq) => [eq.id, eq.attributes.name])
   );
 
+  const categoryParentName = 'Category';
+
   function filter(filtered, eq) {
+    const hasParent = eq.relationships.parent.length != 0;
+    const parentName = hasParent
+      ? parentIdToName.get(eq.relationships.parent[0].id)
+      : null;
+
     if (
-      // If the equipment has a parent
-      // and either the categories list is empty or
-      // the category name of the parent is in the list of categories
-      eq.relationships.parent.length != 0 &&
-      (categories.length == 0 ||
-        categories.includes(parentIdToName.get(eq.relationships.parent[0].id)))
+      eq.attributes.name !== categoryParentName &&
+      parentName !== categoryParentName &&
+      (categories.length === 0 ||
+        (hasParent && categories.includes(parentName)))
     ) {
       filtered.set(eq.id, eq);
     }
@@ -1567,7 +1577,7 @@ export async function runTransaction(operations) {
  * Create a plant asset (i.e. an asset of type `asset--plant`).
  *
  * @param {string} date the date on which the plant asset was created.
- * @param {string} cropName the name of the crop to associate with the plant asset.
+ * @param {string|string[]} cropName - The name of the crop(s) to associate with the plant asset.
  * @param {string} [comment = ""] a comment the comment to associate with this plant asset.
  * @param {Array<Object>} [parents = []] an array of `asset--plant` objects to associate as parents of the new plant asset.
  * @return {Object} the new plant asset.
@@ -1589,7 +1599,16 @@ export async function createPlantAsset(
     parentArray.push({ type: 'asset--plant', id: parent.id });
   }
 
-  const assetName = date + '_' + cropName;
+  const assetName =
+    date + '_' + (Array.isArray(cropName) ? cropName.join('_') : cropName);
+
+  // Determine plant types
+  const plantTypes = Array.isArray(cropName)
+    ? cropName.map((name) => ({
+        type: 'taxonomy_term--plant_type',
+        id: cropMap.get(name).id,
+      }))
+    : [{ type: 'taxonomy_term--plant_type', id: cropMap.get(cropName).id }];
 
   // create an asset--plant
   const plantAsset = farm.asset.create({
@@ -1600,12 +1619,7 @@ export async function createPlantAsset(
       notes: { value: comment },
     },
     relationships: {
-      plant_type: [
-        {
-          type: 'taxonomy_term--plant_type',
-          id: cropMap.get(cropName).id,
-        },
-      ],
+      plant_type: plantTypes,
       parent: parentArray,
     },
   });
@@ -1632,6 +1646,118 @@ export async function getPlantAsset(plantAssetId) {
   });
 
   return results.data[0]; // only one asset with the plantAssetId.
+}
+
+/**
+ * Get the plant assets at the specified location.
+ *
+ * @param {string} locationName the name of the location.
+ * @param {string[]} [checkedBeds=[]] the beds to look for.
+ * @param {boolean} [isInGround=true] look for plants in the ground.
+ * @param {boolean} [isInTrays=true] look for plants in trays.
+ * @return {Object} the plant assets at the specified location.
+ * @throws {Error} if unable to fetch the plant assets.
+ *
+ * @category Plant
+ */
+export async function getPlantAssets(
+  locationName,
+  checkedBeds = [],
+  isInTrays = true,
+  isInGround = true
+) {
+  const farm = await getFarmOSInstance();
+  let bedNameToAssetMap = null;
+  let greenhouseNameToAssetMap = null;
+  let fieldNameToAssetMap = null;
+  let fieldAsset = null;
+  let greenhouseAsset = null;
+  let locationAsset = null;
+
+  // If both isInTrays and isInGround are false, return null
+  if (!isInTrays && !isInGround) {
+    return [];
+  } else if (!isInGround) {
+    // not in ground (i.e. only in trays)
+    // location must be a greenhouse
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+  } else {
+    // not sure about location:
+    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
+    fieldNameToAssetMap = await getFieldNameToAssetMap();
+  }
+
+  if (checkedBeds.length > 0) {
+    bedNameToAssetMap = await getBedNameToAssetMap();
+  }
+
+  // Find the field asset that matches the location name
+  if (fieldNameToAssetMap) {
+    fieldAsset = fieldNameToAssetMap.get(locationName);
+  }
+  if (greenhouseNameToAssetMap) {
+    greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
+  }
+
+  if (greenhouseAsset) {
+    locationAsset = greenhouseAsset;
+  } else if (fieldAsset) {
+    locationAsset = fieldAsset;
+  } else {
+    return [];
+  }
+
+  // Fetch all plant assets
+  const plantAssets = await farm.asset.fetch({
+    filter: {
+      type: 'asset--plant',
+      status: 'active',
+    },
+    limit: Infinity,
+  });
+
+  // Filter and check each plant asset
+  const matchingPlantAssetIds = [];
+  for (const plantAsset of plantAssets.data) {
+    const locations = plantAsset.relationships.location;
+
+    let addToResults = false;
+
+    if (isInTrays && isInGround) {
+      addToResults = true;
+    } else if (isInTrays) {
+      if (getAssetInventory(plantAsset, 'count', 'TRAYS')) {
+        addToResults = true;
+      }
+    } else if (isInGround) {
+      if (getAssetInventory(plantAsset, 'length', 'FEET')) {
+        addToResults = true;
+      }
+    }
+
+    if (addToResults) {
+      // Check if the first location (field) matches
+      if (locations.length > 0 && locations[0].id === locationAsset.id) {
+        if (checkedBeds.length === 0) {
+          // If no beds to check, add the plant asset ID to the result array
+          matchingPlantAssetIds.push(plantAsset.id);
+        } else {
+          // Check if all checked beds are in the locations
+          const bedIds = locations.slice(1).map((location) => location.id);
+          const someBedsMatch = checkedBeds.some((bedName) => {
+            const bedAsset = bedNameToAssetMap.get(bedName);
+            return bedAsset && bedIds.includes(bedAsset.id);
+          });
+          if (someBedsMatch) {
+            matchingPlantAssetIds.push(plantAsset.id);
+          }
+        }
+      }
+    }
+  }
+
+  // Return the array of matching plant asset IDs
+  return matchingPlantAssetIds;
 }
 
 /**
@@ -1930,8 +2056,10 @@ export async function createSeedingLog(
   } else if (logCategories.includes('seeding_cover_crop')) {
     logName += '_cs_';
   }
-  logName += cropIdToNameMap.get(plantAsset.relationships.plant_type[0].id)
-    .attributes.name;
+
+  logName += plantAsset.relationships.plant_type
+    .map((crop) => cropIdToNameMap.get(crop.id).attributes.name)
+    .join('_');
 
   const seedingLogData = {
     type: 'log--seeding',
@@ -2010,7 +2138,7 @@ export async function deleteSeedingLog(seedingLogId) {
  * Can be empty if location does not contain beds or no beds were selected.
  * @param {Array<string>} logCategories the log categories associated with this log.
  * Must include `tillage`.
- * @param {Object} [plantAsset=null] the plant asset (i.e. `asset--plant`) affected by the disturbance.
+ * @param {Object} [plantAsset=null] the plant asset or array of assets (i.e. `asset--plant`) affected by the disturbance.
  * @param {Array<Object>} [quantities=[]] an array of quantity (e.g. `quantity--standard`) objects associated with the disturbance.
  * @param {Array<Object>} [equipment=[]] an array of equipment asset objects (i.e. `asset--equipment`) that were used to disturb the soil.
  * @returns {Object} the new activity log.
@@ -2025,7 +2153,8 @@ export async function createSoilDisturbanceActivityLog(
   logCategories,
   plantAsset = null,
   quantities = [],
-  equipment = []
+  equipment = [],
+  comment = ''
 ) {
   const locationArray = await getPlantingLocationObjects([
     locationName,
@@ -2052,10 +2181,15 @@ export async function createSoilDisturbanceActivityLog(
       timestamp: dayjs(disturbanceDate).format(),
       status: 'done',
       purchase_date: dayjs(disturbanceDate).format(),
+      notes: { value: comment },
     },
     relationships: {
       location: locationArray,
-      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      asset: Array.isArray(plantAsset)
+        ? plantAsset.map((asset) => ({ type: 'asset--plant', id: asset.id }))
+        : plantAsset
+        ? [{ type: 'asset--plant', id: plantAsset.id }]
+        : [],
       category: logCategoriesArray,
       quantity: quantitiesArray,
       equipment: equipmentArray,
@@ -2281,6 +2415,107 @@ export async function getTraySeededCropNames() {
     console.error(error.message);
     console.error(error);
     throw new Error('Unable to fetch tray seeded crop names.', error);
+  }
+}
+
+/**
+ * Create a new activity log (`log--activity`) for a winter kill.
+ *
+ * @param {string} winterKillDate the date the crop will be winter killed.
+ * @param {string} locationName the location to of the crops that will be winter killed.
+ * This must be the name of a field or greenhouse with beds.
+ * @param {Array<string>} bedNames the names of the bed(s) that will be winter killed.
+ * Can be empty if location does not contain beds or no beds were selected.
+ * @param {Object} plantAsset the plant asset representing the cover crops.
+ * @returns {Object} the new activity log.
+ *
+ * @category termination
+ */
+export async function createWinterKillActivityLog(
+  winterKillDate,
+  locationName,
+  bedNames = [],
+  plantAsset
+) {
+  const locationsArray = await getPlantingLocationObjects([
+    locationName,
+    ...bedNames,
+  ]);
+  const logCategoriesArray = await getLogCategoryObjects([
+    'termination',
+    'seeding_cover_crop',
+  ]);
+
+  const cropIdToTermMap = await getCropIdToTermMap();
+  const logName =
+    dayjs(winterKillDate).format('YYYY-MM-DD') +
+    '_wk_' +
+    plantAsset.relationships.plant_type
+      .map((crop) => cropIdToTermMap.get(crop.id).attributes.name)
+      .join('_');
+
+  const activityLogData = {
+    type: 'log--activity',
+    attributes: {
+      name: logName,
+      timestamp: dayjs(winterKillDate).format(),
+      status: 'done',
+      is_movement: true,
+      purchase_date: dayjs(winterKillDate).format(),
+    },
+    relationships: {
+      location: locationsArray,
+      asset: [{ type: 'asset--plant', id: plantAsset.id }],
+      category: logCategoriesArray,
+    },
+  };
+
+  const farm = await getFarmOSInstance();
+  const activityLog = farm.log.create(activityLogData);
+  await farm.log.send(activityLog);
+
+  return activityLog;
+}
+
+/**
+ * Get the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the winter kill activity log to get.
+ * @returns the winter kill activity log with the specified id.
+ *
+ * @category termination
+ */
+export async function getWinterKillActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  const results = await farm.log.fetch({
+    filter: { type: 'log--activity', id: activityLogId },
+  });
+
+  return results.data[0];
+}
+
+/**
+ * Delete the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the winter kill activity log.
+ * @returns {Object} the response from the server.
+ * @throws {Error} if unable to delete the winter kill activity log.
+ *
+ * @category termination
+ */
+export async function deleteWinterKillActivityLog(activityLogId) {
+  const farm = await getFarmOSInstance();
+
+  try {
+    const result = await farm.log.delete('activity', activityLogId);
+    return result;
+  } catch (error) {
+    console.error('deleteWinterKillActivityLog:');
+    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error(error.message);
+    console.error(error);
+    throw error;
   }
 }
 

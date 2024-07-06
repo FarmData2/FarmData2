@@ -113,17 +113,53 @@ describe('Test the SelectorBase behaviors', () => {
       });
   });
 
-  it('Clicking add button goes to the addUrl', () => {
+  it('Clicking add button goes to the addUrl clicking closePopup closes popup', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const addClickedSpy = cy.spy().as('addClickedSpy');
+
+    // when mounting, set the popupUrl to '' to avoid errors when testing
+    cy.mount(SelectorBase, {
+      props: {
+        required: true,
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: ['One', 'Two', 'Three', 'Four', 'Five'],
+        onAddClicked: addClickedSpy,
+        onReady: readySpy,
+        popupUrl: '',
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
+
+        cy.get('[data-cy="selector-add-button"]').should('exist');
+        cy.get('[data-cy="selector-add-button"]').click();
+
+        cy.get('[data-cy="selector-overlay"]').should('exist');
+        cy.get('[data-cy="selector-popup"]').should('exist');
+        cy.get('[data-cy="selector-closePopup"]').should('exist');
+        cy.get('[data-cy="selector-popupIframe"]')
+          .should('exist')
+          .should('have.attr', 'src', '');
+
+        cy.get('[data-cy="selector-closePopup"]').click();
+        cy.get('@addClickedSpy').should('have.been.calledOnce');
+        cy.get('[data-cy="selector-overlay"]').should('not.exist');
+        cy.get('[data-cy="selector-popup"]').should('not.exist');
+        cy.get('[data-cy="selector-closePopup"]').should('not.exist');
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
+      });
+  });
+  it('Clicking add button disables background elements and close enables them', () => {
     const readySpy = cy.spy().as('readySpy');
 
-    cy.intercept(
-      { method: 'GET', url: 'http://farmos', times: 1 },
-      {
-        statusCode: 200,
-        body: 'Add Option Form',
-      }
-    ).as('urlIntercept');
-
+    // when mounting, set the popupUrl to '' to avoid errors when testing
     cy.mount(SelectorBase, {
       props: {
         required: true,
@@ -131,16 +167,34 @@ describe('Test the SelectorBase behaviors', () => {
         label: `TheLabel`,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
         onReady: readySpy,
-        addOptionUrl: 'http://farmos',
+        popupUrl: '',
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-add-button"]').should('exist');
         cy.get('[data-cy="selector-add-button"]').click();
-        cy.wait('@urlIntercept').its('response.statusCode').should('eq', 200);
+
+        cy.get('[data-cy="selector-popupIframe"]')
+          .should('exist')
+          .should('not.have.attr', 'aria-hidden', 'true')
+          .should('not.have.attr', 'tabindex', '-1');
+
+        cy.window().then((window) => {
+          const body = window.document.getElementsByTagName('body')[0];
+          expect(body.getAttribute('tabindex')).to.equal('-1');
+          expect(body.getAttribute('aria-hidden')).to.equal('true');
+        });
+
+        cy.get('[data-cy="selector-closePopup"]').click();
+        cy.get('[data-cy="selector-popupIframe"]').should('not.exist');
+
+        cy.window().then((window) => {
+          const body = window.document.getElementsByTagName('body')[0];
+          expect(body.getAttribute('tabindex')).to.not.equal('-1');
+          expect(body.getAttribute('aria-hidden')).to.not.equal('true');
+        });
       });
   });
 });

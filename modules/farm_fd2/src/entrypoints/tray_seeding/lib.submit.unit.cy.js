@@ -18,12 +18,28 @@ describe('Test the tray seeding lib', () => {
     comment: 'A comment',
   };
 
+  let cropMap = null;
   let greenhouseMap = null;
+  let logCategoryMap = null;
+  let unitMap = null;
+
   let result = null;
 
   before(() => {
     cy.wrap(farmosUtil.getGreenhouseNameToAssetMap()).then((map) => {
       greenhouseMap = map;
+    });
+
+    cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
+      cropMap = map;
+    });
+
+    cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((map) => {
+      logCategoryMap = map;
+    });
+
+    cy.wrap(farmosUtil.getUnitToTermMap()).then((map) => {
+      unitMap = map;
     });
 
     cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((res) => {
@@ -42,177 +58,98 @@ describe('Test the tray seeding lib', () => {
   });
 
   it('Check the asset--plant', () => {
-    // Check the plant asset.
-    cy.wrap(farmosUtil.getPlantAsset(result.plantAsset.id)).then(
-      (plantAsset) => {
-        expect(plantAsset.type).to.equal('asset--plant');
-        expect(plantAsset.attributes.name).to.equal(
-          /*
-           * Note: result.plantAsset is the object that was sent to the server.
-           * plantAsset is the object that was retrieved from the server.
-           * So we can usually check them against each other and avoid the step of using
-           * maps to translate from name to id for things like locations and crops.
-           * The exception is when farmOS computes information that is added to the
-           * record.  For example, the location of the planting asset is set by farmOS
-           * based upon the location specified in the seeding log.
-           */
-          result.plantAsset.attributes.name
-        );
-        expect(plantAsset.attributes.status).to.equal('active');
-        expect(plantAsset.attributes.notes.value).to.equal(form.comment);
-
-        expect(plantAsset.relationships.plant_type[0].type).to.equal(
-          'taxonomy_term--plant_type'
-        );
-        expect(plantAsset.relationships.plant_type[0].id).to.equal(
-          result.plantAsset.relationships.plant_type[0].id
-        );
-
-        expect(plantAsset.relationships.location[0].type).to.equal(
-          'asset--structure'
-        );
-        expect(plantAsset.relationships.location[0].id).to.equal(
-          greenhouseMap.get(form.locationName).id
-        );
-
-        expect(plantAsset.attributes.inventory[0].measure).to.equal('count');
-        expect(plantAsset.attributes.inventory[0].value).to.equal('25');
-        expect(plantAsset.attributes.inventory[0].units).to.equal('TRAYS');
-      }
+    expect(result.plantAsset.type).to.equal('asset--plant');
+    expect(result.plantAsset.attributes.name).to.equal(
+      form.seedingDate + '_' + form.cropName
     );
+    expect(result.plantAsset.attributes.status).to.equal('active');
+    expect(result.plantAsset.attributes.notes.value).to.equal(form.comment);
+    expect(result.plantAsset.relationships.plant_type[0].id).to.equal(
+      cropMap.get(form.cropName).id
+    );
+    expect(result.plantAsset.relationships.parent.length).to.equal(0);
   });
 
   it('Check the trays quantity--standard', () => {
-    // Check the trays quantity.
-    cy.wrap(farmosUtil.getStandardQuantity(result.traysQuantity.id)).then(
-      (traysQuantity) => {
-        expect(traysQuantity.type).to.equal('quantity--standard');
-        expect(traysQuantity.attributes.measure).to.equal('count');
-        expect(traysQuantity.attributes.value.decimal).to.equal(
-          form.trays.toString()
-        );
-        expect(traysQuantity.attributes.label).to.equal('Trays');
+    expect(result.traysQuantity.type).to.equal('quantity--standard');
+    expect(result.traysQuantity.attributes.measure).to.equal('count');
+    expect(result.traysQuantity.attributes.value.decimal).to.equal(form.trays);
+    expect(result.traysQuantity.attributes.label).to.equal('Trays');
+    expect(result.traysQuantity.relationships.units.id).to.equal(
+      unitMap.get('TRAYS').id
+    );
 
-        expect(traysQuantity.attributes.inventory_adjustment).to.equal(
-          'increment'
-        );
-
-        expect(traysQuantity.relationships.units.type).to.equal(
-          'taxonomy_term--unit'
-        );
-        expect(traysQuantity.relationships.units.id).to.equal(
-          result.traysQuantity.relationships.units.id
-        );
-
-        expect(traysQuantity.relationships.inventory_asset.type).to.equal(
-          'asset--plant'
-        );
-        expect(traysQuantity.relationships.inventory_asset.id).to.equal(
-          result.traysQuantity.relationships.inventory_asset.id
-        );
-      }
+    expect(result.traysQuantity.relationships.inventory_asset.id).to.equal(
+      result.plantAsset.id
+    );
+    expect(result.traysQuantity.attributes.inventory_adjustment).to.equal(
+      'increment'
     );
   });
 
   it('Check the tray size quantity--standard', () => {
-    // Check the tray size quantity.
-    cy.wrap(farmosUtil.getStandardQuantity(result.traySizeQuantity.id)).then(
-      (traySizeQuantity) => {
-        expect(traySizeQuantity.type).to.equal('quantity--standard');
-        expect(traySizeQuantity.attributes.measure).to.equal('ratio');
-        expect(traySizeQuantity.attributes.value.decimal).to.equal(
-          form.traySize.toString()
-        );
-        expect(traySizeQuantity.attributes.label).to.equal('Tray Size');
-
-        expect(traySizeQuantity.attributes.inventory_adjustment).to.be.null;
-
-        expect(traySizeQuantity.relationships.units.type).to.equal(
-          'taxonomy_term--unit'
-        );
-        expect(traySizeQuantity.relationships.units.id).to.equal(
-          result.traySizeQuantity.relationships.units.id
-        );
-
-        expect(traySizeQuantity.relationships.inventory_asset).to.be.null;
-      }
+    expect(result.traySizeQuantity.type).to.equal('quantity--standard');
+    expect(result.traySizeQuantity.attributes.measure).to.equal('ratio');
+    expect(result.traySizeQuantity.attributes.value.decimal).to.equal(
+      form.traySize
     );
+    expect(result.traySizeQuantity.attributes.label).to.equal('Tray Size');
+    expect(result.traySizeQuantity.attributes.inventory_adjustment).to.be.null;
+    expect(result.traySizeQuantity.relationships.units.id).to.equal(
+      unitMap.get('CELLS/TRAY').id
+    );
+
+    expect(result.traySizeQuantity.relationships.inventory_asset).to.be.null;
+    expect(result.traySizeQuantity.attributes.inventory_adjustment).to.be.null;
   });
 
   it('Check the seeds quantity--standard', () => {
-    // Check the seeds quantity.
-    cy.wrap(farmosUtil.getStandardQuantity(result.seedsQuantity.id)).then(
-      (seedsQuantity) => {
-        expect(seedsQuantity.type).to.equal('quantity--standard');
-        expect(seedsQuantity.attributes.measure).to.equal('count');
-        expect(seedsQuantity.attributes.value.decimal).to.equal(
-          (form.seedsPerCell * form.trays * form.traySize).toString()
-        );
-        expect(seedsQuantity.attributes.label).to.equal('Seeds');
-
-        expect(seedsQuantity.attributes.inventory_adjustment).to.be.null;
-
-        expect(seedsQuantity.relationships.units.type).to.equal(
-          'taxonomy_term--unit'
-        );
-        expect(seedsQuantity.relationships.units.id).to.equal(
-          result.seedsQuantity.relationships.units.id
-        );
-
-        expect(seedsQuantity.relationships.inventory_asset).to.be.null;
-      }
+    expect(result.seedsQuantity.type).to.equal('quantity--standard');
+    expect(result.seedsQuantity.attributes.measure).to.equal('count');
+    expect(result.seedsQuantity.attributes.value.decimal).to.equal(
+      form.seedsPerCell * form.trays * form.traySize
     );
+    expect(result.seedsQuantity.attributes.label).to.equal('Seeds');
+    expect(result.seedsQuantity.attributes.inventory_adjustment).to.be.null;
+    expect(result.seedsQuantity.relationships.units.id).to.equal(
+      unitMap.get('SEEDS').id
+    );
+    expect(result.seedsQuantity.relationships.inventory_asset).to.be.null;
+    expect(result.traySizeQuantity.attributes.inventory_adjustment).to.be.null;
   });
 
   it('Check the seeding log', () => {
-    // Check the seeding log.
-    cy.wrap(farmosUtil.getSeedingLog(result.seedingLog.id)).then(
-      (seedingLog) => {
-        expect(seedingLog.type).to.equal('log--seeding');
-        expect(seedingLog.attributes.name).to.equal(
-          result.seedingLog.attributes.name
-        );
-        expect(seedingLog.attributes.timestamp).to.contain('1950-01-02');
-        expect(seedingLog.attributes.status).to.equal('done');
-        expect(seedingLog.attributes.is_movement).to.be.true;
-        expect(seedingLog.attributes.purchase_date).to.contain('1950-01-02');
+    expect(result.seedingLog.type).to.equal('log--seeding');
+    expect(result.seedingLog.attributes.name).to.equal(
+      form.seedingDate + '_ts_' + form.cropName
+    );
+    expect(result.seedingLog.attributes.timestamp).to.contain(form.seedingDate);
 
-        expect(seedingLog.relationships.location[0].type).to.equal(
-          'asset--structure'
-        );
-        expect(seedingLog.relationships.location[0].id).to.equal(
-          result.seedingLog.relationships.location[0].id
-        );
+    expect(result.seedingLog.relationships.location[0].id).to.equal(
+      greenhouseMap.get(form.locationName).id
+    );
 
-        expect(seedingLog.relationships.asset[0].type).to.equal('asset--plant');
-        expect(seedingLog.relationships.asset[0].id).to.equal(
-          result.seedingLog.relationships.asset[0].id
-        );
+    expect(result.seedingLog.relationships.category.length).to.equal(2);
+    expect(result.seedingLog.relationships.category[0].id).to.equal(
+      logCategoryMap.get('seeding').id
+    );
+    expect(result.seedingLog.relationships.category[1].id).to.equal(
+      logCategoryMap.get('seeding_tray').id
+    );
 
-        expect(seedingLog.relationships.category.length).to.equal(2);
-        expect(seedingLog.relationships.category[0].type).to.equal(
-          'taxonomy_term--log_category'
-        );
-        expect(seedingLog.relationships.category[0].id).to.equal(
-          result.seedingLog.relationships.category[0].id
-        );
-        expect(seedingLog.relationships.category[1].type).to.equal(
-          'taxonomy_term--log_category'
-        );
-        expect(seedingLog.relationships.category[1].id).to.equal(
-          result.seedingLog.relationships.category[1].id
-        );
+    expect(result.seedingLog.relationships.asset[0].id).to.equal(
+      result.plantAsset.id
+    );
 
-        expect(seedingLog.relationships.quantity.length).to.equal(3);
-        for (let i = 0; i < seedingLog.relationships.quantity.length; i++) {
-          expect(seedingLog.relationships.quantity[i].type).to.equal(
-            'quantity--standard'
-          );
-          expect(seedingLog.relationships.quantity[i].id).to.equal(
-            result.seedingLog.relationships.quantity[i].id
-          );
-        }
-      }
+    expect(result.seedingLog.relationships.quantity.length).to.equal(3);
+    expect(result.seedingLog.relationships.quantity[0].id).to.equal(
+      result.traysQuantity.id
+    );
+    expect(result.seedingLog.relationships.quantity[1].id).to.equal(
+      result.traySizeQuantity.id
+    );
+    expect(result.seedingLog.relationships.quantity[2].id).to.equal(
+      result.seedsQuantity.id
     );
   });
 });

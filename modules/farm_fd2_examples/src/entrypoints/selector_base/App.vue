@@ -14,10 +14,11 @@
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:options="options"
-    v-bind:addOptionUrl="addOptionUrl"
+    v-on:add-clicked="handleAddClicked"
     v-model:selected="form.selected"
     v-on:valid="(valid) => (validity.selected = valid)"
     v-on:ready="createdCount++"
+    v-bind:popupUrl="popupUrl"
   />
   <hr />
   <h5>Component Props:</h5>
@@ -52,20 +53,28 @@
         </td>
       </tr>
       <tr>
-        <td>Include Add Button</td>
+        <td>PopupUrl</td>
         <td>
-          <BFormCheckbox
-            id="add-button-checkbox"
-            data-cy="add-button-checkbox"
-            switch
-            v-on:change="
-              if (this.addOptionUrl == null) {
-                this.addOptionUrl = 'http://farmos/asset/add';
-              } else {
-                this.addOptionUrl = null;
-              }
-            "
-          />
+          <BButton
+            id="popup-url-button"
+            data-cy="popup-url-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.popupUrl = 'date_selector'"
+            :disabled="this.popupUrl != null"
+          >
+            DateSelector URL
+          </BButton>
+          <BButton
+            id="popup-clear-url-button"
+            data-cy="popup-clear-url-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.popupUrl = null"
+            :disabled="this.popupUrl == null"
+          >
+            Clear Url
+          </BButton>
         </td>
       </tr>
       <tr>
@@ -123,6 +132,10 @@
         <td>valid</td>
         <td>{{ validity.selected }}</td>
       </tr>
+      <tr>
+        <td>add-clicked</td>
+        <td>{{ addClicked }}</td>
+      </tr>
     </tbody>
   </table>
 
@@ -146,7 +159,7 @@ export default {
     return {
       required: true,
       showAllButton: true,
-      addOptionUrl: null,
+      popupUrl: null,
       options: ['one', 'two', 'three', 'four', 'five'],
       form: {
         selected: null,
@@ -156,9 +169,21 @@ export default {
         selected: false,
       },
       createdCount: 0,
+      addClicked: false,
     };
   },
-  methods: {},
+  methods: {
+    handleAddClicked() {
+      this.addClicked = 'empty payload';
+    },
+  },
+  watch: {
+    includeAddButton(newValue) {
+      if (!newValue) {
+        this.addClicked = false;
+      }
+    },
+  },
   computed: {
     pageDoneLoading() {
       return this.createdCount == 2;
@@ -179,7 +204,7 @@ export default {
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
- selector-base-hack {
+selector-base-hack {
   display: none;
 }
 </style>

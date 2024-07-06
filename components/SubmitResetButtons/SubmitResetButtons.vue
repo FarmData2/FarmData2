@@ -3,8 +3,9 @@
     <BRow
       id="submit-reset"
       data-cy="submit-reset"
+      class="grid-container"
     >
-      <BCol cols="auto">
+      <BCol class="submit-button-col d-flex justify-content-start">
         <BButton
           id="submit-button"
           data-cy="submit-button"
@@ -16,14 +17,13 @@
           >Submit</BButton
         >
       </BCol>
-      <BCol
-        cols="auto"
-        alignSelf="center"
-      >
+      <BCol class="reset-button-col d-flex justify-content-end p-0">
         <BButton
           id="reset-button"
           data-cy="reset-button"
           variant="warning"
+          size="lg"
+          class="fd2-reset"
           v-on:click="reset()"
           v-bind:disabled="!resetEnabled"
           >Reset</BButton
@@ -117,15 +117,25 @@ export default {
 </script>
 
 <style scoped>
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  margin-left: 0 !important;
+}
+
+.submit-button-col {
+  padding-left: 0 !important;
+}
+
 .fd2-submit {
-  width: 245px !important;
-  min-width: 245px;
-  max-width: 245px;
+  width: 100%;
 }
 
 .fd2-reset {
-  width: 50px !important;
-  min-width: 50px;
-  max-width: 50px;
+  width: 100%;
+  max-width: 120px;
 }
 </style>

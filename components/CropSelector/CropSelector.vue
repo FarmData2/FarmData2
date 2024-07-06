@@ -5,13 +5,14 @@
       data-cy="crop-selector"
       label="Crop"
       invalidFeedbackText="A crop is required"
-      v-bind:addOptionUrl="addCropUrl"
       v-bind:options="cropList"
       v-bind:required="required"
       v-bind:selected="selected"
       v-bind:showValidityStyling="showValidityStyling"
       v-on:update:selected="handleUpdateSelected($event)"
       v-on:valid="handleValid($event)"
+      v-on:add-clicked="handleAddClicked"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
@@ -79,16 +80,8 @@ export default {
     return {
       cropList: [],
       canCreateCrop: false,
+      popupUrl: null,
     };
-  },
-  computed: {
-    addCropUrl() {
-      if (this.canCreateCrop) {
-        return '/admin/structure/taxonomy/manage/plant_type/add';
-      } else {
-        return null;
-      }
-    },
   },
   methods: {
     handleUpdateSelected(event) {
@@ -105,6 +98,33 @@ export default {
        */
       this.$emit('valid', event);
     },
+    async handleAddClicked(newCrop) {
+      // when the selector emits the add-clicked event
+      // clear the cached crops and repopulate the options
+      // to get the newly created crop, then select it
+
+      // If a new asset is provided, update the selected
+      if (newCrop) {
+        // Clear the cached
+        farmosUtil.clearCachedCrops();
+
+        // Populate the map and wait for it to complete
+        await this.populateCropList();
+
+        this.handleUpdateSelected(newCrop);
+      }
+    },
+
+    async populateCropList() {
+      try {
+        let cropMap = await farmosUtil.getCropNameToTermMap();
+
+        // Update asset list
+        this.cropList = Array.from(cropMap.keys());
+      } catch (error) {
+        console.error('Error populating crop map:', error);
+      }
+    },
   },
   watch: {},
   created() {
@@ -115,6 +135,10 @@ export default {
       .then(([canCreate, cropMap]) => {
         this.cropList = Array.from(cropMap.keys());
         this.canCreateCrop = canCreate;
+
+        if (this.canCreateCrop) {
+          this.popupUrl = '/admin/structure/taxonomy/manage/plant_type/add';
+        }
 
         /**
          * The select has been populated with the list of crops and the component is ready to be used.
