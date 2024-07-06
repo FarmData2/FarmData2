@@ -164,9 +164,12 @@ describe('Submission using the cover_crop lib.', () => {
       results.plantAsset.id
     );
 
-    expect(results.winterKillLog.relationships.category.length).to.equal(1);
+    expect(results.winterKillLog.relationships.category.length).to.equal(2);
     expect(results.winterKillLog.relationships.category[0].id).to.equal(
       categoryMap.get('termination').id
+    );
+    expect(results.winterKillLog.relationships.category[1].id).to.equal(
+      categoryMap.get('seeding_cover_crop').id
     );
 
     expect(results.winterKillLog.relationships.quantity).to.be.empty;
