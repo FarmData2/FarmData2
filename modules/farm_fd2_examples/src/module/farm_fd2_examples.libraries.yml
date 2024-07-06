@@ -118,6 +118,16 @@ winter_kill:
     component:
       style/style.css: {}
 
+comment_box:
+  js:
+    comment_box/comment_box.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
 equipment_selector:
   js:
     equipment_selector/equipment_selector.js:
