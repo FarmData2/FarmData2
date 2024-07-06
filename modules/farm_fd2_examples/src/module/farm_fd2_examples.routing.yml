@@ -89,3 +89,10 @@ farm.fd2_examples_comment_box.content:
     _title: 'CommentBox Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_numeric_input.content:
+  path: '/fd2_examples/numeric_input'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'NumericInput Example'
+  requirements:
+    _permission: 'access content'
