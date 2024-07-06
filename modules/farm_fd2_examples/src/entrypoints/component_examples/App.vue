@@ -5,6 +5,9 @@
       <a href="bed_picker">BedPicker</a>: A component for picking multiple beds.
     </li>
     <li>
+      <a href="comment_box">CommentBox</a>: A component for writing a comment.
+    </li>
+    <li>
       <a href="crop_selector">CropSelector</a>: A component for selecting a
       crop.
     </li>

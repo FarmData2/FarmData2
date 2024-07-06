@@ -21,14 +21,23 @@
 /**
  * The CommentBox component provides a UI element that allows the user to enter a comment.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/comment_box">The CommentBox Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/comment_box/App.vue">App.vue</a>
  * ## Usage Example
  *
  * ```html
  * <CommentBox
- *   id="seeding-comment"
- *   data-cy="seeding-comment"
+ *   id="comment-box"
+ *   data-cy="comment-box"
  *   v-model:comment="form.comment"
- *   v-on:valid="validity.comment = $event"
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.comment = valid;
+ *     }
+ *   "
  *   v-on:ready="createdCount++"
  * />
  * ```
