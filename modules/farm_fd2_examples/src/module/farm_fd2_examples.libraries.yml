@@ -127,3 +127,13 @@ comment_box:
   css:
     component:
       style/style.css: {}
+
+text_display:
+  js:
+    text_display/text_display.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
