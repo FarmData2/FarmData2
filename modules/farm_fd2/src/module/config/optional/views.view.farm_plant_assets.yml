@@ -17,6 +17,8 @@ dependencies:
     - state_machine
     - taxonomy
     - user
+_core:
+  default_config_hash: gJ9oazDGogXX2DoF2PgKzSVJ0bhNn8n2ZyAhcQXtaa0
 id: farm_plant_assets
 label: 'Farm Plant Assets'
 module: views
@@ -161,7 +163,7 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ', '
+          separator: ','
           field_api_classes: false
         category_target_id:
           id: category_target_id
@@ -226,7 +228,7 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ', '
+          separator: ','
           field_api_classes: false
         timestamp:
           id: timestamp
@@ -431,7 +433,7 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ', '
+          separator: ','
           field_api_classes: false
       pager:
         type: mini
@@ -786,7 +788,7 @@ display:
           entity_type: log
           entity_field: category
           plugin_id: taxonomy_index_tid
-          operator: and
+          operator: or
           value: {  }
           group: 1
           exposed: true
