@@ -77,7 +77,7 @@ farm.fd2_examples_comment_box:
   route_name: farm.fd2_examples_comment_box.content
   weight: 100
 farm.fd2_examples_text_display:
-  title: 'TextDisplay Example'
+  title: 'TextDisplay'
   description: 'Example of the use of the TextDisplay component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_text_display.content
