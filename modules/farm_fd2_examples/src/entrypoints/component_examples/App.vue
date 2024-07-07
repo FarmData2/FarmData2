@@ -12,6 +12,10 @@
       date.
     </li>
     <li>
+      <a href="numeric_input">NumericInput</a>: A component for inputting a
+      numerical value.
+    </li>
+    <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>
