@@ -1649,13 +1649,26 @@ export async function getPlantAsset(plantAssetId) {
 }
 
 /**
- * Get the plant assets at the specified location.
+ * Get plant assets by location, beds and whether they
+ * are in trays or in the ground.
  *
- * @param {string} locationName the name of the location.
- * @param {string[]} [checkedBeds=[]] the beds to look for.
- * @param {boolean} [isInGround=true] look for plants in the ground.
- * @param {boolean} [isInTrays=true] look for plants in trays.
- * @return {Object} the plant assets at the specified location.
+ * This function returns an array of objects with the following content:
+ * ```json
+ * {
+ *    uuid: <id of a seeding log>,
+ *    crop: <array of name(s) of the crop(s) in the plant asset>,
+ *    created_by: <array of log categories for logs that created the plant asset>,
+ *    timestamp: <date of event (log) that created the plant asset>,
+ *    location: <location of the plant asset>,
+ *    beds: <array of bed name(s) (within location) where plant asset is located>,
+ * }
+ * ```
+ *
+ * @param {string} locationName the location of the plant assets.
+ * @param {string[]} [checkedBeds=[]] the beds of the plant assets.
+ * @param {boolean} [isInGround=true] include plants that are in the ground (direct seeded or transplanted).
+ * @param {boolean} [isInTrays=true] include plants that are in trays (tray seeded but not transplanted).
+ * @return {Object[]} array of objects with information about the matching plant assets.
  * @throws {Error} if unable to fetch the plant assets.
  *
  * @category Plant
@@ -1666,98 +1679,48 @@ export async function getPlantAssets(
   isInTrays = true,
   isInGround = true
 ) {
-  const farm = await getFarmOSInstance();
-  let bedNameToAssetMap = null;
-  let greenhouseNameToAssetMap = null;
-  let fieldNameToAssetMap = null;
-  let fieldAsset = null;
-  let greenhouseAsset = null;
-  let locationAsset = null;
-
-  // If both isInTrays and isInGround are false, return null
   if (!isInTrays && !isInGround) {
     return [];
-  } else if (!isInGround) {
-    // not in ground (i.e. only in trays)
-    // location must be a greenhouse
-    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
-  } else {
-    // not sure about location:
-    greenhouseNameToAssetMap = await getGreenhouseNameToAssetMap();
-    fieldNameToAssetMap = await getFieldNameToAssetMap();
   }
 
+  const farm = await getFarmOSInstance();
+
+  let paramStr = '?location=' + locationName;
   if (checkedBeds.length > 0) {
-    bedNameToAssetMap = await getBedNameToAssetMap();
+    paramStr = paramStr + '&beds=' + checkedBeds.join(',');
   }
 
-  // Find the field asset that matches the location name
-  if (fieldNameToAssetMap) {
-    fieldAsset = fieldNameToAssetMap.get(locationName);
+  let logCategories = [];
+  if (isInTrays) {
+    logCategories.push('seeding_tray');
   }
-  if (greenhouseNameToAssetMap) {
-    greenhouseAsset = greenhouseNameToAssetMap.get(locationName);
+  if (isInGround) {
+    logCategories.push('seeding_direct');
+    logCategories.push('seeding_cover_crop');
+    logCategories.push('transplanting');
+  }
+  if (logCategories.length > 0) {
+    paramStr = paramStr + '&log-categories=' + logCategories.join(',');
   }
 
-  if (greenhouseAsset) {
-    locationAsset = greenhouseAsset;
-  } else if (fieldAsset) {
-    locationAsset = fieldAsset;
+  const url = '/api/fd2_plant_assets' + paramStr;
+  const results = await farm.remote.request(url);
+
+  // If no matches, then data will be an array in the response.
+  if (Array.isArray(results.data)) {
+    for (const result of results.data) {
+      result.crop = result.crop.split(',');
+      result.created_by = result.created_by.split(',');
+      if (result.beds === '') {
+        result.beds = [];
+      } else {
+        result.beds = result.beds.split(',');
+      }
+    }
+    return results.data;
   } else {
     return [];
   }
-
-  // Fetch all plant assets
-  const plantAssets = await farm.asset.fetch({
-    filter: {
-      type: 'asset--plant',
-      status: 'active',
-    },
-    limit: Infinity,
-  });
-
-  // Filter and check each plant asset
-  const matchingPlantAssetIds = [];
-  for (const plantAsset of plantAssets.data) {
-    const locations = plantAsset.relationships.location;
-
-    let addToResults = false;
-
-    if (isInTrays && isInGround) {
-      addToResults = true;
-    } else if (isInTrays) {
-      if (getAssetInventory(plantAsset, 'count', 'TRAYS')) {
-        addToResults = true;
-      }
-    } else if (isInGround) {
-      if (getAssetInventory(plantAsset, 'length', 'FEET')) {
-        addToResults = true;
-      }
-    }
-
-    if (addToResults) {
-      // Check if the first location (field) matches
-      if (locations.length > 0 && locations[0].id === locationAsset.id) {
-        if (checkedBeds.length === 0) {
-          // If no beds to check, add the plant asset ID to the result array
-          matchingPlantAssetIds.push(plantAsset.id);
-        } else {
-          // Check if all checked beds are in the locations
-          const bedIds = locations.slice(1).map((location) => location.id);
-          const someBedsMatch = checkedBeds.some((bedName) => {
-            const bedAsset = bedNameToAssetMap.get(bedName);
-            return bedAsset && bedIds.includes(bedAsset.id);
-          });
-          if (someBedsMatch) {
-            matchingPlantAssetIds.push(plantAsset.id);
-          }
-        }
-      }
-    }
-  }
-
-  // Return the array of matching plant asset IDs
-  return matchingPlantAssetIds;
 }
 
 /**
