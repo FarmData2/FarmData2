@@ -9,6 +9,10 @@
       date.
     </li>
     <li>
+      <a href="location_selector">LocationSelector</a>: A component for
+      selecting a location.
+    </li>
+    <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>

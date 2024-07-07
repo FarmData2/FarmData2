@@ -71,7 +71,7 @@ farm.fd2_examples_winter_kill:
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
 farm.fd2_examples_location_selector:
-  title: 'LocationSelector Example'
+  title: 'LocationSelector'
   description: 'Example for use of the LocationSelector component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_location_selector.content
