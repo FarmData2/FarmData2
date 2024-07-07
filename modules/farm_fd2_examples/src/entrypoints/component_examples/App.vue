@@ -28,6 +28,10 @@
       data on soil disturbances.
     </li>
     <li>
+      <a href="submit_reset_buttons">SubmitResetButtons</a>: A component for the
+      Submit and Reset buttons used on forms.
+    </li>
+    <li>
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component
       for selecting a crop from a list of all crops that currently have tray
       seedings.
