@@ -5,9 +5,9 @@ dependencies:
     - asset.type.plant
     - taxonomy.vocabulary.log_category
   content:
-    - 'taxonomy_term:log_category:1c73d9e3-d012-4759-b9e0-688dffc1fab6'
-    - 'taxonomy_term:log_category:92d44daf-9615-43af-8a66-0fc3e8495e4c'
-    - 'taxonomy_term:log_category:d6fc0639-1d30-457a-ab49-cd70f79c0357'
+    - 'taxonomy_term:log_category:a62d8a24-2b27-4feb-b7af-618e404ecce2'
+    - 'taxonomy_term:log_category:c228aeef-1c9e-4a07-8807-45bcabf68dca'
+    - 'taxonomy_term:log_category:c7c71883-8c6f-4c98-9df7-abdb31c62076'
   module:
     - asset
     - farm_location
@@ -18,7 +18,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: gJ9oazDGogXX2DoF2PgKzSVJ0bhNn8n2ZyAhcQXtaa0
+  default_config_hash: ZLJTUMKzzAV51lvJzNbOixKVkihmKkTlTAPKU-WzjmM
 id: farm_plant_assets
 label: 'Farm Plant Assets'
 module: views
@@ -471,22 +471,7 @@ display:
         type: tag
         options: {  }
       empty: {  }
-      sorts:
-        uuid:
-          id: uuid
-          table: asset
-          field: uuid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: asset
-          entity_field: uuid
-          plugin_id: standard
-          order: ASC
-          expose:
-            label: ''
-            field_identifier: ''
-          exposed: false
+      sorts: {  }
       arguments: {  }
       filters:
         type:
