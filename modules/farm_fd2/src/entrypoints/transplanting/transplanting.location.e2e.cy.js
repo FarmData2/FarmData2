@@ -34,13 +34,16 @@ describe('Transplanting: Location Component', () => {
     cy.get('[data-cy="transplanting-location"]')
       .find('[data-cy="selector-input"]')
       .find('option')
-      .should('have.length', 11);
+      .should('have.length', 12);
     cy.get('[data-cy="transplanting-location"]')
       .find('[data-cy="selector-option-1"]')
       .should('have.value', 'A');
     cy.get('[data-cy="transplanting-location"]')
       .find('[data-cy="selector-option-10"]')
       .should('have.value', 'GHANA');
+    cy.get('[data-cy="transplanting-location"]')
+      .find('[data-cy="selector-option-11"]')
+      .should('have.value', 'H');
   });
 
   it('Location validity styling works', () => {
