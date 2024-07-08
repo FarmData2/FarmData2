@@ -174,20 +174,20 @@ describe('Test the plant asset functions', () => {
         expect(plantAsset.location).to.equal('A');
       });
 
-      expect(plantAssets[0].crop[0]).to.equal('LETTUCE-MES MIX');
-      expect(plantAssets[0].created_by).to.have.length(2);
-      expect(plantAssets[0].created_by[0]).to.equal('seeding');
-      expect(plantAssets[0].created_by[1]).to.equal('seeding_direct');
-      expect(plantAssets[0].timestamp).to.equal('2019-05-07');
-      expect(plantAssets[0].location).to.equal('A');
-      expect(plantAssets[0].beds).to.have.length(0);
-
-      expect(plantAssets[3].crop[0]).to.equal('BROCCOLI');
-      expect(plantAssets[3].created_by).to.have.length(1);
-      expect(plantAssets[3].created_by[0]).to.equal('transplanting');
-      expect(plantAssets[3].timestamp).to.equal('2019-07-17');
+      expect(plantAssets[3].crop[0]).to.equal('LETTUCE-MES MIX');
+      expect(plantAssets[3].created_by).to.have.length(2);
+      expect(plantAssets[3].created_by[0]).to.equal('seeding');
+      expect(plantAssets[3].created_by[1]).to.equal('seeding_direct');
+      expect(plantAssets[3].timestamp).to.equal('2019-05-07');
       expect(plantAssets[3].location).to.equal('A');
       expect(plantAssets[3].beds).to.have.length(0);
+
+      expect(plantAssets[4].crop[0]).to.equal('BROCCOLI');
+      expect(plantAssets[4].created_by).to.have.length(1);
+      expect(plantAssets[4].created_by[0]).to.equal('transplanting');
+      expect(plantAssets[4].timestamp).to.equal('2019-07-17');
+      expect(plantAssets[4].location).to.equal('A');
+      expect(plantAssets[4].beds).to.have.length(0);
     });
   });
 
@@ -199,11 +199,11 @@ describe('Test the plant asset functions', () => {
     cy.wrap(farmosUtil.getPlantAssets('ALF', [], false, true)).then(
       (plantAssets) => {
         expect(plantAssets).to.have.length(2);
-        expect(plantAssets[0].beds).to.have.length(2);
+        expect(plantAssets[0].beds).to.have.length(1);
         expect(plantAssets[0].beds[0]).to.equal('ALF-1');
-        expect(plantAssets[0].beds[1]).to.equal('ALF-2');
-        expect(plantAssets[1].beds).to.have.length(1);
+        expect(plantAssets[1].beds).to.have.length(2);
         expect(plantAssets[1].beds[0]).to.equal('ALF-1');
+        expect(plantAssets[1].beds[1]).to.equal('ALF-2');
       }
     );
   });

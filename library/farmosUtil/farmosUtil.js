@@ -1752,6 +1752,8 @@ export async function deletePlantAsset(plantAssetId) {
  *
  * @param {string} plantAssetId the id of the plant asset.
  * @param {boolean} archived `true` to archive or unarchive the plant asset, or `false` to unarchive it.
+ *
+ * @category Plant
  */
 export async function archivePlantAsset(plantAssetId, archived) {
   const farm = await getFarmOSInstance();
