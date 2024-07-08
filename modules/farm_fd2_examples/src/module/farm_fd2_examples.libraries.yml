@@ -117,3 +117,13 @@ winter_kill:
   css:
     component:
       style/style.css: {}
+
+sort_order_button:
+  js:
+    sort_order_button/sort_order_button.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
