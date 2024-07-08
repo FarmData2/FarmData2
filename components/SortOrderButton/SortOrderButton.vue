@@ -2,62 +2,71 @@
   <BFormGroup
     id="sort-order-button-group"
     data-cy="sort-order-button-group"
+    class="p-0"
   >
-    <BButton
-      id="sort-order-button"
-      data-cy="sort-order-button"
-      block
-      squared
-      v-on:click="toggleSortOrder"
-      v-bind:variant="false"
-      v-bind:class="{ sorted: orderBy !== 'none' }"
+    <div
+      id="sort-order-button-container"
+      data-cy="sort-order-button-container"
     >
-      <span
-        id="sort-order-text"
-        data-cy="sort-order-text"
+      <BButton
+        id="sort-order-button"
+        data-cy="sort-order-button"
+        block
+        squared
+        v-on:click="toggleSortOrder"
+        v-bind:variant="false"
+        v-bind:class="{ sorted: orderBy !== 'none' }"
       >
-        {{ identifier }}
-      </span>
+        <span
+          id="sort-order-text"
+          data-cy="sort-order-text"
+        >
+          {{ label }}
+        </span>
 
-      <span
-        id="sort-order-icon"
-        data-cy="sort-order-icon"
-      >
-        <svg
-          v-if="orderBy === 'none'"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          width="24"
-          height="24"
+        <span
+          id="sort-order-icon"
+          data-cy="sort-order-icon"
         >
-          <symbol viewBox="0 0 24 24">
-            <path
-              d="M3 12h14M3 6h18M3 18h10"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <svg
+            v-if="orderBy === 'none'"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            width="24"
+            height="24"
+          >
+            <symbol
+              id="sort"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 12h14M3 6h18M3 18h10"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </symbol>
+            <use
+              xlink:href="#sort"
+              width="18"
+              height="18"
             />
-          </symbol>
-          <use
-            xlink:href="#sort"
-            width="18"
-            height="18"
-          />
-        </svg>
-        <span
-          class="sort-order-unicode"
-          v-else-if="orderBy === 'asc'"
-          >↓</span
-        >
-        <span
-          class="sort-order-unicode"
-          v-else-if="orderBy === 'desc'"
-          >↑</span
-        >
-      </span>
-    </BButton>
+          </svg>
+          <span
+            class="sort-order-unicode"
+            v-else-if="orderBy === 'asc'"
+            >↓</span
+          >
+          <span
+            class="sort-order-unicode"
+            v-else-if="orderBy === 'desc'"
+            >↑</span
+          >
+        </span>
+      </BButton>
+    </div>
   </BFormGroup>
 </template>
 
@@ -68,11 +77,19 @@ import { BButton } from 'bootstrap-vue-next';
  * A button component for toggling the sort order between ascending and descending.
  * It displays an icon that changes based on the current sort order.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/sort_order_button">SortOrderButton Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/sort_order_button/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <SortOrderButton
- *   v-bind:identifier="'example'"
+ *   id="sort-order-button-letters"
+ *   data-cy="sort-order-button-letters"
+ *   v-bind:label="'example'"
  *   v-bind:isActive="true"
  *   v-bind:sortOrder="'asc'"
  *   v-on:sort="handleSort"
@@ -82,12 +99,13 @@ import { BButton } from 'bootstrap-vue-next';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name             | Description
- * ---------------------------| -----------
- * `sort-order-button-group`  | Identifies the form group element.
- * `sort-order-button`        | Identifies the button element.
- * `sort-order-text`          | Identifies the text element within the button.
- * `sort-order-icon`          | Identifies the icon element within the button.
+ * Attribute Name                   | Description
+ * ---------------------------------| -----------
+ * `sort-order-button-group`        | Identifies the form group element.
+ * `sort-order-button-container`    | Identifies the container div element for the button.
+ * `sort-order-button`              | Identifies the button element.
+ * `sort-order-text`                | Identifies the text element within the button.
+ * `sort-order-icon`                | Identifies the icon element within the button.
  */
 export default {
   name: 'SortOrderButton',
@@ -95,12 +113,9 @@ export default {
   emits: ['ready', 'sort'],
   props: {
     /**
-     * Identifier for the sort order button, used for emitting events and displaying the label.
-     * This prop serves a dual purpose:
-     * 1. It acts as an identifier for emitting events to distinguish between multiple SortOrderButton components.
-     * 2. It is displayed as the label text on the button to indicate the sorting criterion.
+     * The label to be displayed on the button.
      */
-    identifier: {
+    label: {
       type: String,
       required: true,
     },
@@ -110,13 +125,6 @@ export default {
     sortOrder: {
       type: String,
       default: 'none', // 'asc' or 'desc'
-    },
-    /**
-     * The label to be displayed on the button.
-     */
-    label: {
-      type: String,
-      default: 'Sort By',
     },
   },
   data() {
@@ -138,12 +146,12 @@ export default {
       }
       /**
        * The sort order changed.
-       * @property {Object} event - Contains the identifier and the current sort order.
-       * @property {String} event.identifier - The identifier for the sort order button.
+       * @property {Object} event - Contains the label and the current sort order.
+       * @property {String} event.label - The label for the sort order button.
        * @property {String} event.sortOrder - The current sort order, which can be 'asc' for ascending, 'desc' for descending, or 'none'.
        */
       this.$emit('sort', {
-        identifier: this.identifier,
+        label: this.label,
         sortOrder: this.orderBy,
       });
     },
@@ -160,11 +168,6 @@ export default {
 <style scoped>
 #sort-order-text {
   color: #222330;
-}
-
-#sort-order-button-group,
-#sort-order-button-group * {
-  padding: 0;
 }
 
 #sort-order-button.sorted #sort-order-text,
@@ -193,8 +196,11 @@ export default {
   justify-content: space-between;
   gap: 1.5rem;
   transition: none;
-  padding-left: 0;
-  padding-right: 1.5rem;
+  padding: 0;
+}
+
+#sort-order-button-container {
+  margin-right: 1.5rem;
 }
 
 #sort-order-button:hover {

@@ -16,7 +16,7 @@ describe('Test the default SortOrderButton content', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'Sort By',
+        label: 'Sort By',
         onReady: readySpy,
       },
     });
@@ -41,7 +41,7 @@ describe('Test the default SortOrderButton content', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'Sort Ascending',
+        label: 'Sort Ascending',
         sortOrder: 'asc',
         onReady: readySpy,
       },

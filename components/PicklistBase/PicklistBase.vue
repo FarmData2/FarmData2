@@ -48,7 +48,7 @@
               <SortOrderButton
                 v-bind:id="`sort-order-button-${header}`"
                 v-bind:data-cy="`sort-order-button-${header}`"
-                v-bind:identifier="getLabel(header)"
+                v-bind:label="getLabel(header)"
                 v-bind:sortOrder="sortColumn === header ? sortOrder : 'none'"
                 v-on:sort="handleSort"
               />
@@ -515,13 +515,13 @@ export default {
         this.pickedRows = newPickedRows;
       }
     },
-    handleSort({ identifier, sortOrder }) {
+    handleSort({ label, sortOrder }) {
       // Previous state of rows before sorting
       const oldRowOrder = [...this.sortedRows];
 
       // Update the sort state
       this.sortColumn = this.columns.find(
-        (column) => this.getLabel(column) === identifier
+        (column) => this.getLabel(column) === label
       );
       this.sortOrder = sortOrder;
 
@@ -556,13 +556,13 @@ export default {
       this.quantityOptionsMap = newQuantityOptionsMap;
 
       // Notify the parent component if using custom event emitters
-      this.$emit('update-sort-buttons', identifier);
+      this.$emit('update-sort-buttons', label);
       this.$emit('update:picked', this.pickedRows);
     },
     applySort() {
       if (this.sortColumn && this.sortOrder !== 'none') {
         this.handleSort({
-          identifier: this.getLabel(this.sortColumn),
+          label: this.getLabel(this.sortColumn),
           sortOrder: this.sortOrder,
         });
       }

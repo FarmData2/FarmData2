@@ -16,7 +16,7 @@ describe('Test the SortOrderButton component styling', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'none',
         onReady: readySpy,
       },
@@ -54,7 +54,7 @@ describe('Test the SortOrderButton component styling', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'asc',
         onReady: readySpy,
       },
@@ -78,7 +78,7 @@ describe('Test the SortOrderButton component styling', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'none',
         onSort: sortSpy,
       },
@@ -87,7 +87,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.get('[data-cy="sort-order-button"]').click();
     cy.get('[data-cy="sort-order-button"]').then(() => {
       cy.get('@sortSpy').should('have.been.calledWith', {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'asc',
       });
 
@@ -100,7 +100,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.get('[data-cy="sort-order-button"]').click();
     cy.get('[data-cy="sort-order-button"]').then(() => {
       cy.get('@sortSpy').should('have.been.calledWith', {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'desc',
       });
 
@@ -113,7 +113,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.get('[data-cy="sort-order-button"]').click();
     cy.get('[data-cy="sort-order-button"]').then(() => {
       cy.get('@sortSpy').should('have.been.calledWith', {
-        identifier: 'test',
+        label: 'test',
         sortOrder: 'asc',
       });
 

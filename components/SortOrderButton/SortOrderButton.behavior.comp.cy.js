@@ -16,7 +16,7 @@ describe('Test the SortOrderButton component behavior', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'example',
+        label: 'example',
         sortOrder: 'asc',
         onReady: readySpy,
       },
@@ -38,7 +38,7 @@ describe('Test the SortOrderButton component behavior', () => {
 
     cy.mount(SortOrderButton, {
       props: {
-        identifier: 'example',
+        label: 'example',
         sortOrder: 'none',
         onSort: sortSpy,
       },
@@ -48,7 +48,7 @@ describe('Test the SortOrderButton component behavior', () => {
     cy.get('@sortSpy')
       .should('have.been.calledOnce')
       .and('have.been.calledWith', {
-        identifier: 'example',
+        label: 'example',
         sortOrder: 'asc',
       });
     cy.get('[data-cy="sort-order-icon"]').should('have.text', '↓');
@@ -57,7 +57,7 @@ describe('Test the SortOrderButton component behavior', () => {
     cy.get('@sortSpy')
       .should('have.been.calledTwice')
       .and('have.been.calledWith', {
-        identifier: 'example',
+        label: 'example',
         sortOrder: 'desc',
       });
     cy.get('[data-cy="sort-order-icon"]').should('have.text', '↑');
@@ -66,7 +66,7 @@ describe('Test the SortOrderButton component behavior', () => {
     cy.get('@sortSpy')
       .should('have.been.calledThrice')
       .and('have.been.calledWith', {
-        identifier: 'example',
+        label: 'example',
         sortOrder: 'asc',
       });
     cy.get('[data-cy="sort-order-icon"]').should('have.text', '↓');

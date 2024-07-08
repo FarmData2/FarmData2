@@ -63,6 +63,7 @@ import dayjs from 'dayjs';
  * <a href="http://farmos/fd2_examples/winter_kill">The WinterKill Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/winter_kill/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
