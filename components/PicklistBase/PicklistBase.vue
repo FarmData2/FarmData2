@@ -46,11 +46,11 @@
               v-bind:key="header"
             >
               <SortOrderButton
-                :identifier="header"
-                :label="getLabel(header)"
-                :isActive="sortColumn === header"
-                :sortOrder="sortColumn === header ? sortOrder : 'none'"
-                @sort="handleSort"
+                v-bind:id="`sort-order-button-${header}`"
+                v-bind:data-cy="`sort-order-button-${header}`"
+                v-bind:identifier="getLabel(header)"
+                v-bind:sortOrder="sortColumn === header ? sortOrder : 'none'"
+                v-on:sort="handleSort"
               />
             </BTh>
             <BTh
@@ -520,7 +520,9 @@ export default {
       const oldRowOrder = [...this.sortedRows];
 
       // Update the sort state
-      this.sortColumn = identifier;
+      this.sortColumn = this.columns.find(
+        (column) => this.getLabel(column) === identifier
+      );
       this.sortOrder = sortOrder;
 
       // Perform the sort operation
@@ -557,6 +559,14 @@ export default {
       this.$emit('update-sort-buttons', identifier);
       this.$emit('update:picked', this.pickedRows);
     },
+    applySort() {
+      if (this.sortColumn && this.sortOrder !== 'none') {
+        this.handleSort({
+          identifier: this.getLabel(this.sortColumn),
+          sortOrder: this.sortOrder,
+        });
+      }
+    },
   },
   watch: {
     isValid() {
@@ -591,6 +601,7 @@ export default {
         this.showOverlay = null;
         this.sortedRows = [...this.rows]; // Update sortedRows when rows prop changes
         this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
+        this.applySort(); // Apply the sort when rows change
       },
       deep: true,
     },

@@ -4,19 +4,19 @@
     data-cy="sort-order-button-group"
   >
     <BButton
+      id="sort-order-button"
+      data-cy="sort-order-button"
       block
       squared
       v-on:click="toggleSortOrder"
       v-bind:variant="false"
-      id="sort-order-button"
-      data-cy="sort-order-button"
-      v-bind:class="{ sorted: isActive && orderBy !== 'none' }"
+      v-bind:class="{ sorted: orderBy !== 'none' }"
     >
       <span
         id="sort-order-text"
         data-cy="sort-order-text"
       >
-        {{ label }}
+        {{ identifier }}
       </span>
 
       <span
@@ -24,16 +24,13 @@
         data-cy="sort-order-icon"
       >
         <svg
-          v-if="!isActive || orderBy === 'none'"
+          v-if="orderBy === 'none'"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           width="24"
           height="24"
         >
-          <symbol
-            id="sort"
-            viewBox="0 0 24 24"
-          >
+          <symbol viewBox="0 0 24 24">
             <path
               d="M3 12h14M3 6h18M3 18h10"
               fill="none"
@@ -98,18 +95,14 @@ export default {
   emits: ['ready', 'sort'],
   props: {
     /**
-     * Identifier for the sort order button, used for emitting events.
+     * Identifier for the sort order button, used for emitting events and displaying the label.
+     * This prop serves a dual purpose:
+     * 1. It acts as an identifier for emitting events to distinguish between multiple SortOrderButton components.
+     * 2. It is displayed as the label text on the button to indicate the sorting criterion.
      */
     identifier: {
       type: String,
       required: true,
-    },
-    /**
-     * Determines if the button is active.
-     */
-    isActive: {
-      type: Boolean,
-      default: false,
     },
     /**
      * The current sort order. Can be 'asc', 'desc', or 'none'.
@@ -144,13 +137,10 @@ export default {
         this.orderBy = 'desc';
       }
       /**
-       * Emitted when the sort order is toggled.
-       *
-       * @event sort
-       * @type {Object}
-       *
-       * @property {String} identifier - The identifier for the sort order button.
-       * @property {String} sortOrder - The current sort order, which can be 'asc' for ascending, 'desc' for descending, or 'none'.
+       * The sort order changed.
+       * @property {Object} event - Contains the identifier and the current sort order.
+       * @property {String} event.identifier - The identifier for the sort order button.
+       * @property {String} event.sortOrder - The current sort order, which can be 'asc' for ascending, 'desc' for descending, or 'none'.
        */
       this.$emit('sort', {
         identifier: this.identifier,
@@ -202,7 +192,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  /* border-radius: 0; */
   transition: none;
   padding-left: 0;
   padding-right: 1.5rem;

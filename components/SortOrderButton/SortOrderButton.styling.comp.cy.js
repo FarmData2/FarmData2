@@ -17,9 +17,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.mount(SortOrderButton, {
       props: {
         identifier: 'test',
-        isActive: false,
         sortOrder: 'none',
-        label: 'Sort',
         onReady: readySpy,
       },
     }).then(() => {
@@ -57,9 +55,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.mount(SortOrderButton, {
       props: {
         identifier: 'test',
-        isActive: true,
         sortOrder: 'asc',
-        label: 'Sort',
         onReady: readySpy,
       },
     }).then(() => {
@@ -83,9 +79,7 @@ describe('Test the SortOrderButton component styling', () => {
     cy.mount(SortOrderButton, {
       props: {
         identifier: 'test',
-        isActive: true,
         sortOrder: 'none',
-        label: 'Sort',
         onSort: sortSpy,
       },
     });

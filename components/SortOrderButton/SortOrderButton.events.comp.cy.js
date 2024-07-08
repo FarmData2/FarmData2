@@ -49,9 +49,17 @@ describe('Test the SortOrderButton component events', () => {
         identifier: 'example',
         sortOrder: 'desc',
       });
+
+    cy.get('[data-cy="sort-order-button"]').click();
+    cy.get('@sortSpy')
+      .should('have.been.calledThrice')
+      .and('have.been.calledWith', {
+        identifier: 'example',
+        sortOrder: 'asc',
+      });
   });
 
-  it('Updates "orderBy" when "sortOrder" prop changes', () => {
+  it('Emits "sort" event with updated sort order when "sortOrder" prop is changed', () => {
     const sortSpy = cy.spy().as('sortSpy');
 
     cy.mount(SortOrderButton, {
