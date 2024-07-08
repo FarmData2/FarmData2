@@ -70,3 +70,9 @@ farm.fd2_examples_winter_kill:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
+farm.fd2_examples_sort_order_button:
+  title: 'SortOrderButton'
+  description: 'Example of the use of the SortOrderButton component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_sort_order_button.content
+  weight: 100
