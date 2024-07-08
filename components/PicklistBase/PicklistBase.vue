@@ -45,8 +45,14 @@
               v-bind:data-cy="'picklist-header-' + getLabelId(header)"
               v-bind:key="header"
             >
-              {{ getLabel(header) }}</BTh
-            >
+              <SortOrderButton
+                :identifier="header"
+                :label="getLabel(header)"
+                :isActive="sortColumn === header"
+                :sortOrder="sortColumn === header ? sortOrder : 'none'"
+                @sort="handleSort"
+              />
+            </BTh>
             <BTh
               v-if="showInfoIcons"
               class="narrow-col"
@@ -72,7 +78,7 @@
 
         <BTbody>
           <BTr
-            v-for="(row, i) in rows"
+            v-for="(row, i) in sortedRows"
             v-bind:key="i"
             v-bind:id="'picklist-row-' + i"
             v-bind:data-cy="'picklist-row-' + i"
@@ -165,7 +171,7 @@
                     >
                       <ul>
                         <span
-                          v-for="(value, name) in rows[i]"
+                          v-for="(value, name) in sortedRows[i]"
                           v-bind:key="name"
                         >
                           <li
@@ -211,6 +217,7 @@
 
 <script>
 import { BCardHeader } from 'bootstrap-vue-next';
+import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
 
 /**
  * The `PicklistBase` component allows the user to pick multiple items from a list displayed as a table.
@@ -267,7 +274,7 @@ import { BCardHeader } from 'bootstrap-vue-next';
  */
 export default {
   name: 'PicklistBase',
-  components: { BCardHeader },
+  components: { BCardHeader, SortOrderButton },
   emits: ['ready', 'update:picked', 'valid'],
   props: {
     /**
@@ -369,6 +376,10 @@ export default {
       overlayLeft: null,
       infoRowHeight: null,
       pickedRows: this.picked,
+      sortColumn: null,
+      sortOrder: 'none',
+      sortedRows: [...this.rows], // Initialize sortedRows with the rows prop
+      quantityOptionsMap: this.initializeQuantityOptionsMap(this.rows),
     };
   },
   computed: {
@@ -431,16 +442,23 @@ export default {
     },
   },
   methods: {
-    quantityOptions(row) {
-      if (this.quantityAttribute) {
-        const quantities = Array.from(
-          { length: this.rows[row][this.quantityAttribute] + 1 },
-          (_, index) => index
-        );
-        return quantities;
-      } else {
-        return null;
-      }
+    initializeQuantityOptionsMap(rows) {
+      const map = new Map();
+      rows.forEach((row, index) => {
+        if (this.quantityAttribute) {
+          map.set(
+            index,
+            Array.from(
+              { length: row[this.quantityAttribute] + 1 },
+              (_, idx) => idx
+            )
+          );
+        }
+      });
+      return map;
+    },
+    quantityOptions(rowIndex) {
+      return this.quantityOptionsMap.get(rowIndex) || [];
     },
     includeAttributeInInfo(attributeName) {
       return (
@@ -497,6 +515,48 @@ export default {
         this.pickedRows = newPickedRows;
       }
     },
+    handleSort({ identifier, sortOrder }) {
+      // Previous state of rows before sorting
+      const oldRowOrder = [...this.sortedRows];
+
+      // Update the sort state
+      this.sortColumn = identifier;
+      this.sortOrder = sortOrder;
+
+      // Perform the sort operation
+      const sorted = [...this.sortedRows].sort((a, b) => {
+        if (a[this.sortColumn] < b[this.sortColumn]) {
+          return this.sortOrder === 'asc' ? -1 : 1;
+        }
+        if (a[this.sortColumn] > b[this.sortColumn]) {
+          return this.sortOrder === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+
+      // Update the sorted rows
+      this.sortedRows = sorted;
+
+      // Map old pickedRows to the new sorted order
+      const newPickedRows = new Array(this.rows.length);
+      const newQuantityOptionsMap = new Map();
+      sorted.forEach((sortedRow, index) => {
+        const originalIndex = oldRowOrder.findIndex((row) => row === sortedRow);
+        newPickedRows[index] = this.pickedRows[originalIndex];
+        newQuantityOptionsMap.set(
+          index,
+          this.quantityOptionsMap.get(originalIndex)
+        );
+      });
+
+      // Update pickedRows and quantityOptionsMap to reflect the new order
+      this.pickedRows = newPickedRows;
+      this.quantityOptionsMap = newQuantityOptionsMap;
+
+      // Notify the parent component if using custom event emitters
+      this.$emit('update-sort-buttons', identifier);
+      this.$emit('update:picked', this.pickedRows);
+    },
   },
   watch: {
     isValid() {
@@ -529,6 +589,8 @@ export default {
         // This should be an unusual event so hopefully it isn't an issue.
         this.pickedRows = new Array(this.rows.length).fill(0);
         this.showOverlay = null;
+        this.sortedRows = [...this.rows]; // Update sortedRows when rows prop changes
+        this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
       },
       deep: true,
     },
@@ -539,6 +601,8 @@ export default {
   created() {
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
+    this.sortedRows = [...this.rows]; // Initialize sortedRows with the rows prop
+    this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
 
     if (this.pickedRows.length === 0) {
       this.pickedRows = new Array(this.rows.length).fill(0);
