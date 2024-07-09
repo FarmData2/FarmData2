@@ -1,5 +1,3 @@
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
-
 describe('Soil Disturbance: Submission tests', () => {
   before(() => {
     cy.task('initDB');
@@ -19,27 +17,13 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.saveSessionStorage();
   });
 
-  function checkPlantLocation(plantIds) {
-    let locationIds = [];
+  function checkPlantLocation(plants) {
+    for (const plant of plants) {
+      expect(plant.location).to.equal('ALF');
 
-    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
-      locationIds.push(map.get('ALF-1').id);
-      locationIds.push(map.get('ALF-2').id);
-    });
-    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
-      locationIds.push(map.get('ALF').id);
-    });
-
-    for (const plantId of plantIds) {
-      cy.wrap(farmosUtil.getPlantAsset(plantId)).then((plantAsset) => {
-        const locations = plantAsset.relationships.location;
-        // Check if at least one location ID is in the locationIds array
-        const locationFound = locations.some((location) =>
-          locationIds.includes(location.id)
-        );
-        // Assert that the location is found
-        expect(locationFound).to.be.true;
-      });
+      const inALF1 = plant.beds.includes('ALF-1');
+      const inALF2 = plant.beds.includes('ALF-2');
+      expect(inALF1 || inALF2).to.be.true;
     }
   }
 
@@ -51,7 +35,6 @@ describe('Soil Disturbance: Submission tests', () => {
       .select('ALF');
     cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
     cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
-    cy.get('[data-cy="termination-event-checkbox"]').click();
     cy.get('[data-cy="multi-equipment-selector"]')
       .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
@@ -140,7 +123,7 @@ describe('Soil Disturbance: Submission tests', () => {
       expect(formData.location).to.equal('ALF');
       expect(formData.beds[0]).to.equal('ALF-1');
       expect(formData.beds[1]).to.equal('ALF-2');
-      expect(formData.termination).to.equal(true);
+      expect(formData.termination).to.equal(false);
       expect(formData.affectedPlants).to.have.length(2);
       // check that the affectedPlants are correct
       checkPlantLocation(formData.affectedPlants);
@@ -174,11 +157,18 @@ describe('Soil Disturbance: Submission tests', () => {
       .find('[data-cy="soil-disturbance-passes"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', 2);
+
+    cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
+
+    // Check that the non "sticky" parts of the form are reset...
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null); // non-sticky
+    cy.get('[data-cy="picker-group"]').should('not.exist');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', 100); // non-sticky (related to location)
-    cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
     // Check that the success toast is hidden.
     cy.get('.toast').should('not.exist');
