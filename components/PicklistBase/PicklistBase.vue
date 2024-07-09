@@ -509,9 +509,9 @@ export default {
         this.pickedRows = new Array(this.pickedRows.length).fill(0);
       } else {
         const newPickedRows = new Array(this.pickedRows.length).fill(1);
-        for (let i = 0; i < this.rows.length; i++) {
-          newPickedRows[i] = this.rows[i][this.quantityAttribute];
-        }
+        this.sortedRows.forEach((row, index) => {
+          newPickedRows[index] = row[this.quantityAttribute];
+        });
         this.pickedRows = newPickedRows;
       }
     },
@@ -529,11 +529,11 @@ export default {
       const sorted = [...this.sortedRows].sort((a, b) => {
         if (a[this.sortColumn] < b[this.sortColumn]) {
           return this.sortOrder === 'asc' ? -1 : 1;
-        }
-        if (a[this.sortColumn] > b[this.sortColumn]) {
+        } else if (a[this.sortColumn] > b[this.sortColumn]) {
           return this.sortOrder === 'asc' ? 1 : -1;
+        } else {
+          return 0;
         }
-        return 0;
       });
 
       // Update the sorted rows
@@ -556,7 +556,6 @@ export default {
       this.quantityOptionsMap = newQuantityOptionsMap;
 
       // Notify the parent component if using custom event emitters
-      this.$emit('update-sort-buttons', label);
       this.$emit('update:picked', this.pickedRows);
     },
     applySort() {
