@@ -23,10 +23,12 @@ describe('Cover Crop Seeding: Submission tests', () => {
     cy.get('[data-cy="picker-group"]').find('input').eq(0).check();
     cy.get('[data-cy="picker-group"]').find('input').eq(1).check();
 
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('ARUGULA');
-    cy.get('[data-cy="crop-selector-2"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-2"]')
       .find('[data-cy="selector-input"]')
       .select('BEAN');
 
@@ -37,7 +39,8 @@ describe('Cover Crop Seeding: Submission tests', () => {
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
@@ -61,7 +64,8 @@ describe('Cover Crop Seeding: Submission tests', () => {
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Portable Broadcaster');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')

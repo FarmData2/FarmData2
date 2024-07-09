@@ -1,7 +1,6 @@
-import MultiCropSelector from '@comps/MultiCropSelector/MultiCropSelector.vue';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
+import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 
-describe('Test the MultiCropSelector component events', () => {
+describe('Test the MultiSelectorBase component events', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
@@ -12,11 +11,11 @@ describe('Test the MultiCropSelector component events', () => {
     cy.saveSessionStorage();
   });
 
-  it('Emits "valid" false on creation if required and no crop is selected', () => {
+  it('Emits "valid" false on creation if required and no item is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         required: true,
         onReady: readySpy,
@@ -32,11 +31,11 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
-  it('Emits "valid" true on creation if not required and no crop is selected', () => {
+  it('Emits "valid" true on creation if not required and no item is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
         onValid: validSpy,
@@ -51,16 +50,17 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
-  it('Emits "valid" true on creation if required and one crop is selected', () => {
+  it('Emits "valid" true on creation if required and one item is selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         required: true,
         onReady: readySpy,
         onValid: validSpy,
-        selected: ['BROCCOLI'],
+        selected: ['one'],
+        options: ['one', 'two', 'three'],
       },
     });
 
@@ -73,16 +73,17 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
-  it('Emits "valid" true on creation if required and multiple crops are selected', () => {
+  it('Emits "valid" true on creation if required and multiple items are selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         required: true,
         onReady: readySpy,
         onValid: validSpy,
-        selected: ['BROCCOLI', 'ARUGULA'],
+        selected: ['one', 'two'],
+        options: ['one', 'two', 'three'],
       },
     });
 
@@ -94,16 +95,17 @@ describe('Test the MultiCropSelector component events', () => {
       });
   });
 
-  it('Emits valid false when prop changed to contain no selections', () => {
+  it('Emits valid false when required and prop changed to contain no selections', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
+        required: true,
         onReady: readySpy,
         onValid: validSpy,
-        required: true,
-        selected: ['BROCCOLI', 'ARUGULA'],
+        selected: ['one'],
+        options: ['one', 'two', 'three'],
       },
     }).then(({ wrapper }) => {
       cy.get('@readySpy')
@@ -113,13 +115,35 @@ describe('Test the MultiCropSelector component events', () => {
           cy.get('@validSpy').should('have.been.calledWith', true);
         })
         .then(() => {
-          /*
-           * Without extra then here, the wrapper.setProps usually executes before
-           * the cy.get() above, causing the test to fail.
-           */
           wrapper.setProps({ selected: [] });
           cy.get('@validSpy').should('have.been.calledTwice');
           cy.get('@validSpy').should('have.been.calledWith', false);
+        });
+    });
+  });
+
+  it('Emits valid true when not required and prop changed to contain no selections', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        required: false,
+        onReady: readySpy,
+        onValid: validSpy,
+        selected: ['one'],
+        options: ['one', 'two', 'three'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        })
+        .then(() => {
+          wrapper.setProps({ selected: [] });
+          cy.get('@validSpy').should('have.been.calledWith', true);
         });
     });
   });
@@ -128,19 +152,20 @@ describe('Test the MultiCropSelector component events', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
         onReady: readySpy,
         'onUpdate:selected': updateSpy,
+        options: ['one', 'two', 'three'],
       },
     });
 
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"]').select('BROCCOLI');
+        cy.get('[data-cy="selector-input"]').select('one');
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', ['BROCCOLI']);
+        cy.get('@updateSpy').should('have.been.calledWith', ['one']);
       });
   });
 
@@ -148,11 +173,12 @@ describe('Test the MultiCropSelector component events', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
 
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
-        selected: ['BROCCOLI'],
+        selected: ['one'],
         onReady: readySpy,
         'onUpdate:selected': updateSpy,
+        options: ['one', 'two', 'three'],
       },
     });
 
@@ -161,32 +187,35 @@ describe('Test the MultiCropSelector component events', () => {
       .then(() => {
         cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
-          .select('ARUGULA');
+          .select('two');
         cy.get('@updateSpy').should('have.been.calledOnce');
-        cy.get('@updateSpy').should('have.been.calledWith', [
-          'BROCCOLI',
-          'ARUGULA',
-        ]);
+        cy.get('@updateSpy').should('have.been.calledWith', ['one', 'two']);
       });
   });
 
-  it('Emits "error" if loading crops fails', () => {
-    farmosUtil.clearCachedCrops();
+  it('Emits "add-clicked" forwarded from SelectorBase with new option', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const addSpy = cy.spy().as('addSpy');
 
-    const errorSpy = cy.spy().as('errorSpy');
-
-    cy.intercept('GET', '**/api/taxonomy_term/plant_type?*', {
-      forceNetworkError: true,
-    });
-
-    cy.mount(MultiCropSelector, {
+    cy.mount(MultiSelectorBase, {
       props: {
-        onError: errorSpy,
+        selected: ['one'],
+        onReady: readySpy,
+        'onAdd-clicked': addSpy,
+        options: ['one', 'two', 'three'],
+        popupUrl: '', // when mounting, set the popupUrl to '' to avoid errors when testing
       },
-    }).then(() => {
-      cy.get('@errorSpy')
-        .should('have.been.calledOnce')
-        .should('have.been.calledWith', 'Unable to fetch crops.');
     });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-add-button"]')
+          .click();
+        cy.get('[data-cy="selector-closePopup"]').click();
+        cy.get('@addSpy').should('have.been.calledOnce');
+        cy.get('@addSpy').should('have.been.with', null);
+      });
   });
 });

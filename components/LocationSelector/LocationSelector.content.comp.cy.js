@@ -364,4 +364,20 @@ describe('Test the default LocationSelector content', () => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
+
+  it('Location plus button exists, is visible, is enabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhousesWithBeds: true,
+        includeFields: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('[data-cy="selector-add-button"]')
+      .should('exist')
+      .should('be.visible')
+      .should('be.enabled');
+  });
 });
