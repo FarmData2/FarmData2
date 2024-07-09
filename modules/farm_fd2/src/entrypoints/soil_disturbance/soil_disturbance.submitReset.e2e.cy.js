@@ -36,7 +36,8 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
       cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
     }
     if (!skipEquipment) {
-      cy.get('[data-cy="equipment-selector-1"]')
+      cy.get('[data-cy="multi-equipment-selector"]')
+        .find('[data-cy="selector-1"]')
         .find('[data-cy="selector-input"]')
         .select('Tractor');
       cy.get('[data-cy="soil-disturbance-equipment-form"]')
@@ -175,7 +176,8 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
 
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="submit-button"]').should('be.enabled');
@@ -193,14 +195,16 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
     cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
     cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
     cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
     cy.get('[data-cy="soil-disturbance-passes"]').should('not.exist');
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')

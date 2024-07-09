@@ -46,7 +46,8 @@ describe('Cover Crop Seeding: Seed Application Equipment Component', () => {
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
     cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('not.have.class', 'is-valid')
       .should('not.have.class', 'is-invalid');
@@ -57,8 +58,9 @@ describe('Cover Crop Seeding: Seed Application Equipment Component', () => {
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
     cy.get(
-      '[data-cy="cover-crop-seeding-seed-application-soil-disturbance"] [data-cy="equipment-selector-1"]'
+      '[data-cy="cover-crop-seeding-seed-application-soil-disturbance"] [data-cy="multi-equipment-selector"]'
     )
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
 
