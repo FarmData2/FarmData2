@@ -35,7 +35,6 @@ describe('Soil Disturbance: Submission tests', () => {
       .select('ALF');
     cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
     cy.get('[data-cy="picker-options"]').find('input').eq(1).check();
-    cy.get('[data-cy="termination-event-checkbox"]').click();
     cy.get('[data-cy="multi-equipment-selector"]')
       .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')

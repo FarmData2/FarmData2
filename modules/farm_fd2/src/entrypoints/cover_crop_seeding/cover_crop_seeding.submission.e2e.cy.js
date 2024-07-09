@@ -171,14 +171,16 @@ describe('Cover Crop Seeding: Submission tests', () => {
     cy.get('[data-cy="cover-crop-seeding-winter-kill"]')
       .find('[data-cy="winter-kill-date-input"]')
       .should('have.value', '1951-01-02');
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'ARUGULA');
-    cy.get('[data-cy="crop-selector-2"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-2"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'BEAN');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Tractor');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
@@ -190,7 +192,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       .find('[data-cy="numeric-input"]')
       .should('have.value', '2.0');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Portable Broadcaster');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
