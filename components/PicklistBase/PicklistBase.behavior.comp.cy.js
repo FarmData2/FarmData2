@@ -95,19 +95,19 @@ describe('Test the PicklistBase component behavior', () => {
       },
     });
 
-    cy.get('[data-cy="sort-order-button-name"]').click();
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
     cy.get('[data-cy="picklist-row-0"]').contains('Item A');
     cy.get('[data-cy="picklist-row-1"]').contains('Item B');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '3');
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '2');
 
-    cy.get('[data-cy="sort-order-button-name"]').click();
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
     cy.get('[data-cy="picklist-row-0"]').contains('Item B');
     cy.get('[data-cy="picklist-row-1"]').contains('Item A');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '2');
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '3');
 
-    cy.get('[data-cy="sort-order-button-name"]').click();
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
     cy.get('[data-cy="picklist-row-0"]').contains('Item A');
     cy.get('[data-cy="picklist-row-1"]').contains('Item B');
     cy.get('[data-cy="picklist-quantity-0"]').should('have.value', '3');
@@ -171,7 +171,7 @@ describe('Test the PicklistBase component behavior', () => {
     });
 
     // Apply initial sort by name in ascending order
-    cy.get('[data-cy="sort-order-button-name"]').click();
+    cy.get('[data-cy="picklist-sort-button-name"]').click();
     cy.get('[data-cy="picklist-row-0"]').contains('Item A');
     cy.get('[data-cy="picklist-row-1"]').contains('Item B');
 
