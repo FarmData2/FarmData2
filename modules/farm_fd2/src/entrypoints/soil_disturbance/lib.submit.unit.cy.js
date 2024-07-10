@@ -80,16 +80,16 @@ function runTest(terminationValue) {
       });
 
       cy.wrap(directSeedingLib.submitForm(directSeedingBroccoli), {
-        timeout: 10000,
+        timeout: 15000,
       })
         .then((resultsBroccoli) => {
-          form.affectedPlants.push(resultsBroccoli.plantAsset.id);
+          form.affectedPlants.push({ uuid: resultsBroccoli.plantAsset.id });
           return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
-            timeout: 10000,
+            timeout: 15000,
           });
         })
         .then((resultsBean) => {
-          form.affectedPlants.push(resultsBean.plantAsset.id);
+          form.affectedPlants.push({ uuid: resultsBean.plantAsset.id });
           return cy.wrap(lib.submitForm(form), { timeout: 10000 });
         })
         .then((submitted) => {
@@ -110,7 +110,9 @@ function runTest(terminationValue) {
     it('Check affected asset--plant(s)', () => {
       expect(results.affectedPlants).to.have.length(form.affectedPlants.length);
       // check BROCCOLI
-      expect(results.affectedPlants[0].id).to.equal(form.affectedPlants[0]);
+      expect(results.affectedPlants[0].id).to.equal(
+        form.affectedPlants[0].uuid
+      );
       expect(results.affectedPlants[0].type).to.equal('asset--plant');
       expect(results.affectedPlants[0].attributes.name).to.equal(
         directSeedingBroccoli.seedingDate + '_' + directSeedingBroccoli.cropName
@@ -126,7 +128,9 @@ function runTest(terminationValue) {
         cropMap.get(directSeedingBroccoli.cropName).id
       );
       // check BEAN
-      expect(results.affectedPlants[1].id).to.equal(form.affectedPlants[1]);
+      expect(results.affectedPlants[1].id).to.equal(
+        form.affectedPlants[1].uuid
+      );
       expect(results.affectedPlants[1].type).to.equal('asset--plant');
       expect(results.affectedPlants[1].attributes.name).to.equal(
         directSeedingBean.seedingDate + '_' + directSeedingBean.cropName

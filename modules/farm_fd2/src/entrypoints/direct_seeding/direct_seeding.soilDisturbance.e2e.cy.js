@@ -44,7 +44,8 @@ describe('Direct Seeding: Soil Disturbance Component', () => {
       '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
     ).click();
     cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('not.have.class', 'is-valid')
       .should('not.have.class', 'is-invalid');
@@ -54,7 +55,8 @@ describe('Direct Seeding: Soil Disturbance Component', () => {
     cy.get(
       '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
     ).click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
 

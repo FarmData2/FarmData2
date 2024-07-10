@@ -159,7 +159,7 @@ describe('Test the MultiCropSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="crop-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
           .select('ARUGULA');
         cy.get('@updateSpy').should('have.been.calledOnce');
