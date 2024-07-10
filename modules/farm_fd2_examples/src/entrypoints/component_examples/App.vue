@@ -12,6 +12,10 @@
       date.
     </li>
     <li>
+      <a href="equipment_selector">EquipmentSelector</a>: A component for
+      selecting equipment.
+    </li>
+    <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>

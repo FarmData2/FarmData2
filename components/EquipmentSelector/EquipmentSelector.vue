@@ -28,15 +28,27 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * is selected another dropdown appears to allow the user to select
  * another piece of equipment.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/equipment_selector">The EquipmentSelector Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/equipment_selector/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <EquipmentSelector
- *   id="seeding-equipment"
- *   data-cy="seeding-equipment"
- *   v-model:selected="form.equipment"
- *   v-bind:showValidityStyling="validity.show"
- *   v-on:valid="validity.equipment = $event"
+ *   id="equipment-selector"
+ *   data-cy="equipment-selector"
+ *   invalid-feedback-text="Selection cannot be empty."
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:selected="form.selected"
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.selected = valid;
+ *     }
+ *   "
  *   v-on:ready="createdCount++"
  *   v-on:error="(msg) => showErrorToast('Network Error', msg)"
  * />
