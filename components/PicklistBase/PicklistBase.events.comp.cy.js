@@ -38,7 +38,7 @@ describe('Test the PicklistBase component events', () => {
       });
   });
 
-  it('Emits "update:picked" and "valid" when a row is picked for the first time', () => {
+  it('Emits "update:picked" and "valid" when a row is picked', () => {
     const readySpy = cy.spy().as('readySpy');
     const updatePickedSpy = cy.spy().as('updatePickedSpy');
     const validSpy = cy.spy().as('validSpy');

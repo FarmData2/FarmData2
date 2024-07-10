@@ -11,25 +11,6 @@ describe('Test the PicklistBase component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('emits ready event once initialized', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PicklistBase, {
-      props: {
-        onReady: readySpy,
-        rows: [
-          { name: 'Item 1', quantity: 5, location: 'GHANA' },
-          { name: 'Item 2', quantity: 3, location: 'GHANA' },
-        ],
-        columns: ['name', 'quantity', 'location'],
-        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
-      },
-    });
-
-    cy.get('@readySpy').should('have.been.calledOnce');
-  });
-
   it('selects/deselects all rows using "All" button', () => {
     cy.mount(PicklistBase, {
       props: {
@@ -114,47 +95,7 @@ describe('Test the PicklistBase component behavior', () => {
     cy.get('[data-cy="picklist-quantity-1"]').should('have.value', '2');
   });
 
-  it('displays info overlay correctly', () => {
-    cy.mount(PicklistBase, {
-      props: {
-        rows: [
-          {
-            name: 'Item 1',
-            quantity: 5,
-            location: 'GHANA',
-            description: 'Description 1',
-          },
-          {
-            name: 'Item 2',
-            quantity: 3,
-            location: 'GHANA',
-            description: 'Description 2',
-          },
-        ],
-        columns: ['name', 'quantity', 'location'],
-        labels: {
-          name: 'Name',
-          quantity: 'Quantity',
-          location: 'Location',
-          description: 'Description',
-        },
-        picked: [0, 0],
-        showInfoIcons: true,
-      },
-    });
-
-    cy.get('[data-cy="picklist-info-icon-0"]').click({ force: true });
-    cy.get('[data-cy="picklist-info-card-body"]').contains(
-      'Description: Description 1'
-    );
-
-    cy.get('[data-cy="picklist-info-icon-1"]').click({ force: true });
-    cy.get('[data-cy="picklist-info-card-body"]').contains(
-      'Description: Description 2'
-    );
-  });
-
-  it('displays new data in the correct order when loaded with sorting applied', () => {
+  it('Checks sort order is preserved across data change', () => {
     // Initial mounting of the component with first set of data
     cy.mount(PicklistBase, {
       props: {

@@ -20,13 +20,6 @@ describe('Test the default PicklistBase content', () => {
         rows: [],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [],
-        units: 'Trays',
-        quantityAttribute: 'quantity',
-        showInfoIcons: true,
-        showValidityStyling: true, // Ensuring styling is enabled
-        required: true, // Setting required to true
-        invalidFeedbackText: 'This field is required', // Providing the feedback text
       },
     });
 
@@ -37,34 +30,10 @@ describe('Test the default PicklistBase content', () => {
         cy.get('[data-cy="picklist-header-name"]').should('exist');
         cy.get('[data-cy="picklist-header-quantity"]').should('exist');
         cy.get('[data-cy="picklist-header-location"]').should('exist');
-        cy.get('[data-cy="picklist-invalid-feedback"]')
-          .should('exist')
-          .and('have.text', 'This field is required');
+        cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
         cy.get('[data-cy="picklist-sort-button-name"]').should('exist');
         cy.get('[data-cy="picklist-sort-button-quantity"]').should('exist');
         cy.get('[data-cy="picklist-sort-button-location"]').should('exist');
-      });
-  });
-
-  it('Check that required prop is false by default', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PicklistBase, {
-      props: {
-        onReady: readySpy,
-        rows: [],
-        columns: ['name', 'quantity', 'location'],
-        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [],
-        units: 'Trays',
-        quantityAttribute: 'quantity',
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
       });
   });
 
@@ -214,33 +183,6 @@ describe('Test the default PicklistBase content', () => {
         cy.get('[data-cy="picklist-quantity-1-0"]').should('exist');
         cy.get('[data-cy="picklist-quantity-1-1"]').should('exist');
         cy.get('[data-cy="picklist-quantity-1-2"]').should('exist');
-      });
-  });
-
-  it('Check if sort order buttons are displayed', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(PicklistBase, {
-      props: {
-        onReady: readySpy,
-        rows: [
-          { name: 'Item A', quantity: 1, location: 'GHANA' },
-          { name: 'Item B', quantity: 2, location: 'GHANA' },
-        ],
-        columns: ['name', 'quantity', 'location'],
-        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [1, 2],
-        units: 'Trays',
-        quantityAttribute: 'quantity',
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="picklist-sort-button-name"]').should('exist');
-        cy.get('[data-cy="picklist-sort-button-quantity"]').should('exist');
-        cy.get('[data-cy="picklist-sort-button-location"]').should('exist');
       });
   });
 

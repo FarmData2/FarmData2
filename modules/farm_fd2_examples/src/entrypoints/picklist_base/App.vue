@@ -23,7 +23,7 @@
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
     v-on:ready="createdCount++"
-    :use-units="useUnits"
+    v-bind:use-units="useUnits"
   />
   <hr />
 

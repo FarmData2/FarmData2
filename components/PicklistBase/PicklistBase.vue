@@ -260,7 +260,7 @@ import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
  * `picklist-header-*`         | The `<th>` element for the column with header `*`.  Column headings are lowercased and ' ' are replaced with `-`.
  * `picklist-info-card`        | The `BCard` element that displays more detailed information about a row.
  * `picklist-info-card-header` | The `BCardHeader` element that is the transparent area of the info table.
- * `picklist-sort-button-*`    | The `SortOrderButton` element used to sort the table by the column with header `*`. Column headings are lowercased and ' ' are replaced with `-`.
+ * `picklist-sort-button-*`    | The `SortOrderButton` element used to sort the table by the column with header `*`. The `*` is replaced by the attribute names in the `columns` array.
  * `picklist-info-card-body`   | The `BCardBody` element that contains the `li` elements in the `BCard`.
  * `picklist-info-icon-i`      | The info icon in the rightmost column of the ith row (counting from 0).
  * `picklist-info-overlay`     | The `BOverlay` element that is used to display more detailed information on the rows.

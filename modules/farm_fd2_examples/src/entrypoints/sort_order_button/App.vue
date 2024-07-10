@@ -21,7 +21,7 @@
               <SortOrderButton
                 id="sort-order-button-letters"
                 data-cy="sort-order-button-letters"
-                v-bind:label="'Letters'"
+                v-bind:label="'letters'"
                 v-bind:sortOrder="sortColumn === 'letters' ? sortOrder : 'none'"
                 v-on:sort="handleSort"
                 v-on:ready="createdCount++"
@@ -31,7 +31,7 @@
               <SortOrderButton
                 id="sort-order-button-numbers"
                 data-cy="sort-order-button-numbers"
-                v-bind:label="'Numbers'"
+                v-bind:label="'numbers'"
                 v-bind:sortOrder="sortColumn === 'numbers' ? sortOrder : 'none'"
                 v-on:sort="handleSort"
                 v-on:ready="createdCount++"
@@ -39,10 +39,12 @@
             </BTh>
             <BTh>
               <SortOrderButton
-                id="sort-order-button-both"
-                data-cy="sort-order-button-both"
-                v-bind:label="'Both'"
-                v-bind:sortOrder="sortColumn === 'both' ? sortOrder : 'none'"
+                id="sort-order-button-'letters and numbers'"
+                data-cy="sort-order-button-'letters and numbers'"
+                v-bind:label="'letters and numbers'"
+                v-bind:sortOrder="
+                  sortColumn === 'letters and numbers' ? sortOrder : 'none'
+                "
                 v-on:sort="handleSort"
                 v-on:ready="createdCount++"
               />
@@ -56,7 +58,7 @@
           >
             <BTd>{{ row.letters }}</BTd>
             <BTd>{{ row.numbers }}</BTd>
-            <BTd>{{ row.both }}</BTd>
+            <BTd>{{ row['letters and numbers'] }}</BTd>
           </BTr>
         </BTbody>
       </BTableSimple>
@@ -73,44 +75,49 @@
       </thead>
       <tbody>
         <tr>
-          <td>Sort Letters</td>
           <td>
-            <BButton
-              id="sort-letters"
-              data-cy="sort-letters"
-              v-on:click="toggleSort('letters')"
-              variant="outline-primary"
-              size="sm"
-            >
-              Toggle Sort Letters
-            </BButton>
+            <p>SortOrder</p>
+            <p>(controls the letter column only)</p>
           </td>
-        </tr>
-        <tr>
-          <td>Sort Numbers</td>
           <td>
             <BButton
-              id="sort-numbers"
-              data-cy="sort-numbers"
-              v-on:click="toggleSort('numbers')"
-              variant="outline-primary"
-              size="sm"
+              id="sort-letters-none"
+              data-cy="sort-letters-none"
+              v-on:click="setSortOrder('letters', 'none')"
+              :variant="
+                sortColumn === 'letters' && sortOrder === 'none'
+                  ? 'primary'
+                  : 'outline-primary'
+              "
+              size="md"
             >
-              Toggle Sort Numbers
+              None
             </BButton>
-          </td>
-        </tr>
-        <tr>
-          <td>Sort Both</td>
-          <td>
             <BButton
-              id="sort-both"
-              data-cy="sort-both"
-              v-on:click="toggleSort('both')"
-              variant="outline-primary"
-              size="sm"
+              id="sort-letters-asc"
+              data-cy="sort-letters-asc"
+              v-on:click="setSortOrder('letters', 'asc')"
+              :variant="
+                sortColumn === 'letters' && sortOrder === 'asc'
+                  ? 'primary'
+                  : 'outline-primary'
+              "
+              size="md"
             >
-              Toggle Sort Both
+              Asc
+            </BButton>
+            <BButton
+              id="sort-letters-desc"
+              data-cy="sort-letters-desc"
+              v-on:click="setSortOrder('letters', 'desc')"
+              :variant="
+                sortColumn === 'letters' && sortOrder === 'desc'
+                  ? 'primary'
+                  : 'outline-primary'
+              "
+              size="md"
+            >
+              Desc
             </BButton>
           </td>
         </tr>
@@ -156,18 +163,21 @@ export default {
   data() {
     return {
       rows: [
-        { letters: 'A', numbers: 3, both: 'A3' },
-        { letters: 'C', numbers: 1, both: 'C1' },
-        { letters: 'B', numbers: 10, both: 'A1' },
-        { letters: 'D', numbers: 4, both: 'D4' },
+        { letters: 'A', numbers: 3, 'letters and numbers': 'A3' },
+        { letters: 'C', numbers: 1, 'letters and numbers': 'C1' },
+        { letters: 'B', numbers: 10, 'letters and numbers': 'A1' },
+        { letters: 'D', numbers: 4, 'letters and numbers': 'D4' },
       ],
-      sortColumn: '',
+      sortColumn: 'letters',
       sortOrder: 'none',
       createdCount: 0,
     };
   },
   computed: {
     sortedRows() {
+      if (this.sortOrder === 'none') {
+        return this.rows;
+      }
       if (this.sortColumn) {
         return [...this.rows].sort((a, b) => {
           if (a[this.sortColumn] < b[this.sortColumn]) {
@@ -187,12 +197,16 @@ export default {
   },
   methods: {
     handleSort({ label, sortOrder }) {
-      this.sortColumn = label.toLowerCase();
+      this.sortColumn = label;
       this.sortOrder = sortOrder;
     },
     toggleSort(column) {
       this.sortColumn = column;
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    },
+    setSortOrder(column, order) {
+      this.sortColumn = column;
+      this.sortOrder = order;
     },
   },
   created() {
@@ -206,7 +220,6 @@ export default {
 @import url('@css/fd2-mobile.css');
 
 .example-table {
-  width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
 }

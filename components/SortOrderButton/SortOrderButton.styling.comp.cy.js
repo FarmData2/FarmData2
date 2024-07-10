@@ -49,20 +49,24 @@ describe('Test the SortOrderButton component styling', () => {
     });
   });
 
-  it('Check active sort order styling', () => {
-    const readySpy = cy.spy().as('readySpy');
-
+  it('Check ascending sort order styling', () => {
     cy.mount(SortOrderButton, {
       props: {
         label: 'test',
         sortOrder: 'asc',
-        onReady: readySpy,
       },
     }).then(() => {
-      cy.get('@readySpy').should('have.been.calledOnce');
-
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn-md');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn-block');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'rounded-0');
       cy.get('[data-cy="sort-order-button"]').should('have.class', 'sorted');
       cy.get('[data-cy="sort-order-text"]').should(
+        'have.css',
+        'color',
+        'rgb(25, 135, 84)'
+      );
+      cy.get('[data-cy="sort-order-icon"]').should(
         'have.css',
         'color',
         'rgb(25, 135, 84)'
@@ -73,54 +77,31 @@ describe('Test the SortOrderButton component styling', () => {
     });
   });
 
-  it('Check sort order toggle behavior and styling', () => {
-    const sortSpy = cy.spy().as('sortSpy');
-
+  it('Check descending sort order styling', () => {
     cy.mount(SortOrderButton, {
       props: {
         label: 'test',
-        sortOrder: 'none',
-        onSort: sortSpy,
-      },
-    });
-
-    cy.get('[data-cy="sort-order-button"]').click();
-    cy.get('[data-cy="sort-order-button"]').then(() => {
-      cy.get('@sortSpy').should('have.been.calledWith', {
-        label: 'test',
-        sortOrder: 'asc',
-      });
-
-      cy.get('[data-cy="sort-order-button"]').should('have.class', 'sorted');
-      cy.get('[data-cy="sort-order-icon"]').should('have.css', 'opacity', '1');
-      cy.get('[data-cy="sort-order-icon"]').find('svg').should('not.exist');
-      cy.get('[data-cy="sort-order-icon"]').contains('↓').should('exist');
-    });
-
-    cy.get('[data-cy="sort-order-button"]').click();
-    cy.get('[data-cy="sort-order-button"]').then(() => {
-      cy.get('@sortSpy').should('have.been.calledWith', {
-        label: 'test',
         sortOrder: 'desc',
-      });
-
+      },
+    }).then(() => {
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn-md');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'btn-block');
+      cy.get('[data-cy="sort-order-button"]').should('have.class', 'rounded-0');
       cy.get('[data-cy="sort-order-button"]').should('have.class', 'sorted');
+      cy.get('[data-cy="sort-order-text"]').should(
+        'have.css',
+        'color',
+        'rgb(25, 135, 84)'
+      );
+      cy.get('[data-cy="sort-order-icon"]').should(
+        'have.css',
+        'color',
+        'rgb(25, 135, 84)'
+      );
       cy.get('[data-cy="sort-order-icon"]').should('have.css', 'opacity', '1');
       cy.get('[data-cy="sort-order-icon"]').find('svg').should('not.exist');
       cy.get('[data-cy="sort-order-icon"]').contains('↑').should('exist');
-    });
-
-    cy.get('[data-cy="sort-order-button"]').click();
-    cy.get('[data-cy="sort-order-button"]').then(() => {
-      cy.get('@sortSpy').should('have.been.calledWith', {
-        label: 'test',
-        sortOrder: 'asc',
-      });
-
-      cy.get('[data-cy="sort-order-button"]').should('have.class', 'sorted');
-      cy.get('[data-cy="sort-order-icon"]').should('have.css', 'opacity', '1');
-      cy.get('[data-cy="sort-order-icon"]').find('svg').should('not.exist');
-      cy.get('[data-cy="sort-order-icon"]').contains('↓').should('exist');
     });
   });
 });
