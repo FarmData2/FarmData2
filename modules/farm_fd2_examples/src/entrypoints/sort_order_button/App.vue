@@ -76,7 +76,7 @@
       <tbody>
         <tr>
           <td>
-            <p>SortOrder</p>
+            <p>sortOrder</p>
             <p>(controls the letter column only)</p>
           </td>
           <td>
