@@ -32,6 +32,10 @@
       data on soil disturbances.
     </li>
     <li>
+      <a href="text_display">TextDisplay</a>: A component for displaying a
+      labeled text string.
+    </li>
+    <li>
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component
       for selecting a crop from a list of all crops that currently have tray
       seedings.

@@ -76,6 +76,12 @@ farm.fd2_examples_comment_box:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_comment_box.content
   weight: 100
+farm.fd2_examples_text_display:
+  title: 'TextDisplay'
+  description: 'Example of the use of the TextDisplay component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_text_display.content
+  weight: 100
 farm.fd2_examples_equipment_selector:
   title: 'EquipmentSelector'
   description: 'Example of the use of the EquipmentSelector component.'
