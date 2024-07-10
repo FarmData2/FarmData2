@@ -1,26 +1,23 @@
 <template>
   <div>
-    <SelectorBase
-      v-for="(selectedEquipment, i) in ['', ...selectedEquipment]"
-      v-bind:key="i"
-      v-bind:id="'equipment-selector-' + (i + 1)"
-      v-bind:data-cy="'equipment-selector-' + (i + 1)"
-      invalidFeedbackText="Equipment must be selected"
-      v-bind:label="String(i + 1)"
-      v-bind:options="equipmentList"
-      v-bind:required="isRequired(i)"
-      v-bind:selected="selected[i]"
+    <MultiSelectorBase
+      id="multi-equipment-selector"
+      data-cy="multi-equipment-selector"
+      invalidFeedbackText="One equipment must be selected"
+      v-bind:required="required"
       v-bind:showValidityStyling="showValidityStyling"
-      v-on:update:selected="handleUpdateSelected($event, i)"
-      v-on:valid="handleValid($event, i)"
-      v-on:add-clicked="handleAddClicked($event, i)"
-      v-bind:popupUrl="includePopupUrl(i)"
+      v-bind:options="equipmentList"
+      v-bind:selected="selected"
+      v-on:update:selected="handleUpdateSelected()"
+      v-on:add-clicked="handleAddClicked($event)"
+      v-on:valid="handleValid($event)"
+      v-bind:popupUrl="popupUrl"
     />
   </div>
 </template>
 
 <script>
-import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
+import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
@@ -59,13 +56,13 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name         | Description
- * -----------------------| -----------
- * `equipment-selector-i` | The ith `SelectorBase` component (labeled `i:` for i=[1...n]).
+ * Attribute Name             | Description
+ * ---------------------------| -----------
+ * `equipment-multi-selector` | The  `MultiSelectorBase` component.
  */
 export default {
   name: 'EquipmentSelector',
-  components: { SelectorBase },
+  components: { MultiSelectorBase },
   emits: ['error', 'ready', 'update:selected', 'valid'],
   props: {
     /**
@@ -97,7 +94,7 @@ export default {
   data() {
     return {
       selectedEquipment: this.selected,
-      valid: [null],
+      valid: null,
       equipmentList: [],
       canCreateEquipment: false,
       popupUrl: null,
@@ -109,18 +106,11 @@ export default {
        * The whole list will be valid if the first
        * SelectorBase has a valid value.
        */
-      return this.valid[0];
+      return this.valid;
     },
   },
   methods: {
-    includePopupUrl(i) {
-      // determine if ith selector should have add button
-      if (i == this.selectedEquipment.length) {
-        return this.popupUrl;
-      }
-      return null;
-    },
-    async handleAddClicked(newEquipment, i) {
+    async handleAddClicked(newEquipment) {
       // when the selector emits the add-clicked event
       // clear the cached equipment and repopulate the options
       // to get the newly created equipment, then select it
@@ -133,7 +123,8 @@ export default {
         // Populate the map and wait for it to complete
         await this.populateEquipmentList();
 
-        this.handleUpdateSelected(newEquipment, i);
+        this.selectedEquipment.push(newEquipment);
+        this.handleUpdateSelected();
       }
     },
     async populateEquipmentList() {
@@ -146,30 +137,15 @@ export default {
         console.error('Error populating equipment map:', error);
       }
     },
-    isRequired(i) {
-      return this.required && i == 0 && this.selectedEquipment.length < 2;
-    },
-    handleUpdateSelected(event, i) {
-      if (event === '') {
-        // The ith piece of equipment was removed.
-        this.selectedEquipment.splice(i, 1);
-        this.valid.splice(i, 1);
-      } else {
-        this.selectedEquipment[i] = event;
-      }
-
-      if (this.selectedEquipment.length == 0) {
-        this.valid[0] = !this.required;
-      }
-
+    handleUpdateSelected() {
       /**
        * The selected equipment has changed.
        * @property {Array<String>} event the names of the newly selected equipment.
        */
       this.$emit('update:selected', this.selectedEquipment);
     },
-    handleValid(event, i) {
-      this.valid[i] = event;
+    handleValid(event) {
+      this.valid = event;
     },
   },
   watch: {

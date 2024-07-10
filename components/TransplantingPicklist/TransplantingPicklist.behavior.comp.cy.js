@@ -199,8 +199,9 @@ describe('Test the TransplantingPicklist component behavior', () => {
         .then(() => {
           wrapper.setProps({ crop: 'ZUCCHINI' });
           cy.get('[data-cy="selector-input"]').should('have.value', 'ZUCCHINI');
-          cy.get('@updateSpy').its('callCount').should('equal', 5);
+          cy.get('@updateSpy').its('callCount').should('equal', 6);
           cy.get('@updateSpy').its('args[4][0]').should('have.length', 0);
+          cy.get('@updateSpy').its('args[5][0]').should('have.length', 0);
         });
     });
   });

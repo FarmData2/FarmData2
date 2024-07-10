@@ -69,7 +69,7 @@ describe('Test the SoilDisturbance component events', () => {
         cy.get('@validSpy').should('have.been.calledOnce');
         cy.get('@validSpy').should('have.been.calledWith', false);
 
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .select('Tractor');
 
@@ -289,14 +289,14 @@ describe('Test the SoilDisturbance component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .select('Tractor');
 
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', ['Tractor']);
 
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
           .select('Planter');
 

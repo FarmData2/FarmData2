@@ -93,4 +93,19 @@ describe('Test the CropSelector content', () => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
       });
   });
+
+  it('Crop plus button exists, is visible, is enabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CropSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('[data-cy="selector-add-button"]')
+      .should('exist')
+      .should('be.visible')
+      .should('be.enabled');
+  });
 });
