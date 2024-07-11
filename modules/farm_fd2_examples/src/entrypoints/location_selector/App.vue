@@ -75,6 +75,13 @@
             data-cy="includeGreenhouses-checkbox"
             switch
             v-model="includeGreenhouses"
+            v-on:change="
+              () => {
+                if (includeGreenhouses) {
+                  includeGreenhousesWithBeds = true;
+                }
+              }
+            "
           />
         </td>
       </tr>
@@ -86,6 +93,7 @@
             data-cy="includeGreenhousesWithBeds-checkbox"
             switch
             v-model="includeGreenhousesWithBeds"
+            v-bind:disabled="includeGreenhouses"
           />
         </td>
       </tr>
@@ -97,6 +105,13 @@
             data-cy="allowBedSelection-checkbox"
             switch
             v-model="allowBedSelection"
+            v-on:change="
+              () => {
+                if (!allowBedSelection) {
+                  form.pickedBeds = [];
+                }
+              }
+            "
           />
         </td>
       </tr>
@@ -120,7 +135,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = 'A'"
-            v-bind:disabled="!includeFields"
+            v-bind:disabled="!includeFields || this.form.selected == 'A'"
           >
             Field
           </BButton>
@@ -130,7 +145,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = 'ALF'"
-            v-bind:disabled="!includeFields"
+            v-bind:disabled="!includeFields || this.form.selected == 'ALF'"
           >
             Field w/ Beds
           </BButton>
@@ -140,7 +155,9 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = 'JASMINE'"
-            v-bind:disabled="!includeGreenhouses"
+            v-bind:disabled="
+              !includeGreenhouses || this.form.selected == 'JASMINE'
+            "
           >
             Greenhouse
           </BButton>
@@ -150,9 +167,12 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.selected = 'CHUAU'"
-            v-bind:disabled="!includeGreenhouses && !includeGreenhousesWithBeds"
+            v-bind:disabled="
+              (!includeGreenhouses && !includeGreenhousesWithBeds) ||
+              this.form.selected == 'CHUAU'
+            "
           >
-            Greenhouse /w Beds
+            Greenhouse w/ Beds
           </BButton>
         </td>
       </tr>
@@ -167,7 +187,8 @@
             v-on:click="this.form.pickedBeds.push(this.form.selected + '-1')"
             v-bind:disabled="
               !['ALF', 'CHUAU', 'GHANA'].includes(this.form.selected) ||
-              this.form.pickedBeds.includes(this.form.selected + '-1')
+              this.form.pickedBeds.includes(this.form.selected + '-1') ||
+              !this.allowBedSelection
             "
           >
             Select Bed
@@ -178,7 +199,9 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.form.pickedBeds = []"
-            v-bind:disabled="this.form.pickedBeds.length == 0"
+            v-bind:disabled="
+              this.form.pickedBeds.length == 0 || !this.allowBedSelection
+            "
           >
             Clear Beds
           </BButton>
