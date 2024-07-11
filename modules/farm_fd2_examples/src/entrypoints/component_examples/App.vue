@@ -12,6 +12,10 @@
       date.
     </li>
     <li>
+      <a href="equipment_selector">EquipmentSelector</a>: A component for
+      selecting equipment.
+    </li>
+    <li>
       <a href="numeric_input">NumericInput</a>: A component for inputting a
       numerical value.
     </li>
@@ -30,6 +34,10 @@
     <li>
       <a href="soil_disturbance">SoilDisturbance</a>: A component for collecting
       data on soil disturbances.
+    </li>
+    <li>
+      <a href="text_display">TextDisplay</a>: A component for displaying a
+      labeled text string.
     </li>
     <li>
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component

@@ -96,3 +96,24 @@ farm.fd2_examples_numeric_input.content:
     _title: 'NumericInput Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_text_display.content:
+  path: '/fd2_examples/text_display'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'TextDisplay Example'
+  requirements:
+    _permission: 'access content'
+farm.fd2_examples_equipment_selector.content:
+  path: '/fd2_examples/equipment_selector'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'EquipmentSelector Example'
+  requirements:
+    _permission: 'access content'
+farm.fd2_examples_multi_selector_base.content:
+  path: '/fd2_examples/multi_selector_base'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'MultiSelectorBase Example'
+  requirements:
+    _permission: 'access content'
