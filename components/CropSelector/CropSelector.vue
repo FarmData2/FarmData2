@@ -26,19 +26,28 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * It fetches the list for crops (farmOS `taxonomy_term--plant_type` records) from the farmOS server.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/crop_selector">The CropSelector Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/crop_selector/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <CropSelector
- *   required
- *   v-model:selected="form.crop"
- *   v-bind:showInvalidStyling="validity.show"
- *   v-on:valid="validity.crop = $event"
- *   v-on:ready="createdCount++"
- *   v-on:error="
- *     (msg) =>
- *       uiUtil.showToast('Network Error', msg, 'top-center', 'danger', 5)
+ *   id="crop-selector"
+ *   data-cy="crop-selector"
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-model:selected="form.selected"
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.selected = valid;
+ *     }
  *   "
+ *   v-on:ready="createdCount++"
+ *   v-on:error="(msg) => showErrorToast('Network Error', msg)"
  * />
  * ```
  *
