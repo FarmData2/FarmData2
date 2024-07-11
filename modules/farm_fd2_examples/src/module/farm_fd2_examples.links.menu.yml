@@ -100,3 +100,9 @@ farm.fd2_examples_multi_selector_base:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_multi_selector_base.content
   weight: 100
+farm.fd2_examples_crop_selector:
+  title: 'CropSelector'
+  description: 'Example of the use of the CropSelector component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_crop_selector.content
+  weight: 100

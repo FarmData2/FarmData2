@@ -167,3 +167,13 @@ multi_selector_base:
   css:
     component:
       style/style.css: {}
+
+crop_selector:
+  js:
+    crop_selector/crop_selector.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
