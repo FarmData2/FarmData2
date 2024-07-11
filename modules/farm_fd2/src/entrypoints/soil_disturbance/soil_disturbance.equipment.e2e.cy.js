@@ -25,14 +25,16 @@ describe('Soil Disturbance: Equipment Component', () => {
 
   it('Validity styling shown in soil disturbance component', () => {
     cy.get('[data-cy="submit-button"]').click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('not.have.class', 'is-valid')
       .should('have.class', 'is-invalid');
   });
 
   it('Proper numeric fields appear when equipment is selected', () => {
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
 
@@ -51,10 +53,12 @@ describe('Soil Disturbance: Equipment Component', () => {
   });
 
   it('Equipment and numeric fields are required', () => {
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-required"]')
       .should('be.visible');
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
 
@@ -77,7 +81,8 @@ describe('Soil Disturbance: Equipment Component', () => {
   });
 
   it('Updating beds updates area', () => {
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')

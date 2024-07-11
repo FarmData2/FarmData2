@@ -12,6 +12,10 @@
       date.
     </li>
     <li>
+      <a href="equipment_selector">EquipmentSelector</a>: A component for
+      selecting equipment.
+    </li>
+    <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
       items via checkboxes.
     </li>
@@ -30,6 +34,10 @@
     <li>
       <a href="submit_reset_buttons">SubmitResetButtons</a>: A component for the
       Submit and Reset buttons used on forms.
+    </li>
+    <li>
+      <a href="text_display">TextDisplay</a>: A component for displaying a
+      labeled text string.
     </li>
     <li>
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component

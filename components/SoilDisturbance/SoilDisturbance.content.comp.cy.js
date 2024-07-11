@@ -47,7 +47,7 @@ describe('Test the default SoilDisturbance content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-required"]')
           .should('exist');
       });
@@ -67,10 +67,10 @@ describe('Test the default SoilDisturbance content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .should('have.class', 'is-invalid');
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-invalid-feedback"]')
           .should('be.visible');
       });
@@ -89,13 +89,13 @@ describe('Test the default SoilDisturbance content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="equipment-selector-1"]')
+        cy.get('[data-cy="selector-1"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', 'Tractor');
-        cy.get('[data-cy="equipment-selector-2"]')
+        cy.get('[data-cy="selector-2"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', 'Planter');
-        cy.get('[data-cy="equipment-selector-3"]')
+        cy.get('[data-cy="selector-3"]')
           .find('[data-cy="selector-input"]')
           .should('have.value', null);
       });

@@ -137,3 +137,33 @@ submit_reset_buttons:
   css:
     component:
       style/style.css: {}
+
+text_display:
+  js:
+    text_display/text_display.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
+equipment_selector:
+  js:
+    equipment_selector/equipment_selector.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
+multi_selector_base:
+  js:
+    multi_selector_base/multi_selector_base.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}

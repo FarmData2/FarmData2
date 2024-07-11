@@ -29,11 +29,22 @@
  *
  * If the `text` prop is `null` or is the string `'NaN'`, the text will be displayed as an empty string.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/text_display">The TextDisplay Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/text_display/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * <TextDisplay
+ *   id="text-display"
+ *   data-cy="text-display"
+ *   label="TextDisplay"
+ *   v-model:text="this.text"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes

@@ -226,16 +226,20 @@ export default {
   },
   methods: {
     async checkPlantsAtLocation() {
-      try {
-        let results = await farmosUtil.getPlantAssets(
-          this.form.location,
-          this.form.beds,
-          false,
-          true
-        );
-        this.form.affectedPlants = results;
-      } catch (error) {
-        console.error('Error fetching plant assets:', error);
+      if (this.form.location) {
+        try {
+          let results = await farmosUtil.getPlantAssets(
+            this.form.location,
+            this.form.beds,
+            false,
+            true
+          );
+          this.form.affectedPlants = results;
+        } catch (error) {
+          console.error('Error fetching plant assets:', error);
+          this.form.affectedPlants = [];
+        }
+      } else {
         this.form.affectedPlants = [];
       }
     },
@@ -250,6 +254,7 @@ export default {
       } else {
         this.form.area = 100;
       }
+      this.checkPlantsAtLocation();
     },
     submit() {
       this.submitting = true;

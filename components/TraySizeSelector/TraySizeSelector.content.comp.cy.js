@@ -89,4 +89,18 @@ describe('Test the TraySizeSelector content', () => {
         cy.get('[data-cy="selector-input"]').should('have.value', '288');
       });
   });
+
+  it('Tray size plus button exists, is visible, is enabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+    cy.mount(TraySizeSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('[data-cy="selector-add-button"]')
+      .should('exist')
+      .should('be.visible')
+      .should('be.enabled');
+  });
 });
