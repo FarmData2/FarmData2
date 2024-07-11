@@ -118,3 +118,9 @@ farm.fd2_examples_crop_selector:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_crop_selector.content
   weight: 100
+farm.fd2_examples_location_selector:
+  title: 'LocationSelector'
+  description: 'Example for use of the LocationSelector component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_location_selector.content
+  weight: 100

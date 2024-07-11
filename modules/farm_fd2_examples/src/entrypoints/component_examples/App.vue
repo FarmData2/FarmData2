@@ -20,6 +20,10 @@
       selecting equipment.
     </li>
     <li>
+      <a href="location_selector">LocationSelector</a>: A component for
+      selecting a location.
+    </li>
+    <li>
       <a href="multi_crop_selector">MultiCropSelector</a>: A component for
       selecting multiple crops.
     </li>
