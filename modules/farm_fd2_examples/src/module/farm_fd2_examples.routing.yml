@@ -125,6 +125,13 @@ farm.fd2_examples_multi_selector_base.content:
     _title: 'MultiSelectorBase Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_sort_order_button.content:
+  path: '/fd2_examples/sort_order_button'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'SortOrderButton'
+  requirements:
+    _permission: 'access content'
 farm.fd2_examples_crop_selector.content:
   path: '/fd2_examples/crop_selector'
   defaults:
