@@ -8,12 +8,24 @@
       <a href="comment_box">CommentBox</a>: A component for writing a comment.
     </li>
     <li>
+      <a href="crop_selector">CropSelector</a>: A component for selecting a
+      crop.
+    </li>
+    <li>
       <a href="date_selector">DateSelector</a>: A component for selecting a
       date.
     </li>
     <li>
       <a href="equipment_selector">EquipmentSelector</a>: A component for
       selecting equipment.
+    </li>
+    <li>
+      <a href="multi_crop_selector">MultiCropSelector</a>: A component for
+      selecting multiple crops.
+    </li>
+    <li>
+      <a href="numeric_input">NumericInput</a>: A component for inputting a
+      numerical value.
     </li>
     <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
@@ -43,6 +55,10 @@
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component
       for selecting a crop from a list of all crops that currently have tray
       seedings.
+    </li>
+    <li>
+      <a href="winter_kill">WinterKill</a>: A component to specify if a crop
+      will be winter killed.
     </li>
   </ul>
 

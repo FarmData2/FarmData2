@@ -82,6 +82,12 @@ farm.fd2_examples_submit_reset_buttons:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_submit_reset_buttons.content
   weight: 100
+farm.fd2_examples_numeric_input:
+  title: 'NumericInput'
+  description: 'Example of the use of the NumericInput component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_numeric_input.content
+  weight: 100
 farm.fd2_examples_text_display:
   title: 'TextDisplay'
   description: 'Example of the use of the TextDisplay component.'
@@ -99,4 +105,10 @@ farm.fd2_examples_multi_selector_base:
   description: 'Example for use of MultiSelectorBase component.'
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_multi_selector_base.content
+  weight: 100
+farm.fd2_examples_crop_selector:
+  title: 'CropSelector'
+  description: 'Example of the use of the CropSelector component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_crop_selector.content
   weight: 100
