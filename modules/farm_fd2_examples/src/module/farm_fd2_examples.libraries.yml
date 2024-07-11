@@ -128,6 +128,16 @@ comment_box:
     component:
       style/style.css: {}
 
+submit_reset_buttons:
+  js:
+    submit_reset_buttons/submit_reset_buttons.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+
 numeric_input:
   js:
     numeric_input/numeric_input.js:

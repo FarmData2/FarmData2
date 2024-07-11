@@ -44,6 +44,10 @@
       data on soil disturbances.
     </li>
     <li>
+      <a href="submit_reset_buttons">SubmitResetButtons</a>: A component for the
+      Submit and Reset buttons used on forms.
+    </li>
+    <li>
       <a href="text_display">TextDisplay</a>: A component for displaying a
       labeled text string.
     </li>
