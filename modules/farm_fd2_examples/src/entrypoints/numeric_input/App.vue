@@ -116,7 +116,7 @@
             "
             v-bind:disabled="this.minValue == 0"
           >
-            Decrease
+            -10
           </BButton>
           <BButton
             id="min-value-increase"
@@ -131,7 +131,7 @@
             "
             v-bind:disabled="this.minValue == this.maxValue"
           >
-            Increase
+            +10
           </BButton>
         </td>
       </tr>
@@ -151,7 +151,7 @@
             "
             v-bind:disabled="this.maxValue == this.minValue"
           >
-            Decrease
+            -10
           </BButton>
           <BButton
             id="max-value-increase"
@@ -166,7 +166,7 @@
             "
             v-bind:disabled="this.maxValue == 1000"
           >
-            Increase
+            +10
           </BButton>
         </td>
       </tr>
