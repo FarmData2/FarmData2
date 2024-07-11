@@ -11,8 +11,8 @@
     data-cy="submit-reset-buttons"
     v-model:enableReset="this.enableReset"
     v-model:enableSubmit="this.enableSubmit"
-    v-on:submit="this.submitEnabled = $event"
-    v-on:reset="this.resetEnabled = $event"
+    v-on:submit="this.submitCount++"
+    v-on:reset="this.resetCount++"
     v-on:ready="createdCount++"
   />
   <hr />
@@ -49,20 +49,20 @@
     </tbody>
   </table>
 
-  <h5>Component Event Payloads</h5>
+  <h5>Component Event</h5>
   <table class="example-table">
     <thead>
       <th>Event</th>
-      <th>Payload</th>
+      <th>Clicked Count</th>
     </thead>
     <tbody>
       <tr>
         <td>reset</td>
-        <td>{{ resetEnabled }}</td>
+        <td>{{ resetCount }}</td>
       </tr>
       <tr>
         <td>submit</td>
-        <td>{{ submitEnabled }}</td>
+        <td>{{ submitCount }}</td>
       </tr>
     </tbody>
   </table>
@@ -85,9 +85,9 @@ export default {
   data() {
     return {
       enableSubmit: false,
-      submitEnabled: null,
+      submitCount: 0,
       enableReset: false,
-      resetEnabled: null,
+      resetCount: 0,
       createdCount: 0,
     };
   },
