@@ -126,6 +126,7 @@ while true; do
     ;;
   -b | --lib)
     TEST_LIB=1
+    UNIT_TESTS=1
     shift 2
     ;;
   -g | --glob)
