@@ -27,13 +27,25 @@ describe('Test the default PicklistBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-table"]').should('exist');
-        cy.get('[data-cy="picklist-header-name"]').should('exist');
-        cy.get('[data-cy="picklist-header-quantity"]').should('exist');
-        cy.get('[data-cy="picklist-header-location"]').should('exist');
+        cy.get('[data-cy="picklist-header-name"]')
+          .should('exist')
+          .and('contain.text', 'Name');
+        cy.get('[data-cy="picklist-header-quantity"]')
+          .should('exist')
+          .and('contain.text', 'Quantity');
+        cy.get('[data-cy="picklist-header-location"]')
+          .should('exist')
+          .and('contain.text', 'Location');
         cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
-        cy.get('[data-cy="picklist-sort-button-name"]').should('exist');
-        cy.get('[data-cy="picklist-sort-button-quantity"]').should('exist');
-        cy.get('[data-cy="picklist-sort-button-location"]').should('exist');
+        cy.get('[data-cy="picklist-sort-button-name"]')
+          .should('exist')
+          .and('contain.text', 'Name');
+        cy.get('[data-cy="picklist-sort-button-quantity"]')
+          .should('exist')
+          .and('contain.text', 'Quantity');
+        cy.get('[data-cy="picklist-sort-button-location"]')
+          .should('exist')
+          .and('contain.text', 'Location');
       });
   });
 
@@ -44,8 +56,8 @@ describe('Test the default PicklistBase content', () => {
       props: {
         onReady: readySpy,
         rows: [
-          { name: 'Item A', quantity: 1, location: 'GHANA' },
-          { name: 'Item B', quantity: 2, location: 'GHANA' },
+          { name: 'Item A', quantity: 5, location: 'GHANA' },
+          { name: 'Item B', quantity: 7, location: 'GHANA' },
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
@@ -63,8 +75,33 @@ describe('Test the default PicklistBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-table"]').should('exist');
+
+        // Check row 0
         cy.get('[data-cy="picklist-row-0"]').should('exist');
+        cy.get('select[data-cy="picklist-quantity-0"]').should(
+          'have.value',
+          '0'
+        );
+        cy.get('td[data-cy="picklist-name-0"]').should('have.text', 'Item A');
+        cy.get('td[data-cy="picklist-quantity-0"]').should('have.text', '5');
+        cy.get('td[data-cy="picklist-location-0"]').should(
+          'have.text',
+          'GHANA'
+        );
+
+        // Check row 1
         cy.get('[data-cy="picklist-row-1"]').should('exist');
+        cy.get('select[data-cy="picklist-quantity-1"]').should(
+          'have.value',
+          '0'
+        );
+        cy.get('td[data-cy="picklist-name-1"]').should('have.text', 'Item B');
+        cy.get('td[data-cy="picklist-quantity-1"]').should('have.text', '7');
+        cy.get('td[data-cy="picklist-location-1"]').should(
+          'have.text',
+          'GHANA'
+        );
+
         cy.get('[data-cy="picklist-invalid-feedback"]').should(
           'have.text',
           'Please pick at least one item.'
@@ -161,8 +198,8 @@ describe('Test the default PicklistBase content', () => {
       props: {
         onReady: readySpy,
         rows: [
-          { name: 'Item A', quantity: 1, location: 'GHANA' },
-          { name: 'Item B', quantity: 2, location: 'GHANA' },
+          { name: 'Item A', quantity: 3, location: 'GHANA' },
+          { name: 'Item B', quantity: 5, location: 'GHANA' },
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
@@ -175,14 +212,18 @@ describe('Test the default PicklistBase content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="picklist-quantity-0"]').should('exist');
-        cy.get('[data-cy="picklist-quantity-0-0"]').should('exist');
-        cy.get('[data-cy="picklist-quantity-0-1"]').should('exist');
+        cy.get('select[data-cy="picklist-quantity-0"]')
+          .should('exist')
+          .and('have.value', '1');
+        cy.get('option[data-cy="picklist-quantity-0-0"]').should('exist');
+        cy.get('option[data-cy="picklist-quantity-0-1"]').should('exist');
 
-        cy.get('[data-cy="picklist-quantity-1"]').should('exist');
-        cy.get('[data-cy="picklist-quantity-1-0"]').should('exist');
-        cy.get('[data-cy="picklist-quantity-1-1"]').should('exist');
-        cy.get('[data-cy="picklist-quantity-1-2"]').should('exist');
+        cy.get('select[data-cy="picklist-quantity-1"]')
+          .should('exist')
+          .and('have.value', '2');
+        cy.get('option[data-cy="picklist-quantity-1-0"]').should('exist');
+        cy.get('option[data-cy="picklist-quantity-1-1"]').should('exist');
+        cy.get('option[data-cy="picklist-quantity-1-2"]').should('exist');
       });
   });
 
