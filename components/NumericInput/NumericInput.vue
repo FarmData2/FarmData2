@@ -102,21 +102,33 @@ import { BButton } from 'bootstrap-vue-next';
  * It can read integer or decimal numbers which can be rounded to a specified number of decimal places.
  * The component optionally includes up to three increase/decrease buttons that adust the value by specified amounts.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/numeric_input">The NumericInput Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/numeric_input/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
  * <NumericInput
- *   id="seeding-trays"
- *   data-cy="seeding-trays"
- *   required
- *   label="Trays"
- *   invalidFeedbackText="Trays must be positive."
- *   v-model:value="form.trays"
- *   v-bind:showValidityStyling="validity.show"
- *   v-bind:decimalPlaces="2"
- *   v-bind:incDecValues="[1, 5, 20]"
- *   v-bind:minValue="0.01"
- *   v-on:valid="validity.trays = $event"
+ *   id="numeric-input"
+ *   v-bind:key="componentKey"
+ *   data-cy="numeric-input"
+ *   invalidFeedbackText="Invalid Number."
+ *   label="Numeric Input"
+ *   v-bind:required="this.required"
+ *   v-bind:decimalPlaces="this.decimalPlaces"
+ *   v-bind:incDecValues="this.incDecValues"
+ *   v-bind:maxValue="this.maxValue"
+ *   v-bind:minValue="this.minValue"
+ *   v-model:value="form.value"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-on:valid="
+ *     (valid) => {
+ *       validity.value = valid;
+ *     }
+ *   "
  *   v-on:ready="createdCount++"
  * />
  * ```
