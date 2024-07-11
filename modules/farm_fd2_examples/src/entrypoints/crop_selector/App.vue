@@ -1,6 +1,6 @@
 <template>
   <h3>CropSelector Example</h3>
-  <p>The CropSelector component allows the user to select a crops.</p>
+  <p>The CropSelector component allows the user to select a crop.</p>
 
   <hr />
   <CropSelector
