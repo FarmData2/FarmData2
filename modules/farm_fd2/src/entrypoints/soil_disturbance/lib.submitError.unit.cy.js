@@ -49,13 +49,13 @@ describe('Test the Soil Disturbance lib submission error', () => {
       timeout: 10000,
     })
       .then((resultsBroccoli) => {
-        form.affectedPlants.push(resultsBroccoli.plantAsset.id);
+        form.affectedPlants.push({ uuid: resultsBroccoli.plantAsset.id });
         return cy.wrap(directSeedingLib.submitForm(directSeedingBean), {
           timeout: 10000,
         });
       })
       .then((resultsBean) => {
-        form.affectedPlants.push(resultsBean.plantAsset.id);
+        form.affectedPlants.push({ uuid: resultsBean.plantAsset.id });
       });
   });
 

@@ -31,22 +31,22 @@ async function submitForm(formData) {
       do: async () => {
         let affectedPlants = [];
         if (formData.termination) {
-          for (const plantID of formData.affectedPlants) {
+          for (const plant of formData.affectedPlants) {
             affectedPlants.push(
-              await farmosUtil.archivePlantAsset(plantID, true)
+              await farmosUtil.archivePlantAsset(plant.uuid, true)
             );
           }
         } else {
-          for (const plantID of formData.affectedPlants) {
-            affectedPlants.push(await farmosUtil.getPlantAsset(plantID));
+          for (const plant of formData.affectedPlants) {
+            affectedPlants.push(await farmosUtil.getPlantAsset(plant.uuid));
           }
         }
         return affectedPlants;
       },
       undo: async () => {
         if (formData.termination) {
-          for (const plantID of formData.affectedPlants) {
-            await farmosUtil.archivePlantAsset(plantID, false);
+          for (const plant of formData.affectedPlants) {
+            await farmosUtil.archivePlantAsset(plant.uuid, false);
           }
         }
       },

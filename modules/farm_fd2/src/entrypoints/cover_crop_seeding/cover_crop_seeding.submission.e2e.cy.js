@@ -21,12 +21,14 @@ describe('Cover Crop Seeding: Submission tests', () => {
       .find('[data-cy="selector-input"]')
       .select('ALF');
     cy.get('[data-cy="picker-group"]').find('input').eq(0).check();
-    cy.get('[data-cy="picker-group"]').find('input').eq(2).check();
+    cy.get('[data-cy="picker-group"]').find('input').eq(1).check();
 
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('ARUGULA');
-    cy.get('[data-cy="crop-selector-2"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-2"]')
       .find('[data-cy="selector-input"]')
       .select('BEAN');
 
@@ -37,7 +39,8 @@ describe('Cover Crop Seeding: Submission tests', () => {
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
@@ -61,7 +64,8 @@ describe('Cover Crop Seeding: Submission tests', () => {
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Portable Broadcaster');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
@@ -139,7 +143,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       expect(formData.location).to.equal('ALF');
       expect(formData.beds).to.have.length(2);
       expect(formData.beds[0]).to.equal('ALF-1');
-      expect(formData.beds[1]).to.equal('ALF-3');
+      expect(formData.beds[1]).to.equal('ALF-2');
       expect(formData.areaSeeded).to.equal(50);
       expect(formData.winterKill).to.equal(true);
       expect(formData.winterKillDate).to.equal('1951-01-02');
@@ -161,10 +165,54 @@ describe('Cover Crop Seeding: Submission tests', () => {
 
     // Check that the "sticky" parts of the form are not reset...
     cy.get('[data-cy="date-input"]').should('have.value', '1950-01-02');
-
+    cy.get('[data-cy="cover-crop-seeding-winter-kill"]')
+      .find('[data-cy="winter-kill-checkbox"]')
+      .should('be.checked');
+    cy.get('[data-cy="cover-crop-seeding-winter-kill"]')
+      .find('[data-cy="winter-kill-date-input"]')
+      .should('have.value', '1951-01-02');
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'ARUGULA');
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-2"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'BEAN');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'Tractor');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '1.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '2.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', 'Portable Broadcaster');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '3.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '4.0');
     cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
     // Check that the other parts of the form are reset.
+    cy.get('[data-cy="location-selector"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="picker-group"]').should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-area-seeded"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '100');
 
     // Check that the success toast is hidden.
     cy.get('.toast').should('not.exist');

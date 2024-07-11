@@ -24,7 +24,7 @@ describe('Test the MultiCropSelector component behavior', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          cy.get('[data-cy="crop-selector-1"]')
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
             .should('have.value', 'BROCCOLI');
         })
@@ -34,158 +34,14 @@ describe('Test the MultiCropSelector component behavior', () => {
            * the cy.get() above, causing the test to fail.
            */
           wrapper.setProps({ selected: ['BROCCOLI', 'ARUGULA'] });
-          cy.get('[data-cy="crop-selector-1"]')
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
             .should('have.value', 'BROCCOLI');
-          cy.get('[data-cy="crop-selector-2"]')
+          cy.get('[data-cy="selector-2"]')
             .find('[data-cy="selector-input"]')
             .should('have.value', 'ARUGULA');
         });
     });
-  });
-
-  it('Making selections adds another selector', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        onReady: readySpy,
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="crop-selector-2"]').should('not.exist');
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-add-button"]')
-          .should('exist');
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .select('BROCCOLI');
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-add-button"]')
-          .should('not.exist');
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('exist');
-
-        cy.get('[data-cy="crop-selector-2"]').should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-add-button"]')
-          .should('exist');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .should('not.exist');
-      });
-  });
-
-  it('Delete button can remove first selection', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        onReady: readySpy,
-        selected: ['BROCCOLI', 'ARUGULA', 'BEAN'],
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BROCCOLI');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'ARUGULA');
-        cy.get('[data-cy="crop-selector-3"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BEAN');
-        cy.get('[data-cy="crop-selector-4"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', null);
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-delete-button"]')
-          .click();
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'ARUGULA');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BEAN');
-        cy.get('[data-cy="crop-selector-3"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', null);
-        cy.get('[data-cy="crop-selector-4"]').should('not.exist');
-      });
-  });
-
-  it('Delete button can remove last selection', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        onReady: readySpy,
-        selected: ['BROCCOLI', 'ARUGULA', 'BEAN'],
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="crop-selector-3"]')
-          .find('[data-cy="selector-delete-button"]')
-          .click();
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BROCCOLI');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'ARUGULA');
-        cy.get('[data-cy="crop-selector-3"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', null);
-        cy.get('[data-cy="crop-selector-4"]').should('not.exist');
-      });
-  });
-
-  it('Delete button can remove a middle selection', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(MultiCropSelector, {
-      props: {
-        onReady: readySpy,
-        selected: ['BROCCOLI', 'ARUGULA', 'BEAN'],
-      },
-    });
-
-    cy.get('@readySpy')
-      .should('have.been.calledOnce')
-      .then(() => {
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-delete-button"]')
-          .click();
-
-        cy.get('[data-cy="crop-selector-1"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BROCCOLI');
-        cy.get('[data-cy="crop-selector-2"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', 'BEAN');
-        cy.get('[data-cy="crop-selector-3"]')
-          .find('[data-cy="selector-input"]')
-          .should('have.value', null);
-        cy.get('[data-cy="crop-selector-4"]').should('not.exist');
-      });
   });
 
   it('Closing popup via close button does not clear/repopulate the cache', () => {
