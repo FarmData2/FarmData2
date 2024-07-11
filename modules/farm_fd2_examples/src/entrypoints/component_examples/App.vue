@@ -5,8 +5,15 @@
       <a href="bed_picker">BedPicker</a>: A component for picking multiple beds.
     </li>
     <li>
+      <a href="comment_box">CommentBox</a>: A component for writing a comment.
+    </li>
+    <li>
       <a href="date_selector">DateSelector</a>: A component for selecting a
       date.
+    </li>
+    <li>
+      <a href="equipment_selector">EquipmentSelector</a>: A component for
+      selecting equipment.
     </li>
     <li>
       <a href="picker_base">PickerBase</a>: Base component for picking multiple
@@ -23,6 +30,10 @@
     <li>
       <a href="soil_disturbance">SoilDisturbance</a>: A component for collecting
       data on soil disturbances.
+    </li>
+    <li>
+      <a href="text_display">TextDisplay</a>: A component for displaying a
+      labeled text string.
     </li>
     <li>
       <a href="transplanting_picklist">TransplantingPicklist</a>: A component

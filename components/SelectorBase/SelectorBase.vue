@@ -189,12 +189,6 @@ export default {
   emits: ['ready', 'update:selected', 'valid', 'add-clicked'],
   props: {
     /**
-     * The URL of the form for adding a new option.
-     *
-     * If this prop is `null`, no "+" button will appear on the select.
-     * If this prop is set then, a "+" button is displayed and will redirect to the provided URL when clicked.
-     */
-    /**
      * The text to display if the input is invalid.
      */
     invalidFeedbackText: {
