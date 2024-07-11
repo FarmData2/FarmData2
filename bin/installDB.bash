@@ -267,6 +267,8 @@ docker exec fd2_farmos drush cr
 error_check "Unable to clear the cache."
 echo "  Drupal cache cleared."
 
+echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
+
 if [ -n "$CURRENT" ]; then
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $HOME/.fd2/.${NO_COLOR}"
 else
