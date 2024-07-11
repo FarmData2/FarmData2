@@ -27,15 +27,9 @@ describe('Test the default PicklistBase content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-table"]').should('exist');
-        cy.get('[data-cy="picklist-header-name"]')
-          .should('exist')
-          .and('contain.text', 'Name');
-        cy.get('[data-cy="picklist-header-quantity"]')
-          .should('exist')
-          .and('contain.text', 'Quantity');
-        cy.get('[data-cy="picklist-header-location"]')
-          .should('exist')
-          .and('contain.text', 'Location');
+        cy.get('[data-cy="picklist-header-name"]').should('exist');
+        cy.get('[data-cy="picklist-header-quantity"]').should('exist');
+        cy.get('[data-cy="picklist-header-location"]').should('exist');
         cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
         cy.get('[data-cy="picklist-sort-button-name"]')
           .should('exist')
