@@ -33,7 +33,7 @@ describe('Transplanting: Submission tests', () => {
     cy.get('[data-cy="transplanting-location"]')
       .find('[data-cy="picker-options"]')
       .find('input')
-      .eq(3)
+      .eq(1)
       .click();
 
     cy.get('[data-cy="transplanting-bed-feet"]')
@@ -55,7 +55,8 @@ describe('Transplanting: Submission tests', () => {
     cy.get(
       '[data-cy="transplanting-soil-disturbance-accordion-title"]'
     ).click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="soil-disturbance-depth"]')
@@ -118,6 +119,9 @@ describe('Transplanting: Submission tests', () => {
       expect(formData.transplantingDate).to.equal('1950-01-02');
       expect(formData.cropName).to.equal('BROCCOLI');
       expect(formData.location).to.equal('ALF');
+      expect(formData.beds).to.have.length(2);
+      expect(formData.beds[0]).to.equal('ALF-1');
+      expect(formData.beds[1]).to.equal('ALF-2');
       expect(formData.bedFeet).to.equal(200);
       expect(formData.rowsPerBed).to.equal('5');
       expect(formData.bedWidth).to.equal(30);
@@ -142,7 +146,8 @@ describe('Transplanting: Submission tests', () => {
     cy.get(
       '[data-cy="transplanting-soil-disturbance-accordion-title"]'
     ).click();
-    cy.get('[data-cy="equipment-selector-1"]')
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', 'Tractor');
     cy.get('[data-cy="soil-disturbance-depth"]')
@@ -164,7 +169,7 @@ describe('Transplanting: Submission tests', () => {
     cy.get('[data-cy="transplanting-location"]')
       .find('[data-cy="picker-options"]')
       .find('input')
-      .eq(3)
+      .eq(1)
       .should('not.be.checked');
     cy.get('[data-cy="transplanting-bed-feet"]')
       .find('[data-cy="numeric-input"]')

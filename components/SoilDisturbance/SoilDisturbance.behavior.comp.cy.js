@@ -47,13 +47,13 @@ describe('Test the SoilDisturbance component behavior', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          cy.get('[data-cy="equipment-selector-1"]')
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
             .should('have.value', 'Tractor');
 
           wrapper.setProps({ equipment: ['Planter'] });
 
-          cy.get('[data-cy="equipment-selector-1"]')
+          cy.get('[data-cy="selector-1"]')
             .find('[data-cy="selector-input"]')
             .should('have.value', 'Planter');
         });

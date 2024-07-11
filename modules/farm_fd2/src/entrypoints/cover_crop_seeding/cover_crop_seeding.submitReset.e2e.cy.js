@@ -38,10 +38,12 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     }
 
     if (!skipCrop) {
-      cy.get('[data-cy="crop-selector-1"]')
+      cy.get('[data-cy="multi-crop-selector"]')
+        .find('[data-cy="selector-1"]')
         .find('[data-cy="selector-input"]')
         .select('ARUGULA');
-      cy.get('[data-cy="crop-selector-2"]')
+      cy.get('[data-cy="multi-crop-selector"]')
+        .find('[data-cy="selector-2"]')
         .find('[data-cy="selector-input"]')
         .select('BEAN');
     }
@@ -53,7 +55,8 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Tractor');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
@@ -77,7 +80,8 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
     ).click();
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
-      .find('[data-cy="equipment-selector-1"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('Portable Broadcaster');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
@@ -142,7 +146,8 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').click();
     cy.get('[data-cy="submit-button"]').should('be.disabled');
 
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .select('ARUGULA');
 
@@ -320,10 +325,13 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="location-selector"]').should('have.value', '');
     cy.get('[data-cy="picker-group"]').should('not.exist');
 
-    cy.get('[data-cy="crop-selector-1"]')
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-    cy.get('[data-cy="crop-selector-2"]').should('not.exist');
+    cy.get('[data-cy="multi-crop-selector"]')
+      .find('[data-cy="selector-2"]')
+      .should('not.exist');
 
     cy.get('[data-cy="winter-kill-checkbox"]').should('not.be.checked');
     cy.get('[data-cy="winter-kill-date-input"]').should('not.exist');

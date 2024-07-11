@@ -59,7 +59,7 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 4);
+          .should('have.length', 4); // Includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
         cy.get('[data-cy="selector-option-2"]').should('have.text', 'GHANA');
         cy.get('[data-cy="selector-option-3"]').should('have.text', 'JASMINE');
@@ -81,9 +81,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 9);
+          .should('have.length', 10); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-8"]').should('have.text', 'G');
+        cy.get('[data-cy="selector-option-9"]').should('have.text', 'H');
       });
   });
 
@@ -103,9 +103,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 12);
+          .should('have.length', 13); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-11"]').should('have.text', 'JASMINE');
+        cy.get('[data-cy="selector-option-12"]').should('have.text', 'JASMINE');
       });
   });
 
@@ -124,7 +124,7 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 3);
+          .should('have.length', 3); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
         cy.get('[data-cy="selector-option-2"]').should('have.text', 'GHANA');
       });
@@ -146,7 +146,7 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 4);
+          .should('have.length', 4); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'CHUAU');
         cy.get('[data-cy="selector-option-2"]').should('have.text', 'GHANA');
         cy.get('[data-cy="selector-option-3"]').should('have.text', 'JASMINE');
@@ -363,5 +363,21 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-add-button"]').should('exist');
       });
+  });
+
+  it('Location plus button exists, is visible, is enabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhousesWithBeds: true,
+        includeFields: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('[data-cy="selector-add-button"]')
+      .should('exist')
+      .should('be.visible')
+      .should('be.enabled');
   });
 });

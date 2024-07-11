@@ -70,6 +70,30 @@ farm.fd2_examples_winter_kill:
   parent: farm.fd2_examples_component_examples
   route_name: farm.fd2_examples_winter_kill.content
   weight: 100
+farm.fd2_examples_comment_box:
+  title: 'CommentBox'
+  description: 'Example of the use of the CommentBox component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_comment_box.content
+  weight: 100
+farm.fd2_examples_text_display:
+  title: 'TextDisplay'
+  description: 'Example of the use of the TextDisplay component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_text_display.content
+  weight: 100
+farm.fd2_examples_equipment_selector:
+  title: 'EquipmentSelector'
+  description: 'Example of the use of the EquipmentSelector component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_equipment_selector.content
+  weight: 100
+farm.fd2_examples_multi_selector_base:
+  title: 'MultiSelectorBase'
+  description: 'Example for use of MultiSelectorBase component.'
+  parent: farm.fd2_examples_component_examples
+  route_name: farm.fd2_examples_multi_selector_base.content
+  weight: 100
 farm.fd2_examples_location_selector:
   title: 'LocationSelector'
   description: 'Example for use of the LocationSelector component.'
