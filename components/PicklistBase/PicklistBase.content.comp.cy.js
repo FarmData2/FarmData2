@@ -210,14 +210,13 @@ describe('Test the default PicklistBase content', () => {
           .should('exist')
           .and('have.value', '1');
         cy.get('option[data-cy="picklist-quantity-0-0"]').should('exist');
-        cy.get('option[data-cy="picklist-quantity-0-1"]').should('exist');
+        cy.get('option[data-cy="picklist-quantity-0-2"]').should('exist');
 
         cy.get('select[data-cy="picklist-quantity-1"]')
           .should('exist')
           .and('have.value', '2');
         cy.get('option[data-cy="picklist-quantity-1-0"]').should('exist');
-        cy.get('option[data-cy="picklist-quantity-1-1"]').should('exist');
-        cy.get('option[data-cy="picklist-quantity-1-2"]').should('exist');
+        cy.get('option[data-cy="picklist-quantity-1-4"]').should('exist');
       });
   });
 
