@@ -60,10 +60,33 @@ import { BAccordion } from 'bootstrap-vue-next';
 /**
  * The LocationSelector component provides a UI element that allows the user to select a location.
  *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/location_selector">The LocationSelector Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/location_selector/App.vue">App.vue</a>
+ *
  * ## Usage Example
  *
  * ```html
- * TODO: Update this example to include props for BedPicker.
+ * <LocationSelector
+ *   id="location-selector"
+ *   data-cy="location-selector"
+ *   label="Location"
+ *   invalid-feedback-text="Selection cannot be empty."
+ *   v-bind:required="required"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:includeFields="includeFields"
+ *   v-bind:includeGreenhouses="includeGreenhouses"
+ *   v-bind:includeGreenhousesWithBeds="includeGreenhousesWithBeds"
+ *   v-bind:allowBedSelection="allowBedSelection"
+ *   v-bind:requireBedSelection="requireBedSelection"
+ *   v-model:selected="this.form.selected"
+ *   v-model:pickedBeds="this.form.pickedBeds"
+ *   v-on:update:beds="(beds) => (this.form.pickedBeds = beds)"
+ *   v-on:valid="(valid) => (validity.selected = valid)"
+ *   v-on:ready="createdCount++"
+ * />
  * ```
  *
  * ## `data-cy` Attributes

@@ -14,8 +14,8 @@
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
-    v-bind:units="useUnits ? 'Count' : null"
-    v-bind:quantityAttribute="useUnits ? 'quantity' : null"
+    v-bind:units="units"
+    v-bind:quantityAttribute="quantityAttribute"
     v-bind:rows="rows"
     v-bind:showAllButton="showAllButton"
     v-bind:showInfoIcons="showInfoIcons"
@@ -23,6 +23,7 @@
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
     v-on:ready="createdCount++"
+    v-bind:use-units="useUnits"
   />
   <hr />
 
@@ -128,7 +129,7 @@
                   stuff: 'Stuff here4',
                   name: 'name5',
                   value: 'info 5',
-                  quantity: 5000,
+                  quantity: 5,
                 });
               } else {
                 this.rows.splice(4, 1);
@@ -198,32 +199,32 @@ export default {
       },
       rows: [
         {
-          c1: 'R0-C1',
-          c2: 'R0-C2',
-          c3: 'R0-C3',
-          stuff: 'Stuff here1',
+          c1: 'B',
+          c2: 5,
+          c3: 'Y',
+          stuff: 'B, 5, Y',
           quantity: 1,
         },
         {
-          c1: 'R1-C1',
-          c2: 'R1-C2',
-          c3: 'R1-C3',
-          stuff: 'Stuff here2',
+          c1: 'A',
+          c2: 2,
+          c3: 'X',
+          stuff: 'A, 2, X',
           quantity: 2,
         },
         {
-          c1: 'R2-C1',
-          c2: 'R2-C2',
-          c3: 'R2-C3',
-          stuff: 'Stuff here3',
+          c1: 'D',
+          c2: 7,
+          c3: 'Z',
+          stuff: 'D, 7, Z',
           quantity: 3,
         },
         {
-          c1: 'R3-C1',
-          c2: 'R3-C2',
-          c3: 'R3-C3 - A longer value in this cell to show what happens.',
-          stuff: 'Stuff here4',
-          name: 'name1',
+          c1: 'A',
+          c2: 1,
+          c3: 25,
+          stuff: 'A, 1, 25',
+          name: 'C, 1, 25',
           value: '8',
           text: 'Lots of values here as an example.',
           text2: '2',
@@ -243,7 +244,9 @@ export default {
         },
       ],
       required: true,
-      useUnits: false,
+      useUnits: true, // Ensure useUnits is set to true to enable dropdown
+      units: 'Trays', // Added units variable to be used directly
+      quantityAttribute: 'quantity', // Added quantityAttribute variable to be used directly
       showAllButton: true,
       showInfoIcons: true,
       form: {
@@ -263,6 +266,17 @@ export default {
   },
   created() {
     this.createdCount++;
+  },
+  watch: {
+    useUnits(val) {
+      if (!val) {
+        this.units = null;
+        this.quantityAttribute = null;
+      } else {
+        this.units = 'Trays';
+        this.quantityAttribute = 'quantity';
+      }
+    },
   },
 };
 </script>
