@@ -19,7 +19,7 @@ function usage {
   echo ""
   echo "  If --e2e is specified then exactly one of the following must be included:"
   echo "    -f|--fd2               : Run all of the e2e tests in the fd2 module."
-  echo "    -x|--examples          : RUn all of the e2e tests in the examples module."
+  echo "    -x|--examples          : Run all of the e2e tests in the examples module."
   echo "    -s|--school            : Run all of the e2e tests in the fd2 school module."
   echo ""
   echo "  If --e2e is specified then exactly one of the following must be included:"
@@ -102,9 +102,6 @@ while true; do
     ;;
   -c | --comp)
     COMPONENT_TESTS=1
-    E2E_TESTS=1
-    TEST_FD2=1
-    LIVE_FARMOS_SERVER=1
     shift 2
     ;;
   -u | --unit)
@@ -166,9 +163,8 @@ while true; do
   esac
 done
 
-# Make sure only one of -e|--e2e or -c|--comp or -u|--unit is specified,
-if ! { [ "$E2E_TESTS" ] && [ "$COMPONENT_TESTS" ] && ! [ "$UNIT_TESTS" ]; } &&
-  ! xor "$E2E_TESTS" "$COMPONENT_TESTS" "$UNIT_TESTS"; then
+# Make sure only one of -e|--e2e or -c|--comp or -u|--unit is specified.
+if ! xor "$E2E_TESTS" "$COMPONENT_TESTS" "$UNIT_TESTS"; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Exactly one of -e|--e2e, -c|--comp or -u|--unit must be included."
   echo "Use test.bash --help for usage information"
   exit 255
@@ -200,6 +196,13 @@ if [ -n "$UNIT_TESTS" ]; then
     echo "Use test.bash --help for usage information"
     exit 255
   fi
+fi
+
+# Check SPEC_GLOB condition before setting additional variables
+if [ -n "$COMPONENT_TESTS" ] && { [ -z "$SPEC_GLOB" ] || [[ "$SPEC_GLOB" != /components/**/*.comp.cy.js ]]; }; then
+  E2E_TESTS=1
+  TEST_FD2=1
+  LIVE_FARMOS_SERVER=1
 fi
 
 # Setup to run e2e or component or unit tests.
@@ -348,7 +351,7 @@ if [ -n "$BASE_URL" ]; then
 fi
 
 # Run the comp and associated e2e tests...
-if [ -n "$E2E_TESTS" ] && [ -n "$COMPONENT_TESTS" ]; then
+if [ -n "$E2E_TESTS" ] && [ -n "$COMPONENT_TESTS" ] && { [ -z "$SPEC_GLOB" ] || [[ "$SPEC_GLOB" != /components/**/*.comp.cy.js ]]; }; then
   safe_cd modules/farm_fd2
   # Running the e2e associated with the components
   export CYPRESS_SPEC_PATTERN='/home/fd2dev/FarmData2/components/*/*.e2e.cy.js'
