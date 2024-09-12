@@ -28,22 +28,22 @@ PR_BRANCH=$(echo "$PR_DATA" | jq -r '.headRefName')
 PR_LOCATION="$PR_OWNER/$PR_REPO/$PR_BRANCH"
 echo "    Found PR $1 at $PR_LOCATION"
 
-BRANCH_EXISTS=$(git branch -a | grep "$PR_BRANCH")
-if [[ "$BRANCH_EXISTS" == *"$PR_BRANCH"* ]]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} The branch $PR_BRANCH already exists."
+BRANCH_EXISTS=$(git branch -a | grep "pr-$1-$PR_BRANCH")
+if [[ "$BRANCH_EXISTS" == *"pr-$1-$PR_BRANCH"* ]]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} The branch pr-$1-$PR_BRANCH already exists."
   echo "Delete that branch."
   echo "Then run this script again."
   exit 1
 fi
 
-echo "  Fetching $PR_LOCATION..."
-git fetch --quiet "https://github.com/$PR_OWNER/$PR_REPO" "$PR_BRANCH:$PR_BRANCH"
-error_check "Unable to fetch $PR_LOCATION."
+echo "  Fetching $PR_LOCATION as PR-$1-$PR_BRANCH..."
+git fetch --quiet "https://github.com/$PR_OWNER/$PR_REPO" "$PR_BRANCH:pr-$1-$PR_BRANCH"
+error_check "Unable to fetch $PR_LOCATION as pr-$1-$PR_BRANCH."
 echo "  Fetched."
 
-echo "  Switching to branch $PR_BRANCH..."
-git switch --quiet "$PR_BRANCH"
-error_check "Unable to switch to branch $PR_BRANCH."
+echo "  Switching to branch pr-$1-$PR_BRANCH..."
+git switch --quiet "pr-$1-$PR_BRANCH"
+error_check "Unable to switch to branch pr-$1-$PR_BRANCH."
 echo "  Switched."
 
 echo "  Building the FarmData2 module..."

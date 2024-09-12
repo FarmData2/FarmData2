@@ -29,15 +29,15 @@ echo "    Found PR $1 at $PR_LOCATION"
 # Check that we are on the branch for the PR created by fetchPR.bash
 CUR_BRANCH=$(git branch --show-current)
 error_check "Unable to determine current branch."
-if [ "$CUR_BRANCH" != "$PR_BRANCH" ]; then
+if [ "$CUR_BRANCH" != "pr-$1-$PR_BRANCH" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Must be on the PR branch to push a PR."
-  echo "Switch to the $PR_BRANCH branch."
+  echo "Switch to the pr-$1-$PR_BRANCH branch."
   echo "Then run this script again."
   exit 1
 fi
 
 echo "  Pushing $PR_LOCATION..."
-git push --quiet "https://github.com/$PR_OWNER/$PR_REPO" "$PR_BRANCH:$PR_BRANCH"
+git push --quiet "https://github.com/$PR_OWNER/$PR_REPO" "pr-$1-$PR_BRANCH:$PR_BRANCH"
 error_check "Unable to push $PR_LOCATION."
 echo "  Pushed."
 
