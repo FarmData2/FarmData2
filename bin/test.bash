@@ -19,7 +19,7 @@ function usage {
   echo ""
   echo "  If --e2e is specified then exactly one of the following must be included:"
   echo "    -f|--fd2               : Run all of the e2e tests in the fd2 module."
-  echo "    -x|--examples          : RUn all of the e2e tests in the examples module."
+  echo "    -x|--examples          : Run all of the e2e tests in the examples module."
   echo "    -s|--school            : Run all of the e2e tests in the fd2 school module."
   echo ""
   echo "  If --e2e is specified then exactly one of the following must be included:"
@@ -126,6 +126,7 @@ while true; do
     ;;
   -b | --lib)
     TEST_LIB=1
+    UNIT_TESTS=1
     shift 2
     ;;
   -g | --glob)
@@ -197,9 +198,27 @@ if [ -n "$UNIT_TESTS" ]; then
   fi
 fi
 
+# Check SPEC_GLOB condition before setting additional variables
+if [ -n "$COMPONENT_TESTS" ] && { [ -z "$SPEC_GLOB" ] || [[ "$SPEC_GLOB" != /components/**/*.comp.cy.js ]]; }; then
+  E2E_TESTS=1
+  TEST_FD2=1
+  LIVE_FARMOS_SERVER=1
+fi
+
 # Setup to run e2e or component or unit tests.
 CYPRESS_ENV="none=none"
-if [ -n "$E2E_TESTS" ]; then
+if [ -n "$E2E_TESTS" ] && [ -n "$COMPONENT_TESTS" ]; then
+  # e2e testing
+  CYPRESS_TEST_TYPE="e2e"
+  echo "  Testing the farm_fd2 module."
+  PROJECT_DIR="modules/farm_fd2"
+  CYPRESS_ENV="module=./$PROJECT_DIR"
+  CYPRESS_CONFIG_FILE="../../.cypress.module.config.js"
+  URL_PREFIX="fd2"
+  # comp testing
+  COMP_CYPRESS_TEST_TYPE="component"
+  COMP_CYPRESS_ENV="none=none"
+elif [ -n "$E2E_TESTS" ]; then
   echo "End-to-end testing requested."
   CYPRESS_TEST_TYPE="e2e"
   if [ -n "$TEST_FD2" ]; then
@@ -331,17 +350,39 @@ if [ -n "$BASE_URL" ]; then
   export CYPRESS_BASE_URL="$BASE_URL"
 fi
 
-# Run the tests...
-safe_cd $PROJECT_DIR
-
-if [ -n "$CYPRESS_GUI" ]; then
-  echo "Running test in the Cypress GUI."
-  npx cypress open --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
-  EXIT_CODE=$?
-else
-  echo "Running tests headless."
+# Run the comp and associated e2e tests...
+if [ -n "$E2E_TESTS" ] && [ -n "$COMPONENT_TESTS" ] && { [ -z "$SPEC_GLOB" ] || [[ "$SPEC_GLOB" != /components/**/*.comp.cy.js ]]; }; then
+  safe_cd modules/farm_fd2
+  # Running the e2e associated with the components
+  export CYPRESS_SPEC_PATTERN='/home/fd2dev/FarmData2/components/*/*.e2e.cy.js'
+  echo "Running components e2e tests headless."
   npx cypress run --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
-  EXIT_CODE=$?
+  E2E_EXIT_CODE=$?
+  # Run components tests
+  export CYPRESS_SPEC_PATTERN='/home/fd2dev/FarmData2/components/*/*.comp.cy.js'
+  echo "Running comp tests headless."
+  npx cypress run --env "$COMP_CYPRESS_ENV" --"$COMP_CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
+  COMP_EXIT_CODE=$?
+  # Exit with the first non-zero exit code, if any
+  if [ $E2E_EXIT_CODE -ne 0 ]; then
+    exit $E2E_EXIT_CODE
+  elif [ $COMP_EXIT_CODE -ne 0 ]; then
+    exit $COMP_EXIT_CODE
+  else
+    exit 0
+  fi
+# Run all other tests...
+else
+  safe_cd $PROJECT_DIR
+  if [ -n "$CYPRESS_GUI" ]; then
+    echo "Running test in the Cypress GUI."
+    npx cypress open --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE" > /dev/null
+    EXIT_CODE=$?
+  else
+    echo "Running tests headless."
+    npx cypress run --env "$CYPRESS_ENV" --"$CYPRESS_TEST_TYPE" --config-file "$CYPRESS_CONFIG_FILE"
+    EXIT_CODE=$?
+  fi
 fi
 
 echo "Tests complete."
