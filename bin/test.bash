@@ -11,6 +11,7 @@ function usage {
   echo "    -e|--e2e  : Run end-to-end tests."
   echo "    -c|--comp : Run component tests."
   echo "    -u|--unit : Run unit tests."
+  echo "    -b|--lib  : Run all unit tests in the library directory."
   echo ""
   echo "  -i|--gui  : Include to run tests within the Cypress GUI test runner."
   echo "              NOTE: if -i|--gui is used with -p|--prev or -l|--live then"
@@ -126,6 +127,7 @@ while true; do
     ;;
   -b | --lib)
     TEST_LIB=1
+    UNIT_TESTS=1
     shift 2
     ;;
   -g | --glob)
