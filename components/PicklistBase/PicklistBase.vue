@@ -311,8 +311,8 @@ export default {
      * The length of this array must be equal to the length of the array provided by the `rows` prop.
      */
     picked: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => new Map(),
     },
     /**
      * The name of the attribute that will be used to generate the list of selectable quantities in the leftmost column if the `units` prop is not null.
@@ -384,6 +384,9 @@ export default {
     };
   },
   computed: {
+    pickedAsArray() {
+      return Array.from(this.picked.entries());
+    },
     isValid() {
       if (this.required) {
         for (let i = 0; i < this.pickedRows.length; i++) {
@@ -443,6 +446,21 @@ export default {
     },
   },
   methods: {
+    syncPickedRows(newPickedEntries) {
+      // Ensure we are mapping the original row indices to pickedRows
+      const newPickedRows = this.sortedRows.map((row) => {
+        const originalIndex = this.rows.indexOf(row);
+        const pickedEntry = newPickedEntries.find(
+          ([index]) => index === originalIndex
+        );
+        return pickedEntry ? pickedEntry[1].quantity : 0;
+      });
+
+      // Only update if there's a mismatch to avoid loops
+      if (JSON.stringify(newPickedRows) !== JSON.stringify(this.pickedRows)) {
+        this.pickedRows = newPickedRows;
+      }
+    },
     initializeQuantityOptionsMap(rows) {
       const map = new Map();
       rows.forEach((row, index) => {
@@ -576,20 +594,29 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
-    picked: {
-      handler() {
-        this.pickedRows = this.picked;
+    pickedAsArray: {
+      handler(newPickedEntries) {
+        this.syncPickedRows(newPickedEntries);
       },
-      deep: true,
+      deep: true, // Ensure the watcher goes deep into the structure
     },
     pickedRows: {
       handler() {
-        /**
-         * There has been a change to the picked rows.
-         *
-         * @property {Array} pickedRows Index `i` indicates the state of row `i`. Row `i` will be `1` or a non-zero number (if using a `quantityAttribute`) if selected.  Row `i` will be `0` if not selected.
-         */
-        this.$emit('update:picked', this.pickedRows);
+        const pickedMap = new Map();
+        for (let i = 0; i < this.pickedRows.length; i++) {
+          if (this.pickedRows[i] > 0) {
+            // Only add non-zero selections
+            const row = this.sortedRows[i];
+            const originalIndex = this.rows.indexOf(row);
+            if (originalIndex !== -1) {
+              pickedMap.set(originalIndex, {
+                row,
+                quantity: this.pickedRows[i],
+              }); // Store the quantity with the row
+            }
+          }
+        }
+        this.$emit('update:picked', pickedMap);
       },
       deep: true,
     },
@@ -597,11 +624,20 @@ export default {
       handler() {
         // No good way to really know what has changed so deselect everything.
         // This should be an unusual event so hopefully it isn't an issue.
-        this.pickedRows = new Array(this.rows.length).fill(0);
         this.showOverlay = null;
         this.sortedRows = [...this.rows]; // Update sortedRows when rows prop changes
         this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
         this.applySort(); // Apply the sort when rows change
+
+        // Rebuild pickedRows from picked Map
+        this.pickedRows = new Array(this.sortedRows.length).fill(0);
+        for (let i = 0; i < this.sortedRows.length; i++) {
+          const row = this.sortedRows[i];
+          const originalIndex = this.rows.indexOf(row);
+          if (this.picked.has(originalIndex)) {
+            this.pickedRows[i] = this.picked.get(originalIndex).quantity;
+          }
+        }
       },
       deep: true,
     },
@@ -615,7 +651,16 @@ export default {
     this.sortedRows = [...this.rows]; // Initialize sortedRows with the rows prop
     this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
 
-    if (this.pickedRows.length === 0) {
+    if (this.picked instanceof Map && this.picked.size > 0) {
+      this.pickedRows = new Array(this.sortedRows.length).fill(0);
+      for (let i = 0; i < this.sortedRows.length; i++) {
+        const row = this.sortedRows[i];
+        const originalIndex = this.rows.indexOf(row);
+        if (this.picked.has(originalIndex)) {
+          this.pickedRows[i] = this.picked.get(originalIndex).quantity; // or set to the quantity if needed
+        }
+      }
+    } else {
       this.pickedRows = new Array(this.rows.length).fill(0);
     }
 
