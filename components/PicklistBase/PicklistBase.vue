@@ -235,18 +235,18 @@ import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
  *  id="picklist"
  *  data-cy="picklist"
  *  v-bind:required="required"
- *  v-bind:invalidFeedbackText="At least one row must be selected."
+ *  v-bind:invalidFeedbackText="'At least one row must be selected.'"
  *  v-bind:showValidityStyling="validity.showStyling"
  *  v-bind:columns="columns"
  *  v-bind:labels="labels"
- *  v-bind:units="useUnits ? 'Count' : null"
- *  v-bind:quantityAttribute="useUnits ? 'quantity' : null"
+ *  v-bind:units="units"
+ *  v-bind:quantityAttribute="quantityAttribute"
  *  v-bind:rows="rows"
  *  v-bind:showAllButton="showAllButton"
  *  v-bind:showInfoIcons="showInfoIcons"
  *  v-bind:picked="form.picked"
  *  v-on:valid="(valid) => (validity.picked = valid)"
- *  v-on:update:picked="(picked) => (form.picked = picked)"
+ *  v-on:update:picked="form.picked = $event"
  *  v-on:ready="createdCount++"
  * />
  * ```
@@ -304,11 +304,11 @@ export default {
       required: true,
     },
     /**
-     * An array of values indicating the rows/quantities that have been picked in the table.
-     * The rows are indexed from 0.
-     * A non-zero value indicates that the row is picked and the quantity if `units` prop is set.
-     * A zero value indicates that the row is not picked.
-     * The length of this array must be equal to the length of the array provided by the `rows` prop.
+     * A Map indicating the rows/quantities that have been picked in the table.
+     * The keys of the Map are the original row indices from the `rows` array.
+     * The values of the Map are objects containing information about the picked row, including the quantity if the `units` prop is set.
+     * If the row is picked, the corresponding entry in the Map will have a `quantity` greater than 0.
+     * The Map can be empty if no rows are picked.
      */
     picked: {
       type: Object,
@@ -573,9 +573,6 @@ export default {
       // Update pickedRows and quantityOptionsMap to reflect the new order
       this.pickedRows = newPickedRows;
       this.quantityOptionsMap = newQuantityOptionsMap;
-
-      // Notify the parent component if using custom event emitters
-      this.$emit('update:picked', this.pickedRows);
     },
     applySort() {
       if (this.sortColumn && this.sortOrder !== 'none') {

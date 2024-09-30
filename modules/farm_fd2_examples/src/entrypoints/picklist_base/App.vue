@@ -10,7 +10,7 @@
     id="picklist"
     data-cy="picklist"
     v-bind:required="required"
-    invalidFeedbackText="At least one row must be selected."
+    v-bind:invalidFeedbackText="'At least one row must be selected.'"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
@@ -23,7 +23,6 @@
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
     v-on:ready="createdCount++"
-    v-bind:use-units="useUnits"
   />
   <hr />
 
@@ -248,8 +247,8 @@ export default {
         },
       ],
       required: true,
-      useUnits: true, // Ensure useUnits is set to true to enable dropdown
-      units: 'Trays', // Added units variable to be used directly
+      useUnits: true,
+      units: 'Trays',
       quantityAttribute: 'quantity', // Added quantityAttribute variable to be used directly
       showAllButton: true,
       showInfoIcons: true,

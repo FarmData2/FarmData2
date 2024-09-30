@@ -70,7 +70,22 @@
     <tbody>
       <tr>
         <td>update:picked</td>
-        <td>{{ form.picked }}</td>
+        <td>
+          <div v-if="form.picked.size === 0">No trays picked.</div>
+          <ul
+            v-else
+            style="list-style-type: disc; padding-left: 20px"
+          >
+            <li
+              v-for="[key, value] in form.picked.entries()"
+              :key="key"
+              style="margin-bottom: 10px"
+            >
+              {{ JSON.stringify(value) }}
+              <hr style="margin: 10px 0" />
+            </li>
+          </ul>
+        </td>
       </tr>
       <tr>
         <td>valid</td>
@@ -100,7 +115,7 @@ export default {
       createdCount: 0,
       required: true,
       form: {
-        picked: [],
+        picked: new Map(),
       },
       validity: {
         show: false,

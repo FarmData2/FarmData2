@@ -148,7 +148,7 @@ export default {
       },
       form: {
         cropFilter: this.crop,
-        pickedRows: [],
+        pickedRows: new Map(),
       },
       validity: {
         cropFilter: false,
@@ -175,6 +175,7 @@ export default {
       });
     },
     cropFilterChanged(cropName) {
+      this.form.pickedRows.clear();
       this.form.cropFilter = cropName;
       if (cropName) {
         farmosUtil
@@ -209,14 +210,12 @@ export default {
     },
     handlePickedUpdate(picked) {
       const emittedRows = [];
-      for (let i = 0; i < picked.length; i++) {
-        if (picked[i] != 0) {
-          const row = {
-            trays: picked[i],
-            data: { ...this.seedlingList[i] },
-          };
-          emittedRows.push(row);
-        }
+      for (const [index, { quantity }] of picked.entries()) {
+        const row = {
+          trays: quantity,
+          data: { ...this.seedlingList[index] },
+        };
+        emittedRows.push(row);
       }
 
       /**

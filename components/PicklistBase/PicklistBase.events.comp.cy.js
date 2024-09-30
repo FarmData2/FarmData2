@@ -22,7 +22,7 @@ describe('Test the PicklistBase component events', () => {
         rows: [],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [],
+        picked: new Map(),
         units: 'Trays',
         quantityAttribute: 'quantity',
         showValidityStyling: true,
@@ -38,7 +38,7 @@ describe('Test the PicklistBase component events', () => {
       });
   });
 
-  it('Emits "update:picked" and "valid" when a row is picked', () => {
+  it('Emits "update:picked" and "valid" when a row is picked (checkbox)', () => {
     const readySpy = cy.spy().as('readySpy');
     const updatePickedSpy = cy.spy().as('updatePickedSpy');
     const validSpy = cy.spy().as('validSpy');
@@ -54,8 +54,11 @@ describe('Test the PicklistBase component events', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [1, 0],
-        units: null,
+        picked: new Map([
+          [0, { quantity: 1 }],
+          [1, { quantity: 0 }],
+        ]),
+        units: null, // No units (checkbox mode)
         quantityAttribute: 'quantity',
         showValidityStyling: true,
         required: true,
@@ -66,12 +69,18 @@ describe('Test the PicklistBase component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-checkbox-1"]').check();
-        cy.get('@updatePickedSpy').should('have.been.calledWith', [1, 1]);
+        cy.get('@updatePickedSpy').should(
+          'have.been.calledWith',
+          new Map([
+            [0, { quantity: 1 }],
+            [1, { quantity: 1 }],
+          ])
+        );
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
-  it('Emits "update:picked" and "valid" when all button is clicked', () => {
+  it('Emits "update:picked" and "valid" when the all button is clicked', () => {
     const readySpy = cy.spy().as('readySpy');
     const updatePickedSpy = cy.spy().as('updatePickedSpy');
     const validSpy = cy.spy().as('validSpy');
@@ -87,8 +96,8 @@ describe('Test the PicklistBase component events', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
-        units: null,
+        picked: new Map(),
+        units: null, // No units (checkbox mode)
         quantityAttribute: 'quantity',
         showValidityStyling: true,
         required: true,
@@ -99,12 +108,18 @@ describe('Test the PicklistBase component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-all-button"]').click();
-        cy.get('@updatePickedSpy').should('have.been.calledWith', [1, 1]);
+        cy.get('@updatePickedSpy').should(
+          'have.been.calledWith',
+          new Map([
+            [0, { quantity: 1 }],
+            [1, { quantity: 1 }],
+          ])
+        );
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
 
-  it('Emits "update:picked" and "valid" when units button is clicked', () => {
+  it('Emits "update:picked" and "valid" when the units button is clicked', () => {
     const readySpy = cy.spy().as('readySpy');
     const updatePickedSpy = cy.spy().as('updatePickedSpy');
     const validSpy = cy.spy().as('validSpy');
@@ -120,8 +135,8 @@ describe('Test the PicklistBase component events', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
-        units: 'Trays',
+        picked: new Map(),
+        units: 'Trays', // Use units (BFormSelect mode)
         quantityAttribute: 'quantity',
         showValidityStyling: true,
         required: true,
@@ -132,7 +147,13 @@ describe('Test the PicklistBase component events', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="picklist-units-button"]').click();
-        cy.get('@updatePickedSpy').should('have.been.calledWith', [1, 2]);
+        cy.get('@updatePickedSpy').should(
+          'have.been.calledWith',
+          new Map([
+            [0, { quantity: 1 }],
+            [1, { quantity: 2 }],
+          ])
+        );
         cy.get('@validSpy').should('have.been.calledWith', true);
       });
   });
@@ -150,7 +171,7 @@ describe('Test the PicklistBase component events', () => {
         rows: [{ name: 'Item A', quantity: 1, location: 'GHANA' }],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0],
+        picked: new Map([[0, { quantity: 0 }]]),
         units: 'Trays',
         quantityAttribute: 'quantity',
         showValidityStyling: true,
@@ -170,10 +191,19 @@ describe('Test the PicklistBase component events', () => {
               { name: 'Item A', quantity: 1, location: 'GHANA' },
               { name: 'Item B', quantity: 2, location: 'GHANA' },
             ],
-            picked: [1, 1],
+            picked: new Map([
+              [0, { quantity: 1 }],
+              [1, { quantity: 2 }],
+            ]),
           })
           .then(() => {
-            cy.get('@updatePickedSpy').should('have.been.calledWith', [1, 1]);
+            cy.get('@updatePickedSpy').should(
+              'have.been.calledWith',
+              new Map([
+                [0, { quantity: 1 }],
+                [1, { quantity: 2 }],
+              ])
+            );
             cy.get('@validSpy').should('have.been.calledWith', true);
           });
       });
