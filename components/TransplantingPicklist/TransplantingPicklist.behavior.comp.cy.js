@@ -155,7 +155,7 @@ describe('Test the TransplantingPicklist component behavior', () => {
     cy.mount(TransplantingPicklist, {
       props: {
         onReady: readySpy,
-        'onUpdate:picked': updateSpy,
+        'onUpdate:picked': updateSpy, //maybe it should be 'onUpdate:crop'
       },
     }).then(({ wrapper }) => {
       cy.get('@readySpy')

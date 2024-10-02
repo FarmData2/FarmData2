@@ -15,7 +15,7 @@ describe('Submission using the transplanting lib.', () => {
 
   let form = {
     cropName: 'BROCCOLI',
-    picked: [],
+    picked: new Map(),
     transplantingDate: '1950-01-02',
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
@@ -70,10 +70,10 @@ describe('Submission using the transplanting lib.', () => {
         });
       })
       .then((res) => {
-        form.picked[0] = {
+        form.picked.set(0, {
           trays: traySeedingForm.trays,
           data: res[res.length - 1],
-        };
+        });
         return cy.wrap(lib.submitForm(form), { timeout: 10000 });
       })
       .then((res) => {
@@ -92,16 +92,16 @@ describe('Submission using the transplanting lib.', () => {
   });
 
   it('Check the parents', () => {
-    expect(result.parents[0].id).to.equal(form.picked[0].data.asset_uuid);
+    expect(result.parents[0].id).to.equal(form.picked.get(0).data.asset_uuid);
     expect(result.parents[0].type).to.equal('asset--plant');
     expect(result.parents[0].attributes.name).to.equal(
-      form.picked[0].data.date + '_' + form.picked[0].data.crop
+      form.picked.get(0).data.date + '_' + form.picked.get(0).data.crop
     );
   });
 
   it('Check the tray inventory quantity--standard assets', () => {
     expect(result.trayInventoryQuantities[0].attributes.value.decimal).to.equal(
-      form.picked[0].trays
+      form.picked.get(0).trays
     );
     expect(result.trayInventoryQuantities[0].type).to.equal(
       'quantity--standard'
@@ -120,7 +120,7 @@ describe('Submission using the transplanting lib.', () => {
     ).to.equal('decrement');
     expect(
       result.trayInventoryQuantities[0].relationships.inventory_asset.id
-    ).to.equal(form.picked[0].data.asset_uuid);
+    ).to.equal(form.picked.get(0).data.asset_uuid);
   });
 
   it('Check the asset--plant', () => {
@@ -144,7 +144,7 @@ describe('Submission using the transplanting lib.', () => {
     ).to.equal(cropToTerm.get(form.cropName).id);
 
     expect(result.transplantingPlantAsset.relationships.parent[0].id).to.equal(
-      form.picked[0].data.asset_uuid
+      form.picked.get(0).data.asset_uuid
     );
   });
 
@@ -241,7 +241,7 @@ describe('Submission using the transplanting lib.', () => {
 
   it('Check the log--activity', () => {
     expect(result.transplantingLog.attributes.name).to.equal(
-      form.transplantingDate + '_xp_' + form.picked[0].data.crop
+      form.transplantingDate + '_xp_' + form.picked.get(0).data.crop
     );
     expect(result.transplantingLog.attributes.timestamp).to.contain(
       form.transplantingDate
