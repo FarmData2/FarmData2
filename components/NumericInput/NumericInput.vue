@@ -63,6 +63,7 @@
           v-bind:state="validityStyling"
           v-bind:required="required"
           v-bind:formatter="formatter"
+          @update:model-value="valueChanged"
         />
         <BInputGroupAppend>
           <BButton
@@ -236,7 +237,10 @@ export default {
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
-      defaultValueChanged: false,
+      /*
+       * Needed so when initial value is changed the updated value can be replaced or updated
+       */
+      initialValueChanged: false,
 
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
@@ -300,18 +304,14 @@ export default {
   methods: {
     adjustValue(amount) {
       if (this.isValid) {
-        if (this.defaultValueChanged) {
-          this.valueAsString = this.formatter(
-            parseFloat(this.valueAsString) + amount
-          );
-        } else if (!this.defaultValueChanged && amount > this.value) {
+        if (!this.initialValueChanged && amount > this.value) {
           this.valueAsString = this.formatter(amount);
-          this.defaultValueChanged = true;
+          this.initialValueChanged = true;
         } else {
           this.valueAsString = this.formatter(
             parseFloat(this.valueAsString) + amount
           );
-          this.defaultValueChanged = true;
+          this.initialValueChanged = true;
         }
       } else {
         this.valueAsString = this.formatter(this.minValue);
@@ -342,6 +342,12 @@ export default {
       }, 5);
 
       return formattedVal;
+    },
+    valueChanged() {
+      /*
+       * Update the initialValueChanged data when the user manually enters a value.
+       */
+      this.initialValueChanged = true;
     },
   },
   watch: {
