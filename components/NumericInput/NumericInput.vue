@@ -21,7 +21,10 @@
           <BButton
             data-cy="numeric-decrease-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[2])"
             >&#x27EA;</BButton
@@ -29,7 +32,10 @@
           <BButton
             data-cy="numeric-decrease-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[1])"
             >&#x27E8;</BButton
@@ -37,7 +43,10 @@
           <BButton
             data-cy="numeric-decrease-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[0])"
             >&#x2039;</BButton
@@ -227,6 +236,7 @@ export default {
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
+      defaultValueChanged: false,
 
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
@@ -252,6 +262,15 @@ export default {
     },
     isEmpty() {
       return this.valueAsString == null || this.valueAsString.length == 0;
+    },
+    disableSmallDec() {
+      return this.value - this.incDecValues[0] <= this.minValue;
+    },
+    disableMediumDec() {
+      return this.value - this.incDecValues[1] <= this.minValue;
+    },
+    disableLargeDec() {
+      return this.value - this.incDecValues[2] <= this.minValue;
     },
     isValid() {
       if (!this.required) {
@@ -281,9 +300,19 @@ export default {
   methods: {
     adjustValue(amount) {
       if (this.isValid) {
-        this.valueAsString = this.formatter(
-          parseFloat(this.valueAsString) + amount
-        );
+        if (this.defaultValueChanged) {
+          this.valueAsString = this.formatter(
+            parseFloat(this.valueAsString) + amount
+          );
+        } else if (!this.defaultValueChanged && amount > this.value) {
+          this.valueAsString = this.formatter(amount);
+          this.defaultValueChanged = true;
+        } else {
+          this.valueAsString = this.formatter(
+            parseFloat(this.valueAsString) + amount
+          );
+          this.defaultValueChanged = true;
+        }
       } else {
         this.valueAsString = this.formatter(this.minValue);
       }
