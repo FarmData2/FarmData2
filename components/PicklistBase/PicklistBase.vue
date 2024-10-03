@@ -235,7 +235,7 @@ import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
  *  id="picklist"
  *  data-cy="picklist"
  *  v-bind:required="required"
- *  v-bind:invalidFeedbackText="'At least one row must be selected.'"
+ *  invalidFeedbackText="At least one row must be selected."
  *  v-bind:showValidityStyling="validity.showStyling"
  *  v-bind:columns="columns"
  *  v-bind:labels="labels"
@@ -305,10 +305,11 @@ export default {
     },
     /**
      * A Map indicating the rows/quantities that have been picked in the table.
-     * The keys of the Map are the original row indices from the `rows` array.
-     * The values of the Map are objects containing information about the picked row, including the quantity if the `units` prop is set.
-     * If the row is picked, the corresponding entry in the Map will have a `quantity` greater than 0.
-     * The Map can be empty if no rows are picked.
+     * The keys of the Map are row indices from the `rows` array.
+     * The values of the Map are objects containing information about the picked row, including the picked quantity if the `units` prop is set.
+     * If the row is picked, the Map will have an entry with the row number as the key and the value will have a picked attribute
+     * containing a 1 if the units prop is not set, or the value picked if the units prop is set.
+     * The Map will be empty if no rows are picked
      */
     picked: {
       type: Object,
@@ -453,7 +454,7 @@ export default {
         const pickedEntry = newPickedEntries.find(
           ([index]) => index === originalIndex
         );
-        return pickedEntry ? pickedEntry[1].quantity : 0;
+        return pickedEntry ? pickedEntry[1].picked : 0;
       });
 
       // Only update if there's a mismatch to avoid loops
@@ -608,11 +609,18 @@ export default {
             if (originalIndex !== -1) {
               pickedMap.set(originalIndex, {
                 row,
-                quantity: this.pickedRows[i],
+                picked: this.pickedRows[i],
               }); // Store the quantity with the row
             }
           }
         }
+        /**
+         * Emitted when the pickedRows array has been updated.
+         *
+         * @event update:picked
+         * @property {Map<number, Object>} picked - A Map where the keys are the indices of the picked rows in the `rows` prop, and the values are objects representing the picked rows and their data.
+         *
+         */
         this.$emit('update:picked', pickedMap);
       },
       deep: true,
@@ -632,7 +640,7 @@ export default {
           const row = this.sortedRows[i];
           const originalIndex = this.rows.indexOf(row);
           if (this.picked.has(originalIndex)) {
-            this.pickedRows[i] = this.picked.get(originalIndex).quantity;
+            this.pickedRows[i] = this.picked.get(originalIndex).picked;
           }
         }
       },
@@ -654,7 +662,7 @@ export default {
         const row = this.sortedRows[i];
         const originalIndex = this.rows.indexOf(row);
         if (this.picked.has(originalIndex)) {
-          this.pickedRows[i] = this.picked.get(originalIndex).quantity; // or set to the quantity if needed
+          this.pickedRows[i] = this.picked.get(originalIndex).picked; // or set to the quantity if needed
         }
       }
     } else {

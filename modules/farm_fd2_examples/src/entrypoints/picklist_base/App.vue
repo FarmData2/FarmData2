@@ -10,7 +10,7 @@
     id="picklist"
     data-cy="picklist"
     v-bind:required="required"
-    v-bind:invalidFeedbackText="'At least one row must be selected.'"
+    invalidFeedbackText="At least one row must be selected."
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"

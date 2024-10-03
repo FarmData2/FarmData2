@@ -153,10 +153,10 @@ describe('Test the TransplantingPicklist component events', () => {
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
         cy.get('@updateSpy').its('callCount').should('equal', 4);
 
-        cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[2][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[3][0]').should('have.length', 1);
+        cy.get('@updateSpy').its('args[0][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[1][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[2][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[3][0].size').should('equal', 1);
 
         cy.get('@updateSpy')
           .its('args[3][0]')

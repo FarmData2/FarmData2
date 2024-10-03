@@ -145,8 +145,8 @@ describe('Test the default PicklistBase content', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         showInfoIcons: true,
         units: 'Trays',
@@ -175,8 +175,8 @@ describe('Test the default PicklistBase content', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: null, // Checkbox mode
         quantityAttribute: 'quantity',
@@ -204,8 +204,8 @@ describe('Test the default PicklistBase content', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: 'Trays', // Dropdown mode
         quantityAttribute: 'quantity',
@@ -257,8 +257,8 @@ describe('Test the default PicklistBase content', () => {
           stuff: 'More Info',
         },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         showInfoIcons: true,
         units: 'Trays',

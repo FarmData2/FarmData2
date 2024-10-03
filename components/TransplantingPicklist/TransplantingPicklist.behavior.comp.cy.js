@@ -148,14 +148,14 @@ describe('Test the TransplantingPicklist component behavior', () => {
     });
   });
 
-  it('Emits "update:crop" when the crop prop is set', () => {
+  it('Emits "update:picked" when the crop prop is set', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
 
     cy.mount(TransplantingPicklist, {
       props: {
         onReady: readySpy,
-        'onUpdate:picked': updateSpy, //maybe it should be 'onUpdate:crop'
+        'onUpdate:picked': updateSpy,
       },
     }).then(({ wrapper }) => {
       cy.get('@readySpy')
@@ -169,7 +169,7 @@ describe('Test the TransplantingPicklist component behavior', () => {
         .then(() => {
           wrapper.setProps({ crop: 'BROCCOLI' });
           cy.get('@updateSpy').its('callCount').should('equal', 3);
-          cy.get('@updateSpy').its('args[2][0]').should('have.length', 0);
+          cy.get('@updateSpy').its('args[2][0].size').should('equal', 0);
 
           cy.get('[data-cy="selector-input"]').should('have.value', 'BROCCOLI');
         });
@@ -194,14 +194,14 @@ describe('Test the TransplantingPicklist component behavior', () => {
           cy.get('[data-cy="picklist-units-button"]').click();
           cy.get('[data-cy="picklist-quantity-4"]').should('have.value', '2');
           cy.get('@updateSpy').its('callCount').should('equal', 4);
-          cy.get('@updateSpy').its('args[3][0]').should('have.length', 5);
+          cy.get('@updateSpy').its('args[3][0].size').should('equal', 5);
         })
         .then(() => {
           wrapper.setProps({ crop: 'ZUCCHINI' });
           cy.get('[data-cy="selector-input"]').should('have.value', 'ZUCCHINI');
           cy.get('@updateSpy').its('callCount').should('equal', 6);
-          cy.get('@updateSpy').its('args[4][0]').should('have.length', 0);
-          cy.get('@updateSpy').its('args[5][0]').should('have.length', 0);
+          cy.get('@updateSpy').its('args[4][0].size').should('equal', 0);
+          cy.get('@updateSpy').its('args[5][0].size').should('equal', 0);
         });
     });
   });

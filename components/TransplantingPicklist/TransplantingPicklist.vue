@@ -210,9 +210,9 @@ export default {
     },
     handlePickedUpdate(picked) {
       const emittedMap = new Map();
-      for (const [index, { quantity }] of picked.entries()) {
+      for (const [index, { picked: trays }] of picked.entries()) {
         const row = {
-          trays: quantity,
+          trays,
           data: { ...this.seedlingList[index] },
         };
         emittedMap.set(index, row);

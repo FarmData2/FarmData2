@@ -39,8 +39,8 @@ describe('Test the PicklistBase component styling', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
@@ -112,8 +112,8 @@ describe('Test the PicklistBase component styling', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
@@ -179,8 +179,8 @@ describe('Test the PicklistBase component styling', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
@@ -252,8 +252,8 @@ describe('Test the PicklistBase component styling', () => {
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
         picked: new Map([
-          [0, { quantity: 1 }],
-          [1, { quantity: 2 }],
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
         ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
