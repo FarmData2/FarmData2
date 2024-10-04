@@ -125,10 +125,10 @@ describe('Test the TransplantingPicklist component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        // Called twice on creation???
+        // Called twice on creation
         cy.get('@updateSpy').its('callCount').should('equal', 2);
-        cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[0][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[1][0].size').should('equal', 0);
       });
   });
 
@@ -153,19 +153,21 @@ describe('Test the TransplantingPicklist component events', () => {
         cy.get('[data-cy="picklist-quantity-0"]').select('1');
         cy.get('@updateSpy').its('callCount').should('equal', 4);
 
-        cy.get('@updateSpy').its('args[0][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[1][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[2][0]').should('have.length', 0);
-        cy.get('@updateSpy').its('args[3][0]').should('have.length', 1);
+        cy.get('@updateSpy').its('args[0][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[1][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[2][0].size').should('equal', 0);
+        cy.get('@updateSpy').its('args[3][0].size').should('equal', 1);
 
         cy.get('@updateSpy')
-          .its('args[3][0][0]')
-          .its('trays')
-          .should('equal', 1);
-        cy.get('@updateSpy')
-          .its('args[3][0][0]')
-          .its('data.crop')
-          .should('equal', 'BROCCOLI');
+          .its('args[3][0]')
+          .should((pickedMap) => {
+            expect(pickedMap).to.be.instanceOf(Map);
+            expect(pickedMap.size).to.equal(1);
+
+            const pickedRow = pickedMap.get(0);
+            expect(pickedRow).to.have.property('trays', 1);
+            expect(pickedRow.data).to.have.property('crop', 'BROCCOLI');
+          });
       });
   });
 
@@ -190,15 +192,20 @@ describe('Test the TransplantingPicklist component events', () => {
 
         cy.get('@updateSpy').its('callCount').should('equal', 5);
 
-        cy.get('@updateSpy').its('args[4][0]').should('have.length', 2);
         cy.get('@updateSpy')
-          .its('args[4][0][1]')
-          .its('trays')
-          .should('equal', 2);
-        cy.get('@updateSpy')
-          .its('args[4][0][1]')
-          .its('data.crop')
-          .should('equal', 'BROCCOLI');
+          .its('args[4][0]')
+          .should((pickedMap) => {
+            expect(pickedMap).to.be.instanceOf(Map);
+            expect(pickedMap.size).to.equal(2);
+
+            const firstRow = pickedMap.get(0);
+            expect(firstRow).to.have.property('trays', 1);
+            expect(firstRow.data).to.have.property('crop', 'BROCCOLI');
+
+            const secondRow = pickedMap.get(1);
+            expect(secondRow).to.have.property('trays', 2);
+            expect(secondRow.data).to.have.property('crop', 'BROCCOLI');
+          });
       });
   });
 
@@ -223,7 +230,7 @@ describe('Test the TransplantingPicklist component events', () => {
 
         cy.get('[data-cy="picklist-quantity-0"]').select('0');
         cy.get('@updateSpy').its('callCount').should('equal', 5);
-        cy.get('@updateSpy').its('args[4][0]').should('have.length', 0);
+        cy.get('@updateSpy').its('args[4][0].size').should('equal', 0);
       });
   });
 });

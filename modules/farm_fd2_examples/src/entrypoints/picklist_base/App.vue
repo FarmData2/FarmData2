@@ -23,7 +23,6 @@
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
     v-on:ready="createdCount++"
-    v-bind:use-units="useUnits"
   />
   <hr />
 
@@ -100,15 +99,9 @@
             data-cy="set-picked-button"
             variant="outline-primary"
             size="sm"
-            v-on:click="
-              if (form.picked[0] === 1) {
-                form.picked[0] = 0;
-              } else {
-                form.picked[0] = 1;
-              }
-            "
+            v-on:click="toggleFirstRow"
           >
-            Pick first row
+            Pick row
           </BButton>
         </td>
       </tr>
@@ -154,7 +147,17 @@
     <tbody>
       <tr>
         <td>update:picked</td>
-        <td>{{ form.picked }}</td>
+        <td>
+          <div v-if="form.picked.size === 0">{}</div>
+          <ul v-else>
+            <li
+              v-for="[key, value] in form.picked.entries()"
+              :key="key"
+            >
+              Key: {{ key }}, Value: {{ value }}
+            </li>
+          </ul>
+        </td>
       </tr>
       <tr>
         <td>valid</td>
@@ -244,13 +247,13 @@ export default {
         },
       ],
       required: true,
-      useUnits: true, // Ensure useUnits is set to true to enable dropdown
-      units: 'Trays', // Added units variable to be used directly
+      useUnits: true,
+      units: 'Trays',
       quantityAttribute: 'quantity', // Added quantityAttribute variable to be used directly
       showAllButton: true,
       showInfoIcons: true,
       form: {
-        picked: [],
+        picked: new Map(),
       },
       validity: {
         showStyling: false,
@@ -262,6 +265,18 @@ export default {
   computed: {
     pageDoneLoading() {
       return this.createdCount == 2;
+    },
+  },
+  methods: {
+    toggleFirstRow() {
+      const firstRow = this.rows[0];
+      const firstRowIndex = this.rows.indexOf(firstRow);
+
+      if (this.form.picked.has(firstRowIndex)) {
+        this.form.picked.delete(firstRowIndex);
+      } else {
+        this.form.picked.set(firstRowIndex, firstRow);
+      }
     },
   },
   created() {
