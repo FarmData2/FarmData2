@@ -65,7 +65,7 @@
         <BFormGroup
           id="termination-event-group"
           data-cy="termination-event-group"
-          label-for="termination-event-checkbox"
+          label-for="termination-event-picklist"
           label-cols="auto"
           label-align="end"
           v-if="plantsAtLocation"
@@ -79,11 +79,26 @@
             >
           </template>
 
-          <BFormCheckbox
-            id="termination-event-checkbox"
-            data-cy="termination-event-checkbox"
-            v-model="form.termination"
-            size="lg"
+          <PicklistBase
+            id="termination-event-picklist"
+            data-cy="termination-event-picklist"
+            v-bind:required="true"
+            invalidFeedbackText="At least one plant must be selected for termination."
+            v-bind:showValidityStyling="validity.show"
+            v-bind:columns="['crop', 'bed', 'timestamp']"
+            v-bind:labels="{
+              crop: 'Crop',
+              bed: 'Bed',
+              timestamp: 'Planted Date',
+              uuid: 'UUID',
+              created_by: 'Created By',
+            }"
+            v-bind:rows="form.affectedPlants"
+            v-bind:showInfoIcons="true"
+            v-bind:picked="form.picked"
+            v-on:valid="(valid) => (validity.picked = valid)"
+            v-on:update:picked="form.picked = $event"
+            v-on:ready="createdCount++"
           />
         </BFormGroup>
         <hr />
@@ -166,6 +181,7 @@ import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
+import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
@@ -177,6 +193,7 @@ export default {
     SoilDisturbance,
     SubmitResetButtons,
     LocationSelector,
+    PicklistBase,
   },
   data() {
     return {
@@ -184,7 +201,7 @@ export default {
         date: dayjs().format('YYYY-MM-DD'),
         location: null,
         beds: [],
-        termination: false,
+        picked: new Map(),
         affectedPlants: [],
         equipment: [],
         depth: 0,
@@ -197,6 +214,7 @@ export default {
         show: false,
         date: false,
         location: false,
+        picked: false,
         soilDisturbance: false,
         comment: false,
       },
@@ -234,7 +252,29 @@ export default {
             false,
             true
           );
-          this.form.affectedPlants = results;
+
+          // Map results to rows for PicklistBase
+          this.form.affectedPlants = results.flatMap((plant) =>
+            plant.beds.length > 0
+              ? plant.beds.map((bed) => ({
+                  crop: plant.crop.join(', '),
+                  bed,
+                  timestamp: plant.timestamp,
+                  uuid: plant.uuid,
+                  location: plant.location,
+                  created_by: plant.created_by.join(', '),
+                }))
+              : [
+                  {
+                    crop: plant.crop.join(', '),
+                    bed: 'No Bed',
+                    timestamp: plant.timestamp,
+                    uuid: plant.uuid,
+                    location: plant.location,
+                    created_by: plant.created_by.join(', '),
+                  },
+                ]
+          );
         } catch (error) {
           console.error('Error fetching plant assets:', error);
           this.form.affectedPlants = [];
@@ -312,7 +352,7 @@ export default {
 
       if (!sticky) {
         this.form.date = dayjs().format('YYYY-MM-DD');
-        this.form.termination = false;
+        this.form.picked = new Map();
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
@@ -337,8 +377,8 @@ export default {
 </script>
 
 <style>
-/* 
- * Import a set of standard CSS styles for FarmData2 
+/*
+ * Import a set of standard CSS styles for FarmData2
  * entry points that optimize the page for mobile devices.
  */
 @import url('@css/fd2-mobile.css');

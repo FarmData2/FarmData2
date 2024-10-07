@@ -30,24 +30,28 @@ async function submitForm(formData) {
       name: 'affectedPlants',
       do: async () => {
         let affectedPlants = [];
-        if (formData.termination) {
-          for (const plant of formData.affectedPlants) {
-            affectedPlants.push(
-              await farmosUtil.archivePlantAsset(plant.uuid, true)
-            );
+
+        for (const [, plant] of formData.picked.entries()) {
+          // Delete the plant asset
+          await farmosUtil.deletePlantAsset(plant.uuid);
+
+          // Fetch the plant asset to check the remaining location
+          const remainingPlant = await farmosUtil.getPlantAsset(plant.uuid);
+
+          // Archive the plant if there is no remaining location
+          if (!remainingPlant.location) {
+            await farmosUtil.archivePlantAsset(plant.uuid, true);
           }
-        } else {
-          for (const plant of formData.affectedPlants) {
-            affectedPlants.push(await farmosUtil.getPlantAsset(plant.uuid));
-          }
+
+          affectedPlants.push(remainingPlant);
         }
+
         return affectedPlants;
       },
       undo: async () => {
-        if (formData.termination) {
-          for (const plant of formData.affectedPlants) {
-            await farmosUtil.archivePlantAsset(plant.uuid, false);
-          }
+        for (const [, plant] of formData.picked.entries()) {
+          // Undo archiving if needed
+          await farmosUtil.archivePlantAsset(plant.uuid, false);
         }
       },
     };
