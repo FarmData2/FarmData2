@@ -30,24 +30,71 @@ async function submitForm(formData) {
       name: 'affectedPlants',
       do: async () => {
         let affectedPlants = [];
-        if (formData.termination) {
-          for (const plant of formData.affectedPlants) {
-            affectedPlants.push(
-              await farmosUtil.archivePlantAsset(plant.uuid, true)
-            );
+        const bedsByUUID = new Map();
+        const archivedPlants = [];
+
+        // Group picked beds by plant UUID
+        for (const entry of formData.picked) {
+          const { uuid, bed } = entry.row;
+
+          // If the plant has bed set as "N/A", archive it directly
+          if (bed === 'N/A') {
+            await farmosUtil.archivePlantAsset(uuid, true);
+            archivedPlants.push(uuid);
+            continue;
           }
-        } else {
-          for (const plant of formData.affectedPlants) {
-            affectedPlants.push(await farmosUtil.getPlantAsset(plant.uuid));
+
+          if (!bedsByUUID.has(uuid)) {
+            bedsByUUID.set(uuid, []);
           }
+          bedsByUUID.get(uuid).push(bed);
         }
-        return affectedPlants;
-      },
-      undo: async () => {
-        if (formData.termination) {
-          for (const plant of formData.affectedPlants) {
-            await farmosUtil.archivePlantAsset(plant.uuid, false);
+
+        // Iterate over each plant UUID and handle termination
+        for (const [uuid, pickedBeds] of bedsByUUID.entries()) {
+          const plantAsset = await farmosUtil.getPlantAsset(uuid);
+
+          // If the plant has no beds after fetching, archive it directly
+          if (
+            plantAsset.beds.length === pickedBeds.length &&
+            plantAsset.beds.every((bed) => pickedBeds.includes(bed))
+          ) {
+            // If all beds of the plant are picked, archive the plant asset
+            await farmosUtil.archivePlantAsset(uuid, true);
+            archivedPlants.push(uuid);
+          } else {
+            // Otherwise, remove the selected beds from the plant asset
+            plantAsset.beds = plantAsset.beds.filter(
+              (bed) => !pickedBeds.includes(bed)
+            );
+            await farmosUtil.updatePlantAsset(plantAsset); // Assuming updatePlantAsset exists
           }
+          affectedPlants.push(plantAsset);
+        }
+
+        return { affectedPlants, archivedPlants, bedsByUUID };
+      },
+      undo: async (results) => {
+        const { archivedPlants, bedsByUUID } = results;
+
+        // Unarchive any plant assets that were archived during the "do" function
+        for (const uuid of archivedPlants) {
+          await farmosUtil.archivePlantAsset(uuid, false);
+        }
+
+        // Restore the original beds for each plant asset
+        for (const [uuid, pickedBeds] of bedsByUUID.entries()) {
+          const plantAsset = await farmosUtil.getPlantAsset(uuid);
+
+          // Add back the beds that were removed during the "do" function
+          for (const bed of pickedBeds) {
+            if (!plantAsset.beds.includes(bed)) {
+              plantAsset.beds.push(bed);
+            }
+          }
+
+          // Update the plant asset with the restored beds
+          await farmosUtil.updatePlantAsset(plantAsset);
         }
       },
     };
