@@ -85,14 +85,8 @@
             v-bind:required="true"
             invalidFeedbackText="At least one plant must be selected for termination."
             v-bind:showValidityStyling="validity.show"
-            v-bind:columns="['crop', 'bed', 'timestamp']"
-            v-bind:labels="{
-              crop: 'Crop',
-              bed: 'Bed',
-              timestamp: 'Planted Date',
-              uuid: 'UUID',
-              created_by: 'Created By',
-            }"
+            v-bind:columns="picklistColumns"
+            v-bind:labels="picklistLabels"
             v-bind:rows="form.affectedPlants"
             v-bind:showInfoIcons="true"
             v-bind:picked="form.picked"
@@ -221,6 +215,14 @@ export default {
       submitting: false,
       errorShowing: false,
       createdCount: 0,
+      picklistColumns: ['crop', 'bed', 'timestamp'],
+      picklistLabels: {
+        crop: 'Crop',
+        bed: 'Bed',
+        timestamp: 'Planted Date',
+        uuid: 'UUID',
+        created_by: 'Created By',
+      },
     };
   },
   computed: {
@@ -252,7 +254,7 @@ export default {
             false,
             true
           );
-
+          console.log(results);
           // Map results to rows for PicklistBase
           this.form.affectedPlants = results.flatMap((plant) =>
             plant.beds.length > 0
@@ -267,7 +269,7 @@ export default {
               : [
                   {
                     crop: plant.crop.join(', '),
-                    bed: 'No Bed',
+                    bed: 'N/A',
                     timestamp: plant.timestamp,
                     uuid: plant.uuid,
                     location: plant.location,
@@ -275,6 +277,30 @@ export default {
                   },
                 ]
           );
+
+          // Check if all plants have 'N/A' beds and adjust columns accordingly
+          const allBedsNA = this.form.affectedPlants.every(
+            (plant) => plant.bed === 'N/A'
+          );
+
+          if (allBedsNA) {
+            this.picklistColumns = ['crop', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              timestamp: 'Planted Date',
+              uuid: 'UUID',
+              created_by: 'Created By',
+            };
+          } else {
+            this.picklistColumns = ['crop', 'bed', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              bed: 'Bed',
+              timestamp: 'Planted Date',
+              uuid: 'UUID',
+              created_by: 'Created By',
+            };
+          }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
           this.form.affectedPlants = [];
