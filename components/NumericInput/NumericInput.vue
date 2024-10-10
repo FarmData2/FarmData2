@@ -237,6 +237,7 @@ export default {
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
+      numericValue: this.value,
       /*
        * Needed so when initial value is changed the updated value can be replaced or updated
        */
@@ -268,13 +269,13 @@ export default {
       return this.valueAsString == null || this.valueAsString.length == 0;
     },
     disableSmallDec() {
-      return this.value - this.incDecValues[0] <= this.minValue;
+      return this.numericValue - this.incDecValues[0] <= this.minValue;
     },
     disableMediumDec() {
-      return this.value - this.incDecValues[1] <= this.minValue;
+      return this.numericValue - this.incDecValues[1] <= this.minValue;
     },
     disableLargeDec() {
-      return this.value - this.incDecValues[2] <= this.minValue;
+      return this.numericValue - this.incDecValues[2] <= this.minValue;
     },
     isValid() {
       if (!this.required) {
@@ -316,6 +317,8 @@ export default {
       } else {
         this.valueAsString = this.formatter(this.minValue);
       }
+
+      this.numericValue = parseFloat(this.valueAsString);
     },
     formatter(value) {
       let val = parseFloat(value);

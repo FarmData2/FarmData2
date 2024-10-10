@@ -82,10 +82,8 @@ describe('Test the NumericInput component behavior', () => {
         cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
 
         cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-decrease-sm"]').should(
-          'have.class',
-          'disabled'
-        );
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('not.be.disabled');
         cy.get('[data-cy="numeric-decrease-md"]').should('be.disabled');
         cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
       });
