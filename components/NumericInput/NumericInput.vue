@@ -16,7 +16,7 @@
           >*</sup
         >
       </template>
-      <BInputGroup>
+      <BInputGroup class="has-validation">
         <BInputGroupPrepend>
           <BButton
             data-cy="numeric-decrease-lg"
@@ -69,7 +69,10 @@
           <BButton
             data-cy="numeric-increase-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[0])"
             >&#x203A;</BButton
@@ -77,7 +80,10 @@
           <BButton
             data-cy="numeric-increase-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[1])"
             >&#x27E9;</BButton
@@ -85,7 +91,10 @@
           <BButton
             data-cy="numeric-increase-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[2])"
             >&#x27EB;</BButton
@@ -269,13 +278,22 @@ export default {
       return this.valueAsString == null || this.valueAsString.length == 0;
     },
     disableSmallDec() {
-      return this.numericValue - this.incDecValues[0] <= this.minValue;
+      return this.numericValue - this.incDecValues[0] < this.minValue;
     },
     disableMediumDec() {
-      return this.numericValue - this.incDecValues[1] <= this.minValue;
+      return this.numericValue - this.incDecValues[1] < this.minValue;
     },
     disableLargeDec() {
-      return this.numericValue - this.incDecValues[2] <= this.minValue;
+      return this.numericValue - this.incDecValues[2] < this.minValue;
+    },
+    disableSmallInc() {
+      return this.numericValue + this.incDecValues[2] > this.maxValue;
+    },
+    disableMediumInc() {
+      return this.numericValue + this.incDecValues[1] > this.maxValue;
+    },
+    disableLargeInc() {
+      return this.numericValue + this.incDecValues[0] > this.maxValue;
     },
     isValid() {
       if (!this.required) {
@@ -317,8 +335,6 @@ export default {
       } else {
         this.valueAsString = this.formatter(this.minValue);
       }
-
-      this.numericValue = parseFloat(this.valueAsString);
     },
     formatter(value) {
       let val = parseFloat(value);
@@ -372,6 +388,7 @@ export default {
        * @property {Number} value The new numeric value or NaN if the value is invalid.
        */
       this.$emit('update:value', parseFloat(this.valueAsString));
+      this.numericValue = parseFloat(this.valueAsString);
     },
   },
   created() {
