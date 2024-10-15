@@ -323,7 +323,7 @@ export default {
   methods: {
     adjustValue(amount) {
       if (this.isValid) {
-        if (!this.initialValueChanged && amount > this.value) {
+        if (!this.initialValueChanged && amount > this.numericValue) {
           this.valueAsString = this.formatter(amount);
           this.initialValueChanged = true;
         } else {
