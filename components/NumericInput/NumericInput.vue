@@ -278,13 +278,22 @@ export default {
       return this.valueAsString == null || this.valueAsString.length == 0;
     },
     disableSmallDec() {
-      return this.numericValue - this.incDecValues[0] < this.minValue;
+      return (
+        this.numericValue - this.incDecValues[0] < this.minValue ||
+        isNaN(this.numericValue)
+      );
     },
     disableMediumDec() {
-      return this.numericValue - this.incDecValues[1] < this.minValue;
+      return (
+        this.numericValue - this.incDecValues[1] < this.minValue ||
+        isNaN(this.numericValue)
+      );
     },
     disableLargeDec() {
-      return this.numericValue - this.incDecValues[2] < this.minValue;
+      return (
+        this.numericValue - this.incDecValues[2] < this.minValue ||
+        isNaN(this.numericValue)
+      );
     },
     disableSmallInc() {
       return this.numericValue + this.incDecValues[0] > this.maxValue;
@@ -325,16 +334,16 @@ export default {
       if (this.isValid) {
         if (!this.initialValueChanged && amount > this.numericValue) {
           this.valueAsString = this.formatter(amount);
-          this.initialValueChanged = true;
         } else {
           this.valueAsString = this.formatter(
             parseFloat(this.valueAsString) + amount
           );
-          this.initialValueChanged = true;
         }
       } else {
-        this.valueAsString = this.formatter(this.minValue);
+        this.valueAsString = this.formatter(amount);
       }
+
+      this.initialValueChanged = true;
     },
     formatter(value) {
       let val = parseFloat(value);
