@@ -70,9 +70,9 @@
             data-cy="numeric-increase-sm"
             v-if="showSmallIncDec"
             v-bind:variant="
-              disableLargeInc ? 'outline-secondary' : 'outline-success'
+              disableSmallInc ? 'outline-secondary' : 'outline-success'
             "
-            v-bind:disabled="disableLargeInc"
+            v-bind:disabled="disableSmallInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[0])"
             >&#x203A;</BButton
@@ -92,9 +92,9 @@
             data-cy="numeric-increase-lg"
             v-if="showLargeIncDec"
             v-bind:variant="
-              disableSmallInc ? 'outline-secondary' : 'outline-success'
+              disableLargeInc ? 'outline-secondary' : 'outline-success'
             "
-            v-bind:disabled="disableSmallInc"
+            v-bind:disabled="disableLargeInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[2])"
             >&#x27EB;</BButton
@@ -287,13 +287,13 @@ export default {
       return this.numericValue - this.incDecValues[2] < this.minValue;
     },
     disableSmallInc() {
-      return this.numericValue + this.incDecValues[2] > this.maxValue;
+      return this.numericValue + this.incDecValues[0] > this.maxValue;
     },
     disableMediumInc() {
       return this.numericValue + this.incDecValues[1] > this.maxValue;
     },
     disableLargeInc() {
-      return this.numericValue + this.incDecValues[0] > this.maxValue;
+      return this.numericValue + this.incDecValues[2] > this.maxValue;
     },
     isValid() {
       if (!this.required) {

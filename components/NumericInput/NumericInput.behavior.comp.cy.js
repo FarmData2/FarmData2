@@ -142,7 +142,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Input of a larger value replaces the initial value', () => {
+  it('Input of value larger than initial value replaces initial value', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -150,7 +150,7 @@ describe('Test the NumericInput component behavior', () => {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
         value: 10,
-        incDecValues: [1, 10, 100],
+        incDecValues: [100],
         onReady: readySpy,
       },
     });
@@ -158,12 +158,12 @@ describe('Test the NumericInput component behavior', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="numeric-increase-lg"]').click();
+        cy.get('[data-cy="numeric-increase-sm"]').click();
         cy.get('[data-cy="numeric-input"]').should('have.value', '100');
       });
   });
 
-  it('Input of a larger value replaces the initial value', () => {
+  it('Input of value smaller than initial value adds to initial value', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -171,7 +171,7 @@ describe('Test the NumericInput component behavior', () => {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
         value: 10,
-        incDecValues: [1, 10, 100],
+        incDecValues: [1],
         onReady: readySpy,
       },
     });
@@ -184,7 +184,28 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('User type input disables buttons', () => {
+  it('Input of value smaller than initial decimal value adds to initial value', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0.5,
+        incDecValues: [1],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '1');
+      });
+  });
+
+  it('User typed input disables buttons', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
