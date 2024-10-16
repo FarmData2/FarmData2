@@ -16,7 +16,7 @@
           >*</sup
         >
       </template>
-      <BInputGroup class="has-validation">
+      <BInputGroup>
         <BInputGroupPrepend>
           <BButton
             data-cy="numeric-decrease-lg"
