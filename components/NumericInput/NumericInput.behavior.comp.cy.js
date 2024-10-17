@@ -242,6 +242,58 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
+  /* it('User leave input blank, increment button sets value to increment amount', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0,
+        incDecValues: [10],
+        onReady: readySpy,
+        maxValue: 100,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-input"]').clear();
+        cy.get('[data-cy="numeric-input"]').blur();
+
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+
+        cy.get('[data-cy="numeric-input"]').should('have.value', '10');
+      });
+  }); */
+
+  it('User leave input blank, decrement value buttons are disabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0,
+        incDecValues: [1, 10, 100],
+        onReady: readySpy,
+        maxValue: 100,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-input"]').clear();
+        cy.get('[data-cy="numeric-input"]').blur();
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+      });
+  });
+
   it('Component reacts to changed value prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
