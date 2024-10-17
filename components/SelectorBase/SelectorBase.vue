@@ -48,7 +48,7 @@
         >
       </template>
 
-      <BInputGroup class="has-validation">
+      <BInputGroup>
         <BFormSelect
           id="selector-input"
           data-cy="selector-input"
