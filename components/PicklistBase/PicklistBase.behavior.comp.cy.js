@@ -20,7 +20,7 @@ describe('Test the PicklistBase component behavior', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
+        picked: new Map(),
       },
     });
 
@@ -46,7 +46,7 @@ describe('Test the PicklistBase component behavior', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
+        picked: new Map(),
         units: 'Trays',
         quantityAttribute: 'quantity',
       },
@@ -70,7 +70,10 @@ describe('Test the PicklistBase component behavior', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [2, 3],
+        picked: new Map([
+          [0, { picked: 2 }],
+          [1, { picked: 3 }],
+        ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
       },
@@ -96,7 +99,7 @@ describe('Test the PicklistBase component behavior', () => {
   });
 
   it('Checks sort order is preserved across data change', () => {
-    // Initial mounting of the component with first set of data
+    // Initial mounting of the component with the first set of data
     cy.mount(PicklistBase, {
       props: {
         rows: [
@@ -105,7 +108,10 @@ describe('Test the PicklistBase component behavior', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [2, 4],
+        picked: new Map([
+          [0, { picked: 2 }],
+          [1, { picked: 4 }],
+        ]),
         units: 'Trays',
         quantityAttribute: 'quantity',
       },
@@ -126,7 +132,10 @@ describe('Test the PicklistBase component behavior', () => {
         { name: 'Item D', quantity: 1, location: 'GHANA' },
         { name: 'Item C', quantity: 6, location: 'GHANA' },
       ],
-      picked: [1, 6],
+      picked: new Map([
+        [0, { picked: 1 }],
+        [1, { picked: 6 }],
+      ]),
     });
 
     // Verify the new data is sorted correctly in ascending order by name

@@ -76,8 +76,14 @@ describe('Tray Seeding: Number of Trays Component', () => {
 
   it('Number of trays has correct minimum value.', () => {
     cy.get('[data-cy="tray-seeding-trays"]')
-      .find('[data-cy="numeric-decrease-sm"]')
-      .click();
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="tray-seeding-trays"]')
+      .find('[data-cy="numeric-input"]')
+      .type('0.005');
+    cy.get('[data-cy="tray-seeding-trays"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
     cy.get('[data-cy="tray-seeding-trays"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '0.01');
