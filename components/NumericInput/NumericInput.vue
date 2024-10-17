@@ -21,7 +21,10 @@
           <BButton
             data-cy="numeric-decrease-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[2])"
             >&#x27EA;</BButton
@@ -29,7 +32,10 @@
           <BButton
             data-cy="numeric-decrease-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[1])"
             >&#x27E8;</BButton
@@ -37,7 +43,10 @@
           <BButton
             data-cy="numeric-decrease-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[0])"
             >&#x2039;</BButton
@@ -54,12 +63,16 @@
           v-bind:state="validityStyling"
           v-bind:required="required"
           v-bind:formatter="formatter"
+          @update:model-value="valueChanged"
         />
         <BInputGroupAppend>
           <BButton
             data-cy="numeric-increase-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[0])"
             >&#x203A;</BButton
@@ -67,7 +80,10 @@
           <BButton
             data-cy="numeric-increase-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[1])"
             >&#x27E9;</BButton
@@ -75,7 +91,10 @@
           <BButton
             data-cy="numeric-increase-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[2])"
             >&#x27EB;</BButton
@@ -227,6 +246,11 @@ export default {
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
+      numericValue: this.value,
+      /*
+       * Needed so when initial value is changed the updated value can be replaced or updated
+       */
+      initialValueChanged: false,
 
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
@@ -252,6 +276,24 @@ export default {
     },
     isEmpty() {
       return this.valueAsString == null || this.valueAsString.length == 0;
+    },
+    disableSmallDec() {
+      return this.numericValue - this.incDecValues[0] < this.minValue;
+    },
+    disableMediumDec() {
+      return this.numericValue - this.incDecValues[1] < this.minValue;
+    },
+    disableLargeDec() {
+      return this.numericValue - this.incDecValues[2] < this.minValue;
+    },
+    disableSmallInc() {
+      return this.numericValue + this.incDecValues[0] > this.maxValue;
+    },
+    disableMediumInc() {
+      return this.numericValue + this.incDecValues[1] > this.maxValue;
+    },
+    disableLargeInc() {
+      return this.numericValue + this.incDecValues[2] > this.maxValue;
     },
     isValid() {
       if (!this.required) {
@@ -281,9 +323,15 @@ export default {
   methods: {
     adjustValue(amount) {
       if (this.isValid) {
-        this.valueAsString = this.formatter(
-          parseFloat(this.valueAsString) + amount
-        );
+        if (!this.initialValueChanged && amount > this.numericValue) {
+          this.valueAsString = this.formatter(amount);
+          this.initialValueChanged = true;
+        } else {
+          this.valueAsString = this.formatter(
+            parseFloat(this.valueAsString) + amount
+          );
+          this.initialValueChanged = true;
+        }
       } else {
         this.valueAsString = this.formatter(this.minValue);
       }
@@ -314,6 +362,12 @@ export default {
 
       return formattedVal;
     },
+    valueChanged() {
+      /*
+       * Update the initialValueChanged data when the user manually enters a value.
+       */
+      this.initialValueChanged = true;
+    },
   },
   watch: {
     isValid() {
@@ -334,6 +388,7 @@ export default {
        * @property {Number} value The new numeric value or NaN if the value is invalid.
        */
       this.$emit('update:value', parseFloat(this.valueAsString));
+      this.numericValue = parseFloat(this.valueAsString);
     },
   },
   created() {

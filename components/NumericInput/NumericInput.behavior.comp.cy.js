@@ -27,12 +27,12 @@ describe('Test the NumericInput component behavior', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '8');
-        cy.get('[data-cy="numeric-increase-md"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '13');
         cy.get('[data-cy="numeric-increase-lg"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '33');
+        cy.get('[data-cy="numeric-input"]').should('have.value', '20');
+        cy.get('[data-cy="numeric-increase-md"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '25');
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '26');
       });
   });
 
@@ -58,6 +58,187 @@ describe('Test the NumericInput component behavior', () => {
         cy.get('[data-cy="numeric-input"]').should('have.value', '44');
         cy.get('[data-cy="numeric-decrease-lg"]').click();
         cy.get('[data-cy="numeric-input"]').should('have.value', '24');
+      });
+  });
+
+  it('Test decrease buttons are disabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0,
+        incDecValues: [1, 10, 100],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-decrease-sm"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-increase-md"]').click();
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-increase-lg"]').click();
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('not.be.disabled');
+      });
+  });
+
+  it('Test increase buttons are disabled', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 1000,
+        incDecValues: [1, 10, 100],
+        onReady: readySpy,
+        maxValue: 1000,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-increase-sm"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-decrease-sm"]').click();
+
+        cy.get('[data-cy="numeric-increase-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-decrease-md"]').click();
+
+        cy.get('[data-cy="numeric-increase-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('be.disabled');
+
+        cy.get('[data-cy="numeric-decrease-lg"]').click();
+
+        cy.get('[data-cy="numeric-increase-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('not.be.disabled');
+      });
+  });
+
+  it('Input of value larger than initial value replaces initial value', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 10,
+        incDecValues: [100],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '100');
+      });
+  });
+
+  it('Input of value smaller than initial value adds to initial value', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 10,
+        incDecValues: [1],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '11');
+      });
+  });
+
+  it('Input of value smaller than initial decimal value adds to initial value', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0.5,
+        incDecValues: [1],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-increase-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '1');
+      });
+  });
+
+  it('User typed input disables buttons', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0,
+        incDecValues: [1, 10, 100],
+        onReady: readySpy,
+        maxValue: 100,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-decrease-sm"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('not.be.disabled');
+
+        cy.get('[data-cy="numeric-input"]').clear();
+        cy.get('[data-cy="numeric-input"]').type('100');
+        cy.get('[data-cy="numeric-input"]').blur();
+
+        cy.get('[data-cy="numeric-decrease-sm"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-sm"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('be.disabled');
       });
   });
 
