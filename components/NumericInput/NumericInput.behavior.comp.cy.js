@@ -346,6 +346,36 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
+  it('Blank input, inc/dec buttons remain within min/max Value', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 0,
+        minValue: -10,
+        incDecValues: [1, 10, 100],
+        onReady: readySpy,
+        maxValue: 10,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-input"]').clear();
+        cy.get('[data-cy="numeric-input"]').blur();
+
+        cy.get('[data-cy="numeric-increase-sm"]').should('be.enabled');
+        cy.get('[data-cy="numeric-increase-md"]').should('be.enabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('be.disabled');
+        cy.get('[data-cy="numeric-decrease-sm"]').should('be.enabled');
+        cy.get('[data-cy="numeric-decrease-md"]').should('be.enabled');
+        cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
+      });
+  });
+
   it('Non-required blank input, inc/dec button sets value to increment amount', () => {
     const readySpy = cy.spy().as('readySpy');
 
