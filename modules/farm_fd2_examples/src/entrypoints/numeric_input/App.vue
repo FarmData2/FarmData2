@@ -24,6 +24,7 @@
       }
     "
     v-on:ready="createdCount++"
+    v-bind:initialValueChanged="this.initialValueChanged"
   />
   <hr />
 
@@ -111,6 +112,7 @@
             v-on:click="
               () => {
                 this.minValue -= 100;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -126,6 +128,7 @@
             v-on:click="
               () => {
                 this.minValue -= 10;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -141,6 +144,7 @@
             v-on:click="
               () => {
                 this.minValue += 10;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -156,6 +160,7 @@
             v-on:click="
               () => {
                 this.minValue += 100;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -176,6 +181,7 @@
             v-on:click="
               () => {
                 this.maxValue -= 100;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -191,6 +197,7 @@
             v-on:click="
               () => {
                 this.maxValue -= 10;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -206,6 +213,7 @@
             v-on:click="
               () => {
                 this.maxValue += 10;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -221,6 +229,7 @@
             v-on:click="
               () => {
                 this.maxValue += 100;
+                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -244,6 +253,25 @@
             v-bind:disabled="i > this.maxValue || i < this.minValue"
           >
             {{ i }}
+          </BButton>
+        </td>
+      </tr>
+      <tr>
+        <td>initialValueChanged</td>
+        <td>
+          <BButton
+            id="toggle-value-change"
+            data-cy="toggle-value-change"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="
+              () => {
+                this.initialValueChanged = false;
+                this.componentKey++;
+              }
+            "
+          >
+            Set False
           </BButton>
         </td>
       </tr>
@@ -303,6 +331,7 @@ export default {
       },
       createdCount: 0,
       componentKey: 0,
+      initialValueChanged: false,
     };
   },
   methods: {

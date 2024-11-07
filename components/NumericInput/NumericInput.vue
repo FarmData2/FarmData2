@@ -63,7 +63,7 @@
           v-bind:state="validityStyling"
           v-bind:required="required"
           v-bind:formatter="formatter"
-          @update:model-value="valueChanged"
+          @update:model-value="updateValueChanged"
         />
         <BInputGroupAppend>
           <BButton
@@ -242,16 +242,19 @@ export default {
       type: Number,
       required: true,
     },
+    /**
+     * Overwrite initial value if increment is larger/smaller than current value
+     */
+    initialValueChanged: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
       numericValue: this.value,
-      /*
-       * Needed so when initial value is changed the updated value can be replaced or updated
-       */
-      initialValueChanged: false,
-
+      valueChanged: this.initialValueChanged,
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
        * refresh its value. This is necessary when for example, the input is currently
@@ -343,7 +346,13 @@ export default {
       if (this.isValid) {
         if (this.isEmpty) {
           this.valueAsString = this.formatter(amount);
-        } else if (!this.initialValueChanged && amount > this.numericValue) {
+        } else if (!this.valueChanged && amount > this.numericValue) {
+          this.valueAsString = this.formatter(amount);
+        } else if (
+          !this.valueChanged &&
+          this.numericValue < 0 &&
+          amount < this.numericValue
+        ) {
           this.valueAsString = this.formatter(amount);
         } else {
           this.valueAsString = this.formatter(
@@ -354,7 +363,7 @@ export default {
         this.valueAsString = this.formatter(amount);
       }
 
-      this.initialValueChanged = true;
+      this.valueChanged = true;
     },
     formatter(value) {
       let val = parseFloat(value);
@@ -382,11 +391,11 @@ export default {
 
       return formattedVal;
     },
-    valueChanged() {
+    updateValueChanged() {
       /*
-       * Update the initialValueChanged data when the user manually enters a value.
+       * Update the valueChanged data when the user manually enters a value.
        */
-      this.initialValueChanged = true;
+      this.valueChanged = true;
     },
   },
   watch: {
