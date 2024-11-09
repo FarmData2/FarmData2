@@ -24,7 +24,6 @@
       }
     "
     v-on:ready="createdCount++"
-    v-bind:initialValueChanged="this.initialValueChanged"
   />
   <hr />
 
@@ -94,7 +93,7 @@
             data-cy="add-increment-button"
             variant="outline-primary"
             size="sm"
-            v-on:click="this.incDecValues.push(10 ** this.incDecValues.length)"
+            v-on:click="this.incDecValues.push(10 ** incDecValues.length)"
             v-if="this.incDecValues.length < 3"
           >
             Add Increment Button
@@ -112,7 +111,6 @@
             v-on:click="
               () => {
                 this.minValue -= 100;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -128,7 +126,6 @@
             v-on:click="
               () => {
                 this.minValue -= 10;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -144,7 +141,6 @@
             v-on:click="
               () => {
                 this.minValue += 10;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -160,7 +156,6 @@
             v-on:click="
               () => {
                 this.minValue += 100;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -181,7 +176,6 @@
             v-on:click="
               () => {
                 this.maxValue -= 100;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -197,7 +191,6 @@
             v-on:click="
               () => {
                 this.maxValue -= 10;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -213,7 +206,6 @@
             v-on:click="
               () => {
                 this.maxValue += 10;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -229,7 +221,6 @@
             v-on:click="
               () => {
                 this.maxValue += 100;
-                this.initialValueChanged = true;
                 this.componentKey++;
               }
             "
@@ -253,25 +244,6 @@
             v-bind:disabled="i > this.maxValue || i < this.minValue"
           >
             {{ i }}
-          </BButton>
-        </td>
-      </tr>
-      <tr>
-        <td>initialValueChanged</td>
-        <td>
-          <BButton
-            id="toggle-value-change"
-            data-cy="toggle-value-change"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="
-              () => {
-                this.initialValueChanged = false;
-                this.componentKey++;
-              }
-            "
-          >
-            Set False
           </BButton>
         </td>
       </tr>
@@ -323,7 +295,7 @@ export default {
       maxValue: 1000,
       minValue: 0,
       form: {
-        value: 0,
+        value: 3,
       },
       validity: {
         showStyling: false,
@@ -331,7 +303,6 @@ export default {
       },
       createdCount: 0,
       componentKey: 0,
-      initialValueChanged: false,
     };
   },
   methods: {

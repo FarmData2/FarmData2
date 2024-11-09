@@ -63,7 +63,7 @@
           v-bind:state="validityStyling"
           v-bind:required="required"
           v-bind:formatter="formatter"
-          @update:model-value="updateValueChanged"
+          v-on:update:model-value="updateValueChanged"
         />
         <BInputGroupAppend>
           <BButton
@@ -242,19 +242,12 @@ export default {
       type: Number,
       required: true,
     },
-    /**
-     * Overwrite initial value if increment is larger/smaller than current value
-     */
-    initialValueChanged: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       valueAsString: this.formatter(this.value.toString()),
       numericValue: this.value,
-      valueChanged: this.initialValueChanged,
+
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
        * refresh its value. This is necessary when for example, the input is currently
@@ -266,6 +259,15 @@ export default {
        */
       inputRefreshKey: 0,
     };
+  },
+  $options: {
+    /*
+     * valueChanged will be set to true the first time that the value
+     * in the input is changed from its initial value. It will then remain
+     * true for the life of the component. It is defined here so that it
+     * persists across renders.
+     */
+    valueChanged: false,
   },
   computed: {
     showSmallIncDec() {
@@ -342,28 +344,38 @@ export default {
     },
   },
   methods: {
+    valueChanged() {
+      /*
+       * Note that this cannot be a computed property because
+       * this.$options.valueChanged is not reactive, and making
+       * it reactive would cause it to be reset on each render.
+       */
+      if (
+        typeof this.$options.valueChanged === 'undefined' ||
+        this.$options.valueChanged === false
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     adjustValue(amount) {
       if (this.isValid) {
         if (this.isEmpty) {
           this.valueAsString = this.formatter(amount);
-        } else if (!this.valueChanged && amount > this.numericValue) {
-          this.valueAsString = this.formatter(amount);
-        } else if (
-          !this.valueChanged &&
-          this.numericValue < 0 &&
-          amount < this.numericValue
-        ) {
-          this.valueAsString = this.formatter(amount);
-        } else {
+        } else if (this.valueChanged()) {
           this.valueAsString = this.formatter(
             parseFloat(this.valueAsString) + amount
           );
+        } else {
+          let val = parseFloat(this.valueAsString) + amount;
+          // round val to nearest multiple of amount.
+          val = Math.round(val / amount) * amount;
+          this.valueAsString = this.formatter(val);
         }
       } else {
         this.valueAsString = this.formatter(amount);
       }
-
-      this.valueChanged = true;
     },
     formatter(value) {
       let val = parseFloat(value);
@@ -391,12 +403,6 @@ export default {
 
       return formattedVal;
     },
-    updateValueChanged() {
-      /*
-       * Update the valueChanged data when the user manually enters a value.
-       */
-      this.valueChanged = true;
-    },
   },
   watch: {
     isValid() {
@@ -409,6 +415,7 @@ export default {
     value() {
       if (!isNaN(this.value)) {
         this.valueAsString = this.formatter(this.value);
+        this.$options.valueChanged = true;
       }
     },
     valueAsString() {
