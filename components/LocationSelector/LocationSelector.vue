@@ -113,15 +113,25 @@ export default {
     },
     /**
      * Whether to include all greenhouses in the list of locations.
+     * If set to `true`, all greenhouses will be added to the location options,
+     * regardless of whether they contain beds or not.
      */
     includeGreenhouses: {
       type: Boolean,
       default: false,
     },
     /**
-     * Whether to include only greenhouses with beds in the list of locations.
-     * If `includeGreenhouses` is also true, then all greenhouses will be included
-     * even if this property is true.
+     * Whether to include only greenhouses that contain beds in the list of locations.
+     * Note: If `includeGreenhouses` is also set to `true`, all greenhouses will be
+     * included, overriding this setting.
+     *
+     * For example:
+     * - If `includeGreenhouses` is `true` and `includeGreenhousesWithBeds` is `false`,
+     *   all greenhouses, (both with and without beds), will be included.
+     * - If both `includeGreenhouses` and `includeGreenhousesWithBeds` are `true`,
+     *   all greenhouses (both with and without beds) will be included.
+     * - If `includeGreenhouses` is `false` and `includeGreenhousesWithBeds` is `true`,
+     *   only greenhouses with beds will be included.
      */
     includeGreenhousesWithBeds: {
       type: Boolean,
@@ -207,10 +217,22 @@ export default {
       bedObjs: [],
       canCreateLand: false,
       canCreateStructure: false,
-      popupUrl: null,
     };
   },
   computed: {
+    popupUrl() {
+      if (
+        (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
+        !this.includeFields &&
+        this.canCreateStructure
+      ) {
+        return '/asset/add/structure';
+      } else if (this.includeFields && this.canCreateLand) {
+        return '/asset/add/land';
+      } else {
+        return null;
+      }
+    },
     canCreateLocation() {
       return (
         (this.includeFields && this.canCreateLand) ||
@@ -433,21 +455,6 @@ export default {
         this.bedObjs = beds;
         this.canCreateLand = createLand;
         this.canCreateStructure = createStructure;
-        if (
-          this.includeFields &&
-          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-          this.canCreateLand &&
-          this.canCreateStructure
-        ) {
-          this.popupUrl = '/asset/add';
-        } else if (this.includeFields && this.canCreateLand) {
-          this.popupUrl = '/asset/add/land';
-        } else if (
-          (this.includeGreenhouses || this.includeGreenhousesWithBeds) &&
-          this.canCreateStructure
-        ) {
-          this.popupUrl = '/asset/add/structure';
-        }
 
         /**
          * The select has been populated with the list of locations and the component is ready to be used.
