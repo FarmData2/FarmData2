@@ -63,7 +63,7 @@
           v-bind:state="validityStyling"
           v-bind:required="required"
           v-bind:formatter="formatter"
-          v-on:update:model-value="updateValueChanged"
+          v-on:update:model-value="valueChanged"
         />
         <BInputGroupAppend>
           <BButton
@@ -415,7 +415,6 @@ export default {
     value() {
       if (!isNaN(this.value)) {
         this.valueAsString = this.formatter(this.value);
-        this.$options.valueChanged = true;
       }
     },
     valueAsString() {
@@ -425,6 +424,7 @@ export default {
        */
       this.$emit('update:value', parseFloat(this.valueAsString));
       this.numericValue = parseFloat(this.valueAsString);
+      this.$options.valueChanged = true;
     },
   },
   created() {

@@ -295,7 +295,7 @@ export default {
       maxValue: 1000,
       minValue: 0,
       form: {
-        value: 3,
+        value: 0,
       },
       validity: {
         showStyling: false,

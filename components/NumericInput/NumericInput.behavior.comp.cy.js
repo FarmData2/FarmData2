@@ -191,6 +191,7 @@ describe('Test the NumericInput component behavior', () => {
       props: {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
+        decimalPlaces: 1,
         value: 0.5,
         incDecValues: [1],
         onReady: readySpy,
@@ -201,7 +202,7 @@ describe('Test the NumericInput component behavior', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '1');
+        cy.get('[data-cy="numeric-input"]').should('have.value', '2.0');
       });
   });
 
@@ -227,6 +228,7 @@ describe('Test the NumericInput component behavior', () => {
         cy.get('[data-cy="numeric-decrease-lg"]').should('be.disabled');
         cy.get('[data-cy="numeric-increase-sm"]').should('not.be.disabled');
         cy.get('[data-cy="numeric-increase-md"]').should('not.be.disabled');
+        cy.get('[data-cy="numeric-increase-lg"]').should('not.be.disabled');
         cy.get('[data-cy="numeric-increase-lg"]').should('not.be.disabled');
 
         cy.get('[data-cy="numeric-input"]').clear();
