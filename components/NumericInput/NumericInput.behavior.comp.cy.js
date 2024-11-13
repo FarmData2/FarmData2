@@ -142,15 +142,15 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Input of value larger than initial value replaces initial value', () => {
+  it('Increment button rounds up appropriately', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
       props: {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
-        value: 10,
-        incDecValues: [100],
+        value: 5,
+        incDecValues: [10],
         onReady: readySpy,
       },
     });
@@ -159,19 +159,19 @@ describe('Test the NumericInput component behavior', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '100');
+        cy.get('[data-cy="numeric-input"]').should('have.value', '20');
       });
   });
 
-  it('Input of value smaller than initial value adds to initial value', () => {
+  it('Increment button rounds down appropriately', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
       props: {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
-        value: 10,
-        incDecValues: [1],
+        value: 3,
+        incDecValues: [10],
         onReady: readySpy,
       },
     });
@@ -180,20 +180,19 @@ describe('Test the NumericInput component behavior', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '11');
+        cy.get('[data-cy="numeric-input"]').should('have.value', '10');
       });
   });
 
-  it('Input of value smaller than initial decimal value adds to initial value', () => {
+  it('Decrement button rounds up appropriately', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
       props: {
         label: 'Test',
         invalidFeedbackText: 'Test feedback text',
-        decimalPlaces: 1,
-        value: 0.5,
-        incDecValues: [1],
+        value: 16,
+        incDecValues: [10],
         onReady: readySpy,
       },
     });
@@ -201,8 +200,29 @@ describe('Test the NumericInput component behavior', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="numeric-increase-sm"]').click();
-        cy.get('[data-cy="numeric-input"]').should('have.value', '2.0');
+        cy.get('[data-cy="numeric-decrease-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '10');
+      });
+  });
+
+  it('Decrement button rounds down appropriately', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 13,
+        incDecValues: [10],
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="numeric-decrease-sm"]').click();
+        cy.get('[data-cy="numeric-input"]').should('have.value', '0');
       });
   });
 

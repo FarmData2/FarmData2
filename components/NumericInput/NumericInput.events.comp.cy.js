@@ -216,6 +216,32 @@ describe('Test the NumericInput component events', () => {
       });
   });
 
+  it.only('Emits "update:value" when value is affected minValue change', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 10,
+        incDecValues: [1, 10, 100],
+        minValue: 0,
+        onReady: readySpy,
+        'onUpdate:value': updateSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          wrapper.setProps({ minValue: 20 }).then(() => {
+            cy.get('@updateSpy').should('have.been.calledOnce');
+            cy.get('[data-cy="numeric-input"]').should('have.value', 20);
+          });
+        });
+    });
+  });
+
   it('Emits "valid" when value becomes invalid', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
