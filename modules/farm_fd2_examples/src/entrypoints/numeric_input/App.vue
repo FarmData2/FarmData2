@@ -295,7 +295,11 @@ export default {
       maxValue: 1000,
       minValue: 0,
       form: {
-        value: 0,
+        /*
+         * Use a non-zero value here so that the button rounding
+         * effects can be observed.
+         */
+        value: 3,
       },
       validity: {
         showStyling: false,

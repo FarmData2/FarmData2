@@ -387,8 +387,19 @@ export default {
         formattedVal = value;
       } else if (val < this.minValue) {
         formattedVal = this.minValue.toFixed(this.decimalPlaces);
+        /*
+         * This case and the next one do not trigger the watches
+         * so we need to update the values and emit the 'update:value'
+         * event here so that everything stays in sync.
+         */
+        this.valueAsString = formattedVal;
+        this.numericValue = parseFloat(formattedVal);
+        this.$emit('update:value', parseFloat(formattedVal));
       } else if (val > this.maxValue) {
+        this.valueAsString = formattedVal;
+        this.numericValue = parseFloat(formattedVal);
         formattedVal = this.maxValue.toFixed(this.decimalPlaces);
+        this.$emit('update:value', parseFloat(formattedVal));
       } else {
         formattedVal = val.toFixed(this.decimalPlaces);
       }
@@ -415,6 +426,7 @@ export default {
     value() {
       if (!isNaN(this.value)) {
         this.valueAsString = this.formatter(this.value);
+        this.numericValue = this.value;
       }
     },
     valueAsString() {
