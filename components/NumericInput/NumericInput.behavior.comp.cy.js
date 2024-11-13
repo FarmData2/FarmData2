@@ -61,7 +61,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Test decrease buttons are disabled', () => {
+  it('Decrease buttons are disabled appropriately.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -101,7 +101,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Test increase buttons are disabled', () => {
+  it('Increase buttons are disabled appropriately.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -206,7 +206,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Typed input disables buttons', () => {
+  it('Typed input disables buttons as appropriate.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -244,7 +244,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Input remains within bounds of minValue/maxValue', () => {
+  it('Typed values remain within bounds when minValue/maxValue are non-negative.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -279,7 +279,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Input remains within bounds of negative minValue/maxValue', () => {
+  it('Typed input remains within bounds when minValue/maxValue are negative.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -314,7 +314,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Blank input, inc/dec button sets value to increment amount', () => {
+  it('Buttons set value to increment amount when input is blank.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -348,7 +348,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Blank input, inc/dec buttons remain within min/max Value', () => {
+  it('Buttons disabled as appropriate when input is blank.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -378,7 +378,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Non-required blank input, inc/dec button sets value to increment amount', () => {
+  it('Buttons set value to increment amount when not required and input is blank', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -413,7 +413,7 @@ describe('Test the NumericInput component behavior', () => {
       });
   });
 
-  it('Input blank, 0 minValue, decrement value buttons are disabled', () => {
+  it('Decrement value buttons are disabled with 0 minValue and blank input', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -462,7 +462,7 @@ describe('Test the NumericInput component behavior', () => {
     });
   });
 
-  it('Check change to empty value.', () => {
+  it('Component handles prop values of null, NaN, and "".', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
