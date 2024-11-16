@@ -482,7 +482,7 @@ describe('Test the NumericInput component behavior', () => {
     });
   });
 
-  it('Component handles prop values of null, NaN, and "".', () => {
+  it('Component handles non-numeric prop values.', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(NumericInput, {
@@ -509,6 +509,39 @@ describe('Test the NumericInput component behavior', () => {
         .then(() => {
           wrapper.setProps({ value: null });
           cy.get('[data-cy="numeric-input"]').should('have.value', '');
+        })
+        .then(() => {
+          wrapper.setProps({ value: 'xyz' });
+          cy.get('[data-cy="numeric-input"]').should('have.value', '');
+        });
+    });
+  });
+
+  it('Component bounds prop changes to min/max values.', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(NumericInput, {
+      props: {
+        label: 'Test',
+        invalidFeedbackText: 'Test feedback text',
+        value: 50,
+        minValue: 25,
+        maxValue: 100,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="numeric-input"]').should('have.value', '50');
+        })
+        .then(() => {
+          wrapper.setProps({ value: -100 });
+          cy.get('[data-cy="numeric-input"]').should('have.value', '25');
+        })
+        .then(() => {
+          wrapper.setProps({ value: 200 });
+          cy.get('[data-cy="numeric-input"]').should('have.value', 100);
         });
     });
   });

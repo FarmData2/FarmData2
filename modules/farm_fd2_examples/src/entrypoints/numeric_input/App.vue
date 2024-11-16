@@ -7,7 +7,6 @@
   <hr />
   <NumericInput
     id="numeric-input"
-    v-bind:key="componentKey"
     data-cy="numeric-input"
     invalidFeedbackText="Invalid Number."
     label="Numeric Input"
@@ -111,7 +110,6 @@
             v-on:click="
               () => {
                 this.minValue -= 100;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.minValue - 100 < -1000"
@@ -126,7 +124,6 @@
             v-on:click="
               () => {
                 this.minValue -= 10;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.minValue - 10 < -1000"
@@ -141,7 +138,6 @@
             v-on:click="
               () => {
                 this.minValue += 10;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.minValue + 10 >= this.maxValue"
@@ -156,7 +152,6 @@
             v-on:click="
               () => {
                 this.minValue += 100;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.minValue + 100 >= this.maxValue"
@@ -176,7 +171,6 @@
             v-on:click="
               () => {
                 this.maxValue -= 100;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.maxValue - 100 <= this.minValue"
@@ -191,7 +185,6 @@
             v-on:click="
               () => {
                 this.maxValue -= 10;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.maxValue - 10 <= this.minValue"
@@ -206,7 +199,6 @@
             v-on:click="
               () => {
                 this.maxValue += 10;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.maxValue + 10 > 1000"
@@ -221,7 +213,6 @@
             v-on:click="
               () => {
                 this.maxValue += 100;
-                this.componentKey++;
               }
             "
             v-bind:disabled="this.maxValue + 100 > 1000"
@@ -306,13 +297,11 @@ export default {
         value: true,
       },
       createdCount: 0,
-      componentKey: 0,
     };
   },
   methods: {
     updateDecimalPlaces(value) {
       this.decimalPlaces = value;
-      this.componentKey += 1;
     },
   },
   computed: {
