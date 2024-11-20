@@ -65,12 +65,12 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in this.optionList"
-            v-bind:key="option"
-            v-bind:value="option"
+            v-for="(option, i) in this.optionsMap"
+            v-bind:key="option.text"
+            v-bind:value="option.value"
             v-bind:data-cy="'selector-option-' + (i + 1)"
           >
-            {{ option }}
+            {{ option.text }}
           </BFormSelectOption>
         </BFormSelect>
         <BInputGroupAppend>
@@ -250,6 +250,7 @@ export default {
   data() {
     return {
       optionList: this.options,
+      optionsMap: this.optionList,
       selectedOption: this.selected,
       isPopupVisible: false,
       popupSrc: '',
@@ -417,11 +418,21 @@ export default {
     },
     options: {
       handler() {
-        this.optionList = this.options;
-
         if (!this.optionList.includes(this.selected)) {
           this.selectedOption = '';
         }
+      },
+      deep: true,
+    },
+    optionList: {
+      immediate: true,
+      handler() {
+        this.optionsMap = this.options.map((option) => {
+          if (typeof option === 'string') {
+            return { text: option, value: option, disabled: false };
+          }
+          return option;
+        });
       },
       deep: true,
     },
