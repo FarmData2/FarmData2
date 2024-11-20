@@ -68,6 +68,7 @@
             v-for="(option, i) in this.optionsMap"
             v-bind:key="option.text"
             v-bind:value="option.value"
+            v-bind:disabled="option.disabled"
             v-bind:data-cy="'selector-option-' + (i + 1)"
           >
             {{ option.text }}
@@ -421,12 +422,7 @@ export default {
         if (!this.optionList.includes(this.selected)) {
           this.selectedOption = '';
         }
-      },
-      deep: true,
-    },
-    optionList: {
-      immediate: true,
-      handler() {
+
         this.optionsMap = this.options.map((option) => {
           if (typeof option === 'string') {
             return { text: option, value: option, disabled: false };
@@ -435,6 +431,7 @@ export default {
         });
       },
       deep: true,
+      immediate: true,
     },
   },
   created() {
