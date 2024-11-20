@@ -216,7 +216,7 @@ describe('Test the NumericInput component events', () => {
       });
   });
 
-  it.only('Emits "update:value" when value is affected minValue change', () => {
+  it('Emits "update:value" when value is affected minValue change', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
 
