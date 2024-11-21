@@ -309,51 +309,51 @@ export default {
     disableSmallDec() {
       return (
         this.numericValue - this.incDecValues[0] < this.minValue ||
-        (isNaN(this.numericValue) && this.incDecValues[0] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[0] * -1 < this.minValue)
       );
     },
     disableMediumDec() {
       return (
         this.numericValue - this.incDecValues[1] < this.minValue ||
-        (isNaN(this.numericValue) && this.incDecValues[1] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[1] * -1 < this.minValue)
       );
     },
     disableLargeDec() {
       return (
         this.numericValue - this.incDecValues[2] < this.minValue ||
-        (isNaN(this.numericValue) && this.incDecValues[2] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[2] * -1 < this.minValue)
       );
     },
     disableSmallInc() {
       return (
         this.numericValue + this.incDecValues[0] > this.maxValue ||
-        (isNaN(this.numericValue) && this.incDecValues[0] > this.maxValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[0] > this.maxValue)
       );
     },
     disableMediumInc() {
       return (
         this.numericValue + this.incDecValues[1] > this.maxValue ||
-        (isNaN(this.numericValue) && this.incDecValues[1] > this.maxValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[1] > this.maxValue)
       );
     },
     disableLargeInc() {
       return (
         this.numericValue + this.incDecValues[2] > this.maxValue ||
-        (isNaN(this.numericValue) && this.incDecValues[2] > this.maxValue)
+        (Number.isNaN(this.numericValue) && this.incDecValues[2] > this.maxValue)
       );
     },
     isValid() {
       if (!this.required) {
         return (
           this.isEmpty ||
-          (!isNaN(this.numericValue) &&
+          (!Number.isNaN(this.numericValue) &&
             this.numericValue >= this.minValue &&
             this.numericValue <= this.maxValue)
         );
       } else {
         return (
           !this.isEmpty &&
-          !isNaN(this.numericValue) &&
+          !Number.isNaN(this.numericValue) &&
           this.numericValue >= this.minValue &&
           this.numericValue <= this.maxValue
         );
@@ -431,10 +431,10 @@ export default {
       }
     },
     minValue() {
-      this.numericValue = this.validateValue(this.value);
+      this.numericValue = this.validateValue(this.numericValue);
     },
     maxValue() {
-      this.numericValue = this.validateValue(this.value);
+      this.numericValue = this.validateValue(this.numericValue);
     },
     numericValue() {
       /**
@@ -454,6 +454,12 @@ export default {
   created() {
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
+
+    /*
+     * Emit the initial value of the component to account for it being
+     * adjusted by the validateValue function.
+     */
+    this.$emit('update:value', this.numericValue);
 
     /**
      * The component is ready for use.
