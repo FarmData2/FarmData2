@@ -36,6 +36,80 @@ describe('Test the SelectorBase behaviors', () => {
     });
   });
 
+  it('Prop is a list of strings and objects', () => {
+    const initOpts = [
+      'One',
+      'Two',
+      'Three',
+      { text: 'Four', value: 'Four', disabled: false },
+      'Five',
+    ];
+    const newOpts = [
+      'Six',
+      { text: 'Seven', value: 'Seven', disabled: true },
+      'Eight',
+    ];
+
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: initOpts,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+          cy.get('[data-cy="selector-option-4"]').should('have.value', 'Four');
+          cy.get('[data-cy="selector-option-5"]').should('have.value', 'Five');
+          wrapper.setProps({ options: newOpts });
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'Six');
+          cy.get('[data-cy="selector-option-2"]').should('have.value', 'Seven');
+          cy.get('[data-cy="selector-option-3"]').should('have.value', 'Eight');
+        });
+    });
+  });
+
+  it('Props reflect can be disabled/enabled through flag', () => {
+    const initOpts = [
+      { text: 'One', value: 'One', disabled: true },
+      { text: 'Two', value: 'Two', disabled: false },
+      'three',
+    ];
+    const newOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: true },
+      'three',
+    ];
+
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: initOpts,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-option-1"]').should('be.disabled');
+          cy.get('[data-cy="selector-option-2"]').should('be.enabled');
+          cy.get('[data-cy="selector-option-3"]').should('be.enabled');
+          wrapper.setProps({ options: newOpts });
+          cy.get('[data-cy="selector-option-1"]').should('be.enabled');
+          cy.get('[data-cy="selector-option-2"]').should('be.disabled');
+          cy.get('[data-cy="selector-option-3"]').should('be.enabled');
+        });
+    });
+  });
+
   it('Verify that `selected` prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 

@@ -65,7 +65,7 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in this.optionsMap"
+            v-for="(option, i) in this.optionsList"
             v-bind:key="option.text"
             v-bind:value="option.value"
             v-bind:disabled="option.disabled"
@@ -251,7 +251,7 @@ export default {
   data() {
     return {
       optionList: this.options,
-      optionsMap: this.optionList,
+      optionsList: this.optionList,
       selectedOption: this.selected,
       isPopupVisible: false,
       popupSrc: '',
@@ -419,19 +419,27 @@ export default {
     },
     options: {
       handler() {
-        if (!this.optionList.includes(this.selected)) {
-          this.selectedOption = '';
-        }
-
-        this.optionsMap = this.options.map((option) => {
+        this.optionsList = this.options.map((option) => {
           if (typeof option === 'string') {
-            return { text: option, value: option, disabled: false };
+            option = { text: option, value: option, disabled: false };
           }
           return option;
         });
       },
-      deep: true,
       immediate: true,
+      deep: true,
+    },
+    optionsList: {
+      handler() {
+        if (
+          !this.optionsList.some(
+            (option) => option.text === this.selectedOption
+          )
+        ) {
+          this.selectedOption = '';
+        }
+      },
+      deep: true,
     },
   },
   created() {

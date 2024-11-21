@@ -162,7 +162,7 @@ export default {
       popupUrl: null,
       options: ['one', 'two', 'three', 'four', 'five'],
       form: {
-        selected: null,
+        selected: 'one',
       },
       validity: {
         showStyling: false,
