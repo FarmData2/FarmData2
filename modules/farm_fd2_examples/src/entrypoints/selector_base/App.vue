@@ -112,6 +112,39 @@
           </BButton>
         </td>
       </tr>
+      <tr>
+        <td>Disable Three Items</td>
+        <td>
+          <BButton
+            id="disable-button"
+            data-cy="disable-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="
+              () => {
+                const itemsToDisable = ['one', 'two', 'four'];
+                if (itemsToDisable.includes(this.form.selected)) {
+                  this.form.selected = null;
+                }
+                this.options = this.options.map((item) => {
+                  if (itemsToDisable.includes(item)) {
+                    return { text: item, value: item, disabled: true };
+                  } else if (typeof item != 'string') {
+                    return {
+                      ...item,
+                      disabled: !item.disabled,
+                    };
+                  } else {
+                    return item;
+                  }
+                });
+              }
+            "
+          >
+            Disable Three Items
+          </BButton>
+        </td>
+      </tr>
     </tbody>
   </table>
 
@@ -162,7 +195,7 @@ export default {
       popupUrl: null,
       options: ['one', 'two', 'three', 'four', 'five'],
       form: {
-        selected: 'one',
+        selected: null,
       },
       validity: {
         showStyling: false,

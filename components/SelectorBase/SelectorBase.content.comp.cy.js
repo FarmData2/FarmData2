@@ -52,6 +52,47 @@ describe('Test the default SelectorBase content', () => {
       });
   });
 
+  it('Check object props can be updated', () => {
+    const initOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: false },
+      { text: 'Three', value: 'Three', disabled: false },
+    ];
+    const newOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: false },
+      { text: 'Three', value: 'Three', disabled: true },
+    ];
+
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: initOpts,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+          cy.get('[data-cy="selector-option-2"]').should('have.value', 'Two');
+          cy.get('[data-cy="selector-option-3"]').should('have.value', 'Three');
+          cy.get('[data-cy="selector-option-3"]').should(
+            'have.disabled',
+            false
+          );
+          wrapper.setProps({ options: newOpts });
+          cy.get('[data-cy="selector-option-1"]').should('have.value', 'One');
+          cy.get('[data-cy="selector-option-2"]').should('have.value', 'Two');
+          cy.get('[data-cy="selector-option-3"]').should('have.value', 'Three');
+          cy.get('[data-cy="selector-option-3"]').should('have.disabled', true);
+        });
+    });
+  });
+
   it('Test required prop', () => {
     const readySpy = cy.spy().as('readySpy');
 
