@@ -309,37 +309,43 @@ export default {
     disableSmallDec() {
       return (
         this.numericValue - this.incDecValues[0] < this.minValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[0] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[0] * -1 < this.minValue)
       );
     },
     disableMediumDec() {
       return (
         this.numericValue - this.incDecValues[1] < this.minValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[1] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[1] * -1 < this.minValue)
       );
     },
     disableLargeDec() {
       return (
         this.numericValue - this.incDecValues[2] < this.minValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[2] * -1 < this.minValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[2] * -1 < this.minValue)
       );
     },
     disableSmallInc() {
       return (
         this.numericValue + this.incDecValues[0] > this.maxValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[0] > this.maxValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[0] > this.maxValue)
       );
     },
     disableMediumInc() {
       return (
         this.numericValue + this.incDecValues[1] > this.maxValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[1] > this.maxValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[1] > this.maxValue)
       );
     },
     disableLargeInc() {
       return (
         this.numericValue + this.incDecValues[2] > this.maxValue ||
-        (Number.isNaN(this.numericValue) && this.incDecValues[2] > this.maxValue)
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[2] > this.maxValue)
       );
     },
     isValid() {
