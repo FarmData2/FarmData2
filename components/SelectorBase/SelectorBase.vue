@@ -231,6 +231,13 @@ export default {
       default: '',
     },
     /**
+     * Keep newly disabled options selected.
+     */
+    keepDisabledSelected: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Whether validity styling should appear on the dropdown.
      */
     showValidityStyling: {
@@ -423,14 +430,18 @@ export default {
           if (typeof option === 'string') {
             option = { text: option, value: option, disabled: false };
           }
+
+          if (
+            !this.keepDisabledSelected &&
+            option.text === this.selectedOption &&
+            option.disabled
+          ) {
+            this.selectedOption = '';
+          }
+
           return option;
         });
-      },
-      immediate: true,
-      deep: true,
-    },
-    optionsList: {
-      handler() {
+
         if (
           !this.optionsList.some(
             (option) => option.text === this.selectedOption
@@ -439,6 +450,7 @@ export default {
           this.selectedOption = '';
         }
       },
+      immediate: true,
       deep: true,
     },
   },
