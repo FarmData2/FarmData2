@@ -405,21 +405,17 @@ export default {
       }
     },
     checkSelectedOption() {
-      if (
-        !this.optionsList.some((option) => option.text === this.selectedOption)
-      ) {
-        this.handleDelete();
-      }
-
       for (let option of this.optionsList) {
-        if (
-          !this.keepDisabledSelected &&
-          option.text === this.selectedOption &&
-          option.disabled
-        ) {
-          this.handleDelete();
+        if (option.text === this.selectedOption) {
+          if (!this.keepDisabledSelected && option.disabled) {
+            this.handleDelete();
+          }
+
+          return;
         }
       }
+
+      this.handleDelete();
     },
   },
   watch: {
