@@ -78,7 +78,7 @@ describe('Test the SelectorBase component events', () => {
         label: `TheLabel`,
         required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        selected: ['One'],
+        selected: 'One',
         onReady: readySpy,
         onValid: validSpy,
       },

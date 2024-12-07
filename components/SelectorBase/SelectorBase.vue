@@ -404,6 +404,23 @@ export default {
         this.hidePopup(result.trim());
       }
     },
+    checkOptionsList() {
+      if (
+        !this.optionsList.some((option) => option.text === this.selectedOption)
+      ) {
+        this.handleDelete();
+      }
+
+      for (let option of this.optionsList) {
+        if (
+          !this.keepDisabledSelected &&
+          option.text === this.selectedOption &&
+          option.disabled
+        ) {
+          this.handleDelete();
+        }
+      }
+    },
   },
   watch: {
     isValid() {
@@ -424,6 +441,9 @@ export default {
        */
       this.$emit('update:selected', this.selectedOption);
     },
+    keepDisabledSelected() {
+      this.checkOptionsList();
+    },
     options: {
       handler() {
         this.optionsList = this.options.map((option) => {
@@ -431,24 +451,10 @@ export default {
             option = { text: option, value: option, disabled: false };
           }
 
-          if (
-            !this.keepDisabledSelected &&
-            option.text === this.selectedOption &&
-            option.disabled
-          ) {
-            this.handleDelete();
-          }
-
           return option;
         });
 
-        if (
-          !this.optionsList.some(
-            (option) => option.text === this.selectedOption
-          )
-        ) {
-          this.handleDelete();
-        }
+        this.checkOptionsList();
       },
       immediate: true,
       deep: true,

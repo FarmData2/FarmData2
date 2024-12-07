@@ -110,6 +110,70 @@ describe('Test the SelectorBase behaviors', () => {
     });
   });
 
+  it('"selected" prop is removed if disabled and "KeepDisabledSelected" false', () => {
+    const initOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: false },
+    ];
+    const newOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: true },
+    ];
+
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: initOpts,
+        selected: 'Two',
+        keepDisabledSelected: false,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
+          wrapper.setProps({ options: newOpts });
+          cy.get('[data-cy="selector-input"]').should('have.value', null);
+        });
+    });
+  });
+
+  it('"selected" prop remains if disabled and "KeepDisabledSelected" is true', () => {
+    const initOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: false },
+    ];
+    const newOpts = [
+      { text: 'One', value: 'One', disabled: false },
+      { text: 'Two', value: 'Two', disabled: true },
+    ];
+
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: initOpts,
+        selected: 'Two',
+        keepDisabledSelected: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
+          wrapper.setProps({ options: newOpts });
+          cy.get('[data-cy="selector-input"]').should('have.value', 'Two');
+        });
+    });
+  });
+
   it('Verify that `selected` prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
