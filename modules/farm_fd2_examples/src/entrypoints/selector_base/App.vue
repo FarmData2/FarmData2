@@ -113,7 +113,7 @@
         </td>
       </tr>
       <tr>
-        <td>Disable Three Items</td>
+        <td>Toggle Disabled Items</td>
         <td>
           <BButton
             id="disable-button"
@@ -141,7 +141,7 @@
               }
             "
           >
-            Disable Three Items
+            Toggle Disabled Items
           </BButton>
         </td>
       </tr>
