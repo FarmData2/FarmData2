@@ -404,7 +404,7 @@ export default {
         this.hidePopup(result.trim());
       }
     },
-    checkOptionsList() {
+    checkSelectedOption() {
       if (
         !this.optionsList.some((option) => option.text === this.selectedOption)
       ) {
@@ -442,7 +442,7 @@ export default {
       this.$emit('update:selected', this.selectedOption);
     },
     keepDisabledSelected() {
-      this.checkOptionsList();
+      this.checkSelectedOption();
     },
     options: {
       handler() {
@@ -454,7 +454,7 @@ export default {
           return option;
         });
 
-        this.checkOptionsList();
+        this.checkSelectedOption();
       },
       immediate: true,
       deep: true,
