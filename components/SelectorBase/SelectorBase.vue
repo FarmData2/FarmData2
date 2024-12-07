@@ -436,7 +436,7 @@ export default {
             option.text === this.selectedOption &&
             option.disabled
           ) {
-            this.selectedOption = '';
+            this.handleDelete();
           }
 
           return option;
@@ -447,7 +447,7 @@ export default {
             (option) => option.text === this.selectedOption
           )
         ) {
-          this.selectedOption = '';
+          this.handleDelete();
         }
       },
       immediate: true,
