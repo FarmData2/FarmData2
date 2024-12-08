@@ -42,9 +42,9 @@ echo "  Found it."
 
 # Check if Docker daemon is running
 echo "Checking if Docker daemon is running..."
-if ! docker info >/dev/null 2>&1; then
-    echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
-    exit 1
+if ! docker info > /dev/null 2>&1; then
+  echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
+  exit 1
 fi
 echo "  Docker daemon is running."
 
@@ -59,10 +59,10 @@ echo "  Full path: $FD2_PATH"
 
 # Create the .fd2 directory if it does not exist.
 # This directory is used for development environment configuration information.
-if [ ! -d ~/.fd2 ]; then
-  echo "Creating the ~/.fd2 configuration directory."
-  mkdir ~/.fd2
-  echo "  The ~/.fd2 configuration directory created."
+if [ ! -d "$FD2_PATH/.fd2" ]; then
+  echo "Creating the $FD2_PATH/.fd2 configuration directory."
+  mkdir "$FD2_PATH/.fd2"
+  echo "  The $FD2_PATH/.fd2 configuration directory created."
 fi
 
 # Create the dist directories if they do not exist

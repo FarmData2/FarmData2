@@ -128,8 +128,8 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     echo "  fd2grp has RW access to $FD2_DIR."
   fi
 
-  rm -rf ~/.fd2/gids &> /dev/null
-  mkdir ~/.fd2/gids
-  echo "$FD2GRP_GID" > ~/.fd2/gids/fd2grp.gid
-  echo "$DOCKER_GRP_GID" > ~/.fd2/gids/docker.gid
+  rm -rf "$FD2_PATH/.fd2/gids" &> /dev/null
+  mkdir "$FD2_PATH/.fd2/gids"
+  echo "$FD2GRP_GID" > "$FD2_PATH/.fd2/gids/fd2grp.gid"
+  echo "$DOCKER_GRP_GID" > "$FD2_PATH/.fd2/gids/docker.gid"
 fi
