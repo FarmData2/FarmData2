@@ -24,7 +24,7 @@ fi
 HOST=$(docker inspect -f '{{.Name}}' "$HOSTNAME" 2> /dev/null)
 if [ "$HOST" == "/fd2_dev" ]; then
   echo -e "${RED}ERROR:${NO_COLOR} fd2-up.bash script cannot be run in the dev container."
-  echo "Always run fd2-up.bash on your host OS."
+  echo "Always run fd2-up.bash on the host."
   exit 255
 fi
 
@@ -40,19 +40,40 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
 fi
 echo "  Found it."
 
-# NEED TO NOT DO THIS HERE... in codespace the docker.sock
-# has the wrong permissions which are corrected in the fd2-up.linux.bash
-# file which hasn't run yet...
-
-# NEED TO FIX THIS SO THIS IS STILL CHECKED THOUGH.
+# Determine the host on which we are running.
+echo "Detecting host..."
+GP="$(which gp)" # Check for GitPod which will have gp command.
+OS=$(uname -a)   # Check for other OS's
+PROFILE=
+if [ "$GP" != "" ]; then
+  PROFILE=gitpod
+elif [[ "$OS" == *"Darwin"* ]]; then
+  PROFILE=macos
+elif [[ "$OS" == *"microsoft"* ]] || [[ "$OS" == *"Microsoft"* ]]; then
+  # Note that this is before Linux because if running in WSL
+  # uname -a reports Linux, but also has microsoft later in the output.
+  PROFILE=wsl
+elif [[ "$OS" == *"Linux"* ]]; then
+  PROFILE=linux
+else
+  echo -e "${RED}ERROR:${NO_COLOR} Your host operating system $OS was not recognized."
+  echo "  Please file an issue on the FarmData2 issue tracker."
+  exit 255
+fi
+echo "  Running on a $PROFILE host."
 
 # Check if Docker daemon is running
-# echo "Checking if Docker daemon is running..."
-# if ! docker info > /dev/null 2>&1; then
-#   echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
-#   exit 1
-# fi
-# echo "  Docker daemon is running."
+if [[ "$PROFILE" != "linux" && "$PROFILE" != "wsl" ]]; then
+  # Don't check on linux or wsl because the permissions on docker.sock
+  # may not be set correctly and this will fail. The fd2-up-linux.bash
+  # script handles that case.
+  echo "Checking if Docker daemon is running..."
+  if ! docker info > /dev/null 2>&1; then
+    echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
+    exit 1
+  fi
+  echo "  Docker daemon is running."
+fi
 
 # Get the name of the directory containing the FarmData2 repo.
 # This is the FarmData2 directory by default, but may have been
@@ -87,28 +108,6 @@ if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
   mkdir "$FD2_PATH"/modules/farm_fd2_school/dist
   echo "  Created."
 fi
-
-# Determine the host on which we are running.
-echo "Detecting host..."
-GP="$(which gp)" # Check for GitPod which will have gp command.
-OS=$(uname -a)   # Check for other OS's
-PROFILE=
-if [ "$GP" != "" ]; then
-  PROFILE=gitpod
-elif [[ "$OS" == *"Darwin"* ]]; then
-  PROFILE=macos
-elif [[ "$OS" == *"microsoft"* ]] || [[ "$OS" == *"Microsoft"* ]]; then
-  # Note that this is before Linux because if running in WSL
-  # uname -a reports Linux, but also has microsoft later in the output.
-  PROFILE=wsl
-elif [[ "$OS" == *"Linux"* ]]; then
-  PROFILE=linux
-else
-  echo -e "${RED}ERROR:${NO_COLOR} Your host operating system $OS was not recognized."
-  echo "  Please file an issue on the FarmData2 issue tracker."
-  exit 255
-fi
-echo "  Running on a $PROFILE host."
 
 if [[ "$PROFILE" == "gitpod" ]]; then
   echo "Running fd2-up.gitpod.bash..."
