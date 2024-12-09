@@ -44,8 +44,7 @@
               "command": "bin/fd2-up.bash",
               "presentation": {
                 "reveal": "always",
-                "panel": "new",
-                "close": "true"
+                "panel": "new"
               }
             },
             {
@@ -58,7 +57,7 @@
             },
             {
               "label": "Hide Panel",
-              "command": "workbench.action.closePanel"
+              "command": "${input:hidePanel}"
             }
           ],
           "inputs": [
@@ -87,6 +86,11 @@
                   "toggle.workbench.layoutControl.enabled"
                 ]
               }
+            },
+            {
+              "id": "hidePanel",
+              "type": "command",
+              "command": "workbench.action.closePanel"
             }
           ]
         }
