@@ -29,8 +29,9 @@
               "type": "shell",
               "dependsOrder": "sequence",
               "dependsOn": [
+                "Hide All But Panel",
                 "Run fd2-up.bash Script",
-                "Hide UI Elements",
+                "Hide Panel",
                 "Open noVNC in Browser"
               ],
               "runOptions": {
@@ -43,7 +44,8 @@
               "command": "bin/fd2-up.bash",
               "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "new",
+                "close": "true"
               }
             },
             {
@@ -53,6 +55,10 @@
             {
               "label": "Open noVNC in Browser",
               "command": "${input:openSimpleBrowser}"
+            },
+            {
+              "label": "Hide Panel",
+              "command": "workbench.action.closePanel"
             }
           ],
           "inputs": [
