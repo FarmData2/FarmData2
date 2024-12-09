@@ -63,7 +63,8 @@
               "dependsOrder": "sequence",
               "dependsOn": [
                 "Set docker.sock group",
-                "Run bin/fd2-up.bash (1)"
+                "Run bin/fd2-up.bash (1)",
+                "Run bin/fd2-up.bash (2)"
                 //"Run FD2 Dev Environment",
                 //"Open FD2 Dev Environment"
               ],
