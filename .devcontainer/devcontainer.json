@@ -55,7 +55,7 @@
               "command": "if [ ! -f .fd2/gid/fd2grp.gid  ]; then bin/fd2-up.bash; fi",
               "presentation": {
                 "reveal": "always",
-                "panel": "shared"
+                "panel": "new"
               }
             },
             {
