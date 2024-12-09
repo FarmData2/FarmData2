@@ -1,0 +1,13 @@
+{
+  "remoteUser": "fd2dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "mounts": [
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+  ],
+  "postStartCommand": "/home/fd2dev/postStart.bash"
+}
