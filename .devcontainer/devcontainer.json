@@ -46,6 +46,19 @@
               }
             },
             {
+              "label": "Run bin/fd2-up.bash (2)",
+              "type": "shell",
+              // fd2-up.linux.bash has to be run twice the first time it
+              // is run.  When it has run twice the fd2grp.gid file will
+              // exist, so this task will only run the first time the
+              // codespace is launched.
+              "command": "if [ ! -f .fd2/gid/fd2grp.gid  ]; then bin/fd2-up.bash; fi",
+              "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+              }
+            },
+            {
               "label": "Start FD2 Dev Environment",
               "dependsOrder": "sequence",
               "dependsOn": [
