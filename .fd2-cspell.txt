@@ -5,6 +5,7 @@ Braught
 chgrp
 CHUAU
 Cinos
+codespace
 contconf
 conventionalcommits
 datacy

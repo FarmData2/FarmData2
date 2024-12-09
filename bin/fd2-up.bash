@@ -40,13 +40,19 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
 fi
 echo "  Found it."
 
+# NEED TO NOT DO THIS HERE... in codespace the docker.sock
+# has the wrong permissions which are corrected in the fd2-up.linux.bash
+# file which hasn't run yet...
+
+# NEED TO FIX THIS SO THIS IS STILL CHECKED THOUGH.
+
 # Check if Docker daemon is running
-echo "Checking if Docker daemon is running..."
-if ! docker info > /dev/null 2>&1; then
-  echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
-  exit 1
-fi
-echo "  Docker daemon is running."
+# echo "Checking if Docker daemon is running..."
+# if ! docker info > /dev/null 2>&1; then
+#   echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
+#   exit 1
+# fi
+# echo "  Docker daemon is running."
 
 # Get the name of the directory containing the FarmData2 repo.
 # This is the FarmData2 directory by default, but may have been
