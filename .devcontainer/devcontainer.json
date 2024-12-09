@@ -9,8 +9,11 @@
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
   ],
-  "forwardPorts": [5901, 6901],
+  "forwardPorts": [80, 5901, 6901],
   "portsAttributes": {
+    "80": {
+      "label": "farmOS Instance"
+    },
     "5901": {
       "label": "FarmData2 VNC"
     },
@@ -25,10 +28,6 @@
           "version": "2.0.0",
           "tasks": [
             {
-              "label": "Hide UI Elements",
-              "command": "${input:hideUIElements}"
-            },
-            {
               "label": "Set docker.sock group",
               "type": "shell",
               "command": "echo 'fd2dev' | sudo -S chgrp docker /var/run/docker.sock",
@@ -38,7 +37,7 @@
               }
             },
             {
-              "label": "Run FD2 Dev Enviornment",
+              "label": "Run bin/fd2-up.bash (1)",
               "type": "shell",
               "command": "/home/fd2dev/postStart.bash",
               "presentation": {
@@ -47,48 +46,16 @@
               }
             },
             {
-              "label": "Open FD2 Dev Environment",
-              "command": "${input:openSimpleBrowser}"
-            },
-            {
               "label": "Start FD2 Dev Environment",
               "dependsOrder": "sequence",
               "dependsOn": [
-                //"Hide UI Elements",
-                "Set docker.sock group"
+                "Set docker.sock group",
+                "Run bin/fd2-up.bash (1)"
                 //"Run FD2 Dev Environment",
                 //"Open FD2 Dev Environment"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
-              }
-            }
-          ],
-          "inputs": [
-            {
-              "id": "openSimpleBrowser",
-              "type": "command",
-              "command": "simpleBrowser.show",
-              "args": [
-                "https://${env:CODESPACE_NAME}-6901.app.github.dev?autoconnect=true&resize=remote"
-              ]
-            },
-            {
-              "id": "hideUIElements",
-              "type": "command",
-              "command": "runCommands",
-              "args": {
-                "commands": [
-                  "workbench.action.closeSidebar",
-                  "workbench.action.closePanel",
-                  "workbench.action.closeAllEditors",
-                  "workbench.action.activityBarLocation.hide",
-                  "workbench.action.hideEditorTabs",
-                  "workbench.action.hideEditorActions",
-                  "workbench.action.toggleStatusbarVisibility",
-                  "toggle.window.commandCenter",
-                  "toggle.workbench.layoutControl.enabled"
-                ]
               }
             }
           ]
