@@ -29,28 +29,26 @@
               "type": "shell",
               "dependsOrder": "sequence",
               "dependsOn": [
-                "Hide UI Elements",
                 "Run fd2-up.bash Script",
+                "Hide UI Elements",
                 "Open noVNC in Browser"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
-              },
-              "presentation": {
-                "reveal": "never"
               }
-            },
-            {
-              "label": "Hide UI Elements",
-              "command": "${input:hideUIElements}"
             },
             {
               "label": "Run fd2-up.bash Script",
               "type": "shell",
               "command": "bin/fd2-up.bash",
               "presentation": {
-                "reveal": "never"
+                "reveal": "always",
+                "panel": "shared"
               }
+            },
+            {
+              "label": "Hide UI Elements",
+              "command": "${input:hideUIElements}"
             },
             {
               "label": "Open noVNC in Browser",
