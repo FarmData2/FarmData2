@@ -43,10 +43,16 @@ echo "  Found it."
 # Determine the host on which we are running.
 echo "Detecting host..."
 GP="$(which gp)" # Check for GitPod which will have gp command.
-OS=$(uname -a)   # Check for other OS's
+# Check if running in a codespace
+if [ -d "/workspaces" ]; then
+  CODESPACE=1
+fi
+OS=$(uname -a) # Check for other OS's
 PROFILE=
 if [ "$GP" != "" ]; then
   PROFILE=gitpod
+elif [ -n "$CODESPACE" ]; then
+  PROFILE=codespace
 elif [[ "$OS" == *"Darwin"* ]]; then
   PROFILE=macos
 elif [[ "$OS" == *"microsoft"* ]] || [[ "$OS" == *"Microsoft"* ]]; then
@@ -63,10 +69,10 @@ fi
 echo "  Running on a $PROFILE host."
 
 # Check if Docker daemon is running
-if [[ "$PROFILE" != "linux" && "$PROFILE" != "wsl" ]]; then
-  # Don't check on linux or wsl because the permissions on docker.sock
-  # may not be set correctly and this will fail. The fd2-up-linux.bash
-  # script handles that case.
+if [[ "$PROFILE" != "linux" && "$PROFILE" != "wsl" && $PROFILE != "codespace" ]]; then
+  # Don't check on linux, codespaces, or wsl because the permissions on
+  # docker.sock may not be set correctly and this will fail.
+  # The appropriate fd2-up-xxxxxx.bash script will handle those cases.
   echo "Checking if Docker daemon is running..."
   if ! docker info > /dev/null 2>&1; then
     echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
@@ -113,6 +119,10 @@ if [[ "$PROFILE" == "gitpod" ]]; then
   echo "Running fd2-up.gitpod.bash..."
   source "$SCRIPT_DIR/fd2-up.gitpod.bash"
   echo "  Done."
+elif [[ "$PROFILE" == "codespace" ]]; then
+  echo "Running fd2-up.codespace.bash..."
+  source "$SCRIPT_DIR/fd2-up.codespace.bash"
+  echo " Done."
 elif [[ "$PROFILE" == "macos" ]]; then
   echo "Running fd2-up.macos.bash..."
   source "$SCRIPT_DIR/fd2-up.macos.bash"
