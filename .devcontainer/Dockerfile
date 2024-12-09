@@ -39,11 +39,6 @@ RUN git config --global credential.helper store \
 
 USER root
 
-# Copy the postStart script into the container and make it executable.
-# This is run by the devcontainer.json file.
-COPY --chown=$USERNAME:$USERNAME ./postStart.bash ./postStart.bash
-RUN chmod +x ./postStart.bash
-
 # Stuff to reduce image size.
 RUN apt-get clean -y \
   && apt-get autoclean -y \
