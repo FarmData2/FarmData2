@@ -31,7 +31,7 @@
             {
               "label": "Set docker.sock group",
               "type": "shell",
-              "command": "echo 'fd2dev' |sudo chgrp docker /var/run/docker.sock",
+              "command": "echo 'fd2dev' | sudo -S chgrp docker /var/run/docker.sock",
               "presentation": {
                 "reveal": "always",
                 "panel": "shared"
