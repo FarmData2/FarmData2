@@ -39,7 +39,7 @@
             {
               "label": "Run bin/fd2-up.bash (1)",
               "type": "shell",
-              "command": "/home/fd2dev/postStart.bash",
+              "command": "bin/fd2-up.bash",
               "presentation": {
                 "reveal": "always",
                 "panel": "shared"
