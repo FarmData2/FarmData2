@@ -29,7 +29,7 @@
               "type": "shell",
               "dependsOrder": "sequence",
               "dependsOn": [
-                //"Hide UI Elements",
+                "Hide UI Elements",
                 "Run fd2-up.bash Script",
                 "Open noVNC in Browser"
               ],
