@@ -1,6 +1,9 @@
 # Handles all of the permissions issues that arise when mounting
 # directories from the host machine into the container on linux/wsl.
 
+# Pass the password to sudo so user doesn't need to.
+echo "fd2dev" | sudo -S ls &> /dev/null
+
 if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
   echo "Configuring Linux or Windows (WSL) host..."
   # We now know this path exists on all platforms.
