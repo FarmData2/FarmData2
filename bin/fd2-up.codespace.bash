@@ -12,7 +12,7 @@ rm -rf "$FD2_PATH/.fd2/gids" &> /dev/null
 mkdir "$FD2_PATH/.fd2/gids"
 
 # Use the existing docker group
-echo "102" > "$FD_PATH/.fd2/gids/docker.gid"
+echo "102" > "$FD2_PATH/.fd2/gids/docker.gid"
 
 # Assign the //var/run/docker.sock to the docker group
 sudo chgrp docker /var/run/docker.sock
