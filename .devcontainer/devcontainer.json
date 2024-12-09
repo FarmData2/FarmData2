@@ -46,7 +46,7 @@
               "dependsOrder": "sequence",
               "dependsOn": [
                 "Hide UI Elements",
-                "Start FD2 Dev Environment",
+                "Run FD2 Dev Environment",
                 "Open FD2 Dev Environment"
               ],
               "runOptions": {
