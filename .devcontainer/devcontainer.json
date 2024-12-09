@@ -29,7 +29,7 @@
               "type": "shell",
               "dependsOrder": "sequence",
               "dependsOn": [
-                "Hide All But Panel",
+                "Hide UI Elements",
                 "Run fd2-up.bash Script",
                 "Hide Panel",
                 "Open noVNC in Browser"
