@@ -29,6 +29,15 @@
               "command": "${input:hideUIElements}"
             },
             {
+              "label": "Set docker.sock group",
+              "type": "shell",
+              "command": "echo 'fd2dev' |sudo chgrp docker /var/run/docker.sock",
+              "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+              }
+            },
+            {
               "label": "Run FD2 Dev Enviornment",
               "type": "shell",
               "command": "/home/fd2dev/postStart.bash",
@@ -45,9 +54,10 @@
               "label": "Start FD2 Dev Environment",
               "dependsOrder": "sequence",
               "dependsOn": [
-                "Hide UI Elements",
-                "Run FD2 Dev Environment",
-                "Open FD2 Dev Environment"
+                //"Hide UI Elements",
+                "Set docker.sock group"
+                //"Run FD2 Dev Environment",
+                //"Open FD2 Dev Environment"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
