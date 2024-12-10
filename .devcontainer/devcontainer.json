@@ -76,12 +76,12 @@
               "args": {
                 "commands": [
                   "workbench.action.closeSidebar",
-                  "workbench.action.closePanel",
                   "workbench.action.closeAllEditors",
                   "workbench.action.activityBarLocation.hide",
                   "workbench.action.hideEditorTabs",
                   "workbench.action.hideEditorActions",
                   "workbench.action.toggleStatusbarVisibility",
+                  "workbench.action.toggleMaximizedPanel",
                   "toggle.window.commandCenter",
                   "toggle.workbench.layoutControl.enabled"
                 ]
