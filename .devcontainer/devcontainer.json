@@ -94,7 +94,17 @@
             }
           ]
         }
-      }
+      },
+      "extensions": [
+        "Vue.volar",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bierner.markdown-preview-github-styles",
+        "timonwong.shellcheck",
+        "mkhl.shfmt",
+        "chrischinchilla.vale-vscode"
+      ]
     }
   }
 }
