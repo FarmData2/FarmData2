@@ -39,17 +39,17 @@
               }
             },
             {
+              "label": "Hide UI Elements",
+              "command": "${input:hideUIElements}"
+            },
+            {
               "label": "Run fd2-up.bash Script",
               "type": "shell",
               "command": "bin/fd2-up.bash",
               "presentation": {
                 "reveal": "always",
-                "panel": "new"
+                "panel": "shared"
               }
-            },
-            {
-              "label": "Hide UI Elements",
-              "command": "${input:hideUIElements}"
             },
             {
               "label": "Open noVNC in Browser",
@@ -102,8 +102,8 @@
         "esbenp.prettier-vscode",
         "bierner.markdown-preview-github-styles",
         "timonwong.shellcheck",
-        "mkhl.shfmt",
-        "chrischinchilla.vale-vscode"
+        "mkhl.shfmt"
+        //"chrischinchilla.vale-vscode"
       ]
     }
   }
