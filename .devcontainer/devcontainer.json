@@ -1,7 +1,8 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/shinepukur/devcontainer-features/vale:1": {}
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
@@ -96,14 +97,15 @@
         }
       },
       "extensions": [
+        // Install extensions just to hide the prompt to install.
         "Vue.volar",
         "streetsidesoftware.code-spell-checker",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "bierner.markdown-preview-github-styles",
         "timonwong.shellcheck",
-        "mkhl.shfmt"
-        //"chrischinchilla.vale-vscode"
+        "mkhl.shfmt",
+        "chrischinchilla.vale-vscode"
       ]
     }
   }
