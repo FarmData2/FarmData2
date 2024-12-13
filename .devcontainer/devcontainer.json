@@ -22,6 +22,17 @@
   "customizations": {
     "vscode": {
       "settings": {
+        // Hide a bunch of the VSCode UI elements.
+        "workbench.startupEditor": "none",
+        "workbench.activityBar.location": "hidden",
+        "workbench.statusBar.visible": false,
+        "window.commandCenter": false,
+        "window.menuBarVisibility": "hidden",
+        "workbench.editor.restoreViewState": false,
+        "workbench.editor.editorActionsLocation": "hidden",
+        "workbench.editor.showTabs": "none",
+        "workbench.layoutControl.enabled": false,
+        "workbench.panel.opensMaximized": "always",
         "tasks": {
           "version": "2.0.0",
           "tasks": [
@@ -71,20 +82,15 @@
               ]
             },
             {
+              // Hide some additional UI elements for which there is no setting.
               "id": "hideUIElements",
               "type": "command",
               "command": "runCommands",
               "args": {
                 "commands": [
                   "workbench.action.closeSidebar",
-                  "workbench.action.closeAllEditors",
-                  "workbench.action.activityBarLocation.hide",
-                  "workbench.action.hideEditorTabs",
-                  "workbench.action.hideEditorActions",
-                  "workbench.action.toggleStatusbarVisibility",
-                  "workbench.action.toggleMaximizedPanel",
-                  "toggle.window.commandCenter",
-                  "toggle.workbench.layoutControl.enabled"
+                  "workbench.action.closeAllEditors"
+                  //"workbench.action.toggleMaximizedPanel"
                 ]
               }
             },
@@ -97,7 +103,7 @@
         }
       },
       "extensions": [
-        // Install extensions just to hide the prompt to install.
+        // Install extensions so that we hide the prompt to install.
         "Vue.volar",
         "streetsidesoftware.code-spell-checker",
         "dbaeumer.vscode-eslint",
