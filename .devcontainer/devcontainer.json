@@ -90,7 +90,6 @@
                 "commands": [
                   "workbench.action.closeSidebar",
                   "workbench.action.closeAllEditors"
-                  //"workbench.action.toggleMaximizedPanel"
                 ]
               }
             },
