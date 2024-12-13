@@ -23,16 +23,16 @@
     "vscode": {
       "settings": {
         // Hide a bunch of the VSCode UI elements.
-        "workbench.startupEditor": "none",
-        "workbench.activityBar.location": "hidden",
-        "workbench.statusBar.visible": false,
-        "window.commandCenter": false,
-        "window.menuBarVisibility": "hidden",
-        "workbench.editor.restoreViewState": false,
-        "workbench.editor.editorActionsLocation": "hidden",
-        "workbench.editor.showTabs": "none",
-        "workbench.layoutControl.enabled": false,
-        "workbench.panel.opensMaximized": "always",
+        // "workbench.startupEditor": "none",
+        // "workbench.activityBar.location": "hidden",
+        // "workbench.statusBar.visible": false,
+        // "window.commandCenter": false,
+        // "window.menuBarVisibility": "hidden",
+        // "workbench.editor.restoreViewState": false,
+        // "workbench.editor.editorActionsLocation": "hidden",
+        // "workbench.editor.showTabs": "none",
+        // "workbench.layoutControl.enabled": false,
+        // "workbench.panel.opensMaximized": "always",
         "tasks": {
           "version": "2.0.0",
           "tasks": [
