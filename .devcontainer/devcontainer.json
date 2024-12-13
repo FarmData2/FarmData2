@@ -1,7 +1,8 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/shinepukur/devcontainer-features/vale:1": {}
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
@@ -52,12 +53,12 @@
               }
             },
             {
-              "label": "Hide Panel",
-              "command": "${input:hidePanel}"
-            },
-            {
               "label": "Open noVNC in Browser",
               "command": "${input:openSimpleBrowser}"
+            },
+            {
+              "label": "Hide Panel",
+              "command": "${input:hidePanel}"
             }
           ],
           "inputs": [
@@ -76,7 +77,14 @@
               "args": {
                 "commands": [
                   "workbench.action.closeSidebar",
-                  "workbench.action.closeAllEditors"
+                  "workbench.action.closeAllEditors",
+                  "workbench.action.activityBarLocation.hide",
+                  "workbench.action.hideEditorTabs",
+                  "workbench.action.hideEditorActions",
+                  "workbench.action.toggleStatusbarVisibility",
+                  "workbench.action.toggleMaximizedPanel",
+                  "toggle.window.commandCenter",
+                  "toggle.workbench.layoutControl.enabled"
                 ]
               }
             },
@@ -87,7 +95,18 @@
             }
           ]
         }
-      }
+      },
+      "extensions": [
+        // Install extensions just to hide the prompt to install.
+        "Vue.volar",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bierner.markdown-preview-github-styles",
+        "timonwong.shellcheck",
+        "mkhl.shfmt",
+        "chrischinchilla.vale-vscode"
+      ]
     }
   }
 }
