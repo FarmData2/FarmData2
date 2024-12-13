@@ -27,7 +27,6 @@
           "tasks": [
             {
               "label": "Open FarmData Dev Environment",
-              "type": "shell",
               "dependsOrder": "sequence",
               "dependsOn": [
                 "Hide UI Elements",
@@ -41,6 +40,7 @@
             },
             {
               "label": "Hide UI Elements",
+              "type": "process",
               "command": "${input:hideUIElements}"
             },
             {
@@ -54,10 +54,12 @@
             },
             {
               "label": "Open noVNC in Browser",
+              "type": "process",
               "command": "${input:openSimpleBrowser}"
             },
             {
               "label": "Hide Panel",
+              "type": "process",
               "command": "${input:hidePanel}"
             }
           ],
