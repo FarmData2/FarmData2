@@ -64,12 +64,12 @@
               }
             },
             {
-              "label": "Open noVNC in Browser",
-              "command": "${input:openSimpleBrowser}"
-            },
-            {
               "label": "Hide Panel",
               "command": "${input:hidePanel}"
+            },
+            {
+              "label": "Open noVNC in Browser",
+              "command": "${input:openSimpleBrowser}"
             }
           ],
           "inputs": [
@@ -103,14 +103,14 @@
       },
       "extensions": [
         // Install extensions so that we hide the prompt to install.
-        "Vue.volar",
-        "streetsidesoftware.code-spell-checker",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "bierner.markdown-preview-github-styles",
-        "timonwong.shellcheck",
-        "mkhl.shfmt",
-        "chrischinchilla.vale-vscode"
+        // "Vue.volar",
+        // "streetsidesoftware.code-spell-checker",
+        // "dbaeumer.vscode-eslint",
+        // "esbenp.prettier-vscode",
+        // "bierner.markdown-preview-github-styles",
+        // "timonwong.shellcheck",
+        // "mkhl.shfmt",
+        // "chrischinchilla.vale-vscode"
       ]
     }
   }
