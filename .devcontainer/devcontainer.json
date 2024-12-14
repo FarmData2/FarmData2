@@ -22,6 +22,24 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "customizations": {
+          "vscode": {
+            "settings": {
+              // Hide most of the VSCode UI via settings.
+              // Here instead of .vscode/settings.json so that
+              // they apply only in the dev container.
+              "workbench.startupEditor": "none",
+              "workbench.activityBar.location": "hidden",
+              "workbench.statusBar.visible": false,
+              "window.commandCenter": false,
+              "window.menuBarVisibility": "hidden",
+              "workbench.editor.restoreViewState": false,
+              "workbench.editor.editorActionsLocation": "hidden",
+              "workbench.editor.showTabs": "none",
+              "workbench.layoutControl.enabled": false
+            }
+          }
+        },
         "tasks": {
           "version": "2.0.0",
           "tasks": [
@@ -73,20 +91,15 @@
               ]
             },
             {
+              // Hides some additional VSCode UI elements for which there
+              // are no settings available.
               "id": "hideUIElements",
               "type": "command",
               "command": "runCommands",
               "args": {
                 "commands": [
                   "workbench.action.closeSidebar",
-                  "workbench.action.closeAllEditors",
-                  "workbench.action.activityBarLocation.hide",
-                  "workbench.action.hideEditorTabs",
-                  "workbench.action.hideEditorActions",
-                  "workbench.action.toggleStatusbarVisibility",
-                  "workbench.action.toggleMaximizedPanel",
-                  "toggle.window.commandCenter",
-                  "toggle.workbench.layoutControl.enabled"
+                  "workbench.action.closeAllEditors"
                 ]
               }
             },
@@ -99,7 +112,8 @@
         }
       },
       "extensions": [
-        // Install extensions just to hide the prompt to install.
+        // Install extensions just to hide the dialog that pops up
+        // to install the extensions recommended in .vscode/extensions.json.
         "Vue.volar",
         "streetsidesoftware.code-spell-checker",
         "dbaeumer.vscode-eslint",
