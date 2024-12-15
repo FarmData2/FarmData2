@@ -6,7 +6,7 @@
     <tr>
         <td width=50% valign="top">
             <u><h3>Open in your Browser<sup>1</sup></h3></u>
-            Click here to <a href="https://%CODESPACE_NAME%.app.github.dev-5901?autoconnect=true&resize=remote" target="_blank">Open the Development Environment in a Browser Tab</a>.
+            Click here to <a href="https://%CODESPACE_NAME%-6901.app.github.dev?autoconnect=true&resize=remote" target="_blank">Open the Development Environment in a Browser Tab</a>.
             <br>
             <u><h3>Open on your Machine with VNC<sup>2</sup></h3></u>
             In a terminal on your machine:
