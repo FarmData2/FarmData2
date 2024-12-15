@@ -1,0 +1,13 @@
+<h1>The FarmData2 Development Environment</h1>
+
+<center>
+    <h3>The Development Environment is Loading</h3>
+    <img alt="Loading spinner" src="loading.gif">
+    <br>
+    Please be patient.<br>
+    This may take up to 10 minutes when<br>
+    the Development Enviornment is first creatd.
+    <br><br>
+    Restarting and existing Development Environment<br>
+    will be faster.
+</center>

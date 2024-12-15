@@ -34,6 +34,10 @@
         "workbench.editor.editorActionsLocation": "hidden",
         "workbench.editor.showTabs": "none",
         "workbench.layoutControl.enabled": false,
+        "breadcrumbs.enabled": false,
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        },
         "tasks": {
           "version": "2.0.0",
           "tasks": [
@@ -42,18 +46,41 @@
               "dependsOrder": "sequence",
               "dependsOn": [
                 "Hide UI Elements",
+                "Open Loading Page",
+                "Customize Wecome Page",
                 "Run fd2-up.bash Script",
-                "Hide Panel",
-                "Open noVNC in Browser"
+                "Wait for noVNC Server"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
+              },
+              "presentation": {
+                "reveal": "never"
               }
             },
             {
               "label": "Hide UI Elements",
               "type": "process",
-              "command": "${input:hideUIElements}"
+              "command": "${input:hideUIElements}",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Open Loading Page",
+              "type": "shell",
+              "command": "code -r .devcontainer/fd2_loading.md",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Customize Wecome Page",
+              "type": "shell",
+              "command": "./.devcontainer/homepage.bash",
+              "presentation": {
+                "reveal": "never"
+              }
             },
             {
               "label": "Run fd2-up.bash Script",
@@ -65,25 +92,15 @@
               }
             },
             {
-              "label": "Open noVNC in Browser",
-              "type": "process",
-              "command": "${input:openSimpleBrowser}"
-            },
-            {
-              "label": "Hide Panel",
-              "type": "process",
-              "command": "${input:hidePanel}"
+              "label": "Wait for noVNC Server",
+              "type": "shell",
+              "command": "./.devcontainer/waitForNoVNC.bash",
+              "presentation": {
+                "reveal": "never"
+              }
             }
           ],
           "inputs": [
-            {
-              "id": "openSimpleBrowser",
-              "type": "command",
-              "command": "simpleBrowser.show",
-              "args": [
-                "https://${env:CODESPACE_NAME}-6901.app.github.dev?autoconnect=true&resize=remote"
-              ]
-            },
             {
               // Hides some additional VSCode UI elements for which there
               // are no settings available.
@@ -93,14 +110,10 @@
               "args": {
                 "commands": [
                   "workbench.action.closeSidebar",
-                  "workbench.action.closeAllEditors"
+                  "workbench.action.closeAllEditors",
+                  "workbench.action.closePanel"
                 ]
               }
-            },
-            {
-              "id": "hidePanel",
-              "type": "command",
-              "command": "workbench.action.closePanel"
             }
           ]
         }
