@@ -50,7 +50,7 @@
                 "Open Loading Page",
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
-                "Wait for noVNC Server"
+                "Open Welcome Page"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
@@ -92,9 +92,9 @@
               }
             },
             {
-              "label": "Wait for noVNC Server",
+              "label": "Open Welcome Page",
               "type": "shell",
-              "command": "./.devcontainer/waitForNoVNC.bash",
+              "command": "code -r .devcontainer/fd2_welcome.md",
               "presentation": {
                 "reveal": "never"
               }

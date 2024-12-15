@@ -1,6 +1,6 @@
 <h1>The FarmData2 Development Environment</h1>
 
-<center><h3>The Development Enviornment is Ready.</h3></center>
+<center><h3>The Development Enviornment is Ready</h3></center>
 
 <table>
     <tr>

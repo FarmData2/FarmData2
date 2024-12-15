@@ -5,7 +5,7 @@
     <img alt="Loading spinner" src="loading.gif">
     <br>
     This can take up to 10 minutes when<br>
-    the Development Enviornment is first creatd.
+    the Development Environment is first created.
     <br><br>
     Restarting and existing Development Environment<br>
     will be faster.
