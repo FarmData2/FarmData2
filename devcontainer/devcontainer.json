@@ -1,0 +1,133 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/shinepukur/devcontainer-features/vale:1": {}
+  },
+  "mounts": [
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+  ],
+  "forwardPorts": [80, 5901, 6901],
+  "portsAttributes": {
+    "80": {
+      "label": "farmOS Instance"
+    },
+    "5901": {
+      "label": "FarmData2 VNC"
+    },
+    "6901": {
+      "label": "FarmData2 NoVNC"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Hide most of the VSCode UI via settings.
+        // Here instead of .vscode/settings.json so that
+        // they apply only in the dev container.
+        "workbench.startupEditor": "none",
+        "workbench.activityBar.location": "hidden",
+        "workbench.statusBar.visible": false,
+        "window.commandCenter": false,
+        "window.menuBarVisibility": "hidden",
+        "workbench.editor.restoreViewState": false,
+        "workbench.editor.editorActionsLocation": "hidden",
+        "workbench.editor.showTabs": "none",
+        "workbench.layoutControl.enabled": false,
+        "breadcrumbs.enabled": false,
+        "workbench.editorAssociations": {"*.md": "vscode.markdown.preview.editor"},
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": [
+            {
+              "label": "Open FarmData Dev Environment",
+              "dependsOrder": "sequence",
+              "dependsOn": [
+                  "Hide UI Elements",
+                  "Open Loading Page",
+                  "Customize Welcome Page",
+                  "Run fd2-up.bash Script",
+                  "Wait for noVNC Server"
+              ],
+              "runOptions": {
+                  "runOn": "folderOpen"
+              },
+              "presentation": {
+                  "reveal": "never"
+              }
+            },
+            {
+              "label": "Hide UI Elements",
+              "type": "process",
+              "command": "${input:hideUIElements}",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Open Loading Page",
+              "type": "shell",
+              "command": "code -r .devcontainer/fd2_loading.md",
+              "presentation": {
+                  "reveal": "never"
+              }
+            },
+            {
+              "label": "Customize Welcome Page",
+              "type": "shell",
+              "command": "./.devcontainer/homepage.bash",
+              "presentation": {
+                  "reveal": "never"
+              }
+            },
+            {
+              "label": "Run fd2-up.bash Script",
+              "type": "shell",
+              "command": "bin/fd2-up.bash",
+              "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+              }
+            },
+            {
+              "label": "Wait for noVNC Server",
+              "type": "shell",
+              "command": "./.devcontainer/waitForNoVNC.bash",
+              "presentation": {
+                  "reveal": "never"
+              }
+            }
+          ],
+          "inputs": [
+            {
+              // Hides some additional VSCode UI elements for which there
+              // are no settings available.
+              "id": "hideUIElements",
+              "type": "command",
+              "command": "runCommands",
+              "args": {
+                "commands": [
+                  "workbench.action.closeSidebar",
+                  "workbench.action.closeAllEditors",
+                  "workbench.action.closePanel"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "extensions": [
+        // Install extensions just to hide the dialog that pops up
+        // to install the extensions recommended in .vscode/extensions.json.
+        "Vue.volar",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bierner.markdown-preview-github-styles",
+        "timonwong.shellcheck",
+        "mkhl.shfmt",
+        "chrischinchilla.vale-vscode"
+      ]
+    }
+  }
+}

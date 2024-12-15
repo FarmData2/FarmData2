@@ -1,8 +1,10 @@
 backmerge
 backmerged
 bashlint
+bierner
 Braught
 chgrp
+chrischinchilla
 CHUAU
 Cinos
 codespace
@@ -10,6 +12,9 @@ Codespaces
 contconf
 conventionalcommits
 datacy
+dbaeumer
+devcontainer
+devcontainers
 docdash
 docgen
 dockercompose
@@ -17,6 +22,7 @@ dockerlint
 drupalcode
 drush
 entrypoints
+esbenp
 Farhan
 farmadata
 farmdata
@@ -34,6 +40,7 @@ lintstagedrc
 localstorage
 mfinelli
 Michal
+mkhl
 mryhryki
 newgrp
 novnc
@@ -53,8 +60,10 @@ saithodev
 setsid
 shellcheck
 shfmt
+shinepukur
 Siddiqui
 Steiman
+timonwong
 toplevel
 transplantings
 unplugin
