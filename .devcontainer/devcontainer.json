@@ -2,7 +2,8 @@
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/shinepukur/devcontainer-features/vale:1": {}
+    "ghcr.io/shinepukur/devcontainer-features/vale:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
@@ -47,7 +48,7 @@
               "dependsOn": [
                 "Hide UI Elements",
                 "Open Loading Page",
-                "Customize Wecome Page",
+                "Customize Welcome Page",
                 "Run fd2-up.bash Script",
                 "Wait for noVNC Server"
               ],
@@ -75,7 +76,7 @@
               }
             },
             {
-              "label": "Customize Wecome Page",
+              "label": "Customize Welcome Page",
               "type": "shell",
               "command": "./.devcontainer/homepage.bash",
               "presentation": {
