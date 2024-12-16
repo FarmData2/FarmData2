@@ -47,6 +47,7 @@
               "dependsOrder": "sequence",
               "dependsOn": [
                 "Hide UI Elements",
+                "Install eslint",
                 "Open Loading Page",
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
@@ -63,6 +64,14 @@
               "label": "Hide UI Elements",
               "type": "process",
               "command": "${input:hideUIElements}",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Install eslint",
+              "type": "shell",
+              "command": "npm install eslint",
               "presentation": {
                 "reveal": "never"
               }
