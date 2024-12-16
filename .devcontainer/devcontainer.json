@@ -34,9 +34,12 @@
         "workbench.editor.showTabs": "none",
         "workbench.layoutControl.enabled": false,
         "breadcrumbs.enabled": false,
+        "extensions.ignoreRecommendations": true,
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
         },
+        "window.restoreWindows": "none",
+        "terminal.integrated.hideOnStartup": "always",
         "tasks": {
           "version": "2.0.0",
           "tasks": [
