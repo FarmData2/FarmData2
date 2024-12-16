@@ -1,9 +1,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/shinepukur/devcontainer-features/vale:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
@@ -109,27 +107,15 @@
               "command": "runCommands",
               "args": {
                 "commands": [
-                  "workbench.action.closeSidebar",
                   "workbench.action.closeAllEditors",
+                  "workbench.action.closeSidebar",
                   "workbench.action.closePanel"
                 ]
               }
             }
           ]
         }
-      },
-      "extensions": [
-        // Install extensions just to hide the dialog that pops up
-        // to install the extensions recommended in .vscode/extensions.json.
-        "Vue.volar",
-        "streetsidesoftware.code-spell-checker",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "bierner.markdown-preview-github-styles",
-        "timonwong.shellcheck",
-        "mkhl.shfmt",
-        "chrischinchilla.vale-vscode"
-      ]
+      }
     }
   }
 }
