@@ -37,7 +37,7 @@
                     </ul>
                 </li>
                 <li>
-                    The `gh cs ports forward 5901:5902` command forwards port `5901` in the codespace to port `5902` on your local machine to allow VNC to connet. If port 5902 is in use on your machine you can change `5902` to any available port. Then use your VNC client to connect to the new port.
+                    The `gh cs ports forward 5901:5902` command forwards port `5901` in the codespace to port `5902` on your local machine to enable VNC to connet. If port 5902 is in use on your machine you can change `5902` to any available port. Then use your VNC client to connect to the new port.
                 </li>
             </ol>
         </td>
