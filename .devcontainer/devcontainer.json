@@ -40,6 +40,7 @@
         },
         "window.restoreWindows": "none",
         "terminal.integrated.hideOnStartup": "always",
+        "github.codespaces.devcontainerChangedNotificationStyle": "none",
         "tasks": {
           "version": "2.0.0",
           "tasks": [
