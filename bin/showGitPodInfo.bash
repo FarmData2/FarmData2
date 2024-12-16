@@ -12,6 +12,9 @@ echo "Click the following link to connect to the Farmdata2 Development Environme
 echo "in your browser:"
 echo ""
 NOVNC_URL=$(gp url 6901)
+# Use the CACHE_KEY so that the browser does not use a cached page
+# when the dev environment is restarted. Otherwise reconnecting to
+# noVNC will not work.
 CACHE_KEY=$(date +%s)
 echo "$NOVNC_URL?autoconnect=true&resize=remote&key=$CACHE_KEY"
 echo ""
