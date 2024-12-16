@@ -7,6 +7,6 @@
     This can take up to 10 minutes when<br>
     the Development Environment is first created.
     <br><br>
-    Restarting and existing Development Environment<br>
+    Restarting an existing Development Environment<br>
     will be faster.
 </center>
