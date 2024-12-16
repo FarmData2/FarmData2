@@ -30,14 +30,14 @@
                     The browser based version of the Development Environment has the limitation that you cannot copy and paste between the Development Environment and your machine. Using a VNC client on your machine as described in Note #2 removes this limitation.
                 </li>
                 <li>
-                    Opening in VNC requires that both the `gh` command line interface and a VNC client be installed on your machine. You can find more information about each of these in the [INSTALL Document](../INSTALL.md) or at the following links:
+                    Opening in VNC requires that both the <code>gh</code> command line interface and a VNC client be installed on your machine. You can find more information about each of these in the <a href="../INSTALL.md">INSTALL Document</a> or at the following links:
                     <ul>
-                        <li><a href="https://cli.github.com/">Installing `gh`</a>
+                        <li><a href="https://cli.github.com/">Installing <code>gh</code></a>
                         <li><a href="https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/">Installing Tiger VNC Client</a>
                     </ul>
                 </li>
                 <li>
-                    The `gh cs ports forward 5901:5902` command forwards port `5901` in the codespace to port `5902` on your local machine to enable VNC to connet. If port 5902 is in use on your machine you can change `5902` to any available port. Then use your VNC client to connect to the new port.
+                    The <code>gh cs ports forward 5901:5902</code> command forwards port <code>5901</code> in the codespace to port <code>5902</code> on your local machine to enable VNC to connet. If port <code>5902</code> is in use on your machine you can change <code>5902</code> to any available port. Then use your VNC client to connect to the new port.
                 </li>
             </ol>
         </td>
