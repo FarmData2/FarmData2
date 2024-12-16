@@ -37,10 +37,10 @@
                     The browser based version of the Development Environment has the limitation that you cannot copy and paste between the Development Environment and your machine. Using a VNC client on your machine as described in Note #2 removes this limitation.
                 </li>
                 <li>
-                    Opening in VNC requires that both the <code>gh</code> command line interface and a VNC client be installed on your machine. You can find more information about each of these in the <a href="../INSTALL.md">INSTALL Document</a> or at the following links:
+                    Opening in VNC requires that both the <code>gh</code> command line interface and a VNC client be installed on your machine. You can find more information about each of these in the <a href="../INSTALL.md" target="_blank">INSTALL Document</a> or at the following links:
                     <ul>
-                        <li><a href="https://cli.github.com/">Installing <code>gh</code></a>
-                        <li><a href="https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/">Installing Tiger VNC Client</a>
+                        <li><a href="https://cli.github.com/" target="_blank">Installing <code>gh</code></a>
+                        <li><a href="https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/" target="_blank">Installing Tiger VNC Client</a>
                     </ul>
                 </li>
                 <li>
