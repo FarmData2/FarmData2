@@ -6,7 +6,7 @@
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
   ],
-  //"onCreateCommand": "setup.bash",
+  "onCreateCommand": "setup.bash",
   "forwardPorts": [80, 5901, 6901],
   "portsAttributes": {
     "80": {
