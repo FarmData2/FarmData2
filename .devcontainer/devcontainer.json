@@ -42,10 +42,11 @@
         "window.restoreWindows": "none",
         "terminal.integrated.hideOnStartup": "always",
         "github.codespaces.devcontainerChangedNotificationStyle": "none",
-        // Setup to auto-save when editor loses focus.  This invokes the
-        // triggerOnAutoSave extension that sends a heartbeat signal to 
+        // Setup to auto-save a second after any change.  This invokes the
+        // triggerTaskOnSave extension that sends a heartbeat signal to 
         // the codespace that keeps it from timing out due to inactivity.
-        "files.autoSave": "onFocusChange",
+        "files.autoSave": "afterDelay",
+        "files.autoSaveDelay": 1000,
         "tasks": {
           "version": "2.0.0",
           "tasks": [
