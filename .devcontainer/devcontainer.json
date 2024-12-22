@@ -53,7 +53,8 @@
                 "Open Loading Page",
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
-                "Open Welcome Page"
+                "Open Welcome Page",
+                "Start Heartbeat Listener"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
@@ -98,6 +99,14 @@
               "label": "Open Welcome Page",
               "type": "shell",
               "command": "code -r .devcontainer/fd2_welcome.md",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Start Heartbeat Listener",
+              "type": "shell",
+              "command": "ncat -lk 8888",
               "presentation": {
                 "reveal": "never"
               }
