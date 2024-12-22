@@ -1,7 +1,9 @@
 #!/bin/bash
 
-apt update
-apt install -y --no-install-recommends \
+echo "fd2dev" | sudo -S ls &> /dev/null
+
+sudo apt update
+sudo apt install -y --no-install-recommends \
   ncat
 
-apt clean
+sudo apt clean
