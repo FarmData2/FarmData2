@@ -21,6 +21,9 @@
   },
   "customizations": {
     "vscode": {
+      "extensions": [
+        "emeraldwalk.RunOnSave"
+      ],
       "settings": {
         // Hide most of the VSCode UI via settings.
         // Here instead of .vscode/settings.json so that
@@ -139,10 +142,7 @@
             }
           ]
         }
-      },
-      "extensions": [
-        "emeraldwalk.RunOnSave"
-      ]
+      }
     }
   }
 }
