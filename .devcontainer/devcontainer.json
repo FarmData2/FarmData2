@@ -42,6 +42,9 @@
         "window.restoreWindows": "none",
         "terminal.integrated.hideOnStartup": "always",
         "github.codespaces.devcontainerChangedNotificationStyle": "none",
+        "editor.codeActionsOnSave": [
+          "Send Heartbeat"
+        ],
         "tasks": {
           "version": "2.0.0",
           "tasks": [
@@ -109,6 +112,14 @@
               "command": "ncat -lk 8888",
               "presentation": {
                 "reveal": "never"
+              }
+            },
+            {
+              "label": "Send Heartbeat",
+              "type": "shell",
+              "command": "echo 'heartbeat'",
+              "presentation": {
+                "reveal": "always"
               }
             }
           ],
