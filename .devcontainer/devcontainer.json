@@ -42,9 +42,16 @@
         "window.restoreWindows": "none",
         "terminal.integrated.hideOnStartup": "always",
         "github.codespaces.devcontainerChangedNotificationStyle": "none",
-        "editor.codeActionsOnSave": [
-          "Send Heartbeat"
-        ],
+        "emeraldwalk.runonsave": {
+          "commands": [
+            {
+                "match": ".*",
+                "isAsync": true,
+                "autoShowOutputPanel": "never",
+                "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
+            }
+          ]
+        },
         "tasks": {
           "version": "2.0.0",
           "tasks": [
@@ -113,14 +120,6 @@
               "presentation": {
                 "reveal": "never"
               }
-            },
-            {
-              "label": "Send Heartbeat",
-              "type": "shell",
-              "command": "echo 'heartbeat'",
-              "presentation": {
-                "reveal": "always"
-              }
             }
           ],
           "inputs": [
@@ -140,7 +139,10 @@
             }
           ]
         }
-      }
+      },
+      "extensions": [
+        "emeraldwalk.RunOnSave"
+      ]
     }
   }
 }
