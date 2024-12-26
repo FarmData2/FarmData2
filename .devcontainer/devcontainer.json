@@ -17,6 +17,9 @@
     },
     "6901": {
       "label": "FarmData2 NoVNC"
+    },
+    "8888": {
+      "label": "FarmData2 Heartbeat"
     }
   },
   "customizations": {
