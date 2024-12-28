@@ -27,8 +27,8 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     sudo usermod -a -G docker "$(id -un)"
     error_check
     echo "  User $(id -un) added to the docker group."
-    echo "  Running ./fd2-up.bash again with user $(id -un) in the docker group."
-    exec sg "docker" "exec '$0'"
+    echo "  Running fd2-up.bash again with user $(id -un) in the docker group."
+    sg "docker" "$SCRIPT_DIR/fd2-up.bash"
 
     # echo "  ***"
     # echo "  *** Run the ./fd2-up.bash script again to continue."
@@ -100,9 +100,9 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     sudo usermod -a -G fd2grp "$(id -un)"
     error_check
     echo "  User user $(id -un) added to the fd2grp group."
-    echo "  Running ./fd2-up.bash again with user $(id -un) in the fd2grp group."
-    exec sg "fd2grp" "exec '$0'"
-    
+    echo "  Running fd2-up.bash again with user $(id -un) in the fd2grp group."
+    sg "fd2grp" "$SCRIPT_DIR/fd2-up.bash"
+
     # echo "  ***"
     # echo "  *** Run the fd2-up.bash script again to continue."
     # echo "  ***"
