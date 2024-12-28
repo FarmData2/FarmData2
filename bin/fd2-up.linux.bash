@@ -19,17 +19,21 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     echo "  docker group exists on host with GID=$DOCKER_GRP_GID."
   fi
 
-  # If the current user is not in the docker group add them.
+  # If the current user is not in the docker group add them
+  # and run the script again with the user in the docker group.
   USER_IN_DOCKER_GRP=$(groups | grep "docker")
   if [ -z "$USER_IN_DOCKER_GRP" ]; then
     echo "  Adding user $(id -un) to the docker group."
     sudo usermod -a -G docker "$(id -un)"
     error_check
     echo "  User $(id -un) added to the docker group."
-    echo "  ***"
-    echo "  *** Run the ./fd2-up.bash script again to continue."
-    echo "  ***"
-    exec newgrp docker
+    echo "  Running ./fd2-up.bash again with user $(id -un) in the docker group."
+    exec sg "docker" "exec '$0'"
+
+    # echo "  ***"
+    # echo "  *** Run the ./fd2-up.bash script again to continue."
+    # echo "  ***"
+    # exec newgrp docker
   else
     echo "  User $(id -un) is in docker group."
   fi
@@ -96,10 +100,13 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     sudo usermod -a -G fd2grp "$(id -un)"
     error_check
     echo "  User user $(id -un) added to the fd2grp group."
-    echo "  ***"
-    echo "  *** Run the fd2-up.bash script again to continue."
-    echo "  ***"
-    exec newgrp fd2grp
+    echo "  Running ./fd2-up.bash again with user $(id -un) in the fd2grp group."
+    exec sg "fd2grp" "exec '$0'"
+    
+    # echo "  ***"
+    # echo "  *** Run the fd2-up.bash script again to continue."
+    # echo "  ***"
+    # exec newgrp fd2grp
   else
     echo "  User $(id -un) is in fd2grp group."
   fi
