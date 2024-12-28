@@ -29,11 +29,6 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     echo "  User $(id -un) added to the docker group."
     echo "  Running fd2-up.bash again with user $(id -un) in the docker group."
     sg "docker" "$SCRIPT_DIR/fd2-up.bash"
-
-    # echo "  ***"
-    # echo "  *** Run the ./fd2-up.bash script again to continue."
-    # echo "  ***"
-    # exec newgrp docker
   else
     echo "  User $(id -un) is in docker group."
   fi
@@ -102,11 +97,6 @@ if [ "$PROFILE" == "linux" ] || [ "$PROFILE" == "wsl" ]; then
     echo "  User user $(id -un) added to the fd2grp group."
     echo "  Running fd2-up.bash again with user $(id -un) in the fd2grp group."
     sg "fd2grp" "$SCRIPT_DIR/fd2-up.bash"
-
-    # echo "  ***"
-    # echo "  *** Run the fd2-up.bash script again to continue."
-    # echo "  ***"
-    # exec newgrp fd2grp
   else
     echo "  User $(id -un) is in fd2grp group."
   fi
