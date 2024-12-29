@@ -3,5 +3,5 @@
 # that we know do not exist in the container.
 rm -rf ~/.fd2/gids &> /dev/null
 mkdir ~/.fd2/gids
-echo "3000" > ~/.fd2/gids/fd2grp.gid
-echo "3001" > ~/.fd2/gids/docker.gid
+echo "3000" > "$FD2_PATH/.fd2/gids/fd2grp.gid"
+echo "3001" > "$FD2_PATH/.fd2/gids/docker.gid"

@@ -7,7 +7,7 @@
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
   ],
   "onCreateCommand": ".devcontainer/setup.bash",
-  "forwardPorts": [80, 5901, 6901],
+  "forwardPorts": [80, 5901, 6901, 8888],
   "portsAttributes": {
     "80": {
       "label": "farmOS Instance"
