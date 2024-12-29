@@ -109,7 +109,7 @@
               "type": "shell",
               "command": "bin/fd2-up.bash",
               "presentation": {
-                "reveal": "never"
+                "reveal": "alwasy"
               }
             },
             {
@@ -123,7 +123,7 @@
             {
               "label": "Start Heartbeat Server",
               "type": "shell",
-              "command": ",devcontainer/startHeartbeat.bash",
+              "command": ".devcontainer/startHeartbeat.bash",
               "presentation": {
                 "reveal": "always"
               }
