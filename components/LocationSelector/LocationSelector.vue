@@ -40,9 +40,8 @@
           id="location-bed-picker"
           data-cy="location-bed-picker"
           v-bind:location="selectedLocation"
-          v-bind:picked="checkedBeds"
+          v-model:picked="checkedBeds"
           v-bind:required="requireBedSelection"
-          v-on:update:picked="handleUpdateBeds($event)"
           v-bind:showValidityStyling="showValidityStyling"
           v-on:valid="handleBedsValid($event)"
         />
@@ -150,6 +149,13 @@ export default {
      * is false, this property is ignored.
      */
     requireBedSelection: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether to select all beds within a location by default.
+     */
+    selectAllBedsByDefault: {
       type: Boolean,
       default: false,
     },
@@ -318,22 +324,13 @@ export default {
     },
   },
   methods: {
-    handleUpdateBeds(event) {
-      this.checkedBeds = event;
-
-      /**
-       * The selected beds have changed.
-       * @property {Array<string>} checkedBeds an array containing the names of the selected beds.
-       * @property {number} totalBeds the total number of beds in the selected location.
-       */
-      this.$emit('update:beds', this.checkedBeds, this.beds.length);
-    },
     handleUpdateSelected(event) {
       this.selectedLocation = event;
 
-      // Clear any picked beds for the new location.
-      if (this.pickedBeds.length > 0) {
-        this.handleUpdateBeds([]);
+      if (this.selectAllBedsByDefault) {
+        this.checkedBeds = this.beds;
+      } else {
+        this.checkedBeds = [];
       }
 
       /**
@@ -408,8 +405,16 @@ export default {
     },
   },
   watch: {
-    selectedBeds() {
-      this.checkedBeds = this.selectedBeds;
+    checkedBeds: {
+      handler() {
+        /**
+         * The selected beds have changed.
+         * @property {Array<string>} checkedBeds an array containing the names of the selected beds.
+         * @property {number} totalBeds the total number of beds in the selected location.
+         */
+        this.$emit('update:beds', this.checkedBeds, this.beds.length);
+      },
+      deep: true,
     },
     pickedBeds() {
       this.checkedBeds = this.pickedBeds;

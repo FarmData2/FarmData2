@@ -142,7 +142,7 @@ docker rm fd2_dev &> /dev/null
 echo "Starting containers..."
 safe_cd "$FD2_PATH/docker"
 
-# Note: Any command line args are passed to the docker-compose up command
+# Note: Any command line args are passed to the docker compose up command
 docker compose up -d "$@"
 
 echo "Rebuilding the drupal cache..."

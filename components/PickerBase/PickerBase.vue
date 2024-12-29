@@ -23,15 +23,17 @@
               >*</sup
             >
           </div>
-          <BButton
-            v-if="showAllButton"
-            id="picker-all-button"
-            data-cy="picker-all-button"
-            size="sm"
-            variant="primary"
-            v-on:click="pickAll()"
-            >All</BButton
+         <BButton
+           v-if="showAllButton"
+           id="picker-all-button"
+           data-cy="picker-all-button"
+           size="sm"
+           variant="primary"
+           v-on:click="pickAll"
           >
+           <span v-if="checked.length === options.length">🚫 All</span>
+           <span v-else>✅ All</span>
+         </BButton>
         </div>
       </template>
 
@@ -46,7 +48,6 @@
           v-model="checked"
           v-bind:options="options"
           v-bind:state="validationStyling"
-          v-on:change="updatePicked($event)"
         />
 
         <BFormInvalidFeedback
@@ -190,21 +191,12 @@ export default {
     },
   },
   methods: {
-    updatePicked() {
-      /**
-       * The picked options have changed.
-       * @property {Array} picked An array of strings with the names of the picked options.
-       */
-      this.$emit('update:picked', this.checked);
-    },
     pickAll() {
       if (this.checked.length === this.options.length) {
         this.checked = [];
       } else {
         this.checked = [...this.options];
       }
-
-      this.updatePicked();
     },
   },
   watch: {
@@ -215,6 +207,16 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
+    checked: {
+      handler() {
+        /**
+         * The picked options have changed.
+         * @property {Array} picked An array of strings with the names of the picked options.
+         */
+        this.$emit('update:picked', this.checked);
+      },
+      deep: true,
+    },
     picked() {
       this.checked = this.picked;
     },
@@ -224,8 +226,6 @@ export default {
           this.checked = this.checked.filter((option) =>
             this.options.includes(option)
           );
-
-          this.updatePicked();
         }
       },
       deep: true,

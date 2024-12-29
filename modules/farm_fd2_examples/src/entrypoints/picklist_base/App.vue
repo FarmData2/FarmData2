@@ -210,16 +210,16 @@ export default {
         },
         {
           c1: 'A',
-          c2: 2,
+          c2: 25,
           c3: 'X',
-          stuff: 'A, 2, X',
+          stuff: 'A, 25, X',
           quantity: 2,
         },
         {
           c1: 'D',
           c2: 7,
-          c3: 'Z',
-          stuff: 'D, 7, Z',
+          c3: 5,
+          stuff: 'D, 7, 5',
           quantity: 3,
         },
         {
@@ -271,12 +271,17 @@ export default {
     toggleFirstRow() {
       const firstRow = this.rows[0];
       const firstRowIndex = this.rows.indexOf(firstRow);
+      const newPicked = new Map(this.form.picked);
 
-      if (this.form.picked.has(firstRowIndex)) {
-        this.form.picked.delete(firstRowIndex);
+      if (newPicked.has(firstRowIndex)) {
+        newPicked.delete(firstRowIndex);
       } else {
-        this.form.picked.set(firstRowIndex, firstRow);
+        newPicked.set(firstRowIndex, {
+          row: firstRow,
+          picked: 1,
+        });
       }
+      this.form.picked = newPicked;
     },
   },
   created() {

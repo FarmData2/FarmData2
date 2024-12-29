@@ -11,7 +11,7 @@ fi
 
 echo "Stopping and Removing Containers..."
 
-# Get to the docker directory so docker-compose.yml is available.
+# Get to the docker directory so compose.yml is available.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.

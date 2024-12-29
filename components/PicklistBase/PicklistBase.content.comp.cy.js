@@ -102,7 +102,7 @@ describe('Test the default PicklistBase content', () => {
         );
         cy.get('[data-cy="picklist-units-button"]')
           .should('exist')
-          .and('have.text', 'Trays');
+          .and('have.text', '✅ Trays');
       });
   });
 
@@ -128,7 +128,9 @@ describe('Test the default PicklistBase content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="picklist-all-button"]').should('exist');
+        cy.get('[data-cy="picklist-all-button"]')
+          .should('exist')
+          .and('have.text', '✅ All');
       });
   });
 

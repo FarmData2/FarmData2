@@ -259,18 +259,47 @@ describe('Test the LocationSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
+        cy.get('@updateSpy').should('have.been.calledOnce');
+
         cy.get('[data-cy="selector-input"]').select('CHUAU');
-        cy.get('@updateSpy').should('not.have.been.called');
+        cy.get('@updateSpy').should('have.been.calledTwice');
 
         // Pick CHUAU-1
         cy.get('[data-cy="picker-options"]').find('input').eq(0).check();
 
-        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledThrice');
         cy.get('@updateSpy').should('have.been.calledWith', ['CHUAU-1'], 5);
       });
   });
 
-  it('Selected beds are cleared when location is changed', () => {
+  it('Emits "update:beds" when the pickedBeds prop changes', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateBedsSpy = cy.spy().as('updateBedsSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        onReady: readySpy,
+        'onUpdate:beds': updateBedsSpy,
+        selected: 'CHUAU',
+        pickedBeds: ['CHUAU-2'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@updateBedsSpy').should('have.been.calledOnce');
+      cy.get('@updateBedsSpy').should('have.been.calledWith', ['CHUAU-2'], 5);
+
+      wrapper.setProps({ pickedBeds: ['CHUAU-1', 'CHUAU-3'] });
+
+      cy.get('@updateBedsSpy').should('have.been.calledTwice');
+      cy.get('@updateBedsSpy').should(
+        'have.been.calledWith',
+        ['CHUAU-1', 'CHUAU-3'],
+        5
+      );
+    });
+  });
+
+  it('Selected beds are cleared when new location with beds is picked', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
 
@@ -287,17 +316,57 @@ describe('Test the LocationSelector component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="selector-input"]').select('GHANA');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy')
+          .its('args[0][0]')
+          .should('deep.equal', ['CHUAU-1', 'CHUAU-3']);
+        cy.get('@updateSpy').its('args[0][1]').should('equal', 5);
 
-        cy.get('@updateSpy').should('have.been.calledThrice');
-        cy.get('@updateSpy').its('args[2][0]').should('deep.equal', []);
-        cy.get('@updateSpy').its('args[2][1]').should('equal', 4);
+        cy.get('[data-cy="selector-input"]').select('GHANA');
+        cy.get('@updateSpy').should('have.been.calledTwice');
+        cy.get('@updateSpy').its('args[1][0]').should('deep.equal', []);
+        cy.get('@updateSpy').its('args[1][1]').should('equal', 4);
 
         cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('@updateSpy').should('have.been.calledThrice');
+        cy.get('@updateSpy').its('args[2][0]').should('deep.equal', []);
+        cy.get('@updateSpy').its('args[2][1]').should('equal', 5);
+      });
+  });
 
-        cy.get('@updateSpy').its('callCount').should('equal', 4);
-        cy.get('@updateSpy').its('args[3][0]').should('deep.equal', []);
-        cy.get('@updateSpy').its('args[3][1]').should('equal', 5);
+  it('Selected beds are cleared when new location with no beds is picked', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        selected: 'CHUAU',
+        pickedBeds: ['CHUAU-1', 'CHUAU-3'],
+        onReady: readySpy,
+        'onUpdate:beds': updateSpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy')
+          .its('args[0][0]')
+          .should('deep.equal', ['CHUAU-1', 'CHUAU-3']);
+        cy.get('@updateSpy').its('args[0][1]').should('equal', 5);
+
+        cy.get('[data-cy="selector-input"]').select('A');
+        cy.get('@updateSpy').should('have.been.calledTwice');
+        cy.get('@updateSpy').its('args[1][0]').should('deep.equal', []);
+        cy.get('@updateSpy').its('args[1][1]').should('equal', 0);
+
+        cy.get('[data-cy="selector-input"]').select('B');
+        cy.get('@updateSpy').should('have.been.calledThrice');
+        cy.get('@updateSpy').its('args[2][0]').should('deep.equal', []);
+        cy.get('@updateSpy').its('args[2][1]').should('equal', 0);
       });
   });
 

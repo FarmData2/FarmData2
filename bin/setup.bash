@@ -33,9 +33,9 @@ echo ""
 
 echo "  Installing VSCodium extensions..."
 # Based on: https://stackoverflow.com/a/74440032
-npx json5 .vscode/extensions.json |
-  npx json-cli-tool --path=recommendations --output=newline |
-  xargs -L 1 codium --force --install-extension
+npx json5 .vscode/extensions.json \
+  | npx json-cli-tool --path=recommendations --output=newline \
+  | xargs -L 1 codium --force --install-extension
 echo "  Installed."
 
 echo ""
@@ -67,18 +67,27 @@ echo "  Configured."
 echo ""
 
 echo "  Authenticating with GitHub..."
-echo "    The following will authenticate the FarmData2 development environment"
-echo "    with your GitHub account.  If you are not familiar with the options shown"
-echo "    the following are recommended as the easiest approach:"
-echo "      - What is your preferred protocol for Git operations on this host?"
-echo "        - HTTPS"
-echo "      - Authenticate Git with your GitHub credentials? (Y/n)"
-echo "        - Y"
-echo "      - How would you like to authenticate GitHub CLI?"
-echo "        - Login with a web browser"
-echo "          - Use your GitHub username and password to log in."
-echo ""
-gh auth login --hostname GitHub.com
+if ! gh api user &> /dev/null; then
+  echo "    The following will authenticate the FarmData2 development environment"
+  echo "    with your GitHub account.  If you are not familiar with the options shown"
+  echo "    the following are recommended as the easiest approach:"
+  echo "      - What is your preferred protocol for Git operations on this host?"
+  echo "        - HTTPS"
+  echo "      - Authenticate Git with your GitHub credentials? (Y/n)"
+  echo "        - Y"
+  echo "      - How would you like to authenticate GitHub CLI?"
+  echo "        - Login with a web browser"
+  echo "          - Use your GitHub username and password to log in."
+  echo ""
+
+  while ! gh api user &> /dev/null; do
+    if ! gh auth login --hostname GitHub.com; then
+      echo "Authentication failed. Clearing credentials and trying again..."
+      gh auth logout --hostname GitHub.com &> /dev/null
+      read -rp "Press Enter to retry or Ctrl+C to exit..."
+    fi
+  done
+fi
 echo "  Authenticated."
 
 echo ""

@@ -154,4 +154,165 @@ describe('Test the LocationSelector component behavior', () => {
         });
     });
   });
+
+  it('1. Prop = true, when a location with beds is selected, all beds are checked', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('[data-cy="location-beds-accordion"]').should('exist');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'be.checked'
+        );
+      });
+  });
+
+  it('2. Prop = false, when a location with beds is selected, no beds are checked', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: false,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('[data-cy="location-beds-accordion"]').should('exist');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'not.be.checked'
+        );
+      });
+  });
+
+  it('3. Prop starts false, select a location (none checked), then change prop to true, select another location (all checked)', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: false,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.then(() => {
+            cy.get('[data-cy="selector-input"]').select('CHUAU');
+            cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+              'not.be.checked'
+            );
+          }).then(() => {
+            wrapper.setProps({ selectAllBedsByDefault: true });
+            cy.get('[data-cy="selector-input"]').select('ALF');
+            cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+              'be.checked'
+            );
+          });
+        });
+    });
+  });
+
+  it('4. Prop starts true, select a location (all checked), then change prop to false, select another location (none checked)', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: true,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.then(() => {
+            cy.get('[data-cy="selector-input"]').select('CHUAU');
+            cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+              'be.checked'
+            );
+          }).then(() => {
+            wrapper.setProps({ selectAllBedsByDefault: false });
+
+            cy.get('[data-cy="selector-input"]').select('ALF');
+            cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+              'not.be.checked'
+            );
+          });
+        });
+    });
+  });
+
+  it(`5. Prop = true, switch locations: ensure each newly selected location's beds are all checked`, () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: true,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'be.checked'
+        );
+
+        cy.get('[data-cy="selector-input"]').select('ALF');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'be.checked'
+        );
+      });
+  });
+
+  it(`6. Prop = false, switch locations: ensure each newly selected location's beds are all unchecked`, () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        includeGreenhouses: true,
+        includeFields: true,
+        onReady: readySpy,
+        selectAllBedsByDefault: false,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').select('CHUAU');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'not.be.checked'
+        );
+
+        cy.get('[data-cy="selector-input"]').select('ALF');
+        cy.get('[data-cy="picker-options"] input[type="checkbox"]').should(
+          'not.be.checked'
+        );
+      });
+  });
 });
