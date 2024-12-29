@@ -120,11 +120,19 @@
               }
             },
             {
+              "label": "Start Heartbeat Server in fd2_dev",
+              "type": "shell",
+              "command": ",devcontainer/startHeartbeat.bash",
+              "presentation": {
+                "reveal": "always"
+              }
+            },
+            {
               "label": "Start Heartbeat Listener",
               "type": "shell",
               "command": "ncat -lk 8888",
               "presentation": {
-                "reveal": "never"
+                "reveal": "always"
               }
             }
           ],
