@@ -7,4 +7,4 @@ nohup docker exec fd2_dev sh -c \
   -e create,delete,modify /home/fd2dev | \
   while read -r dirname events basename; do       
     echo 'FD2 Dev Environment Heartbeat' | ncat 172.18.0.1 8888  
-  done"
+  done" > /dev/null 2>&1 &

@@ -70,6 +70,7 @@
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
                 "Open Welcome Page",
+                "Start Heartbeat Server",
                 "Start Heartbeat Listener"
               ],
               "runOptions": {
@@ -120,7 +121,7 @@
               }
             },
             {
-              "label": "Start Heartbeat Server in fd2_dev",
+              "label": "Start Heartbeat Server",
               "type": "shell",
               "command": ",devcontainer/startHeartbeat.bash",
               "presentation": {
