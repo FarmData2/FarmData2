@@ -70,6 +70,7 @@ transplantings
 unplugin
 usermod
 vite
+vncviewer
 vuejs
 vuese
 XDEBUG

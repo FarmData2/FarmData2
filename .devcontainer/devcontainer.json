@@ -109,7 +109,7 @@
               "type": "shell",
               "command": "bin/fd2-up.bash",
               "presentation": {
-                "reveal": "alwasy"
+                "reveal": "never"
               }
             },
             {
@@ -125,7 +125,7 @@
               "type": "shell",
               "command": ".devcontainer/startHeartbeat.bash",
               "presentation": {
-                "reveal": "always"
+                "reveal": "never"
               }
             },
             {
@@ -133,7 +133,7 @@
               "type": "shell",
               "command": "ncat -lk 8888",
               "presentation": {
-                "reveal": "always"
+                "reveal": "never"
               }
             }
           ],
