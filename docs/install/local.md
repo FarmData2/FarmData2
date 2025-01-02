@@ -67,7 +67,7 @@ The FarmData2 Development Environment will restart much faster that the first ti
       - `bin/fd2-up.bash`
 1. Wait for the message "FarmData2 Development Environment started" to appear in your terminal.
 1. Connect to the FarmData2 Development Environment by using one of the following methods:
-   - Use a web browser to visit `http://localhost:6109` and click the "Connect" button on the page that appears.
+   - Use a web browser to visit `http://localhost:6109` and click the "Connect" button on the page that is displayed.
    - Use a VNC client to connect to`localhost:5901`.
 1. When you are done working:
    1. Push the branch you are working on to your GitHub as a backup.
