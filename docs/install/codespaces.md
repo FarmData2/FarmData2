@@ -79,4 +79,4 @@ To restart the Development Environment:
 1. Scroll down to the entry your FarmData2 codespace. <br><center><img src="images/stop-codespace.png" alt='Entry for the FarmData2 codespace.' width=650 /></center>
 1. Click the _meatballs menu_ (⋯) to the right side of the word "Active."
 1. Choose "Open in Browser" from the menu.
-   - Note: As a shortcut, you can also click the _codespace name_, for example "shinny waffle," that appears under the repository name.
+   - Note: As a shortcut, you can also click the _codespace name_, for example "shinny waffle," that is displayed under the repository name.
