@@ -228,10 +228,7 @@ module.exports = {
     'cspell --no-progress --no-summary --no-must-find-files --config .cspell.json',
     'prettier --ignore-unknown --write',
   ],
-  '**/*.bash|.githooks/*': [
-    'shellcheck',
-    'shfmt --write --indent 2 --space-redirects',
-  ],
+  '**/*.bash|.githooks/*': ['shellcheck'],
   '**/*.md': async (files) => {
     const filesToLint = await removeIgnoredFiles(files);
     return [

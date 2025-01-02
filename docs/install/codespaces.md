@@ -10,9 +10,9 @@ If you are already familiar with Codespaces, running the FarmData2 Development E
 
 If you run into problems during the install visit the dedicated [install stream](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
 
-## Creating a new FarmData2 Development Environment in Codespaces
+## Creating a FarmData2 Development Environment in Codespaces
 
-Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. [Restarting a development environment](#restarting-a-farmdata2-development-environment-in-codespaces) is much faster. 
+Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. [Restarting a development environment](#restarting-a-farmdata2-development-environment-in-codespaces) is much faster.
 
 Use the following steps to create a new FarmData2 Development Environment in Codespaces:
 
@@ -41,7 +41,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
       - The FarmData2 Development Environment will open in a new browser tab.
    2. **Open on your Machine with VNC:** If you will want to copy and paste information between the FarmData2 Development Environment and your local machine frequently, this is the best way to connect.
       - Confirm that the following dependencies are installed on your machine:
-        - [The `gh` command line interface](https://cli.github.com/")
+        - [The `gh` command line interface](https://cli.github.com/)
         - [The Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/)
           - For Windows, download and run the `vncviewer64.1.13.0.exe` file.
           - For Mac, download and open the `TigerVNC.1.13.0.dmg` file and then copy the "TigerVNC Viewer" to your Applications folder.
@@ -50,13 +50,13 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md).
 
-1. See the [Working in the FarmData2 Development Environment](install/working.md) document for more information about working in the FarmData2 Developer Environment in a browser or a VNC client.
+1. See the [Working in the FarmData2 Development Environment](working.md) document for more information about working in the FarmData2 Developer Environment in a browser or a VNC client.
 
 ## Stopping a FarmData2 Development Environment in Codespaces
 
-In practice you can just close the development environment by closing its browser tab or VNC window. The development environment containers running on GitHib Codespaces will automatically stop after the idle timeout that you set earlier. 
+In practice you can just close the development environment by closing its browser tab or VNC window. The development environment containers running on GitHib Codespaces will automatically stop after the idle timeout that you set earlier.
 
-If you are close to, or have already, exhausted your free Codespaces time you might want to explicitly stop the FarmData2 codespace to avoid incurring charges until the idle timeout expires. 
+If you are close to, or have already, exhausted your free Codespaces time you might want to explicitly stop the FarmData2 codespace to avoid incurring charges until the idle timeout expires.
 
 To explicitly stop the FarmData2 Development Environment in GitHub Codespaces:
 

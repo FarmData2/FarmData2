@@ -40,9 +40,10 @@ echo "  Installed."
 
 echo ""
 
-echo "  Initializing vale linter..."
-vale sync
-echo "  Initialized."
+# Commit the .vale directory to avoid version issues.
+# echo "  Initializing vale linter..."
+# vale sync
+# echo "  Initialized."
 
 echo "  Configuring git information..."
 echo "    The following information will be associated with GitHub commits"

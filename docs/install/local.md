@@ -45,7 +45,7 @@ Use the following steps to create a FarmData2 Development Environment on your lo
 1. Wait for the message "FarmData2 Development Environment started" to appear in your terminal.
 1. Launch the VNC Viewer and to connect to `localhost:5901`.
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md).
-1. See the [Working in the FarmData2 Development Environment](install/working.md) document for more information about working in the FarmData2 Developer Environment.
+1. See the [Working in the FarmData2 Development Environment](working.md) document for more information about working in the FarmData2 Developer Environment.
 
 ## Stopping a FarmData2 Development Environment Locally
 
