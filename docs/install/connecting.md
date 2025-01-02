@@ -4,15 +4,15 @@ You can connect to the Linux-based FarmData2 Development Environment in two ways
 
 ## Connect by Using Your Web Browser
 
-Connecting by using your web browser is the easiest way to connect to a FarmData2 Development Environment. When connecting with your browser the Linux desktop will appear inside your browser window.
+Connecting by using your web browser is the easiest way to connect to a FarmData2 Development Environment. When connecting with your browser, there no dependencies to install on your machine and the Linux desktop will appear inside your browser window.
 
-Note that connecting to the FarmData2 Development Environment in your browser has a significant limitation. You will not be able to copy and paste information _directly_ between the FarmData2 Development Environment and your local machine. To do so you must use the _noVNC Clipboard_:
-- Click the use the "noVNC Menu" at the left edge of the desktop.
-- Click the _Clipboard icon_.
-- ...
+When connecting to a FarmData2 Development Environment in your browser there are some things to know.
 
+- The "noVNC Menu," at the left edge of the window provides useful configuration options:
 
-If copying between your local machine and the FarmData2 Development Environment is something you do frequently, consider connecting by [using a VNC Client](#connect-by-using-a-vnc-client), which does not have this limitation.
+  - Click the _gear_ icon and set the "Scaling Mode" to "Remote Resizing" to have the desktop automatically fill the browser window.
+  - Click the _full screen_ icon to change the desktop into full screen mode to hide the browser decorations and provide more space for the Linux desktop.
+  - By using the _clipboard_ icon you can copy and paste information between the FarmData2 Development Environment and your local machine. If copying between your local machine and the FarmData2 Development Environment is something you do frequently you might want to consider connecting by [using a VNC Client](#connect-by-using-a-vnc-client), which does not have this limitation.
 
 - See the [Keyboard Shortcuts](#keyboard-shortcuts) for a list of key combinations that can be used within the FarmData2 Development Environment.
 
