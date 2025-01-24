@@ -65,7 +65,7 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in this.optionsList"
+            v-for="(option, i) in this.optionsObjects"
             v-bind:key="option.text"
             v-bind:value="option.value"
             v-bind:disabled="option.disabled"
@@ -154,6 +154,7 @@
  *   id="crop-selector"
  *   data-cy="crop-selector"
  *   label="Crop"
+ *   keepDisabledSelected:"keepDisabledSelected"
  *   invalidFeedbackText="A crop is required"
  *   v-bind:options="cropList"
  *   v-bind:required="required"
@@ -231,7 +232,7 @@ export default {
       default: '',
     },
     /**
-     * Keep newly disabled options selected.
+     * Whether the selected option is removed from the options when marked "disabled".
      */
     keepDisabledSelected: {
       type: Boolean,
@@ -257,8 +258,8 @@ export default {
   },
   data() {
     return {
-      optionList: this.options,
-      optionsList: this.optionList,
+      optionsStrings: this.options,
+      optionsObjects: this.optionsStrings,
       selectedOption: this.selected,
       isPopupVisible: false,
       popupSrc: '',
@@ -405,7 +406,7 @@ export default {
       }
     },
     checkSelectedOption() {
-      for (let option of this.optionsList) {
+      for (let option of this.optionsObjects) {
         if (option.text === this.selectedOption) {
           if (!this.keepDisabledSelected && option.disabled) {
             this.handleDelete();
@@ -442,7 +443,7 @@ export default {
     },
     options: {
       handler() {
-        this.optionsList = this.options.map((option) => {
+        this.optionsObjects = this.options.map((option) => {
           if (typeof option === 'string') {
             option = { text: option, value: option, disabled: false };
           }
