@@ -174,6 +174,36 @@ describe('Test the SelectorBase behaviors', () => {
     });
   });
 
+  it('"selected" prop cannot be a disabled item when "KeepDisabledSelected" is false', () => {
+    const opts = [{ text: 'One', value: 'One', disabled: true }];
+    const newSelection = 'One';
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(SelectorBase, {
+      props: {
+        invalidFeedbackText: 'Invalid feedback text.',
+        label: `TheLabel`,
+        options: opts,
+        selected: '',
+        keepDisabledSelected: false,
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-input"]')
+            .should('have.value', null)
+            .then(() => {
+              wrapper.setProps({ selected: newSelection });
+            });
+        });
+      cy.get('@updateSpy').should('have.been.calledWith', '');
+    });
+  });
+
   it('Verify that `selected` prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 

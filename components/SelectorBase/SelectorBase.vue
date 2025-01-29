@@ -258,8 +258,7 @@ export default {
   },
   data() {
     return {
-      optionsStrings: this.options,
-      optionsObjects: this.optionsStrings,
+      optionsObjects: this.options,
       selectedOption: this.selected,
       isPopupVisible: false,
       popupSrc: '',
@@ -409,14 +408,13 @@ export default {
       for (let option of this.optionsObjects) {
         if (option.text === this.selectedOption) {
           if (!this.keepDisabledSelected && option.disabled) {
-            this.handleDelete();
+            this.selectedOption = '';
           }
 
           return;
         }
       }
-
-      this.handleDelete();
+      this.selectedOption = '';
     },
   },
   watch: {
@@ -428,7 +426,15 @@ export default {
       this.$emit('valid', this.isValid);
     },
     selected() {
-      this.selectedOption = this.selected;
+      for (let option of this.optionsObjects) {
+        if (option.text === this.selected) {
+          if (!option.disabled || this.keepDisabledSelected) {
+            this.selectedOption = this.selected;
+          } else {
+            this.$emit('update:selected', this.selectedOption);
+          }
+        }
+      }
     },
     selectedOption() {
       /**
@@ -443,6 +449,9 @@ export default {
     },
     options: {
       handler() {
+        /**
+         * The incoming list of options is adapted to the selector base format
+         */
         this.optionsObjects = this.options.map((option) => {
           if (typeof option === 'string') {
             option = { text: option, value: option, disabled: false };
