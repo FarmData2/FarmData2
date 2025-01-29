@@ -174,7 +174,7 @@ describe('Test the SelectorBase behaviors', () => {
     });
   });
 
-  it('"selected" prop cannot be a disabled item when "KeepDisabledSelected" is false', () => {
+  it('"selected" prop cannot be updated to a disabled item', () => {
     const opts = [{ text: 'One', value: 'One', disabled: true }];
     const newSelection = 'One';
     const readySpy = cy.spy().as('readySpy');
@@ -200,6 +200,7 @@ describe('Test the SelectorBase behaviors', () => {
               wrapper.setProps({ selected: newSelection });
             });
         });
+      cy.get('[data-cy="selector-input"]').should('have.value', null);
       cy.get('@updateSpy').should('have.been.calledWith', '');
     });
   });
