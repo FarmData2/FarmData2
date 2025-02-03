@@ -2384,11 +2384,10 @@ export async function getTraySeededCropNames() {
 }
 
 /**
- * Creates an activity log (`log--activity`) for a soil disturbance termination event if beds.
- *
- * This function performs two key actions:
- * 1. Terminates specific beds associated with a plant asset at a given location.
- * 2. Archives the plant asset **if no beds remain after the termination process**.
+ * Creates an activity log (`log--activity`) for a soil disturbance termination event if there are beds
+ * to be terminated. If a plant asset has no beds, it is archived instead. Additionally, if all beds
+ * are terminated and nothing remains, the plant asset is archived. If an empty `bedNames` array (`[]`)
+ * is passed, but the plant asset has associated beds, all beds are chosen for termination by default.
  *
  * @param {string} terminationDate - The date of the soil disturbance (e.g., "2023-11-20").
  * @param {string} locationName - The location of the plant asset (e.g., a field or greenhouse).
@@ -2404,22 +2403,28 @@ export async function createSoilDisturbanceTerminationLog(
   bedNames = [],
   plantAsset
 ) {
-  if (bedNames.length == 0) {
-    await archivePlantAsset(plantAsset.id, true);
-    return;
-  }
-
   const farm = await getFarmOSInstance();
   const allBedsMap = await getBeds();
   const cropIdToTermMap = await getCropIdToTermMap(); // for log name
 
   const bedNameToAssetMap = await getBedNameToAssetMap();
-  const bedIdsToTerminate = bedNames.map(
-    (name) => bedNameToAssetMap.get(name)?.id
-  );
-
-  // Determine beds to keep and beds to terminate
   const existingBeds = plantAsset.relationships.location.slice(1) || [];
+
+  // No beds to terminate, thus no need to create a movement log
+  if (existingBeds.length == 0) {
+    await archivePlantAsset(plantAsset.id, true);
+    return;
+  }
+
+  let bedIdsToTerminate = [];
+  if (bedNames.length > 0) {
+    // if bedNames given for termination
+    bedIdsToTerminate = bedNames.map((name) => bedNameToAssetMap.get(name)?.id);
+  } else {
+    // If no bedNames are given, choose all beds
+    bedIdsToTerminate = existingBeds.map((bed) => bed.id);
+  }
+
   const bedsToKeep = existingBeds
     .filter((bed) => !bedIdsToTerminate.includes(bed.id)) // Exclude terminated beds
     .map(
