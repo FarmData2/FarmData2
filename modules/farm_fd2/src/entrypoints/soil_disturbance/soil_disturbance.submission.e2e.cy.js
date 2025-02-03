@@ -127,7 +127,7 @@ describe('Soil Disturbance: Submission tests', () => {
          */
         expect(formData.termination).to.equal(false);
 
-        expect(formData.area).to.equal(67);
+        expect(formData.area).to.equal(50);
       } else {
         expect(formData.location).to.equal('H');
         expect(formData.beds[0]).to.equal('H-1');

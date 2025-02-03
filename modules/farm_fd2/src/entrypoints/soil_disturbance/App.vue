@@ -333,13 +333,51 @@ export default {
     handlePickedUpdate(picked) {
       this.form.picked = picked;
 
-      if (this.form.affectedPlants.length > 0 && this.form.picked.size > 0) {
-        this.form.area = Math.round(
-          (this.form.picked.size / this.form.affectedPlants.length) * 100
-        );
-      } else {
+      // If there are beds but nothing is picked or if there are no beds, default to 100%
+      if (picked.size === 0 || !this.picklistColumns.includes('bed')) {
         this.form.area = 100;
+        return;
       }
+      // else, find area percentage
+
+      // Map "Bed -> # of entries in the picklistBase table"
+      const bedTotals = this.form.affectedPlants.reduce((acc, row) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Maps "Beds -> # of picked entries"
+      // For example, if Chuau-3 -> 1 (Chuau-3 has two entires in the table
+      // but only one was chosen so this bed wont count towards the area percentage)
+      const bedPicks = [...picked.values()].reduce((acc, row) => {
+        if (row.row.bed !== 'N/A') {
+          acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Count how many beds have all their plants chosen
+      let fullyChosenBeds = 0;
+      for (const [bed, totalForBed] of Object.entries(bedTotals)) {
+        const pickedForBed = bedPicks[bed] || 0;
+        // A bed is fully chosen only if ALL of its entries were picked
+        if (pickedForBed == totalForBed) {
+          fullyChosenBeds++;
+        }
+      }
+
+      // If no beds are fully chosen, still keep area at 100%
+      if (fullyChosenBeds === 0) {
+        this.form.area = 100;
+        return;
+      }
+
+      // Otherwise, calculate the percentage
+      this.form.area = Math.round(
+        (fullyChosenBeds / Object.keys(bedTotals).length) * 100
+      );
     },
     submit() {
       this.submitting = true;

@@ -317,64 +317,26 @@ describe('Test the soil disturbance termination log functions', () => {
       );
     });
 
-    // Validate the soil disturbance termination log
-    cy.get('@soilDisturbanceLog').then((soilDisturbanceLog) => {
-      cy.wrap(
-        farmosUtil.getSoilDisturbanceTerminationLog(soilDisturbanceLog.id)
-      ).as('readSoilDisturbanceLog');
-    });
-
-    cy.getAll(['@readSoilDisturbanceLog', '@newPlantAsset']).then(
-      ([soilDisturbanceLog, plantAsset]) => {
-        expect(soilDisturbanceLog.attributes.name).to.equal(
-          '2023-11-20_sd_' +
-            plantAsset.relationships.plant_type
-              .map((crop) => cropMap.get(crop.id).attributes.name)
-              .join('_')
-        );
-        expect(soilDisturbanceLog.attributes.timestamp).to.contain(
-          '2023-11-20'
-        );
-        expect(soilDisturbanceLog.type).to.equal('log--activity');
-        expect(soilDisturbanceLog.attributes.status).to.equal('done');
-        expect(soilDisturbanceLog.attributes.is_movement).to.be.true;
-
-        expect(soilDisturbanceLog.relationships.location).to.have.length(1);
-        expect(soilDisturbanceLog.relationships.location[0].id).to.equal(
-          fieldMap.get('A').id
-        );
-
-        expect(soilDisturbanceLog.relationships.asset).to.have.length(1);
-        expect(soilDisturbanceLog.relationships.asset[0].id).to.equal(
-          plantAsset.id
-        );
-
-        expect(soilDisturbanceLog.relationships.category).to.have.length(1);
-        expect(soilDisturbanceLog.relationships.category[0].id).to.equal(
-          categoryMap.get('termination').id
-        );
-      }
-    );
+    // Ensure no soil disturbance termination log was created
+    cy.get('@soilDisturbanceLog').should('be.undefined');
 
     // Ensure the plant asset in the termination log is archived
-    cy.get('@readSoilDisturbanceLog').then((soilDisturbanceLog) => {
-      cy.wrap(
-        farmosUtil.getPlantAsset(soilDisturbanceLog.relationships.asset[0].id)
-      ).then((updatedAsset) => {
+    cy.get('@newPlantAsset').then((plantAsset) => {
+      cy.wrap(farmosUtil.getPlantAsset(plantAsset.id)).then((updatedAsset) => {
         expect(updatedAsset.attributes.status).to.equal('archived');
-        expect(updatedAsset.relationships.location).to.have.length(1);
+        expect(updatedAsset.relationships.location).to.be.empty;
       });
     });
 
     // Delete all logs and plant asset
     cleanupLogsAndAsset({
-      deleteSoilDisturbanceLog: true,
+      deleteSoilDisturbanceLog: false,
       deletePlantAsset: true,
     });
   });
 
   it(
-    'Error creating a soil disturbance termination log',
+    'Error creating a soil disturbance termination log for ',
     { retries: 4 },
     () => {
       createPlantAsset(
@@ -382,6 +344,15 @@ describe('Test the soil disturbance termination log functions', () => {
         'HERB-CILANTRO',
         '2023-11-20'
       );
+
+      cy.get('@newPlantAsset').then((plantAsset) => {
+        createMovementLog(
+          plantAsset,
+          ['CHUAU', 'CHUAU-1', 'CHUAU-3'],
+          ['seeding', 'tillage'],
+          '2023-11-20'
+        );
+      });
 
       // Simulate an error while creating the soil disturbance termination log
       cy.intercept('POST', '**/api/log/activity', {
@@ -396,8 +367,8 @@ describe('Test the soil disturbance termination log functions', () => {
                 .createSoilDisturbanceTerminationLog(
                   '2023-11-20',
                   'CHUAU', // Location
-                  [], // No beds to terminate
-                  updatedPlantAsset // Pass the plant asset with no beds
+                  ['CHUAU-1', 'CHUAU-3'], // beds to terminate
+                  updatedPlantAsset
                 )
                 .then(() => {
                   throw new Error(
@@ -418,7 +389,7 @@ describe('Test the soil disturbance termination log functions', () => {
       cy.get('@newPlantAsset').then((plantAsset) => {
         cy.wrap(farmosUtil.getPlantAsset(plantAsset.id)).then(
           (updatedAsset) => {
-            expect(updatedAsset.relationships.location).to.have.length(0); // No beds should exist
+            expect(updatedAsset.relationships.location).to.have.length(3); // 2 beds should exist
             expect(updatedAsset.attributes.status).to.not.equal('archived'); // Asset should not be archived
           }
         );
@@ -426,6 +397,7 @@ describe('Test the soil disturbance termination log functions', () => {
 
       // Delete the plant asset
       cleanupLogsAndAsset({
+        deleteMovementLog: true,
         deletePlantAsset: true,
       });
     }

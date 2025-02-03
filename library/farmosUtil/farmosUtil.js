@@ -2384,7 +2384,7 @@ export async function getTraySeededCropNames() {
 }
 
 /**
- * Creates an activity log (`log--activity`) for a soil disturbance termination event.
+ * Creates an activity log (`log--activity`) for a soil disturbance termination event if beds.
  *
  * This function performs two key actions:
  * 1. Terminates specific beds associated with a plant asset at a given location.
@@ -2404,6 +2404,11 @@ export async function createSoilDisturbanceTerminationLog(
   bedNames = [],
   plantAsset
 ) {
+  if (bedNames.length == 0) {
+    await archivePlantAsset(plantAsset.id, true);
+    return;
+  }
+
   const farm = await getFarmOSInstance();
   const allBedsMap = await getBeds();
   const cropIdToTermMap = await getCropIdToTermMap(); // for log name

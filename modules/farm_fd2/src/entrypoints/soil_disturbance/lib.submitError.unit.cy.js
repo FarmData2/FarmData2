@@ -207,6 +207,7 @@ function runTest(activePlantAsset) {
                 throw new Error('The submission should have failed.');
               })
               .catch((error) => {
+                console.error(error.message);
                 expect(error.message).to.contain(
                   'Error creating Soil Disturbance records.'
                 );
@@ -283,6 +284,7 @@ function runTest(activePlantAsset) {
                 throw new Error('The submission should have failed.');
               })
               .catch((error) => {
+                console.log(error.message);
                 expect(error.message).to.contain(
                   'Error creating Soil Disturbance records.'
                 );
@@ -327,4 +329,4 @@ function runTest(activePlantAsset) {
 }
 
 runTest(false);
-runTest(false);
+runTest(true);
