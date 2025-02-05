@@ -431,6 +431,7 @@ export default {
           if (!option.disabled || this.keepDisabledSelected) {
             this.selectedOption = this.selected;
           } else {
+            this.selectedOption = '';
             this.$emit('update:selected', this.selectedOption);
           }
         }
