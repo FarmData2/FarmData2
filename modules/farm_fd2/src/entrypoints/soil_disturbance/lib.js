@@ -259,10 +259,6 @@ async function submitForm(formData) {
                   (i + 1) +
                   ' of ' +
                   formData.passes +
-                  ' of Plant Asset ' +
-                  (j + 1) +
-                  ' of ' +
-                  plantAssets.length +
                   '. ' +
                   formData.comment
               );
