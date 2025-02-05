@@ -287,7 +287,7 @@ function runTest(activePlantAsset, terminationValue) {
             return createPlantAsset(
               'Test Plant Asset 2',
               'LETTUCE-MES MIX',
-              '2025-11-20',
+              '2021-11-20',
               'newPlantAsset2'
             ).then(() => {
               return cy.get('@newPlantAsset2').then((plantAsset) => {
@@ -295,7 +295,7 @@ function runTest(activePlantAsset, terminationValue) {
                   plantAsset,
                   ['CHUAU', 'CHUAU-1', 'CHUAU-3'],
                   ['seeding', 'tillage'],
-                  '2025-11-20',
+                  '2021-11-20',
                   'activityLog2'
                 );
 
@@ -381,12 +381,24 @@ function runTest(activePlantAsset, terminationValue) {
             ).to.equal(true);
 
             // location
-            expect(
-              results['terminationLog' + i].relationships.location.length
-            ).to.equal(1);
-            expect(
-              results['terminationLog' + i].relationships.location[0].id
-            ).to.equal(fieldMap.get(form.location).id);
+            if (i == 0) {
+              expect(
+                results['terminationLog' + i].relationships.location.length
+              ).to.equal(1);
+              expect(
+                results['terminationLog' + i].relationships.location[0].id
+              ).to.equal(fieldMap.get(form.location).id);
+            } else {
+              expect(
+                results['terminationLog' + i].relationships.location.length
+              ).to.equal(2);
+              expect(
+                results['terminationLog' + i].relationships.location[0].id
+              ).to.equal(fieldMap.get(form.location).id);
+              expect(
+                results['terminationLog' + i].relationships.location[1].id
+              ).to.equal(bedMap.get('CHUAU-1').id);
+            }
 
             // plant assets
             expect(
