@@ -13,7 +13,7 @@ describe('LocationSelector popup test', () => {
     cy.saveSessionStorage();
   });
 
-  it('Form selects new location', () => {
+  it('Form selects new location for Tray Seeding', () => {
     cy.get('[data-cy="tray-seeding-location"]')
       .find('[data-cy="selector-add-button"]')
       .click();
@@ -27,14 +27,14 @@ describe('LocationSelector popup test', () => {
 
     cy.get('@iframeBody')
       .find('[id="edit-name-0-value"]', { timeout: 10000 })
-      .should('be.visible') // Ensure the input field is visible
+      .should('be.visible')
       .type('NewLocation');
 
     cy.get('@iframeBody').find('[id="edit-structure-type-greenhouse"]').check();
 
     cy.get('@iframeBody')
       .find('[id="edit-submit"]', { timeout: 10000 })
-      .should('be.visible') // Ensure the submit button is visible
+      .should('be.visible')
       .click();
 
     cy.get('[data-cy="tray-seeding-location"]')

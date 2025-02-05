@@ -55,7 +55,7 @@ describe('Test the default PicklistBase content', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [0, 0],
+        picked: new Map(),
         units: 'Trays',
         quantityAttribute: 'quantity',
         showValidityStyling: true,
@@ -102,7 +102,7 @@ describe('Test the default PicklistBase content', () => {
         );
         cy.get('[data-cy="picklist-units-button"]')
           .should('exist')
-          .and('have.text', 'Trays');
+          .and('have.text', '✅ Trays');
       });
   });
 
@@ -118,7 +118,7 @@ describe('Test the default PicklistBase content', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [],
+        picked: new Map(),
         showAllButton: true,
         units: null,
         quantityAttribute: 'quantity',
@@ -128,7 +128,9 @@ describe('Test the default PicklistBase content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="picklist-all-button"]').should('exist');
+        cy.get('[data-cy="picklist-all-button"]')
+          .should('exist')
+          .and('have.text', '✅ All');
       });
   });
 
@@ -144,7 +146,10 @@ describe('Test the default PicklistBase content', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [1, 2],
+        picked: new Map([
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
+        ]),
         showInfoIcons: true,
         units: 'Trays',
         quantityAttribute: 'quantity',
@@ -171,8 +176,11 @@ describe('Test the default PicklistBase content', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [1, 2],
-        units: null,
+        picked: new Map([
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
+        ]),
+        units: null, // Checkbox mode
         quantityAttribute: 'quantity',
       },
     });
@@ -197,8 +205,11 @@ describe('Test the default PicklistBase content', () => {
         ],
         columns: ['name', 'quantity', 'location'],
         labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: [1, 2],
-        units: 'Trays',
+        picked: new Map([
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
+        ]),
+        units: 'Trays', // Dropdown mode
         quantityAttribute: 'quantity',
       },
     });
@@ -247,7 +258,10 @@ describe('Test the default PicklistBase content', () => {
           location: 'Location',
           stuff: 'More Info',
         },
-        picked: [1, 2],
+        picked: new Map([
+          [0, { picked: 1 }],
+          [1, { picked: 2 }],
+        ]),
         showInfoIcons: true,
         units: 'Trays',
         quantityAttribute: 'quantity',

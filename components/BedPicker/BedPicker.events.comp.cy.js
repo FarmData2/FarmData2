@@ -32,7 +32,7 @@ describe('Test the BedPicker component events', () => {
       });
   });
 
-  it('Test update:picked event propagated', () => {
+  it('Test update:picked event propagated from user interaction', () => {
     const readySpy = cy.spy().as('readySpy');
     const pickedSpy = cy.spy().as('pickedSpy');
 
@@ -51,6 +51,35 @@ describe('Test the BedPicker component events', () => {
         cy.get('@pickedSpy').should('have.been.calledOnce');
         cy.get('@pickedSpy').should('have.been.calledWith', ['ALF-1']);
       });
+  });
+
+  it('Emits update:picked when the picked prop changes', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const pickedSpy = cy.spy().as('pickedSpy');
+
+    cy.mount(BedPicker, {
+      props: {
+        onReady: readySpy,
+        'onUpdate:picked': pickedSpy,
+        location: 'ALF',
+        picked: ['ALF-2'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@pickedSpy').should('have.been.calledOnce');
+          cy.get('@pickedSpy').should('have.been.calledWith', ['ALF-2']);
+
+          wrapper.setProps({ picked: ['ALF-3', 'ALF-4'] });
+
+          cy.get('@pickedSpy').should('have.been.calledTwice');
+          cy.get('@pickedSpy').should('have.been.calledWith', [
+            'ALF-3',
+            'ALF-4',
+          ]);
+        });
+    });
   });
 
   it('Error event if unable to fetch beds, fields or greenhouses', () => {

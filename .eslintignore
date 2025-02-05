@@ -1,5 +1,6 @@
 docker/db/
 docker/docker-compose.yml
+docker/compose.yml
 
 bin/templates/entrypoint/*.yml
 **/*.info.yml

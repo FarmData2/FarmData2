@@ -40,6 +40,14 @@ if [ -z "$SYS_DOCKER_SOCK" ]; then
 fi
 echo "  Found it."
 
+# Check if Docker daemon is running
+echo "Checking if Docker daemon is running..."
+if ! docker info >/dev/null 2>&1; then
+    echo -e "${RED}ERROR:${NO_COLOR} Docker daemon is not running. Please start Docker and try again."
+    exit 1
+fi
+echo "  Docker daemon is running."
+
 # Get the name of the directory containing the FarmData2 repo.
 # This is the FarmData2 directory by default, but may have been
 # changed by the user.
@@ -119,7 +127,7 @@ docker rm fd2_dev &> /dev/null
 echo "Starting containers..."
 safe_cd "$FD2_PATH/docker"
 
-# Note: Any command line args are passed to the docker-compose up command
+# Note: Any command line args are passed to the docker compose up command
 docker compose up -d "$@"
 
 echo "Rebuilding the drupal cache..."

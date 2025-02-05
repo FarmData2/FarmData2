@@ -280,7 +280,7 @@ export default {
       rowValues: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
       form: {
         cropName: null,
-        picked: [],
+        picked: new Map(),
         transplantingDate: dayjs().format('YYYY-MM-DD'),
         location: '',
         beds: [],

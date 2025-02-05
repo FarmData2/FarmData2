@@ -21,7 +21,7 @@ describe('Error when submitting using the transplanting lib.', () => {
 
   let form = {
     cropName: 'BROCCOLI',
-    picked: [],
+    picked: new Map(),
     transplantingDate: '1950-01-02',
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
@@ -45,7 +45,7 @@ describe('Error when submitting using the transplanting lib.', () => {
         });
       })
       .then((res) => {
-        form.picked[0] = { trays: 25, data: res[res.length - 1] };
+        form.picked.set(0, { trays: 25, data: res[res.length - 1] });
       });
   });
 
