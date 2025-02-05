@@ -256,7 +256,7 @@ async function submitForm(formData) {
                 ],
                 equipmentAssets,
                 'Pass ' +
-                  (i + 1) +
+                  (j + 1) +
                   ' of ' +
                   formData.passes +
                   '. ' +

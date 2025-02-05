@@ -518,7 +518,7 @@ function runTest(activePlantAsset, terminationValue) {
             expect(
               results['activityLog' + i + ' ' + j].attributes.notes.value
             ).to.equal(
-              'Pass ' + (i + 1) + ' of ' + form.passes + '. ' + form.comment
+              'Pass ' + (j + 1) + ' of ' + form.passes + '. ' + form.comment
             );
 
             // check locations
