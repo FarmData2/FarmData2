@@ -32,8 +32,8 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
       cy.get('[data-cy="soil-disturbance-location"]')
         .find('[data-cy="selector-input"]')
         .select('ALF');
-      cy.get('[data-cy="picker-options"]').find('input').eq(2).check();
-      cy.get('[data-cy="picker-options"]').find('input').eq(3).check();
+      cy.get('[data-cy="picklist-checkbox-0"]').check();
+      cy.get('[data-cy="picklist-checkbox-1"]').check();
     }
     if (!skipEquipment) {
       cy.get('[data-cy="multi-equipment-selector"]')

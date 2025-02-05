@@ -155,7 +155,7 @@ describe('Test the LocationSelector component behavior', () => {
     });
   });
 
-  it('1. Prop = true, when a location with beds is selected, all beds are checked', () => {
+  it('1. selectAllBedsByDefault = true, when a location with beds is selected, all beds are checked', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -178,7 +178,7 @@ describe('Test the LocationSelector component behavior', () => {
       });
   });
 
-  it('2. Prop = false, when a location with beds is selected, no beds are checked', () => {
+  it('2. selectAllBedsByDefault = false, when a location with beds is selected, no beds are checked', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -201,7 +201,7 @@ describe('Test the LocationSelector component behavior', () => {
       });
   });
 
-  it('3. Prop starts false, select a location (none checked), then change prop to true, select another location (all checked)', () => {
+  it('3. selectAllBedsByDefault prop starts false, select a location (none checked), then change prop to true, select another location (all checked)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -231,7 +231,7 @@ describe('Test the LocationSelector component behavior', () => {
     });
   });
 
-  it('4. Prop starts true, select a location (all checked), then change prop to false, select another location (none checked)', () => {
+  it('4. selectAllBedsByDefault prop starts true, select a location (all checked), then change prop to false, select another location (none checked)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -262,7 +262,7 @@ describe('Test the LocationSelector component behavior', () => {
     });
   });
 
-  it(`5. Prop = true, switch locations: ensure each newly selected location's beds are all checked`, () => {
+  it(`5. selectAllBedsByDefault = true, switch locations: ensure each newly selected location's beds are all checked`, () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
@@ -289,7 +289,7 @@ describe('Test the LocationSelector component behavior', () => {
       });
   });
 
-  it(`6. Prop = false, switch locations: ensure each newly selected location's beds are all unchecked`, () => {
+  it(`6. selectAllBedsByDefault = false, switch locations: ensure each newly selected location's beds are all unchecked`, () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(LocationSelector, {
