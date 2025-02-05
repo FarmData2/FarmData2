@@ -161,6 +161,9 @@ describe('Test the soil disturbance termination log functions', () => {
         expect(soilDisturbanceLog.type).to.equal('log--activity');
         expect(soilDisturbanceLog.attributes.status).to.equal('done');
         expect(soilDisturbanceLog.attributes.is_movement).to.equal(true);
+        expect(soilDisturbanceLog.attributes.notes.value).to.equal(
+          'Terminated plants in bed ALF-1.'
+        );
 
         expect(soilDisturbanceLog.relationships.location).to.have.length(2);
         expect(soilDisturbanceLog.relationships.location[0].id).to.equal(
@@ -258,6 +261,9 @@ describe('Test the soil disturbance termination log functions', () => {
         expect(soilDisturbanceLog.type).to.equal('log--activity');
         expect(soilDisturbanceLog.attributes.status).to.equal('done');
         expect(soilDisturbanceLog.attributes.is_movement).to.be.true;
+        expect(soilDisturbanceLog.attributes.notes.value).to.equal(
+          'Terminated plants in beds ALF-1, ALF-3.'
+        );
 
         expect(soilDisturbanceLog.relationships.location).to.have.length(1);
         expect(soilDisturbanceLog.relationships.location[0].id).to.equal(

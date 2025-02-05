@@ -2446,6 +2446,13 @@ export async function createSoilDisturbanceTerminationLog(
     .map((crop) => cropIdToTermMap.get(crop.id).attributes.name)
     .join('_')}`;
 
+  let comment = 'Terminated plants in ';
+  if (bedNames.length === 1) {
+    comment += 'bed ' + bedNames[0] + '.';
+  } else {
+    comment += 'beds ' + bedNames.join(', ') + '.';
+  }
+
   const terminationLogData = {
     type: 'log--activity',
     attributes: {
@@ -2453,6 +2460,7 @@ export async function createSoilDisturbanceTerminationLog(
       timestamp: dayjs(terminationDate).format(),
       status: 'done',
       is_movement: true,
+      notes: comment,
     },
     relationships: {
       location: locationsArray,
