@@ -207,9 +207,11 @@ export default {
     /**
      * The list of options for the dropdown.
      *
-     * The options shown will update if the prop is set to a new array.
+     * The list of options may take two forms. The first is an array of strings where each string represents an option.
      *
-     * However, the options shown will not change if only the contents of the array are changed.
+     * The second is an array of objects where each object has `text`, `value` and `disabled` attribute. For example `[ {text: 'foo', value: 'foo', disabled: false}, ... ]`. `text` is the option that is displayed, `value` is the value of the element when the options is chosen. `disabled` indicates (`true`/`false`) if the option can be chosen.
+     *
+     * The options displayed will update when the prop is modified.
      */
     options: {
       type: Array,
