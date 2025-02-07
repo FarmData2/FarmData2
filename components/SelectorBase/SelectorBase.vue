@@ -258,8 +258,8 @@ export default {
   },
   data() {
     return {
-      optionsObjects: this.options,
       selectedOption: this.selected,
+      optionsObjects: this.processOptions(),
       isPopupVisible: false,
       popupSrc: '',
       isPopupLoaded: false,
@@ -290,6 +290,20 @@ export default {
     },
   },
   methods: {
+    processOptions() {
+      /**
+       * The incoming list of options is adapted to the selector base format
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
     handleDelete() {
       this.selectedOption = '';
     },
@@ -410,7 +424,6 @@ export default {
           if (!this.keepDisabledSelected && option.disabled) {
             this.selectedOption = '';
           }
-
           return;
         }
       }
@@ -434,8 +447,10 @@ export default {
             this.selectedOption = '';
             this.$emit('update:selected', this.selectedOption);
           }
+          return;
         }
       }
+      this.selectedOption = '';
     },
     selectedOption() {
       /**
@@ -450,20 +465,9 @@ export default {
     },
     options: {
       handler() {
-        /**
-         * The incoming list of options is adapted to the selector base format
-         */
-        this.optionsObjects = this.options.map((option) => {
-          if (typeof option === 'string') {
-            option = { text: option, value: option, disabled: false };
-          }
-
-          return option;
-        });
-
+        this.optionsObjects = this.processOptions();
         this.checkSelectedOption();
       },
-      immediate: true,
       deep: true,
     },
   },
