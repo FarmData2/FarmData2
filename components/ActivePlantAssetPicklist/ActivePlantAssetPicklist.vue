@@ -26,137 +26,85 @@
       v-on:update:selected="handleLocationUpdate($event)"
     />
 
-    <!--
-      Example block commented out:
-
-      <div
-        id="termination-event-group"
-        data-cy="termination-event-group"
-        class="d-flex flex-column align-items-center"
-        v-if="plantsAtLocation"
+    <!-- Termination Event -->
+    <div
+      id="active-plant-asset-picklist-group"
+      data-cy="active-plant-asset-picklist-group"
+      class="d-flex flex-column align-items-center"
+      v-if="showPicklistBase"
+    >
+      <BFormGroup
+        id="active-plant-asset-picklist-termination-event-group-checkbox"
+        data-cy="active-plant-asset-picklist-termination-event-group-checkbox"
+        class="w-100"
+        label-for="active-plant-asset-picklist-termination-event-checkbox"
+        label-cols="auto"
+        label-align="end"
       >
-        ...
-      </div>
-    -->
+        <template v-slot:label>
+          <span
+            id="active-plant-asset-picklist-termination-event-label"
+            data-cy="active-plant-asset-picklist-termination-event-label"
+            >Termination Event:</span
+          >
+        </template>
+
+        <BFormCheckbox
+          id="active-plant-asset-picklist-termination-event-checkbox"
+          data-cy="active-plant-asset-picklist-termination-event-checkbox"
+          v-model="termination"
+          size="lg"
+        />
+      </BFormGroup>
+    </div>
+    <hr />
   </div>
 </template>
 
 <script>
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 
-/**
- * A new component.
- *
- * ## Usage Example
- * ```html
- * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
- * ```
- *
- * ## `data-cy` Attributes
- *
- * Attribute Name        | Description
- * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
- */
 export default {
   name: 'ActivePlantAssetPicklist',
   components: { LocationSelector },
-  emits: ['ready', 'valid', 'update:selected', 'update:beds'],
+  emits: [
+    'ready',
+    'valid',
+    'update:selected',
+    'update:beds',
+    'update:termination',
+  ],
+
   props: {
-    /**
-     * Allow selection of beds within a location if they exist.
-     */
-    allowBedSelection: {
-      type: Boolean,
-      default: true,
-    },
-    /**
-     * Require that a bed be selected within a location if they exist.
-     */
-    requireBedSelection: {
-      type: Boolean,
-      default: true,
-    },
-    /**
-     * Whether to include all fields in the list of locations.
-     */
-    includeFields: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether to include all greenhouses in the list of locations,
-     * regardless of whether they contain beds or not.
-     */
-    includeGreenhouses: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether to include only greenhouses that contain beds in the list of locations.
-     */
-    includeGreenhousesWithBeds: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether to select all beds within a location by default.
-     */
-    selectAllBedsByDefault: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether a value for the input element is required or not.
-     */
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether validity styling should appear on input elements.
-     */
-    showValidityStyling: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * The current selected location
-     */
-    selected: {
-      type: String,
-      default: null,
-    },
-    /**
-     * The current picked beds from the location
-     */
-    pickedBeds: {
-      type: Array,
-      default: () => [],
-    },
+    allowBedSelection: { type: Boolean, default: true },
+    requireBedSelection: { type: Boolean, default: true },
+    includeFields: { type: Boolean, default: false },
+    includeGreenhouses: { type: Boolean, default: false },
+    includeGreenhousesWithBeds: { type: Boolean, default: false },
+    selectAllBedsByDefault: { type: Boolean, default: false },
+    required: { type: Boolean, default: false },
+    showPicklistBase: { type: Boolean, default: true },
+    showValidityStyling: { type: Boolean, default: false },
+    selected: { type: String, default: null },
+    pickedBeds: { type: Array, default: () => [] },
   },
+
   data() {
     return {
       selectedLocation: this.selected,
       locationValid: false,
+      termination: false,
     };
   },
+
   computed: {
-    /**
-     * Computed property that determines if this component is valid.
-     * Adjust logic as needed.
-     */
     isValid() {
-      // If not required, consider it automatically valid
       if (!this.required) {
         return true;
       }
-      // If required but no location selected, invalid
       if (!this.selectedLocation) {
         return false;
       }
-      // If bed selection is required, check that there's at least one bed
       if (this.requireBedSelection && this.allowBedSelection) {
         if (!this.pickedBeds || this.pickedBeds.length === 0) {
           return false;
@@ -164,44 +112,26 @@ export default {
       }
       return true;
     },
-
-    /**
-     * If you'd like to bind to the `state` prop in child components
-     * to apply validity styling, return a boolean or `null` for no styling:
-     */
     validityStyling() {
       return this.isValid;
     },
   },
+
   methods: {
-    /**
-     * Called when the user selects or changes the location in the child component
-     */
     handleLocationUpdate(newLocation) {
       this.selectedLocation = newLocation;
       this.$emit('update:selected', newLocation);
     },
-
-    /**
-     * Called when the child component emits 'valid'
-     * - e.g. location is valid or invalid
-     */
     handleLocationValid(validStatus) {
       this.locationValid = validStatus;
-      // Also emit 'valid' from the parent, if needed
       this.$emit('valid', this.isValid);
     },
-
-    /**
-     * Called when the child component emits 'update:beds'
-     */
     handleBedsUpdate(checkedBeds, totalBeds) {
-      // Example logging
       console.log('handleBedsUpdate was called with:', checkedBeds, totalBeds);
-      // Re-emit to the parent so it can be captured with v-on:update:beds
       this.$emit('update:beds', checkedBeds, totalBeds);
     },
   },
+
   watch: {
     /**
      * Re-emit validity whenever isValid changes
@@ -209,12 +139,58 @@ export default {
     isValid(newVal) {
       this.$emit('valid', newVal);
     },
+    /**
+     * 3) Whenever termination changes, emit it to the parent
+     */
+    termination(newVal) {
+      this.$emit('update:termination', newVal);
+    },
   },
+
   created() {
-    // Emit the initial valid state
     this.$emit('valid', this.isValid);
-    // Emit ready once the component is created
     this.$emit('ready');
   },
 };
 </script>
+
+<style scoped>
+/*
+ * Import a set of standard CSS styles for FarmData2
+ * entry points that optimize the page for mobile devices.
+ */
+@import url('@css/fd2-mobile.css');
+
+#active-plant-asset-picklist-location {
+  margin-bottom: 8px;
+}
+
+#active-plant-asset-picklist-group {
+  display: flex;
+  align-items: center;
+}
+
+#active-plant-asset-picklist-group label {
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#active-plant-asset-picklist-group div.form-check.form-control-lg {
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#active-plant-asset-picklist-termination-event-checkbox {
+  align-items: center;
+  padding: 0.25rem;
+  background-color: #fff;
+}
+
+#active-plant-asset-picklist-group {
+  border: 1px solid rgb(222, 226, 230);
+}
+</style>
