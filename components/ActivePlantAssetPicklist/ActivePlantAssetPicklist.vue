@@ -15,7 +15,7 @@
       v-bind:includeGreenhousesWithBeds="includeGreenhousesWithBeds"
       v-bind:selected="selected"
       v-bind:pickedBeds="pickedBeds"
-      v-bind:allowBedSelection="allowBedSelection"
+      v-bind:allowBedSelection="!plantsAtLocation"
       v-bind:requireBedSelection="requireBedSelection"
       v-bind:selectAllBedsByDefault="selectAllBedsByDefault"
       v-bind:showValidityStyling="showValidityStyling"
@@ -31,7 +31,7 @@
       id="active-plant-asset-picklist-group"
       data-cy="active-plant-asset-picklist-group"
       class="d-flex flex-column align-items-center"
-      v-if="showPicklistBase"
+      v-if="plantsAtLocation"
     >
       <BFormGroup
         id="active-plant-asset-picklist-termination-event-group-checkbox"
@@ -68,7 +68,7 @@
         v-bind:rows="affectedPlants"
         v-bind:showInfoIcons="false"
         v-bind:picked="picked"
-        v-on:valid="(valid) => (validity.picked = !plantsAtLocation || valid)"
+        v-on:valid="(valid) => (picklistValid = !plantsAtLocation || valid)"
         v-on:update:picked="handlePickedUpdate($event)"
       />
     </div>
@@ -95,7 +95,6 @@ export default {
   props: {
     isInTrays: { type: Boolean, default: false },
     isInGround: { type: Boolean, default: true },
-    allowBedSelection: { type: Boolean, default: true },
     requireBedSelection: { type: Boolean, default: true },
     includeFields: { type: Boolean, default: false },
     includeGreenhouses: { type: Boolean, default: false },
@@ -103,7 +102,6 @@ export default {
     selectAllBedsByDefault: { type: Boolean, default: false },
     pickRequired: { type: Boolean, default: false },
     required: { type: Boolean, default: false },
-    showPicklistBase: { type: Boolean, default: true },
     showValidityStyling: { type: Boolean, default: false },
     selected: { type: String, default: null },
     pickedBeds: { type: Array, default: () => [] },
@@ -112,7 +110,8 @@ export default {
   data() {
     return {
       selectedLocation: this.selected,
-      locationValid: false,
+      locationValid: null,
+      picklistValid: null,
       termination: false,
       affectedPlants: [],
       picked: new Map(),
@@ -126,18 +125,28 @@ export default {
   },
 
   computed: {
+    plantsAtLocation() {
+      return this.affectedPlants.length > 0;
+    },
     isValid() {
       if (!this.required) {
         return true;
       }
+
       if (!this.selectedLocation) {
         return false;
       }
+
       if (this.requireBedSelection && this.allowBedSelection) {
         if (!this.pickedBeds || this.pickedBeds.length === 0) {
           return false;
         }
       }
+
+      if (!this.picklistValid) {
+        return false;
+      }
+
       return true;
     },
     validityStyling() {
@@ -158,6 +167,9 @@ export default {
     handleBedsUpdate(checkedBeds, totalBeds) {
       console.log('handleBedsUpdate was called with:', checkedBeds, totalBeds);
       this.$emit('update:beds', checkedBeds, totalBeds);
+    },
+    handlePickedUpdate(newPicked) {
+      this.picked = newPicked;
     },
     async checkPlantsAtLocation() {
       if (this.selectedLocation) {
