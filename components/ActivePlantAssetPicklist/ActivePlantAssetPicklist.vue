@@ -90,6 +90,7 @@ export default {
     'update:selected',
     'update:beds',
     'update:termination',
+    'update:picked',
   ],
 
   props: {
@@ -170,6 +171,7 @@ export default {
     },
     handlePickedUpdate(newPicked) {
       this.picked = newPicked;
+      this.$emit('update:picked', newPicked);
     },
     async checkPlantsAtLocation() {
       if (this.selectedLocation) {
@@ -239,9 +241,6 @@ export default {
     isValid(newVal) {
       this.$emit('valid', newVal);
     },
-    /**
-     * 3) Whenever termination changes, emit it to the parent
-     */
     termination(newVal) {
       this.$emit('update:termination', newVal);
     },
