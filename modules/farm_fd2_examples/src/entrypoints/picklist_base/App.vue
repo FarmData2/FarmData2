@@ -9,6 +9,7 @@
   <PicklistBase
     id="picklist"
     data-cy="picklist"
+    class="w-100"
     v-bind:required="required"
     invalidFeedbackText="At least one row must be selected."
     v-bind:showValidityStyling="validity.showStyling"

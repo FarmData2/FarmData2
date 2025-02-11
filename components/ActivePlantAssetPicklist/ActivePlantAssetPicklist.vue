@@ -56,17 +56,34 @@
           size="lg"
         />
       </BFormGroup>
+      <PicklistBase
+        id="active-plant-asset-picklist-table"
+        data-cy="active-plant-asset-picklist-table"
+        class="w-100"
+        v-bind:required="pickRequired"
+        invalidFeedbackText="At least one bed must be selected."
+        v-bind:showValidityStyling="showValidityStyling"
+        v-bind:columns="picklistColumns"
+        v-bind:labels="picklistLabels"
+        v-bind:rows="affectedPlants"
+        v-bind:showInfoIcons="false"
+        v-bind:picked="picked"
+        v-on:valid="(valid) => (validity.picked = !plantsAtLocation || valid)"
+        v-on:update:picked="handlePickedUpdate($event)"
+      />
     </div>
     <hr />
   </div>
 </template>
 
 <script>
+import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
+import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 
 export default {
   name: 'ActivePlantAssetPicklist',
-  components: { LocationSelector },
+  components: { LocationSelector, PicklistBase },
   emits: [
     'ready',
     'valid',
@@ -76,12 +93,15 @@ export default {
   ],
 
   props: {
+    isInTrays: { type: Boolean, default: false },
+    isInGround: { type: Boolean, default: true },
     allowBedSelection: { type: Boolean, default: true },
     requireBedSelection: { type: Boolean, default: true },
     includeFields: { type: Boolean, default: false },
     includeGreenhouses: { type: Boolean, default: false },
     includeGreenhousesWithBeds: { type: Boolean, default: false },
     selectAllBedsByDefault: { type: Boolean, default: false },
+    pickRequired: { type: Boolean, default: false },
     required: { type: Boolean, default: false },
     showPicklistBase: { type: Boolean, default: true },
     showValidityStyling: { type: Boolean, default: false },
@@ -94,6 +114,14 @@ export default {
       selectedLocation: this.selected,
       locationValid: false,
       termination: false,
+      affectedPlants: [],
+      picked: new Map(),
+      picklistColumns: ['crop', 'bed', 'timestamp'],
+      picklistLabels: {
+        crop: 'Crop',
+        bed: 'Bed',
+        timestamp: 'Planted Date',
+      },
     };
   },
 
@@ -120,6 +148,7 @@ export default {
   methods: {
     handleLocationUpdate(newLocation) {
       this.selectedLocation = newLocation;
+      this.checkPlantsAtLocation();
       this.$emit('update:selected', newLocation);
     },
     handleLocationValid(validStatus) {
@@ -129,6 +158,65 @@ export default {
     handleBedsUpdate(checkedBeds, totalBeds) {
       console.log('handleBedsUpdate was called with:', checkedBeds, totalBeds);
       this.$emit('update:beds', checkedBeds, totalBeds);
+    },
+    async checkPlantsAtLocation() {
+      if (this.selectedLocation) {
+        try {
+          let results = await farmosUtil.getPlantAssets(
+            this.selectedLocation,
+            [],
+            this.isInTrays, // ask
+            this.isInGround // ask
+          );
+          // Map results to rows for PicklistBase
+          this.affectedPlants = results.flatMap((plant) =>
+            plant.beds.length > 0
+              ? plant.beds.map((bed) => ({
+                  crop: plant.crop.join(', '),
+                  bed,
+                  timestamp: plant.timestamp,
+                  uuid: plant.uuid,
+                  location: plant.location,
+                  created_by: plant.created_by.join(', '),
+                }))
+              : [
+                  {
+                    crop: plant.crop.join(', '),
+                    bed: 'N/A',
+                    timestamp: plant.timestamp,
+                    uuid: plant.uuid,
+                    location: plant.location,
+                    created_by: plant.created_by.join(', '),
+                  },
+                ]
+          );
+
+          // Check if all plants have 'N/A' beds and adjust columns accordingly
+          const allBedsNA = this.affectedPlants.every(
+            (plant) => plant.bed === 'N/A'
+          );
+
+          if (allBedsNA) {
+            this.picklistColumns = ['crop', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              timestamp: 'Planted Date',
+            };
+          } else {
+            this.picklistColumns = ['crop', 'bed', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              bed: 'Bed',
+              timestamp: 'Planted Date',
+            };
+          }
+        } catch (error) {
+          console.error('Error fetching plant assets:', error);
+          this.form.affectedPlants = [];
+        }
+      } else {
+        this.affectedPlants = [];
+      }
     },
   },
 
