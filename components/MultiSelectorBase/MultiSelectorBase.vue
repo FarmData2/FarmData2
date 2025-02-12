@@ -184,6 +184,12 @@ export default {
       },
       deep: true,
     },
+    options: {
+      handler() {
+        this.processedOptions = this.processOptions();
+      },
+      deep: true,
+    },
     isValid() {
       /**
        * The validity of the selected item changed.
