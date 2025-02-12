@@ -1,34 +1,33 @@
 <template>
   <h3>ActivePlantAssetPicklist Example</h3>
   <p>
-    ActivePlantAssetPicklist is a component that allows the user to pick a
-    location from a drop-down list and optionally select beds if necessary.
+    ActivePlantAssetPicklist is a component that allows the user to pick beds or
+    plantAssets from a list of locations.
   </p>
 
   <hr />
   <!-- Pass all props, including new ones like isInTrays, isInGround, pickRequired -->
   <ActivePlantAssetPicklist
-    id="location-selector"
-    data-cy="location-selector"
-    label="Location"
+    id="active-plant-asset-picklist"
+    data-cy="active-plant-asset-picklist"
     invalid-feedback-text="Selection cannot be empty."
-    :required="required"
-    :showValidityStyling="validity.showStyling"
-    :includeFields="includeFields"
-    :includeGreenhouses="includeGreenhouses"
-    :includeGreenhousesWithBeds="includeGreenhousesWithBeds"
-    :requireBedSelection="requireBedSelection"
-    :selectAllBedsByDefault="selectAllBedsByDefault"
-    :pickRequired="pickRequired"
-    :isInTrays="isInTrays"
-    :isInGround="isInGround"
+    v-bind:required="required"
+    v-bind:showValidityStyling="validity.showStyling"
+    v-bind:includeFields="includeFields"
+    v-bind:includeGreenhouses="includeGreenhouses"
+    v-bind:includeGreenhousesWithBeds="includeGreenhousesWithBeds"
+    v-bind:requireBedSelection="requireBedSelection"
+    v-bind:selectAllBedsByDefault="selectAllBedsByDefault"
+    v-bind:pickRequired="pickRequired"
+    v-bind:isInTrays="isInTrays"
+    v-bind:isInGround="isInGround"
     v-model:selected="form.selected"
     v-model:pickedBeds="form.pickedBeds"
     v-model:termination="form.termination"
     v-model:picked="form.picked"
-    @update:beds="(beds) => (form.pickedBeds = beds)"
-    @valid="(valid) => (validity.selected = valid)"
-    @ready="createdCount++"
+    v-on:update:beds="(beds) => (form.pickedBeds = beds)"
+    v-on:valid="(valid) => (validity.selected = valid)"
+    v-on:ready="createdCount++"
   />
   <hr />
 
@@ -231,32 +230,7 @@
       <!-- pickedBeds -->
       <tr>
         <td>pickedBeds</td>
-        <td>
-          <BButton
-            id="select-bed-button"
-            data-cy="select-bed-button"
-            variant="outline-primary"
-            size="sm"
-            @click="form.pickedBeds.push(form.selected + '-1')"
-            :disabled="
-              !['ALF', 'CHUAU', 'GHANA'].includes(form.selected) ||
-              form.pickedBeds.includes(form.selected + '-1') ||
-              !requireBedSelection
-            "
-          >
-            Select Bed
-          </BButton>
-          <BButton
-            id="clear-bed-button"
-            data-cy="clear-bed-button"
-            variant="outline-primary"
-            size="sm"
-            @click="form.pickedBeds = []"
-            :disabled="form.pickedBeds.length === 0 || !requireBedSelection"
-          >
-            Clear Beds
-          </BButton>
-        </td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -312,7 +286,6 @@ export default {
   },
   data() {
     return {
-      // The controls for ALL props
       required: true,
       includeFields: true,
       includeGreenhouses: true,
@@ -323,33 +296,28 @@ export default {
       isInTrays: false,
       isInGround: true,
 
-      // Two-way bindings
       form: {
         selected: null,
         pickedBeds: [],
         termination: false,
-        picked: new Map(), // Now we store 'picked' from the child
+        picked: new Map(),
       },
 
-      // For controlling validity styling in the example
       validity: {
         showStyling: false,
         selected: false,
       },
 
-      // Example usage of a loading counter
       createdCount: 0,
     };
   },
   computed: {
     pageDoneLoading() {
-      // e.g. if we wait for the child to fire @ready, we increment createdCount
-      // once that hits 2, we can consider the page 'loaded'
       return this.createdCount === 2;
     },
   },
+  methods: {},
   created() {
-    // We'll increment once ourselves here, and then once more in @ready
     this.createdCount++;
   },
 };
@@ -358,13 +326,4 @@ export default {
 <style>
 @import url('@css/fd2-examples.css');
 @import url('@css/fd2-mobile.css');
-
-/**
- * This ensures that the css for this file is picked up by the builder.
- * Not sure why this is necessary, but without it the css imports
- * above are not processed.
- */
-location-selector-hack {
-  display: none;
-}
 </style>
