@@ -149,13 +149,11 @@ export default {
       this.$emit('add-clicked', event);
     },
     handleUpdateSelected(event, i) {
-      console.log('event ' + event);
       if (event === '' || event === null) {
         const item = this.selectedItems[i];
         for (let option of this.processedOptions) {
           if (option.text == item) {
             option.disabled = false;
-            console.log('item ' + item + ' was enabled');
           }
         }
         this.selectedItems.splice(i, 1);
@@ -171,13 +169,12 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
-        this.selectedItems[i] = event;
         for (let option of this.processedOptions) {
           if (option.text == event) {
             option.disabled = true;
-            console.log('item ' + event + ' was disabled');
           }
         }
+        this.selectedItems[i] = event;
       }
 
       if (this.selectedItems.length === 0) {
