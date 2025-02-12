@@ -120,6 +120,7 @@ export default {
   data() {
     return {
       selectedItems: this.selected,
+      processedOptions: this.processOptions(),
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
