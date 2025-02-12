@@ -7,7 +7,8 @@
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:options="options"
+      v-bind:keepDisabledSelected="true"
+      v-bind:options="this.processedOptions"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -148,7 +149,15 @@ export default {
       this.$emit('add-clicked', event);
     },
     handleUpdateSelected(event, i) {
+      console.log('event ' + event);
       if (event === '' || event === null) {
+        const item = this.selectedItems[i];
+        for (let option of this.processedOptions) {
+          if (option.text == item) {
+            option.disabled = false;
+            console.log('item ' + item + ' was enabled');
+          }
+        }
         this.selectedItems.splice(i, 1);
         this.valid.splice(i, 1);
         this.keyExtra++;
@@ -163,6 +172,12 @@ export default {
          */
       } else {
         this.selectedItems[i] = event;
+        for (let option of this.processedOptions) {
+          if (option.text == event) {
+            option.disabled = true;
+            console.log('item ' + event + ' was disabled');
+          }
+        }
       }
 
       if (this.selectedItems.length === 0) {
