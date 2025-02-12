@@ -176,6 +176,18 @@ export default {
     handleValid(event, i) {
       this.valid[i] = event;
     },
+    processOptions() {
+      /**
+       * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+        return option;
+      });
+      return opObjs;
+    },
   },
   watch: {
     selected: {
