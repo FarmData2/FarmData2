@@ -8,7 +8,7 @@
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
       v-bind:keepDisabledSelected="true"
-      v-bind:options="this.passedOptions"
+      v-bind:options="this.processedOptions"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -129,9 +129,6 @@ export default {
     return {
       selectedItems: this.selected,
       processedOptions: this.processOptions(),
-      passedOptions: this.allowDuplicateSelections
-        ? this.options
-        : this.processedOptions,
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
