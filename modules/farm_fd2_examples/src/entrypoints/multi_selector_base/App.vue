@@ -12,6 +12,7 @@
     invalid-feedback-text="Selection cannot be empty."
     v-bind:required="required"
     v-bind:showValidityStyling="validity.showStyling"
+    v-bind:allowDuplicateSelections="allowDuplicates"
     v-bind:selected="form.selected"
     v-bind:options="options"
     v-bind:popupUrl="popupUrl"
@@ -116,6 +117,17 @@
           </BButton>
         </td>
       </tr>
+      <tr>
+        <td>allowDuplicateSelections</td>
+        <td>
+          <BFormCheckbox
+            id="duplicate-selections-checkbox"
+            data-cy="duplicate-selections-checkbox"
+            switch
+            v-model="allowDuplicates"
+          />
+        </td>
+      </tr>
     </tbody>
   </table>
 
@@ -165,6 +177,7 @@ export default {
         showStyling: false,
         selected: false,
       },
+      allowDuplicates: false,
       createdCount: 0,
       options: ['one', 'two', 'three', 'four', 'five'],
       popupUrl: null,
