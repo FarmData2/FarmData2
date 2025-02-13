@@ -8,7 +8,9 @@
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
       v-bind:keepDisabledSelected="true"
-      v-bind:options="this.processedOptions"
+      v-bind:options="
+        this.allowDuplicateSelections ? this.options : this.processedOptions
+      "
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
