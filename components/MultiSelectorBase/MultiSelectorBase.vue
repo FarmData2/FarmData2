@@ -130,7 +130,7 @@ export default {
   data() {
     return {
       selectedItems: this.selected,
-      processedOptions: this.processOptions(),
+      processedOptions: this.options,
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
@@ -202,18 +202,6 @@ export default {
     handleValid(event, i) {
       this.valid[i] = event;
     },
-    processOptions() {
-      /**
-       * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
-       */
-      const opObjs = this.options.map((option) => {
-        if (typeof option === 'string') {
-          option = { text: option, value: option, disabled: false };
-        }
-        return option;
-      });
-      return opObjs;
-    },
   },
   watch: {
     selected: {
@@ -224,8 +212,17 @@ export default {
     },
     options: {
       handler() {
-        this.processedOptions = this.processOptions();
+        /**
+         * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
+         */
+        this.processedOptions = this.options.map((option) => {
+          if (typeof option === 'string') {
+            option = { text: option, value: option, disabled: false };
+          }
+          return option;
+        });
       },
+      immediate: true,
       deep: true,
     },
     isValid() {
