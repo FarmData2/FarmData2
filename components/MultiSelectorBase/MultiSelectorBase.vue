@@ -178,9 +178,13 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
+        const item = this.selectedItems[i];
         for (let option of this.processedOptions) {
           if (option.text == event) {
             option.disabled = true;
+          }
+          if (option.text == item) {
+            option.disabled = false;
           }
         }
         this.selectedItems[i] = event;
