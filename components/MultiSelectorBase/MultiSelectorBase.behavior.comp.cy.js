@@ -192,4 +192,25 @@ describe('Test the MultiSelectorBase component behavior', () => {
         cy.get('[data-cy="selector-4"]').should('not.exist');
       });
   });
+
+  it('Option selection disables elements in selectorBases', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        onReady: readySpy,
+        selected: ['one', 'two'],
+        options: ['one', 'two', 'three', 'four', 'five'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-3"]')
+          .find('[data-cy="selector-input"]')
+          .contains('[data-cy="selector-option-3"]')
+          .should('have.disabled', false);
+      });
+  });
 });

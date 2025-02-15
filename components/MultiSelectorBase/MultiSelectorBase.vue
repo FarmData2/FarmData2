@@ -46,6 +46,7 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:selected="form.selected"
     v-bind:options="options"
+    v-bind:allowDuplicateSelections="allowDuplicateSelections"
     v-bind:popupUrl="popupUrl"
     v-on:valid="
       (valid) => {
@@ -205,6 +206,11 @@ export default {
         this.valid[0] = !this.required;
       }
     },
+    disableSelectedItems() {
+      this.processedOptions = this.processedOptions.map((option) => {
+        option.disabled = true;
+      });
+    },
   },
   watch: {
     selected: {
@@ -221,7 +227,11 @@ export default {
          */
         this.processedOptions = this.options.map((option) => {
           if (typeof option === 'string') {
-            option = { text: option, value: option, disabled: false };
+            option = {
+              text: option,
+              value: option,
+              disabled: false,
+            };
           }
           return option;
         });
@@ -234,7 +244,6 @@ export default {
        * The validity of the selected item changed.
        * @property {boolean} event whether the selected item is valid or not.
        */
-      console.log('valid is being checked');
       this.$emit('valid', this.isValid);
     },
   },
@@ -242,6 +251,7 @@ export default {
     /**
      * The component is ready to be used.
      */
+    this.disableSelectedItems();
     this.$emit('ready');
   },
 };
