@@ -190,9 +190,7 @@ export default {
         this.selectedItems[i] = event;
       }
 
-      if (this.selectedItems.length === 0) {
-        this.valid[0] = !this.required;
-      }
+      this.selectedIsPopulated();
       /**
        * The selected items have changed.
        * @property {Array<String>} event the names of the newly selected items.
@@ -202,11 +200,17 @@ export default {
     handleValid(event, i) {
       this.valid[i] = event;
     },
+    selectedIsPopulated() {
+      if (this.selectedItems.length === 0) {
+        this.valid[0] = !this.required;
+      }
+    },
   },
   watch: {
     selected: {
       handler() {
         this.selectedItems = this.selected;
+        this.selectedIsPopulated();
       },
       deep: true,
     },
@@ -230,6 +234,7 @@ export default {
        * The validity of the selected item changed.
        * @property {boolean} event whether the selected item is valid or not.
        */
+      console.log('valid is being checked');
       this.$emit('valid', this.isValid);
     },
   },
