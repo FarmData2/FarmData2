@@ -1,121 +1,57 @@
 <template>
-  <div
+  <PicklistBase
     id="active-plant-asset-picklist"
     data-cy="active-plant-asset-picklist"
-  >
-    <!-- Location Selection -->
-    <LocationSelector
-      id="active-plant-asset-picklist-location"
-      data-cy="active-plant-asset-picklist-location"
-      label="Location"
-      invalid-feedback-text="Selection cannot be empty."
-      v-bind:required="required"
-      v-bind:includeFields="includeFields"
-      v-bind:includeGreenhouses="includeGreenhouses"
-      v-bind:includeGreenhousesWithBeds="includeGreenhousesWithBeds"
-      v-bind:selected="selected"
-      v-bind:pickedBeds="pickedBeds"
-      v-bind:allowBedSelection="!plantsAtLocation"
-      v-bind:requireBedSelection="requireBedSelection"
-      v-bind:selectAllBedsByDefault="selectAllBedsByDefault"
-      v-bind:showValidityStyling="showValidityStyling"
-      v-on:valid="handleLocationValid($event)"
-      v-on:update:beds="
-        (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
-      "
-      v-on:update:selected="handleLocationUpdate($event)"
-    />
-
-    <!-- Termination Event -->
-    <div
-      id="active-plant-asset-picklist-group"
-      data-cy="active-plant-asset-picklist-group"
-      class="d-flex flex-column align-items-center"
-      v-if="plantsAtLocation"
-    >
-      <BFormGroup
-        id="active-plant-asset-picklist-termination-event-group-checkbox"
-        data-cy="active-plant-asset-picklist-termination-event-group-checkbox"
-        class="w-100"
-        label-for="active-plant-asset-picklist-termination-event-checkbox"
-        label-cols="auto"
-        label-align="end"
-      >
-        <template v-slot:label>
-          <span
-            id="active-plant-asset-picklist-termination-event-label"
-            data-cy="active-plant-asset-picklist-termination-event-label"
-            >Termination Event:</span
-          >
-        </template>
-
-        <BFormCheckbox
-          id="active-plant-asset-picklist-termination-event-checkbox"
-          data-cy="active-plant-asset-picklist-termination-event-checkbox"
-          v-model="termination"
-          size="lg"
-        />
-      </BFormGroup>
-      <PicklistBase
-        id="active-plant-asset-picklist-table"
-        data-cy="active-plant-asset-picklist-table"
-        class="w-100"
-        v-bind:required="pickRequired"
-        invalidFeedbackText="At least one bed must be selected."
-        v-bind:showValidityStyling="showValidityStyling"
-        v-bind:columns="picklistColumns"
-        v-bind:labels="picklistLabels"
-        v-bind:rows="affectedPlants"
-        v-bind:showInfoIcons="false"
-        v-bind:picked="picked"
-        v-on:valid="(valid) => (picklistValid = !plantsAtLocation || valid)"
-        v-on:update:picked="handlePickedUpdate($event)"
-      />
-    </div>
-    <hr />
-  </div>
+    class="w-100"
+    v-bind:required="required"
+    invalidFeedbackText="At least one row must be selected."
+    v-bind:showValidityStyling="showValidityStyling"
+    v-bind:columns="picklistColumns"
+    v-bind:labels="picklistLabels"
+    v-bind:rows="affectedPlants"
+    v-bind:showInfoIcons="false"
+    v-bind:picked="picked"
+    v-on:update:picked="handleUpdatePicked($event)"
+    v-on:valid="handleValid($event)"
+  />
 </template>
 
 <script>
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
-import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 
 export default {
   name: 'ActivePlantAssetPicklist',
-  components: { LocationSelector, PicklistBase },
-  emits: [
-    'ready',
-    'valid',
-    'update:selected',
-    'update:beds',
-    'update:termination',
-    'update:picked',
-  ],
+  components: { PicklistBase },
+
+  emits: ['valid', 'update:picked', 'error'],
 
   props: {
-    isInTrays: { type: Boolean, default: false },
-    isInGround: { type: Boolean, default: true },
-    requireBedSelection: { type: Boolean, default: true },
-    includeFields: { type: Boolean, default: false },
-    includeGreenhouses: { type: Boolean, default: false },
-    includeGreenhousesWithBeds: { type: Boolean, default: false },
-    selectAllBedsByDefault: { type: Boolean, default: false },
-    pickRequired: { type: Boolean, default: false },
-    required: { type: Boolean, default: false },
-    showValidityStyling: { type: Boolean, default: false },
-    selected: { type: String, default: null },
-    pickedBeds: { type: Array, default: () => [] },
+    location: {
+      type: String,
+      required: true,
+    },
+    showValidityStyling: {
+      type: Boolean,
+      default: false,
+    },
+    picked: {
+      type: Map,
+      default: () => new Map(),
+    },
+    isInTrays: {
+      type: Boolean,
+      default: false,
+    },
+    isInGround: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
-      selectedLocation: this.selected,
-      locationValid: null,
-      picklistValid: null,
-      termination: false,
       affectedPlants: [],
-      picked: new Map(),
       picklistColumns: ['crop', 'bed', 'timestamp'],
       picklistLabels: {
         crop: 'Crop',
@@ -125,62 +61,35 @@ export default {
     };
   },
 
-  computed: {
-    plantsAtLocation() {
-      return this.affectedPlants.length > 0;
-    },
-    isValid() {
-      if (!this.required) {
-        return true;
-      }
-
-      if (!this.selectedLocation) {
-        return false;
-      }
-
-      if (this.requireBedSelection && this.allowBedSelection) {
-        if (!this.pickedBeds || this.pickedBeds.length === 0) {
-          return false;
-        }
-      }
-
-      if (!this.picklistValid) {
-        return false;
-      }
-
-      return true;
-    },
-    validityStyling() {
-      return this.isValid;
-    },
-  },
-
   methods: {
-    handleLocationUpdate(newLocation) {
-      this.selectedLocation = newLocation;
-      this.checkPlantsAtLocation();
-      this.$emit('update:selected', newLocation);
+    handleUpdatePicked(event) {
+      /**
+       * Emitted when the picked rows have changed.
+       *
+       * @event update:picked
+       * @property {Map<number, Object>} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+       *
+       */
+      this.$emit('update:picked', event);
     },
-    handleLocationValid(validStatus) {
-      this.locationValid = validStatus;
-      this.$emit('valid', this.isValid);
+    resetPicked() {
+      this.$emit('update:picked', new Map());
     },
-    handleBedsUpdate(checkedBeds, totalBeds) {
-      console.log('handleBedsUpdate was called with:', checkedBeds, totalBeds);
-      this.$emit('update:beds', checkedBeds, totalBeds);
-    },
-    handlePickedUpdate(newPicked) {
-      this.picked = newPicked;
-      this.$emit('update:picked', newPicked);
+    handleValid(event) {
+      /**
+       * Indicates if this component's value is valid or not.
+       * @property {Boolean} event `true` if the component's value is valid; `false` if it is invalid.
+       */
+      this.$emit('valid', event);
     },
     async checkPlantsAtLocation() {
-      if (this.selectedLocation) {
+      if (this.location) {
         try {
-          let results = await farmosUtil.getPlantAssets(
-            this.selectedLocation,
+          const results = await farmosUtil.getPlantAssets(
+            this.location,
             [],
-            this.isInTrays, // ask
-            this.isInGround // ask
+            this.isInTrays,
+            this.isInGround
           );
           // Map results to rows for PicklistBase
           this.affectedPlants = results.flatMap((plant) =>
@@ -226,7 +135,8 @@ export default {
           }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
-          this.form.affectedPlants = [];
+          this.affectedPlants = [];
+          this.$emit('error', 'Unable to fetch plant assets.');
         }
       } else {
         this.affectedPlants = [];
@@ -235,61 +145,34 @@ export default {
   },
 
   watch: {
-    /**
-     * Re-emit validity whenever isValid changes
-     */
-    isValid(newVal) {
-      this.$emit('valid', newVal);
+    location: {
+      handler() {
+        this.checkPlantsAtLocation();
+        this.resetPicked();
+      },
+      immediate: true,
     },
-    termination(newVal) {
-      this.$emit('update:termination', newVal);
+    isInTrays: {
+      handler() {
+        this.checkPlantsAtLocation();
+        this.resetPicked();
+      },
+      immediate: true,
+    },
+    isInGround: {
+      handler() {
+        this.checkPlantsAtLocation();
+        this.resetPicked();
+      },
+      immediate: true,
     },
   },
 
   created() {
-    this.$emit('valid', this.isValid);
+    /**
+     * The component is ready for use.
+     */
     this.$emit('ready');
   },
 };
 </script>
-
-<style scoped>
-/*
- * Import a set of standard CSS styles for FarmData2
- * entry points that optimize the page for mobile devices.
- */
-@import url('@css/fd2-mobile.css');
-
-#active-plant-asset-picklist-location {
-  margin-bottom: 8px;
-}
-
-#active-plant-asset-picklist-group {
-  display: flex;
-  align-items: center;
-}
-
-#active-plant-asset-picklist-group label {
-  padding-bottom: 0px;
-  padding-top: 0px;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-#active-plant-asset-picklist-group div.form-check.form-control-lg {
-  padding-bottom: 0px;
-  padding-top: 0px;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-#active-plant-asset-picklist-termination-event-checkbox {
-  align-items: center;
-  padding: 0.25rem;
-  background-color: #fff;
-}
-
-#active-plant-asset-picklist-group {
-  border: 1px solid rgb(222, 226, 230);
-}
-</style>
