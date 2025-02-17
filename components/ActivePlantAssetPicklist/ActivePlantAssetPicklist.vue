@@ -20,30 +20,85 @@
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 
+/**
+ * A ActivePlantAssetPicklist allows the user to pick crops from a location.
+ *
+ * ## Live Example
+ *
+ * <a href="http://farmos/fd2_examples/active_plant_asset_picklist">The ActivePlantAssetPicklist Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/active_plant_asset_picklist/App.vue">App.vue</a>
+ *
+ * ## Usage Example
+ *
+ * ```html
+ * <ActivePlantAssetPicklist
+ *   id="active-plant-asset-picklist"
+ *   data-cy="active-plant-asset-picklist"
+ *   v-bind:required="required"
+ *   v-bind:location="form.selected"
+ *   v-bind:showValidityStyling="validity.showStyling"
+ *   v-bind:picked="form.picked"
+ *   v-bind:isInTrays="isInTrays"
+ *   v-bind:isInGround="isInGround"
+ *   v-on:update:picked="(picked) => (form.picked = picked)"
+ *   v-on:valid="(valid) => (validity.selected = valid)"
+ *   v-on:error="handleError"
+ *   v-on:ready="createdCount++"
+ * />
+ * ```
+ *
+ * ## `data-cy` Attributes
+ *
+ * Attribute Name                       | Description
+ * -------------------------------------| -----------
+ * `active-plant-asset-picklist`        | The `PicklistBase` element showing the crops that can be picked.
+ */
 export default {
   name: 'ActivePlantAssetPicklist',
   components: { PicklistBase },
-
-  emits: ['valid', 'update:picked', 'error'],
-
+  emits: ['ready', 'valid', 'update:picked', 'error'],
   props: {
-    location: {
-      type: String,
-      required: true,
-    },
-    showValidityStyling: {
-      type: Boolean,
-      default: false,
-    },
-    picked: {
-      type: Map,
-      default: () => new Map(),
-    },
+    /**
+     * Whether to include plants that are in trays (tray seeded but not transplanted) or not.
+     */
     isInTrays: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Whether to include plants that are in the ground (direct seeded or transplanted) or not
+     */
     isInGround: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * The name of the location for which the `ActivePlantAssetPicklist` should show crops.
+     * The `ActivePlantAssetPicklist` will fetch any crops associated with this location.
+     */
+    location: {
+      type: String,
+      required: true,
+    },
+    /**
+     * The crops that are currently picked.
+     */
+    picked: {
+      type: Map,
+      default: () => new Map(),
+    },
+    /**
+     * Whether at least one crop must be picked or not.
+     */
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Whether validity styling should appear on input elements.
+     */
+    showValidityStyling: {
       type: Boolean,
       default: false,
     },
@@ -64,10 +119,10 @@ export default {
   methods: {
     handleUpdatePicked(event) {
       /**
-       * Emitted when the picked rows have changed.
+       * Emitted when the picked crops have changed.
        *
        * @event update:picked
-       * @property {Map<number, Object>} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+       * @property {Map<number, Object>} event - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
        *
        */
       this.$emit('update:picked', event);
