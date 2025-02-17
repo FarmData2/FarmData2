@@ -71,7 +71,7 @@ export default {
      */
     isInGround: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     /**
      * The name of the location for which the `ActivePlantAssetPicklist` should show crops.
