@@ -645,13 +645,6 @@ export default {
 
         // Rebuild pickedRows from picked Map
         this.pickedRows = new Array(this.sortedRows.length).fill(0);
-        for (let i = 0; i < this.sortedRows.length; i++) {
-          const row = this.sortedRows[i];
-          const originalIndex = this.rows.indexOf(row);
-          if (this.picked.has(originalIndex)) {
-            this.pickedRows[i] = this.picked.get(originalIndex).picked;
-          }
-        }
       },
       deep: true,
     },

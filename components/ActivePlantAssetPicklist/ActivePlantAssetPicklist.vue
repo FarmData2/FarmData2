@@ -125,11 +125,10 @@ export default {
        * @property {Map<number, Object>} event - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
        *
        */
+      console.log(`called picked`);
       this.$emit('update:picked', event);
     },
-    resetPicked() {
-      this.$emit('update:picked', new Map());
-    },
+
     handleValid(event) {
       /**
        * Indicates if this component's value is valid or not.
@@ -203,23 +202,19 @@ export default {
     location: {
       handler() {
         this.checkPlantsAtLocation();
-        this.resetPicked();
+        console.log('location change');
       },
       immediate: true,
     },
     isInTrays: {
       handler() {
         this.checkPlantsAtLocation();
-        this.resetPicked();
       },
-      immediate: true,
     },
     isInGround: {
       handler() {
         this.checkPlantsAtLocation();
-        this.resetPicked();
       },
-      immediate: true,
     },
   },
 

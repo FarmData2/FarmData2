@@ -11,7 +11,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check all of the data-cy elements and default props', () => {
+  it('Checks all of the data-cy elements and default props', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -36,7 +36,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       });
   });
 
-  it('Check active plant assets are fetched (isInGround = true, isInTrays = false)', () => {
+  it('Checks active plant assets are fetched (isInGround = true, isInTrays = false)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -72,7 +72,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
     cy.get('[data-cy="picklist-header-planted-date"]').should('be.visible');
   });
 
-  it('Check active plant assets are fetched (isInGround = false, isInTrays = true)', () => {
+  it('Checks active plant assets are fetched (isInGround = false, isInTrays = true)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -106,7 +106,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       });
   });
 
-  it('Check active plant assets are fetched (isInGround = true, isInTrays = true)', () => {
+  it('Checks active plant assets are fetched (isInGround = true, isInTrays = true)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {

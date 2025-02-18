@@ -15,8 +15,8 @@ describe('Test the ActivePlantAssetPicklist component styling', () => {
    * There are 8 possibilities for styling...
    *
    * required   showValidityStyling    picked     Tested by Test
-   * false      false                  false     1. Not Required, Not showing, not picked
-   * false      false                  true      2. Not Required, Not showing, picked
+   * false      false                  false     1. Not Required, not showing, not picked
+   * false      false                  true      2. Not Required, not showing, picked
    * false      true                   false     3. Not Required, showing, not picked
    * false      true                   true      4. Not Required, showing, picked
    * true       false                  false     5. Required, not showing, not picked

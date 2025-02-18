@@ -11,7 +11,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Changing location prop fetches new plantAssets', () => {
+  it('Should fetch new plant assets when the `location` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -39,7 +39,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Changing isInGround prop fetches new plantAssets', () => {
+  it('Should fetch new plant assets when the `isInGround` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -67,7 +67,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Changing isInTrays prop fetches new plantAssets', () => {
+  it('Should fetch new plant assets when the `isInTrays` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -95,7 +95,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Changing location prop clears picked checkboxes', () => {
+  it('Should clear picked checkboxes when the `location` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
