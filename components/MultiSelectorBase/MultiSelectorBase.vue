@@ -131,7 +131,7 @@ export default {
   data() {
     return {
       selectedItems: this.selected,
-      processedOptions: this.options,
+      processedOptions: this.processOptions(),
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
@@ -142,6 +142,24 @@ export default {
     },
   },
   methods: {
+    processOptions() {
+      /**
+       * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = {
+            text: option,
+            value: option,
+            disabled: true, //this.selected.includes(option) ? true : false,
+          };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
     includePopupUrl(i) {
       return i === this.selectedItems.length ? this.popupUrl : null;
     },
@@ -222,19 +240,7 @@ export default {
     },
     options: {
       handler() {
-        /**
-         * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
-         */
-        this.processedOptions = this.options.map((option) => {
-          if (typeof option === 'string') {
-            option = {
-              text: option,
-              value: option,
-              disabled: this.selectedItems.includes(option) ? true : false,
-            };
-          }
-          return option;
-        });
+        this.processedOptions = this.processOptions();
       },
       immediate: true,
       deep: true,
