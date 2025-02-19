@@ -25,7 +25,8 @@
                 variant="primary"
                 v-on:click="handleAllButton()"
               >
-                All
+                <span v-if="allPicked">🚫 All</span>
+                <span v-else>✅ All</span>
               </BButton>
               <BButton
                 id="picklist-units-button"
@@ -36,7 +37,8 @@
                 variant="primary"
                 v-on:click="handleUnitsButton()"
               >
-                {{ units }}
+                <span v-if="allPicked">🚫 {{ units }}</span>
+                <span v-else>✅ {{ units }}</span>
               </BButton>
             </BTh>
             <BTh
@@ -235,18 +237,18 @@ import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
  *  id="picklist"
  *  data-cy="picklist"
  *  v-bind:required="required"
- *  v-bind:invalidFeedbackText="At least one row must be selected."
+ *  invalidFeedbackText="At least one row must be selected."
  *  v-bind:showValidityStyling="validity.showStyling"
  *  v-bind:columns="columns"
  *  v-bind:labels="labels"
- *  v-bind:units="useUnits ? 'Count' : null"
- *  v-bind:quantityAttribute="useUnits ? 'quantity' : null"
+ *  v-bind:units="units"
+ *  v-bind:quantityAttribute="quantityAttribute"
  *  v-bind:rows="rows"
  *  v-bind:showAllButton="showAllButton"
  *  v-bind:showInfoIcons="showInfoIcons"
  *  v-bind:picked="form.picked"
  *  v-on:valid="(valid) => (validity.picked = valid)"
- *  v-on:update:picked="(picked) => (form.picked = picked)"
+ *  v-on:update:picked="form.picked = $event"
  *  v-on:ready="createdCount++"
  * />
  * ```
@@ -304,15 +306,16 @@ export default {
       required: true,
     },
     /**
-     * An array of values indicating the rows/quantities that have been picked in the table.
-     * The rows are indexed from 0.
-     * A non-zero value indicates that the row is picked and the quantity if `units` prop is set.
-     * A zero value indicates that the row is not picked.
-     * The length of this array must be equal to the length of the array provided by the `rows` prop.
+     * A Map indicating the rows/quantities that have been picked in the table.
+     * The keys of the Map are row indices from the `rows` array.
+     * The values of the Map are objects containing information about the picked row, including the picked quantity if the `units` prop is set.
+     * If the row is picked, the Map will have an entry with the row number as the key and the value will have a picked attribute
+     * containing a 1 if the units prop is not set, or the value picked if the units prop is set.
+     * The Map will be empty if no rows are picked
      */
     picked: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => new Map(),
     },
     /**
      * The name of the attribute that will be used to generate the list of selectable quantities in the leftmost column if the `units` prop is not null.
@@ -384,6 +387,9 @@ export default {
     };
   },
   computed: {
+    pickedAsArray() {
+      return Array.from(this.picked.entries());
+    },
     isValid() {
       if (this.required) {
         for (let i = 0; i < this.pickedRows.length; i++) {
@@ -443,6 +449,21 @@ export default {
     },
   },
   methods: {
+    syncPickedRows(newPickedEntries) {
+      // Ensure we are mapping the original row indices to pickedRows
+      const newPickedRows = this.sortedRows.map((row) => {
+        const originalIndex = this.rows.indexOf(row);
+        const pickedEntry = newPickedEntries.find(
+          ([index]) => index === originalIndex
+        );
+        return pickedEntry ? pickedEntry[1].picked : 0;
+      });
+
+      // Only update if there's a mismatch to avoid loops
+      if (JSON.stringify(newPickedRows) !== JSON.stringify(this.pickedRows)) {
+        this.pickedRows = newPickedRows;
+      }
+    },
     initializeQuantityOptionsMap(rows) {
       const map = new Map();
       rows.forEach((row, index) => {
@@ -517,47 +538,51 @@ export default {
       }
     },
     handleSort({ label, sortOrder }) {
-      // Previous state of rows before sorting
-      const oldRowOrder = [...this.sortedRows];
-
-      // Update the sort state
       this.sortColumn = this.columns.find(
         (column) => this.getLabel(column) === label
       );
       this.sortOrder = sortOrder;
 
-      // Perform the sort operation
       const sorted = [...this.sortedRows].sort((a, b) => {
-        if (a[this.sortColumn] < b[this.sortColumn]) {
+        let aVal = a[this.sortColumn];
+        let bVal = b[this.sortColumn];
+
+        if (isNaN(aVal) || isNaN(bVal)) {
+          aVal = aVal.toString().toLowerCase();
+          bVal = bVal.toString().toLowerCase();
+        }
+
+        if (aVal < bVal) {
           return this.sortOrder === 'asc' ? -1 : 1;
-        } else if (a[this.sortColumn] > b[this.sortColumn]) {
+        } else if (aVal > bVal) {
           return this.sortOrder === 'asc' ? 1 : -1;
         } else {
           return 0;
         }
       });
 
-      // Update the sorted rows
-      this.sortedRows = sorted;
-
-      // Map old pickedRows to the new sorted order
-      const newPickedRows = new Array(this.rows.length);
+      const newPickedRows = new Array(this.rows.length).fill(0);
       const newQuantityOptionsMap = new Map();
+
       sorted.forEach((sortedRow, index) => {
-        const originalIndex = oldRowOrder.findIndex((row) => row === sortedRow);
-        newPickedRows[index] = this.pickedRows[originalIndex];
-        newQuantityOptionsMap.set(
-          index,
-          this.quantityOptionsMap.get(originalIndex)
-        );
+        const originalIndex = this.rows.indexOf(sortedRow);
+        if (this.picked.has(originalIndex)) {
+          newPickedRows[index] = this.picked.get(originalIndex).picked;
+        }
+        if (this.quantityAttribute) {
+          newQuantityOptionsMap.set(
+            index,
+            Array.from(
+              { length: sortedRow[this.quantityAttribute] + 1 },
+              (_, i) => i
+            )
+          );
+        }
       });
 
-      // Update pickedRows and quantityOptionsMap to reflect the new order
+      this.sortedRows = sorted;
       this.pickedRows = newPickedRows;
       this.quantityOptionsMap = newQuantityOptionsMap;
-
-      // Notify the parent component if using custom event emitters
-      this.$emit('update:picked', this.pickedRows);
     },
     applySort() {
       if (this.sortColumn && this.sortOrder !== 'none') {
@@ -576,20 +601,36 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
-    picked: {
-      handler() {
-        this.pickedRows = this.picked;
+    pickedAsArray: {
+      handler(newPickedEntries) {
+        this.syncPickedRows(newPickedEntries);
       },
-      deep: true,
+      deep: true, // Ensure the watcher goes deep into the structure
     },
     pickedRows: {
       handler() {
+        const pickedMap = new Map();
+        for (let i = 0; i < this.pickedRows.length; i++) {
+          if (this.pickedRows[i] > 0) {
+            // Only add non-zero selections
+            const row = this.sortedRows[i];
+            const originalIndex = this.rows.indexOf(row);
+            if (originalIndex !== -1) {
+              pickedMap.set(originalIndex, {
+                row,
+                picked: this.pickedRows[i],
+              }); // Store the quantity with the row
+            }
+          }
+        }
         /**
-         * There has been a change to the picked rows.
+         * Emitted when the pickedRows array has been updated.
          *
-         * @property {Array} pickedRows Index `i` indicates the state of row `i`. Row `i` will be `1` or a non-zero number (if using a `quantityAttribute`) if selected.  Row `i` will be `0` if not selected.
+         * @event update:picked
+         * @property {Map<number, Object>} picked - A Map where the keys are the indices of the picked rows in the `rows` prop, and the values are objects representing the picked rows and their data.
+         *
          */
-        this.$emit('update:picked', this.pickedRows);
+        this.$emit('update:picked', pickedMap);
       },
       deep: true,
     },
@@ -597,11 +638,20 @@ export default {
       handler() {
         // No good way to really know what has changed so deselect everything.
         // This should be an unusual event so hopefully it isn't an issue.
-        this.pickedRows = new Array(this.rows.length).fill(0);
         this.showOverlay = null;
         this.sortedRows = [...this.rows]; // Update sortedRows when rows prop changes
         this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
         this.applySort(); // Apply the sort when rows change
+
+        // Rebuild pickedRows from picked Map
+        this.pickedRows = new Array(this.sortedRows.length).fill(0);
+        for (let i = 0; i < this.sortedRows.length; i++) {
+          const row = this.sortedRows[i];
+          const originalIndex = this.rows.indexOf(row);
+          if (this.picked.has(originalIndex)) {
+            this.pickedRows[i] = this.picked.get(originalIndex).picked;
+          }
+        }
       },
       deep: true,
     },
@@ -615,7 +665,16 @@ export default {
     this.sortedRows = [...this.rows]; // Initialize sortedRows with the rows prop
     this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
 
-    if (this.pickedRows.length === 0) {
+    if (this.picked instanceof Map && this.picked.size > 0) {
+      this.pickedRows = new Array(this.sortedRows.length).fill(0);
+      for (let i = 0; i < this.sortedRows.length; i++) {
+        const row = this.sortedRows[i];
+        const originalIndex = this.rows.indexOf(row);
+        if (this.picked.has(originalIndex)) {
+          this.pickedRows[i] = this.picked.get(originalIndex).picked; // or set to the quantity if needed
+        }
+      }
+    } else {
       this.pickedRows = new Array(this.rows.length).fill(0);
     }
 
@@ -647,12 +706,11 @@ export default {
   margin-top: -3px;
 }
 
-#picklist-units-button,
-#picklist-all-button {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
+#picklist-all-button,
+#picklist-units-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 #picklist-info-card {

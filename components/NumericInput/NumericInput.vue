@@ -16,12 +16,15 @@
           >*</sup
         >
       </template>
-      <BInputGroup>
+      <BInputGroup class="has-validation">
         <BInputGroupPrepend>
           <BButton
             data-cy="numeric-decrease-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[2])"
             >&#x27EA;</BButton
@@ -29,7 +32,10 @@
           <BButton
             data-cy="numeric-decrease-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[1])"
             >&#x27E8;</BButton
@@ -37,7 +43,10 @@
           <BButton
             data-cy="numeric-decrease-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallDec ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallDec"
             size="sm"
             v-on:click="adjustValue(-incDecValues[0])"
             >&#x2039;</BButton
@@ -49,17 +58,20 @@
           number
           lazy
           lazy-formatter
-          v-model="valueAsString"
+          v-model="formattedValue"
           v-bind:key="inputRefreshKey"
           v-bind:state="validityStyling"
           v-bind:required="required"
-          v-bind:formatter="formatter"
+          v-on:update:model-value="valueChanged"
         />
         <BInputGroupAppend>
           <BButton
             data-cy="numeric-increase-sm"
             v-if="showSmallIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableSmallInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableSmallInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[0])"
             >&#x203A;</BButton
@@ -67,7 +79,10 @@
           <BButton
             data-cy="numeric-increase-md"
             v-if="showMediumIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableMediumInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableMediumInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[1])"
             >&#x27E9;</BButton
@@ -75,7 +90,10 @@
           <BButton
             data-cy="numeric-increase-lg"
             v-if="showLargeIncDec"
-            variant="outline-success"
+            v-bind:variant="
+              disableLargeInc ? 'outline-secondary' : 'outline-success'
+            "
+            v-bind:disabled="disableLargeInc"
             size="sm"
             v-on:click="adjustValue(incDecValues[2])"
             >&#x27EB;</BButton
@@ -215,9 +233,8 @@ export default {
       default: false,
     },
     /**
-     * The value to display in the numeric input.
-     *
-     * This prop is watched and changes are relayed to the component's internal state.
+     * The value to display in the numeric input.  This value will be bound
+     * to the range [minValue, maxValue].
      */
     value: {
       type: Number,
@@ -226,13 +243,16 @@ export default {
   },
   data() {
     return {
-      valueAsString: this.formatter(this.value.toString()),
+      /*
+       * The value of the component. This will always be either a valid number
+       * in the range [minValue, maxValue] or NaN.
+       */
+      numericValue: this.validateValue(this.value),
 
       /*
        * This value is used in the "Key-Changing Technique" to force the input to
        * refresh its value. This is necessary when for example, the input is currently
-       * 1.75 and the users types 7.75234.  The value of the `valueAsString` variable
-       * will still be 1.75 and thus an update of the input will not be triggered.
+       * 1.75 and the users types 7.75234.
        *
        * The "Key-Changing Technique" is explained here:
        * https://michaelnthiessen.com/force-re-render
@@ -240,7 +260,43 @@ export default {
       inputRefreshKey: 0,
     };
   },
+  $options: {
+    /*
+     * valueChanged will be set to true the first time that the value
+     * in the input is changed from its initial value. It will then remain
+     * true for the life of the component. It is defined here so that it
+     * persists across renders.
+     */
+    valueChanged: false,
+  },
   computed: {
+    formattedValue: {
+      get() {
+        let strVal;
+
+        if (Number.isNaN(this.numericValue)) {
+          strVal = '';
+        } else {
+          strVal = this.numericValue.toFixed(this.decimalPlaces);
+        }
+
+        return strVal;
+      },
+      set(newValue) {
+        this.numericValue = this.validateValue(parseFloat(newValue));
+
+        /* Ensures that the input is refreshed if the user types in
+         * the field.  This handles the case where they type an invalid
+         * value and then type another invalid value. In that case the
+         * numericValue would not change on the second invalid value and
+         * thus the field value would not refresh.
+         */
+        this.inputRefreshKey++;
+      },
+    },
+    isEmpty() {
+      return this.formattedValue.length === 0;
+    },
     showSmallIncDec() {
       return this.incDecValues != null && this.incDecValues.length > 0;
     },
@@ -250,23 +306,62 @@ export default {
     showLargeIncDec() {
       return this.incDecValues != null && this.incDecValues.length > 2;
     },
-    isEmpty() {
-      return this.valueAsString == null || this.valueAsString.length == 0;
+    disableSmallDec() {
+      return (
+        this.numericValue - this.incDecValues[0] < this.minValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[0] * -1 < this.minValue)
+      );
+    },
+    disableMediumDec() {
+      return (
+        this.numericValue - this.incDecValues[1] < this.minValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[1] * -1 < this.minValue)
+      );
+    },
+    disableLargeDec() {
+      return (
+        this.numericValue - this.incDecValues[2] < this.minValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[2] * -1 < this.minValue)
+      );
+    },
+    disableSmallInc() {
+      return (
+        this.numericValue + this.incDecValues[0] > this.maxValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[0] > this.maxValue)
+      );
+    },
+    disableMediumInc() {
+      return (
+        this.numericValue + this.incDecValues[1] > this.maxValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[1] > this.maxValue)
+      );
+    },
+    disableLargeInc() {
+      return (
+        this.numericValue + this.incDecValues[2] > this.maxValue ||
+        (Number.isNaN(this.numericValue) &&
+          this.incDecValues[2] > this.maxValue)
+      );
     },
     isValid() {
       if (!this.required) {
         return (
           this.isEmpty ||
-          (!isNaN(parseFloat(this.valueAsString)) &&
-            parseFloat(this.valueAsString) >= this.minValue &&
-            parseFloat(this.valueAsString) <= this.maxValue)
+          (!Number.isNaN(this.numericValue) &&
+            this.numericValue >= this.minValue &&
+            this.numericValue <= this.maxValue)
         );
       } else {
         return (
           !this.isEmpty &&
-          !isNaN(parseFloat(this.valueAsString)) &&
-          parseFloat(this.valueAsString) >= this.minValue &&
-          parseFloat(this.valueAsString) <= this.maxValue
+          !Number.isNaN(this.numericValue) &&
+          this.numericValue >= this.minValue &&
+          this.numericValue <= this.maxValue
         );
       }
     },
@@ -279,40 +374,49 @@ export default {
     },
   },
   methods: {
-    adjustValue(amount) {
-      if (this.isValid) {
-        this.valueAsString = this.formatter(
-          parseFloat(this.valueAsString) + amount
-        );
+    validateValue(value) {
+      let val = parseFloat(value);
+
+      if (Number.isNaN(val)) {
+        return NaN;
+      } else if (val < this.minValue) {
+        return this.minValue;
+      } else if (val > this.maxValue) {
+        return this.maxValue;
       } else {
-        this.valueAsString = this.formatter(this.minValue);
+        return val;
       }
     },
-    formatter(value) {
-      let val = parseFloat(value);
-      let formattedVal;
-
-      if (value == 'NaN') {
-        formattedVal = '';
-      } else if (isNaN(val)) {
-        formattedVal = value;
-      } else if (val < this.minValue) {
-        formattedVal = this.minValue.toFixed(this.decimalPlaces);
-      } else if (val > this.maxValue) {
-        formattedVal = this.maxValue.toFixed(this.decimalPlaces);
-      } else {
-        formattedVal = val.toFixed(this.decimalPlaces);
-      }
-
+    valueChanged() {
       /*
-       * Do this in a timeout so that the formattedVal will be placed
-       * into the input component before it is refreshed.
+       * Note that this cannot be a computed property because
+       * this.$options.valueChanged is not reactive, and making
+       * it reactive would cause it to be reset on each render.
        */
-      setTimeout(() => {
-        this.inputRefreshKey++;
-      }, 5);
-
-      return formattedVal;
+      if (
+        typeof this.$options.valueChanged === 'undefined' ||
+        this.$options.valueChanged === false
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    adjustValue(amount) {
+      if (this.isValid) {
+        if (this.isEmpty) {
+          this.numericValue = this.validateValue(amount);
+        } else if (this.valueChanged()) {
+          this.numericValue = this.validateValue(this.numericValue + amount);
+        } else {
+          let val = this.numericValue + amount;
+          // round val to nearest multiple of amount.
+          val = Math.round(val / amount) * amount;
+          this.numericValue = this.validateValue(val);
+        }
+      } else {
+        this.numericValue = this.validateValue(amount);
+      }
     },
   },
   watch: {
@@ -324,21 +428,44 @@ export default {
       this.$emit('valid', this.isValid);
     },
     value() {
-      if (!isNaN(this.value)) {
-        this.valueAsString = this.formatter(this.value);
+      let val = this.validateValue(this.value);
+
+      if (!Number.isNaN(val)) {
+        this.numericValue = parseFloat(val.toFixed(this.decimalPlaces));
+      } else {
+        this.numericValue = NaN;
       }
     },
-    valueAsString() {
+    minValue() {
+      this.numericValue = this.validateValue(this.numericValue);
+    },
+    maxValue() {
+      this.numericValue = this.validateValue(this.numericValue);
+    },
+    numericValue() {
       /**
        * The numeric value has changed.
        * @property {Number} value The new numeric value or NaN if the value is invalid.
        */
-      this.$emit('update:value', parseFloat(this.valueAsString));
+      this.$emit('update:value', this.numericValue);
+
+      /*
+       * Set this to true so that the special behavior of the
+       * increment/decrement buttons only works on the first
+       * change of value.
+       */
+      this.$options.valueChanged = true;
     },
   },
   created() {
     //Emit the initial valid state of the component's value.
     this.$emit('valid', this.isValid);
+
+    /*
+     * Emit the initial value of the component to account for it being
+     * adjusted by the validateValue function.
+     */
+    this.$emit('update:value', this.numericValue);
 
     /**
      * The component is ready for use.

@@ -51,6 +51,8 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
+          v-bind:allowBedSelection="!plantsAtLocation"
+          v-bind:selectAllBedsByDefault="true"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
@@ -62,30 +64,52 @@
         />
 
         <!-- Termination Event -->
-        <BFormGroup
+        <div
           id="termination-event-group"
           data-cy="termination-event-group"
-          label-for="termination-event-checkbox"
-          label-cols="auto"
-          label-align="end"
+          class="d-flex flex-column align-items-center"
           v-if="plantsAtLocation"
         >
-          <template v-slot:label>
-            <span
-              id="termination-event-label"
-              data-cy="termination-event-label"
-              class="p-0"
-              >Termination Event:</span
-            >
-          </template>
+          <BFormGroup
+            id="termination-event-group-checkbox"
+            data-cy="termination-event-group-checkbox"
+            class="w-100"
+            label-for="termination-event-checkbox"
+            label-cols="auto"
+            label-align="end"
+          >
+            <template v-slot:label>
+              <span
+                id="termination-event-label"
+                data-cy="termination-event-label"
+                >Termination Event:</span
+              >
+            </template>
 
-          <BFormCheckbox
-            id="termination-event-checkbox"
-            data-cy="termination-event-checkbox"
-            v-model="form.termination"
-            size="lg"
+            <BFormCheckbox
+              id="termination-event-checkbox"
+              data-cy="termination-event-checkbox"
+              v-model="form.termination"
+              size="lg"
+            />
+          </BFormGroup>
+          <PicklistBase
+            id="termination-event-picklist"
+            data-cy="termination-event-picklist"
+            class="w-100"
+            v-bind:showValidityStyling="validity.show"
+            v-bind:columns="picklistColumns"
+            v-bind:labels="picklistLabels"
+            v-bind:rows="form.affectedPlants"
+            v-bind:showInfoIcons="false"
+            v-bind:picked="form.picked"
+            v-on:valid="
+              (valid) => (validity.picked = !plantsAtLocation || valid)
+            "
+            v-on:update:picked="handlePickedUpdate($event)"
+            v-on:ready="createdCount++"
           />
-        </BFormGroup>
+        </div>
         <hr />
 
         <!-- Equipment -->
@@ -166,6 +190,7 @@ import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
+import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
@@ -177,6 +202,7 @@ export default {
     SoilDisturbance,
     SubmitResetButtons,
     LocationSelector,
+    PicklistBase,
   },
   data() {
     return {
@@ -185,6 +211,7 @@ export default {
         location: null,
         beds: [],
         termination: false,
+        picked: new Map(),
         affectedPlants: [],
         equipment: [],
         depth: 0,
@@ -197,12 +224,19 @@ export default {
         show: false,
         date: false,
         location: false,
+        picked: false,
         soilDisturbance: false,
         comment: false,
       },
       submitting: false,
       errorShowing: false,
       createdCount: 0,
+      picklistColumns: ['crop', 'bed', 'timestamp'],
+      picklistLabels: {
+        crop: 'Crop',
+        bed: 'Bed',
+        timestamp: 'Planted Date',
+      },
     };
   },
   computed: {
@@ -230,11 +264,52 @@ export default {
         try {
           let results = await farmosUtil.getPlantAssets(
             this.form.location,
-            this.form.beds,
+            [],
             false,
             true
           );
-          this.form.affectedPlants = results;
+          // Map results to rows for PicklistBase
+          this.form.affectedPlants = results.flatMap((plant) =>
+            plant.beds.length > 0
+              ? plant.beds.map((bed) => ({
+                  crop: plant.crop.join(', '),
+                  bed,
+                  timestamp: plant.timestamp,
+                  uuid: plant.uuid,
+                  location: plant.location,
+                  created_by: plant.created_by.join(', '),
+                }))
+              : [
+                  {
+                    crop: plant.crop.join(', '),
+                    bed: 'N/A',
+                    timestamp: plant.timestamp,
+                    uuid: plant.uuid,
+                    location: plant.location,
+                    created_by: plant.created_by.join(', '),
+                  },
+                ]
+          );
+
+          // Check if all plants have 'N/A' beds and adjust columns accordingly
+          const allBedsNA = this.form.affectedPlants.every(
+            (plant) => plant.bed === 'N/A'
+          );
+
+          if (allBedsNA) {
+            this.picklistColumns = ['crop', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              timestamp: 'Planted Date',
+            };
+          } else {
+            this.picklistColumns = ['crop', 'bed', 'timestamp'];
+            this.picklistLabels = {
+              crop: 'Crop',
+              bed: 'Bed',
+              timestamp: 'Planted Date',
+            };
+          }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
           this.form.affectedPlants = [];
@@ -243,18 +318,66 @@ export default {
         this.form.affectedPlants = [];
       }
     },
-    handleLocationUpdate(location) {
+    async handleLocationUpdate(location) {
       this.form.location = location;
       this.checkPlantsAtLocation();
     },
     handleBedsUpdate(checkedBeds, totalBeds) {
       this.form.beds = checkedBeds;
       if (totalBeds > 0 && checkedBeds.length > 0) {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
+        this.form.area = Math.round((checkedBeds.length / totalBeds) * 100);
       } else {
         this.form.area = 100;
       }
-      this.checkPlantsAtLocation();
+    },
+    handlePickedUpdate(picked) {
+      this.form.picked = picked;
+
+      // If there are beds but nothing is picked or if there are no beds, default to 100%
+      if (picked.size === 0 || !this.picklistColumns.includes('bed')) {
+        this.form.area = 100;
+        return;
+      }
+      // else, find area percentage
+
+      // Map "Bed -> # of entries in the picklistBase table"
+      const bedTotals = this.form.affectedPlants.reduce((acc, row) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Maps "Beds -> # of picked entries"
+      // For example, if Chuau-3 -> 1 (Chuau-3 has two entires in the table
+      // but only one was chosen so this bed wont count towards the area percentage)
+      const bedPicks = [...picked.values()].reduce((acc, row) => {
+        if (row.row.bed !== 'N/A') {
+          acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Count how many beds have all their plants chosen
+      let fullyChosenBeds = 0;
+      for (const [bed, totalForBed] of Object.entries(bedTotals)) {
+        const pickedForBed = bedPicks[bed] || 0;
+        // A bed is fully chosen only if ALL of its entries were picked
+        if (pickedForBed == totalForBed) {
+          fullyChosenBeds++;
+        }
+      }
+
+      // If no beds are fully chosen, still keep area at 100%
+      if (fullyChosenBeds === 0) {
+        this.form.area = 100;
+        return;
+      }
+
+      // Otherwise, calculate the percentage
+      this.form.area = Math.round(
+        (fullyChosenBeds / Object.keys(bedTotals).length) * 100
+      );
     },
     submit() {
       this.submitting = true;
@@ -312,7 +435,6 @@ export default {
 
       if (!sticky) {
         this.form.date = dayjs().format('YYYY-MM-DD');
-        this.form.termination = false;
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
@@ -322,12 +444,17 @@ export default {
 
       this.form.location = null;
       this.form.beds = [];
+      this.form.termination = false;
+      this.form.picked = new Map();
+      this.form.affectedPlants = [];
       this.form.area = 100;
     },
   },
   watch: {},
   created() {
     this.createdCount++;
+
+    this.validity.picked = !this.plantsAtLocation;
 
     if (window.Cypress) {
       document.defaultView.lib = lib;
@@ -337,8 +464,8 @@ export default {
 </script>
 
 <style>
-/* 
- * Import a set of standard CSS styles for FarmData2 
+/*
+ * Import a set of standard CSS styles for FarmData2
  * entry points that optimize the page for mobile devices.
  */
 @import url('@css/fd2-mobile.css');
@@ -398,5 +525,15 @@ export default {
   padding-top: 2px;
   font-size: 1.15rem;
   font-weight: 350;
+}
+
+#termination-event-group-checkbox {
+  align-items: center;
+  padding: 0.25rem;
+  background-color: #fff;
+}
+
+#termination-event-group {
+  border: 1px solid rgb(222, 226, 230);
 }
 </style>

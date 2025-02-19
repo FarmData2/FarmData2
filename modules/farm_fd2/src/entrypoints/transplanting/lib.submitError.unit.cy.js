@@ -21,7 +21,7 @@ describe('Error when submitting using the transplanting lib.', () => {
 
   let form = {
     cropName: 'BROCCOLI',
-    picked: [],
+    picked: new Map(),
     transplantingDate: '1950-01-02',
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
@@ -45,7 +45,7 @@ describe('Error when submitting using the transplanting lib.', () => {
         });
       })
       .then((res) => {
-        form.picked[0] = { trays: 25, data: res[res.length - 1] };
+        form.picked.set(0, { trays: 25, data: res[res.length - 1] });
       });
   });
 
@@ -101,7 +101,6 @@ describe('Error when submitting using the transplanting lib.', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            console.log(error.message);
             expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation trayInventoryQuantities could not be cleaned up.'
@@ -180,7 +179,6 @@ describe('Error when submitting using the transplanting lib.', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            console.log(error.message);
             expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation depthQuantity could not be cleaned up.'

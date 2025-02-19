@@ -278,10 +278,7 @@ describe('Test the default SoilDisturbance content', () => {
       .then(() => {
         cy.get('[data-cy="soil-disturbance-depth"]')
           .find('[data-cy="numeric-decrease-sm"]')
-          .click();
-        cy.get('[data-cy="soil-disturbance-depth"]')
-          .find('[data-cy="numeric-input"]')
-          .should('have.value', '0.0');
+          .should('be.disabled');
       });
   });
 
@@ -350,10 +347,7 @@ describe('Test the default SoilDisturbance content', () => {
       .then(() => {
         cy.get('[data-cy="soil-disturbance-speed"]')
           .find('[data-cy="numeric-decrease-sm"]')
-          .click();
-        cy.get('[data-cy="soil-disturbance-speed"]')
-          .find('[data-cy="numeric-input"]')
-          .should('have.value', '0.0');
+          .should('be.disabled');
       });
   });
 
@@ -427,10 +421,7 @@ describe('Test the default SoilDisturbance content', () => {
       .then(() => {
         cy.get('[data-cy="soil-disturbance-area"]')
           .find('[data-cy="numeric-increase-sm"]')
-          .click();
-        cy.get('[data-cy="soil-disturbance-area"]')
-          .find('[data-cy="numeric-input"]')
-          .should('have.value', '100');
+          .should('be.disabled');
 
         cy.get('[data-cy="soil-disturbance-area"]')
           .find('[data-cy="numeric-input"]')
@@ -441,10 +432,7 @@ describe('Test the default SoilDisturbance content', () => {
 
         cy.get('[data-cy="soil-disturbance-area"]')
           .find('[data-cy="numeric-decrease-sm"]')
-          .click();
-        cy.get('[data-cy="soil-disturbance-area"]')
-          .find('[data-cy="numeric-input"]')
-          .should('have.value', '1');
+          .should('be.disabled');
       });
   });
 
@@ -507,10 +495,7 @@ describe('Test the default SoilDisturbance content', () => {
       .then(() => {
         cy.get('[data-cy="soil-disturbance-passes"]')
           .find('[data-cy="numeric-decrease-sm"]')
-          .click();
-        cy.get('[data-cy="soil-disturbance-passes"]')
-          .find('[data-cy="numeric-input"]')
-          .should('have.value', '1');
+          .should('be.disabled');
       });
   });
 });

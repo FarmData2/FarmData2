@@ -62,7 +62,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.popupUrl = 'date_selector'"
-            :disabled="this.popupUrl != null"
+            v-bind:disabled="this.popupUrl != null"
           >
             DateSelector URL
           </BButton>
@@ -72,7 +72,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.popupUrl = null"
-            :disabled="this.popupUrl == null"
+            v-bind:disabled="this.popupUrl == null"
           >
             Clear Url
           </BButton>
@@ -89,6 +89,18 @@
             v-on:click="this.form.selected = 'one'"
           >
             Select first option
+          </BButton>
+          <BButton
+            id="clear-button"
+            data-cy="clear-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.form.selected = ''"
+            v-bind:disabled="
+              this.form.selected == '' || this.form.selected == null
+            "
+          >
+            clear
           </BButton>
         </td>
       </tr>

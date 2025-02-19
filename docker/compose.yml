@@ -1,4 +1,3 @@
-version: '3'
 services:
   db:
     image: farmdata2/postgres:fd2.2
@@ -35,7 +34,7 @@ services:
       XDEBUG_CONFIG: discover_client_host=yes
 
   fd2dev:
-    image: farmdata2/fd2dev:fd2.9
+    image: farmdata2/fd2dev:fd2.10
     container_name: fd2_dev
     init: true
     volumes:

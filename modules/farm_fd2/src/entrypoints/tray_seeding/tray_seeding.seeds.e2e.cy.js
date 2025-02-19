@@ -65,10 +65,7 @@ describe('Tray Seeding: Seeds/Cell Component', () => {
   it('Seeds/Cell has correct minimum value.', () => {
     cy.get('[data-cy="tray-seeding-seeds"]')
       .find('[data-cy="numeric-decrease-sm"]')
-      .click();
-    cy.get('[data-cy="tray-seeding-seeds"]')
-      .find('[data-cy="numeric-input"]')
-      .should('have.value', '1');
+      .should('be.disabled');
   });
 
   it('Seeds/Cell validity styling works', () => {

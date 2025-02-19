@@ -148,7 +148,7 @@ export default {
       },
       form: {
         cropFilter: this.crop,
-        pickedRows: [],
+        pickedRows: new Map(),
       },
       validity: {
         cropFilter: false,
@@ -175,6 +175,7 @@ export default {
       });
     },
     cropFilterChanged(cropName) {
+      this.form.pickedRows.clear();
       this.form.cropFilter = cropName;
       if (cropName) {
         farmosUtil
@@ -208,22 +209,20 @@ export default {
       this.$emit('update:crop', cropName);
     },
     handlePickedUpdate(picked) {
-      const emittedRows = [];
-      for (let i = 0; i < picked.length; i++) {
-        if (picked[i] != 0) {
-          const row = {
-            trays: picked[i],
-            data: { ...this.seedlingList[i] },
-          };
-          emittedRows.push(row);
-        }
+      const emittedMap = new Map();
+      for (const [index, { picked: trays }] of picked.entries()) {
+        const row = {
+          trays,
+          data: { ...this.seedlingList[index] },
+        };
+        emittedMap.set(index, row);
       }
 
       /**
-       * There has been a change to the picked rows.
-       * @property {Array} rows one object for each picked row. `{trays: number of trays picked, data: data about the tray seeding`). The format of the data is as given by [`farmosUtil.getSeedlings()`](http://localhost:8082/docs/library/farmosUtil.md#module_farmosUtil.getSeedlings).
+       * There has been a change to the picked map.
+       * @property {Map} rows one object for each picked row. `{trays: number of trays picked, data: data about the tray seeding`). The format of the data is as given by [`farmosUtil.getSeedlings()`](http://localhost:8082/docs/library/farmosUtil.md#module_farmosUtil.getSeedlings).
        */
-      this.$emit('update:picked', emittedRows);
+      this.$emit('update:picked', emittedMap);
     },
   },
   watch: {

@@ -2,7 +2,7 @@ import { lib } from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import { lib as traySeedingLib } from '../tray_seeding/lib.js';
 
-describe('Submit w/o equipment using the direct_seeding lib.', () => {
+describe('Submit w/o equipment using the transplanting lib.', () => {
   /*
    * Create a form object that has the same format as the data.form
    * object used in the tray_seeding entry point.  This will be passed
@@ -21,7 +21,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
 
   let form = {
     cropName: 'BROCCOLI',
-    picked: [],
+    picked: new Map(),
     transplantingDate: '1950-01-02',
     location: 'ALF',
     beds: ['ALF-1', 'ALF-3'],
@@ -72,10 +72,10 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
         });
       })
       .then((res) => {
-        form.picked[0] = {
+        form.picked.set(0, {
           trays: traySeedingForm.trays,
           data: res[res.length - 1],
-        };
+        });
         return cy.wrap(lib.submitForm(form), { timeout: 10000 });
       })
       .then((res) => {
@@ -94,16 +94,16 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
   });
 
   it('Check the parents', () => {
-    expect(result.parents[0].id).to.equal(form.picked[0].data.asset_uuid);
+    expect(result.parents[0].id).to.equal(form.picked.get(0).data.asset_uuid);
     expect(result.parents[0].type).to.equal('asset--plant');
     expect(result.parents[0].attributes.name).to.equal(
-      form.picked[0].data.date + '_' + form.picked[0].data.crop
+      form.picked.get(0).data.date + '_' + form.picked.get(0).data.crop
     );
   });
 
   it('Check the tray inventory quantity--standard assets', () => {
     expect(result.trayInventoryQuantities[0].attributes.value.decimal).to.equal(
-      form.picked[0].trays
+      form.picked.get(0).trays
     );
     expect(result.trayInventoryQuantities[0].type).to.equal(
       'quantity--standard'
@@ -122,7 +122,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     ).to.equal('decrement');
     expect(
       result.trayInventoryQuantities[0].relationships.inventory_asset.id
-    ).to.equal(form.picked[0].data.asset_uuid);
+    ).to.equal(form.picked.get(0).data.asset_uuid);
   });
 
   it('Check the asset--plant', () => {
@@ -146,7 +146,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
     ).to.equal(cropToTerm.get(form.cropName).id);
 
     expect(result.transplantingPlantAsset.relationships.parent[0].id).to.equal(
-      form.picked[0].data.asset_uuid
+      form.picked.get(0).data.asset_uuid
     );
   });
 
@@ -243,7 +243,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
 
   it('Check the log--activity', () => {
     expect(result.transplantingLog.attributes.name).to.equal(
-      form.transplantingDate + '_xp_' + form.picked[0].data.crop
+      form.transplantingDate + '_xp_' + form.picked.get(0).data.crop
     );
     expect(result.transplantingLog.attributes.timestamp).to.contain(
       form.transplantingDate
@@ -287,6 +287,7 @@ describe('Submit w/o equipment using the direct_seeding lib.', () => {
       result.trayInventoryQuantities[0].id
     );
   });
+
   it('Check soil disturbance activity log not created', () => {
     expect(result.depthQuantity).to.be.null;
     expect(result.speedQuantity).to.be.null;

@@ -35,8 +35,8 @@ export async function submitForm(formData) {
     const parents = {
       name: 'parents',
       do: async () => {
-        for (const row of formData.picked) {
-          const parent = await farmosUtil.getPlantAsset(row.data.asset_uuid);
+        for (const { data } of formData.picked.values()) {
+          const parent = await farmosUtil.getPlantAsset(data.asset_uuid);
           parentsArray.push(parent);
         }
 
@@ -52,10 +52,10 @@ export async function submitForm(formData) {
       name: 'trayInventoryQuantities',
       do: async (results) => {
         const trayInventoryQuantitiesArray = [];
-        for (let i = 0; i < results.parents.length; i++) {
+        for (const [i, { trays }] of formData.picked.entries()) {
           const trayQuantity = await farmosUtil.createStandardQuantity(
             'count',
-            formData.picked[i].trays,
+            trays,
             'Trays',
             'TRAYS',
             results.parents[i],
@@ -69,10 +69,9 @@ export async function submitForm(formData) {
             'count',
             'TRAYS'
           );
-          const traysPicked = formData.picked[i].trays;
 
           // All of the trays in the planting have been transplanted.
-          if (traysPicked == trayInvenotry) {
+          if (trays === trayInvenotry) {
             await farmosUtil.archivePlantAsset(results.parents[i].id, true);
           }
         }

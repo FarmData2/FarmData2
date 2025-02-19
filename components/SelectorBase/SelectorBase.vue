@@ -48,7 +48,7 @@
         >
       </template>
 
-      <BInputGroup>
+      <BInputGroup class="has-validation">
         <BFormSelect
           id="selector-input"
           data-cy="selector-input"
@@ -207,9 +207,11 @@ export default {
     /**
      * The list of options for the dropdown.
      *
-     * The options shown will update if the prop is set to a new array.
+     * The list of options may take two forms. The first is an array of strings where each string represents an option.
      *
-     * However, the options shown will not change if only the contents of the array are changed.
+     * The second is an array of objects where each object has `text`, `value` and `disabled` attribute. For example `[ {text: 'foo', value: 'foo', disabled: false}, ... ]`. `text` is the option that is displayed, `value` is the value of the element when the options is chosen. `disabled` indicates (`true`/`false`) if the option can be chosen.
+     *
+     * The options displayed will update when the prop is modified.
      */
     options: {
       type: Array,
@@ -258,8 +260,8 @@ export default {
   },
   data() {
     return {
-      optionsObjects: this.options,
       selectedOption: this.selected,
+      optionsObjects: this.processOptions(),
       isPopupVisible: false,
       popupSrc: '',
       isPopupLoaded: false,
@@ -290,6 +292,20 @@ export default {
     },
   },
   methods: {
+    processOptions() {
+      /**
+       * The incoming list of options is adapted to the selector base format
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
     handleDelete() {
       this.selectedOption = '';
     },
@@ -410,7 +426,6 @@ export default {
           if (!this.keepDisabledSelected && option.disabled) {
             this.selectedOption = '';
           }
-
           return;
         }
       }
@@ -434,8 +449,10 @@ export default {
             this.selectedOption = '';
             this.$emit('update:selected', this.selectedOption);
           }
+          return;
         }
       }
+      this.selectedOption = '';
     },
     selectedOption() {
       /**
@@ -450,17 +467,7 @@ export default {
     },
     options: {
       handler() {
-        /**
-         * The incoming list of options is adapted to the selector base format
-         */
-        this.optionsObjects = this.options.map((option) => {
-          if (typeof option === 'string') {
-            option = { text: option, value: option, disabled: false };
-          }
-
-          return option;
-        });
-
+        this.optionsObjects = this.processOptions();
         this.checkSelectedOption();
       },
       immediate: true,
