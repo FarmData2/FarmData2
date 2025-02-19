@@ -8,9 +8,7 @@
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
       v-bind:keepDisabledSelected="true"
-      v-bind:options="
-        this.allowDuplicateSelections ? this.options : this.processedOptions
-      "
+      v-bind:options="this.processedOptions"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -151,7 +149,10 @@ export default {
           option = {
             text: option,
             value: option,
-            disabled: true, //this.selected.includes(option) ? true : false,
+            disabled:
+              this.selected.includes(option) && !this.allowDuplicateSelections
+                ? true
+                : false,
           };
         }
 
@@ -179,9 +180,11 @@ export default {
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {
         const item = this.selectedItems[i];
-        for (let option of this.processedOptions) {
-          if (option.text == item) {
-            option.disabled = false;
+        if (!this.allowDuplicateSelections) {
+          for (let option of this.processedOptions) {
+            if (option.text == item) {
+              option.disabled = false;
+            }
           }
         }
         this.selectedItems.splice(i, 1);
@@ -198,12 +201,14 @@ export default {
          */
       } else {
         const item = this.selectedItems[i];
-        for (let option of this.processedOptions) {
-          if (option.text == event) {
-            option.disabled = true;
-          }
-          if (option.text == item) {
-            option.disabled = false;
+        if (!this.allowDuplicateSelections) {
+          for (let option of this.processedOptions) {
+            if (option.text == event) {
+              option.disabled = true;
+            }
+            if (option.text == item) {
+              option.disabled = false;
+            }
           }
         }
         this.selectedItems[i] = event;
@@ -225,9 +230,13 @@ export default {
       }
     },
     disableSelectedItems() {
-      this.processedOptions = this.processedOptions.map((option) => {
-        option.disabled = true;
+      const options = this.processedOptions.map((option) => {
+        option.disabled = this.selectedItems.includes(option.text)
+          ? true
+          : false;
+        return option;
       });
+      return options;
     },
   },
   watch: {
@@ -244,6 +253,33 @@ export default {
       },
       immediate: true,
       deep: true,
+    },
+    allowDuplicateSelections: {
+      handler() {
+        if (this.allowDuplicateSelections) {
+          this.processedOptions = this.processedOptions.map((option) => {
+            option.disabled = false;
+            return option;
+          });
+        } else {
+          let selectedMinusDuplicates = new Array();
+          const encountered = new Set();
+          for (let i = 0; i < this.selectedItems.length; i++) {
+            if (!encountered.has(this.selectedItems[i])) {
+              selectedMinusDuplicates.push(this.selectedItems[i]);
+              encountered.add(this.selectedItems[i]);
+            }
+          }
+
+          //not sure why, but this is only way vue will update selectedItems.
+          this.selectedItems.splice(
+            0,
+            this.selectedItems.length,
+            ...selectedMinusDuplicates
+          );
+          this.processedOptions = this.disableSelectedItems();
+        }
+      },
     },
     isValid() {
       /**
