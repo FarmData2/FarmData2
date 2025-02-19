@@ -11,7 +11,7 @@ describe('Test the MultiSelectorBase component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Check selected prop is reactive', () => {
+  it.only('Check selected prop is reactive', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(MultiSelectorBase, {

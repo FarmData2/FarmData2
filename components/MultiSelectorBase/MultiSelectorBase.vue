@@ -230,7 +230,7 @@ export default {
             option = {
               text: option,
               value: option,
-              disabled: false,
+              disabled: this.selectedItems.includes(option) ? true : false,
             };
           }
           return option;
@@ -251,7 +251,6 @@ export default {
     /**
      * The component is ready to be used.
      */
-    this.disableSelectedItems();
     this.$emit('ready');
   },
 };
