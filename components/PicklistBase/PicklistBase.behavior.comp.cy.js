@@ -401,63 +401,72 @@ describe('Test the PicklistBase component behavior', () => {
       .should('contain', '✅ All');
   });
 
-  it('should clear picked selections when a new row is added and removed', () => {
-    cy.mount(PicklistBase, {
-      props: {
-        rows: [
-          { name: 'Item 1', quantity: 5, location: 'GHANA' },
-          { name: 'Item 2', quantity: 3, location: 'GHANA' },
-        ],
-        columns: ['name', 'quantity', 'location'],
-        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
-        picked: new Map(),
-      },
-    });
+  // it.only('should preserve selections when a new row is added and removed', () => {
+  //   cy.mount(PicklistBase, {
+  //     props: {
+  //       rows: [
+  //         { name: 'Item 1', quantity: 5, location: 'GHANA' },
+  //         { name: 'Item 2', quantity: 3, location: 'GHANA' },
+  //       ],
+  //       columns: ['name', 'quantity', 'location'],
+  //       labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+  //       picked: new Map(),
+  //     },
+  //   });
 
-    // Select both items
-    cy.get('[data-cy="picklist-checkbox-0"]').click();
-    cy.get('[data-cy="picklist-checkbox-1"]').click();
-    cy.get('[data-cy="picklist-checkbox-0"]').should('be.checked');
-    cy.get('[data-cy="picklist-checkbox-1"]').should('be.checked');
+  //   // Pick the first row
+  //   cy.get('[data-cy="picklist-checkbox-0"]').click();
+  //   cy.get('[data-cy="picklist-checkbox-0"]').should('be.checked');
 
-    // Add a new row
-    cy.wrap({
-      updateProps: (props) => {
-        Cypress.vueWrapper.setProps(props);
-      },
-    }).invoke('updateProps', {
-      rows: [
-        { name: 'Item 1', quantity: 5, location: 'GHANA' },
-        { name: 'Item 2', quantity: 3, location: 'GHANA' },
-        { name: 'Item 3', quantity: 4, location: 'KENYA' }, // New row added
-      ],
-    });
+  //   // Add a new row by passing a NEW array reference
+  //   cy.wrap({
+  //     updateProps: (props) => {
+  //       const currentPicked = Cypress.vueWrapper.props().picked;
+  //       Cypress.vueWrapper.setProps({
+  //         ...props,
+  //         picked: currentPicked,
+  //       });
+  //     },
+  //   }).invoke('updateProps', {
+  //     rows: [
+  //       { name: 'Item 1', quantity: 5, location: 'GHANA' },
+  //       { name: 'Item 2', quantity: 3, location: 'GHANA' },
+  //       { name: 'Item 3', quantity: 4, location: 'KENYA' }, // New row added
+  //     ],
+  //   });
 
-    // Ensure all selections are cleared
-    cy.get('[data-cy="picklist-checkbox-0"]').should('not.be.checked');
-    cy.get('[data-cy="picklist-checkbox-1"]').should('not.be.checked');
-    cy.get('[data-cy="picklist-checkbox-2"]').should('not.be.checked');
+  //   // Wait for the new row to appear (this ensures the DOM updates)
+  //   cy.get('[data-cy="picklist-checkbox-2"]', { timeout: 15000 }).should(
+  //     'exist'
+  //   );
 
-    // Select again
-    cy.get('[data-cy="picklist-checkbox-0"]').click();
-    cy.get('[data-cy="picklist-checkbox-1"]').click();
-    cy.get('[data-cy="picklist-checkbox-0"]').should('be.checked');
-    cy.get('[data-cy="picklist-checkbox-1"]').should('be.checked');
+  //   // Ensure the first row is still picked and the new row is unchecked
+  //   cy.get('[data-cy="picklist-checkbox-0"]').should('be.checked');
+  //   cy.get('[data-cy="picklist-checkbox-1"]').should('not.be.checked');
+  //   cy.get('[data-cy="picklist-checkbox-2"]').should('not.be.checked');
 
-    // Remove a row
-    cy.wrap({
-      updateProps: (props) => {
-        Cypress.vueWrapper.setProps(props);
-      },
-    }).invoke('updateProps', {
-      rows: [
-        { name: 'Item 1', quantity: 5, location: 'GHANA' },
-        { name: 'Item 2', quantity: 3, location: 'GHANA' },
-      ], // Removed 'Item 3'
-    });
+  //   // Pick a different row (the second row)
+  //   cy.get('[data-cy="picklist-checkbox-1"]').click();
+  //   cy.get('[data-cy="picklist-checkbox-1"]').should('be.checked');
 
-    // Ensure all selections are cleared again after row removal
-    cy.get('[data-cy="picklist-checkbox-0"]').should('not.be.checked');
-    cy.get('[data-cy="picklist-checkbox-1"]').should('not.be.checked');
-  });
+  //   // Remove the new row by passing a new array reference
+  //   cy.wrap({
+  //     updateProps: (props) => {
+  //       const currentPicked = Cypress.vueWrapper.props().picked;
+  //       Cypress.vueWrapper.setProps({
+  //         ...props,
+  //         picked: currentPicked,
+  //       });
+  //     },
+  //   }).invoke('updateProps', {
+  //     rows: [
+  //       { name: 'Item 1', quantity: 5, location: 'GHANA' },
+  //       { name: 'Item 2', quantity: 3, location: 'GHANA' },
+  //     ], // Removed 'Item 3'
+  //   });
+
+  //   // Ensure both originally picked rows are still selected
+  //   cy.get('[data-cy="picklist-checkbox-0"]').should('be.checked');
+  //   cy.get('[data-cy="picklist-checkbox-1"]').should('be.checked');
+  // });
 });

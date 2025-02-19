@@ -149,15 +149,7 @@
       <tr>
         <td>update:picked</td>
         <td>
-          <div v-if="form.picked.size === 0">{}</div>
-          <ul v-else>
-            <li
-              v-for="[key, value] in form.picked.entries()"
-              :key="key"
-            >
-              Key: {{ key }}, Value: {{ value }}
-            </li>
-          </ul>
+          {{ form.picked }}
         </td>
       </tr>
       <tr>

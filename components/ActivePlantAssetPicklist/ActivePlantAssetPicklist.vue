@@ -106,6 +106,7 @@ export default {
 
   data() {
     return {
+      pickedRow: new Map(),
       affectedPlants: [],
       picklistColumns: ['crop', 'bed', 'timestamp'],
       picklistLabels: {
@@ -118,15 +119,17 @@ export default {
 
   methods: {
     handleUpdatePicked(event) {
-      /**
-       * Emitted when the picked crops have changed.
-       *
-       * @event update:picked
-       * @property {Map<number, Object>} event - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
-       *
-       */
-      console.log(`called picked`);
-      this.$emit('update:picked', event);
+      if (event.size > 0 || this.pickedRow.size > 0) {
+        this.pickedRow = event;
+        /**
+         * Emitted when the picked crops have changed.
+         *
+         * @event update:picked
+         * @property {Map<number, Object>} event - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+         *
+         */
+        this.$emit('update:picked', this.pickedRow);
+      }
     },
 
     handleValid(event) {
@@ -187,10 +190,26 @@ export default {
               timestamp: 'Planted Date',
             };
           }
+
+          if (this.pickedRow.size > 0) {
+            this.pickedRow = new Map();
+            this.$emit('update:picked', this.pickedRow);
+          }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
           this.affectedPlants = [];
-          this.$emit('error', 'Unable to fetch plant assets.');
+
+          /**
+           * Emitted when there is an error fetching plant assets.
+           *
+           * @event error
+           * @property {string} message - A description of the error that occurred.
+           * @property {Error} error - The actual error object for debugging.
+           */
+          this.$emit('error', {
+            message: 'Unable to fetch plant assets.',
+            error,
+          });
         }
       } else {
         this.affectedPlants = [];
@@ -202,7 +221,6 @@ export default {
     location: {
       handler() {
         this.checkPlantsAtLocation();
-        console.log('location change');
       },
       immediate: true,
     },

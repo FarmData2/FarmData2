@@ -95,33 +95,33 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          // called twice. Once on mounting and then on initial location
-          cy.get('@pickedSpy').should('have.been.calledTwice');
+          cy.get('@pickedSpy').should('not.have.been.called');
 
           // check if map has the correct values
           cy.get('[data-cy="picklist-checkbox-1"]').check();
-          cy.get('@pickedSpy').should('have.been.calledThrice');
-          cy.get('@pickedSpy').should(
-            'have.been.calledWithMatch',
-            (pickedMap) => {
-              console.log('Spy received:', pickedMap);
-              return Array.from(pickedMap.values()).some(
-                (pickedRow) =>
-                  pickedRow.row.crop === 'LETTUCE-ICEBERG' &&
-                  pickedRow.row.bed === 'ALF-1'
-              );
-            }
-          );
+          cy.get('@pickedSpy')
+            .should('have.been.calledOnce')
+            .its('lastCall.args.0')
+            .should((pickedMap) => {
+              const pickedRows = Array.from(pickedMap.values());
+              expect(
+                pickedRows.some(
+                  (row) =>
+                    row.row.crop === 'LETTUCE-ICEBERG' &&
+                    row.row.bed === 'ALF-1'
+                )
+              ).to.be.true;
+            });
 
           // map is empty
           cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-          cy.get('@pickedSpy').should('have.callCount', 4);
-          cy.get('@pickedSpy').then((spy) => {
-            const lastCallArgs = spy.getCall(3).args[0];
-            console.log('Fourth call payload:', lastCallArgs);
-            expect(lastCallArgs).to.be.instanceOf(Map);
-            expect(lastCallArgs.size).to.equal(0);
-          });
+          cy.get('@pickedSpy')
+            .should('have.been.calledTwice')
+            .its('lastCall.args.0')
+            .should((lastCallArgs) => {
+              expect(lastCallArgs).to.be.instanceOf(Map);
+              expect(lastCallArgs.size).to.equal(0);
+            });
         });
     });
   });
@@ -140,12 +140,11 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          // called twice. Once on mounting and then on initial location
-          cy.get('@pickedSpy').should('have.been.calledTwice');
+          cy.get('@pickedSpy').should('not.have.been.called');
         })
         .then(() => {
           wrapper.setProps({ location: 'CHUAU' });
-          cy.get('@pickedSpy').should('have.been.calledTwice');
+          cy.get('@pickedSpy').should('not.have.been.called');
         });
     });
   });
@@ -164,35 +163,35 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       cy.get('@readySpy')
         .should('have.been.calledOnce')
         .then(() => {
-          // called twice. Once on mounting and then on initial location
-          cy.get('@pickedSpy').should('have.been.calledTwice');
+          cy.get('@pickedSpy').should('not.have.been.called');
 
           // check if map has the correct values
           cy.get('[data-cy="picklist-checkbox-1"]').check();
-          cy.get('@pickedSpy').should('have.been.calledThrice');
-          cy.get('@pickedSpy').should(
-            'have.been.calledWithMatch',
-            (pickedMap) => {
-              console.log('Spy received:', pickedMap);
-              return Array.from(pickedMap.values()).some(
-                (pickedRow) =>
-                  pickedRow.row.crop === 'LETTUCE-ICEBERG' &&
-                  pickedRow.row.bed === 'ALF-1'
-              );
-            }
-          );
+          cy.get('@pickedSpy')
+            .should('have.been.calledOnce')
+            .its('lastCall.args.0')
+            .should((pickedMap) => {
+              const pickedRows = Array.from(pickedMap.values());
+              expect(
+                pickedRows.some(
+                  (row) =>
+                    row.row.crop === 'LETTUCE-ICEBERG' &&
+                    row.row.bed === 'ALF-1'
+                )
+              ).to.be.true;
+            });
         })
         .then(() => {
           wrapper.setProps({ location: 'CHUAU' });
 
           // map is empty
-          cy.get('@pickedSpy').should('have.callCount', 4);
-          cy.get('@pickedSpy').then((spy) => {
-            const lastCallArgs = spy.getCall(3).args[0];
-            console.log('Fourth call payload:', lastCallArgs);
-            expect(lastCallArgs).to.be.instanceOf(Map);
-            expect(lastCallArgs.size).to.equal(0);
-          });
+          cy.get('@pickedSpy')
+            .should('have.been.calledTwice')
+            .its('lastCall.args.0')
+            .should((lastCallArgs) => {
+              expect(lastCallArgs).to.be.instanceOf(Map);
+              expect(lastCallArgs.size).to.equal(0);
+            });
         });
     });
   });
@@ -217,6 +216,9 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
 
     cy.get('@errorSpy')
       .should('have.been.calledOnce')
-      .and('have.been.calledWith', 'Unable to fetch plant assets.');
+      .and('have.been.calledWithMatch', {
+        message: 'Unable to fetch plant assets.',
+        error: Cypress.sinon.match.instanceOf(Error),
+      });
   });
 });
