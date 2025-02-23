@@ -146,14 +146,7 @@ export default {
        */
       const opObjs = this.options.map((option) => {
         if (typeof option === 'string') {
-          option = {
-            text: option,
-            value: option,
-            disabled:
-              this.selected.includes(option) && !this.allowDuplicateSelections
-                ? true
-                : false,
-          };
+          option = { text: option, value: option, disabled: false };
         }
 
         return option;
@@ -229,14 +222,13 @@ export default {
         this.valid[0] = !this.required;
       }
     },
-    disableSelectedItems() {
-      const options = this.processedOptions.map((option) => {
+    disableSelectedOptions() {
+      this.processedOptions = this.processedOptions.map((option) => {
         option.disabled = this.selectedItems.includes(option.text)
           ? true
           : false;
         return option;
       });
-      return options;
     },
   },
   watch: {
@@ -250,8 +242,8 @@ export default {
     options: {
       handler() {
         this.processedOptions = this.processOptions();
+        this.disableSelectedOptions();
       },
-      immediate: true,
       deep: true,
     },
     allowDuplicateSelections: {
