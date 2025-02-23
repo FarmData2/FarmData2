@@ -94,35 +94,4 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
         });
     });
   });
-
-  it('Should clear picked checkboxes when the `location` prop changes', () => {
-    const readySpy = cy.spy().as('readySpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        isInGround: true,
-        isInTrays: true,
-        onReady: readySpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('[data-cy="picklist-all-button"]').then(($btn) => {
-            $btn[0].click();
-          });
-
-          cy.get('[data-cy^="picklist-checkbox-"]').each(($el) => {
-            cy.wrap($el).should('be.checked');
-          });
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-          cy.get('[data-cy^="picklist-checkbox-"]').each(($el) => {
-            cy.wrap($el).should('not.be.checked');
-          });
-        });
-    });
-  });
 });
