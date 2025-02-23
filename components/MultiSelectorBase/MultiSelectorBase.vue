@@ -269,8 +269,8 @@ export default {
             this.selectedItems.length,
             ...selectedMinusDuplicates
           );
-          this.processedOptions = this.disableSelectedItems();
         }
+        this.disableSelectedOptions();
       },
     },
     isValid() {
@@ -285,6 +285,7 @@ export default {
     /**
      * The component is ready to be used.
      */
+    this.disableSelectedOptions();
     this.$emit('ready');
   },
 };
