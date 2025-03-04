@@ -263,6 +263,7 @@ export default {
           if (this.pickedRow.size > 0) {
             this.pickedRow = new Map();
             this.$emit('update:picked', this.pickedRow);
+            this.$emit('update:area', 100);
           }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
