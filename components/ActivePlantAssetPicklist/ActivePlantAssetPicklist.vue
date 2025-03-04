@@ -41,8 +41,10 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
  *   v-bind:picked="form.picked"
  *   v-bind:isInTrays="isInTrays"
  *   v-bind:isInGround="isInGround"
+ *   v-on:hasPlants="form.hasPlants = $event"
  *   v-on:update:picked="(picked) => (form.picked = picked)"
- *   v-on:valid="(valid) => (validity.selected = valid)"
+ *   v-on:update:area="form.area = $event"
+ *   v-on:valid="validity.selected = $event"
  *   v-on:error="handleError"
  *   v-on:ready="createdCount++"
  * />
@@ -57,7 +59,14 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 export default {
   name: 'ActivePlantAssetPicklist',
   components: { PicklistBase },
-  emits: ['ready', 'valid', 'update:picked', 'error'],
+  emits: [
+    'ready',
+    'valid',
+    'hasPlants',
+    'update:picked',
+    'update:area',
+    'error',
+  ],
   props: {
     /**
      * Whether to include plants that are in trays (tray seeded but not transplanted) or not.
@@ -116,11 +125,20 @@ export default {
       },
     };
   },
+  computed: {
+    plantsAtLocation() {
+      return this.affectedPlants.length > 0;
+    },
+  },
 
   methods: {
     handleUpdatePicked(event) {
       if (event.size > 0 || this.pickedRow.size > 0) {
         this.pickedRow = event;
+
+        // Calculate the area based on picked plants
+        const area = this.calculatePickedArea(event);
+
         /**
          * Emitted when the picked crops have changed.
          *
@@ -129,7 +147,57 @@ export default {
          *
          */
         this.$emit('update:picked', this.pickedRow);
+
+        /**
+         * Emitted when the area percentage of fully selected beds changes.
+         *
+         * @event update:area
+         * @property {number} area - The percentage of beds that have all their plants selected, ranging from 0 to 100.
+         */
+        this.$emit('update:area', area);
       }
+    },
+
+    calculatePickedArea(picked) {
+      // If no plants are picked or there are no beds, default to 100%
+      if (picked.size === 0 || !this.picklistColumns.includes('bed')) {
+        return 100;
+      }
+
+      // Map "Bed -> # of entries in the picklistBase table"
+      const bedTotals = this.affectedPlants.reduce((acc, row) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Maps "Beds -> # of picked entries"
+      const bedPicks = [...picked.values()].reduce((acc, row) => {
+        if (row.row.bed !== 'N/A') {
+          acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Count how many beds have all their plants chosen
+      let fullyChosenBeds = 0;
+      for (const [bed, totalForBed] of Object.entries(bedTotals)) {
+        const pickedForBed = bedPicks[bed] || 0;
+        if (pickedForBed === totalForBed) {
+          fullyChosenBeds++;
+        }
+      }
+
+      // If no beds are fully chosen, keep area at 100%
+      if (fullyChosenBeds === 0) {
+        return 100;
+      }
+
+      // Otherwise, calculate the percentage
+      return Math.round(
+        (fullyChosenBeds / Object.keys(bedTotals).length) * 100
+      );
     },
 
     handleValid(event) {
@@ -139,6 +207,7 @@ export default {
        */
       this.$emit('valid', event);
     },
+
     async checkPlantsAtLocation() {
       if (this.location) {
         try {
@@ -232,6 +301,17 @@ export default {
     isInGround: {
       handler() {
         this.checkPlantsAtLocation();
+      },
+    },
+    plantsAtLocation: {
+      handler(newValue) {
+        /**
+         * Emitted when the presence of active plant assets at the location changes.
+         *
+         * @event hasPlants
+         * @property {Boolean} newValue - `true` if there are active plant assets at the location, `false` otherwise.
+         */
+        this.$emit('hasPlants', newValue);
       },
     },
   },

@@ -26,8 +26,10 @@
     v-bind:picked="form.picked"
     v-bind:isInTrays="isInTrays"
     v-bind:isInGround="isInGround"
-    v-on:update:picked="(picked) => (form.picked = picked)"
-    v-on:valid="(valid) => (validity.selected = valid)"
+    v-on:hasPlants="form.hasPlants = $event"
+    v-on:update:picked="form.picked = $event"
+    v-on:update:area="form.area = $event"
+    v-on:valid="validity.selected = $event"
     v-on:error="handleError"
     v-on:ready="createdCount++"
   />
@@ -99,8 +101,16 @@
     </thead>
     <tbody>
       <tr>
+        <td>hasPlants</td>
+        <td>{{ form.hasPlants }}</td>
+      </tr>
+      <tr>
         <td>update:picked</td>
         <td>{{ form.picked }}</td>
+      </tr>
+      <tr>
+        <td>update:area</td>
+        <td>{{ form.area }}</td>
       </tr>
       <tr>
         <td>valid</td>
@@ -132,6 +142,8 @@ export default {
       form: {
         selected: '',
         picked: new Map(),
+        area: 100,
+        hasPlants: false,
       },
       validity: {
         showStyling: false,
