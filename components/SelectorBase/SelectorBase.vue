@@ -421,15 +421,19 @@ export default {
       }
     },
     checkSelectedOption() {
-      for (let option of this.optionsObjects) {
-        if (option.text === this.selectedOption) {
-          if (!this.keepDisabledSelected && option.disabled) {
-            this.selectedOption = '';
+      // only update the selected option when the options list is populated.
+      // this prevents premature clearing of selectedOption before api calls return options.
+      if (this.optionsObjects.length !== 0) {
+        for (let option of this.optionsObjects) {
+          if (option.text === this.selectedOption) {
+            if (!this.keepDisabledSelected && option.disabled) {
+              this.selectedOption = '';
+            }
+            return;
           }
-          return;
         }
+        this.selectedOption = '';
       }
-      this.selectedOption = '';
     },
   },
   watch: {
@@ -470,7 +474,6 @@ export default {
         this.optionsObjects = this.processOptions();
         this.checkSelectedOption();
       },
-      immediate: true,
       deep: true,
     },
   },
