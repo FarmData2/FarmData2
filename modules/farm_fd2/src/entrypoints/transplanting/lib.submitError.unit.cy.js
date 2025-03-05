@@ -101,7 +101,6 @@ describe('Error when submitting using the transplanting lib.', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            console.log(error.message);
             expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation trayInventoryQuantities could not be cleaned up.'
@@ -180,7 +179,6 @@ describe('Error when submitting using the transplanting lib.', () => {
             throw new Error('The submission should have failed.');
           })
           .catch((error) => {
-            console.log(error.message);
             expect(error.message).to.contain('Error creating transplanting.');
             expect(error.message).to.contain(
               'Result of operation depthQuantity could not be cleaned up.'

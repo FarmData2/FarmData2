@@ -12,6 +12,7 @@
     label="Select"
     invalid-feedback-text="Selection cannot be empty."
     v-bind:required="required"
+    v-bind:keepDisabledSelected="keepDisabledSelected"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:options="options"
     v-on:add-clicked="handleAddClicked"
@@ -61,7 +62,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.popupUrl = 'date_selector'"
-            :disabled="this.popupUrl != null"
+            v-bind:disabled="this.popupUrl != null"
           >
             DateSelector URL
           </BButton>
@@ -71,7 +72,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="this.popupUrl = null"
-            :disabled="this.popupUrl == null"
+            v-bind:disabled="this.popupUrl == null"
           >
             Clear Url
           </BButton>
@@ -88,6 +89,18 @@
             v-on:click="this.form.selected = 'one'"
           >
             Select first option
+          </BButton>
+          <BButton
+            id="clear-button"
+            data-cy="clear-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.form.selected = ''"
+            v-bind:disabled="
+              this.form.selected == '' || this.form.selected == null
+            "
+          >
+            clear
           </BButton>
         </td>
       </tr>
@@ -109,6 +122,47 @@
             "
           >
             Toggle sixth option
+          </BButton>
+        </td>
+      </tr>
+      <tr>
+        <td>Keep Disabled Selected</td>
+        <td>
+          <BFormCheckbox
+            id="keep-disabled-checkbox"
+            data-cy="keep-disabled-checkbox"
+            switch
+            v-model="keepDisabledSelected"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>Toggle Disabled Items</td>
+        <td>
+          <BButton
+            id="disable-button"
+            data-cy="disable-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="
+              () => {
+                const itemsToDisable = ['one', 'two', 'four'];
+                this.options = this.options.map((item) => {
+                  if (itemsToDisable.includes(item)) {
+                    return { text: item, value: item, disabled: true };
+                  } else if (typeof item != 'string') {
+                    return {
+                      ...item,
+                      disabled: !item.disabled,
+                    };
+                  } else {
+                    return item;
+                  }
+                });
+              }
+            "
+          >
+            Toggle Disabled Items
           </BButton>
         </td>
       </tr>
@@ -158,6 +212,7 @@ export default {
   data() {
     return {
       required: true,
+      keepDisabledSelected: false,
       showAllButton: true,
       popupUrl: null,
       options: ['one', 'two', 'three', 'four', 'five'],

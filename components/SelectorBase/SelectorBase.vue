@@ -65,12 +65,13 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in this.optionList"
-            v-bind:key="option"
-            v-bind:value="option"
+            v-for="(option, i) in this.optionsObjects"
+            v-bind:key="option.text"
+            v-bind:value="option.value"
+            v-bind:disabled="option.disabled"
             v-bind:data-cy="'selector-option-' + (i + 1)"
           >
-            {{ option }}
+            {{ option.text }}
           </BFormSelectOption>
         </BFormSelect>
         <BInputGroupAppend>
@@ -153,6 +154,7 @@
  *   id="crop-selector"
  *   data-cy="crop-selector"
  *   label="Crop"
+ *   keepDisabledSelected:"keepDisabledSelected"
  *   invalidFeedbackText="A crop is required"
  *   v-bind:options="cropList"
  *   v-bind:required="required"
@@ -205,9 +207,11 @@ export default {
     /**
      * The list of options for the dropdown.
      *
-     * The options shown will update if the prop is set to a new array.
+     * The list of options may take two forms. The first is an array of strings where each string represents an option.
      *
-     * However, the options shown will not change if only the contents of the array are changed.
+     * The second is an array of objects where each object has `text`, `value` and `disabled` attribute. For example `[ {text: 'foo', value: 'foo', disabled: false}, ... ]`. `text` is the option that is displayed, `value` is the value of the element when the options is chosen. `disabled` indicates (`true`/`false`) if the option can be chosen.
+     *
+     * The options displayed will update when the prop is modified.
      */
     options: {
       type: Array,
@@ -230,6 +234,13 @@ export default {
       default: '',
     },
     /**
+     * Whether the selected option is removed from the options when marked "disabled".
+     */
+    keepDisabledSelected: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Whether validity styling should appear on the dropdown.
      */
     showValidityStyling: {
@@ -249,8 +260,8 @@ export default {
   },
   data() {
     return {
-      optionList: this.options,
       selectedOption: this.selected,
+      optionsObjects: this.processOptions(),
       isPopupVisible: false,
       popupSrc: '',
       isPopupLoaded: false,
@@ -281,6 +292,20 @@ export default {
     },
   },
   methods: {
+    processOptions() {
+      /**
+       * The incoming list of options is adapted to the selector base format
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
     handleDelete() {
       this.selectedOption = '';
     },
@@ -395,6 +420,17 @@ export default {
         this.hidePopup(result.trim());
       }
     },
+    checkSelectedOption() {
+      for (let option of this.optionsObjects) {
+        if (option.text === this.selectedOption) {
+          if (!this.keepDisabledSelected && option.disabled) {
+            this.selectedOption = '';
+          }
+          return;
+        }
+      }
+      this.selectedOption = '';
+    },
   },
   watch: {
     isValid() {
@@ -405,7 +441,18 @@ export default {
       this.$emit('valid', this.isValid);
     },
     selected() {
-      this.selectedOption = this.selected;
+      for (let option of this.optionsObjects) {
+        if (option.text === this.selected) {
+          if (!option.disabled || this.keepDisabledSelected) {
+            this.selectedOption = this.selected;
+          } else {
+            this.selectedOption = '';
+            this.$emit('update:selected', this.selectedOption);
+          }
+          return;
+        }
+      }
+      this.selectedOption = '';
     },
     selectedOption() {
       /**
@@ -415,13 +462,13 @@ export default {
        */
       this.$emit('update:selected', this.selectedOption);
     },
+    keepDisabledSelected() {
+      this.checkSelectedOption();
+    },
     options: {
       handler() {
-        this.optionList = this.options;
-
-        if (!this.optionList.includes(this.selected)) {
-          this.selectedOption = '';
-        }
+        this.optionsObjects = this.processOptions();
+        this.checkSelectedOption();
       },
       deep: true,
     },

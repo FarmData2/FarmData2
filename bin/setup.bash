@@ -17,7 +17,7 @@ echo "Setting up the FarmData2 Development Environment..."
 safe_cd "$REPO_ROOT_DIR"
 
 echo "  Installing npm dependencies..."
-npm install > /dev/null
+npm ci > /dev/null
 echo "  Installed."
 
 echo ""
@@ -40,10 +40,15 @@ echo "  Installed."
 
 echo ""
 
-# Commit the .vale directory to avoid version issues.
-# echo "  Initializing vale linter..."
-# vale sync
-# echo "  Initialized."
+echo "  Configuring vale linter..."
+if [ -f /usr/local/bin/vale ]; then
+  # Remove existing vale if it is left over from an old fd2dev docker container.
+  echo "fd2dev" | sudo -Sk -p "" rm /usr/local/bin/vale
+fi
+# Link to the version of vale installed by npm
+echo "fd2dev" | sudo -Sk -p "" ln -s "$REPO_ROOT_DIR"/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
+vale sync
+echo "  Configured."
 
 echo "  Configuring git information..."
 echo "    The following information will be associated with GitHub commits"

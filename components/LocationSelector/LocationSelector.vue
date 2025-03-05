@@ -405,6 +405,13 @@ export default {
     },
   },
   watch: {
+    allowBedSelection() {
+      if (this.selectAllBedsByDefault) {
+        this.checkedBeds = this.beds;
+      } else {
+        this.checkedBeds = [];
+      }
+    },
     checkedBeds: {
       handler() {
         /**

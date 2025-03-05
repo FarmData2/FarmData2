@@ -1,6 +1,24 @@
 #!/bin/bash
 
+# Required to use stdin in a git hook.
+exec < /dev/tty
+
 echo "Running FarmData2 pre-commit checks..."
+
+# Function to check if any staged files have been modified
+check_modified_staged_files() {
+  local modified_files
+  modified_files=$(git diff --name-only --cached)
+  RESTAGE_FILES=""
+  local result=1
+  for file in $modified_files; do
+    if [ -f "$file" ] && ! git diff --quiet "$file"; then
+      RESTAGE_FILES="$RESTAGE_FILES $file"
+      result=0 # Found a modified staged file
+    fi
+  done
+  return $result
+}
 
 # Prevent commits to the production branch
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -22,13 +40,24 @@ if [ "$BRANCH" = "development" ]; then
   exit 255
 fi
 
-# For all other branches, run the pre-commit checks using lint-staged.
-if npm run check:staged; then
-  echo "Done."
-  echo "Making the commit."
+if check_modified_staged_files; then
   echo
-  exit 0
-else
+  echo "The following previously staged files contain unstaged changes:"
+  echo "  $RESTAGE_FILES"
+  read -rp "Would you like to restage these files for this commit? (y/N) " response
+  if [[ "$response" =~ ^[Yy] ]]; then
+    for file in $RESTAGE_FILES; do
+      git stage "$file"
+    done
+    echo "The modified files have been restaged."
+  else
+    echo "The modified files have not been restaged."
+    echo "Please clarify the situation manually and try your commit again."
+    exit 255
+  fi
+fi
+
+if ! npm run check:staged; then
   echo
   echo "FarmData2 pre-commit checks failed."
   echo "The commit will not be made."
@@ -37,3 +66,7 @@ else
   echo
   exit 255
 fi
+echo "Done."
+echo "Making the commit."
+echo
+exit 0
