@@ -43,10 +43,10 @@ echo ""
 echo "  Configuring vale linter..."
 if [ -f /usr/local/bin/vale ]; then
   # Remove existing vale if it is left over from an old fd2dev docker container.
-  echo "fd2dev" | sudo rm /usr/local/bin/vale
+  echo "fd2dev" | sudo -Sk -p "" rm /usr/local/bin/vale
 fi
 # Link to the version of vale installed by npm
-echo "fd2dev" | sudo ln -s "$REPO_ROOT_DIR"/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
+echo "fd2dev" | sudo -Sk -p "" ln -s "$REPO_ROOT_DIR"/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
 vale sync
 echo "  Configured."
 
