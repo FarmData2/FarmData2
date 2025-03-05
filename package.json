@@ -53,6 +53,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/compiler-sfc": "^3.3.7",
     "@vue/eslint-config-prettier": "^7.1.0",
+    "@vvago/vale": "^3.9.6",
     "conventional-changelog-conventionalcommits": "^7.0.1",
     "cspell": "^6.31.2",
     "cypress": "12.17.4",
