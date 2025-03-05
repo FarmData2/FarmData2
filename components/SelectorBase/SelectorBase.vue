@@ -428,7 +428,7 @@ export default {
      * - The option is not disabled
      *
      */
-    checkSelectedOption() {
+    verifySelectedOption() {
       if (this.optionsObjects.length !== 0) {
         const selectedOption = this.optionsObjects.find(
           (option) => option.text === this.selectedOption
@@ -460,7 +460,7 @@ export default {
       this.selectedOption = this.selected;
     },
     selectedOption() {
-      this.checkSelectedOption();
+      this.verifySelectedOption();
       /**
        * The selected option has changed. When the selection is changed by clicking
        * the trash icon to clear it, this event is emitted with '' as the payload.
@@ -475,10 +475,10 @@ export default {
       deep: true,
     },
     optionsObjects() {
-      this.checkSelectedOption();
+      this.verifySelectedOption();
     },
     keepDisabledSelected() {
-      this.checkSelectedOption();
+      this.verifySelectedOption();
     },
   },
   created() {
