@@ -506,7 +506,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
   //-------------------------------Check if `update:area` emit reset area when switching across different types of location if crops picked-----------------------------------//
 
-  it('Should emit `update:area` and reset to 100 when switching from a location with picked crops to a location with no ', () => {
+  it('Should emit `update:area` and reset to 100 when switching from a location with beds to a location with no active plant assets after selecting crops', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
 
@@ -524,6 +524,45 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
           // Select a crop
           cy.get('[data-cy="picklist-checkbox-2"]').check();
+          cy.get('@areaSpy')
+            .should('have.been.calledThrice')
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(50);
+            });
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'H' });
+
+          // Area should default to a 100
+          cy.get('@areaSpy')
+            .should('have.callCount', 4)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(100);
+            });
+        });
+    });
+  });
+
+  it('Should emit `update:area` and reset to 100 when switching from a location with no beds but has active plant assets to a location with no active plant assets after selecting crops', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'G',
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@areaSpy').should('have.been.calledTwice');
+
+          // Select a crop
+          cy.get('[data-cy="picklist-checkbox-0"]').check();
           cy.get('@areaSpy')
             .should('have.been.calledThrice')
             .its('lastCall.args.0')
@@ -618,45 +657,6 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(0); // Reset area when location changes
-            });
-        });
-    });
-  });
-
-  it('Should emit `update:area` and reset to 100 when switching from a location with no beds but has active plant assets to a location with no beds after selecting crops', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const areaSpy = cy.spy().as('areaSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'G',
-        onReady: readySpy,
-        'onUpdate:area': areaSpy,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@areaSpy').should('have.been.calledTwice');
-
-          // Select a crop
-          cy.get('[data-cy="picklist-checkbox-0"]').check();
-          cy.get('@areaSpy')
-            .should('have.been.calledThrice')
-            .its('lastCall.args.0')
-            .should((areaValue) => {
-              expect(areaValue).to.equal(50);
-            });
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'H' });
-
-          // Area should default to a 100
-          cy.get('@areaSpy')
-            .should('have.callCount', 4)
-            .its('lastCall.args.0')
-            .should((areaValue) => {
-              expect(areaValue).to.equal(100);
             });
         });
     });
