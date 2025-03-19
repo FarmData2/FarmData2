@@ -1,14 +1,14 @@
 <template>
   <div>
     <SelectorBase
-      v-for="(item, i) in ['', ...selectedItems]"
+      v-for="(item, i) in ['', ...selectedObjects]"
       v-bind:key="i + 'extra' + keyExtra"
       v-bind:id="'selector-' + (i + 1)"
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
       v-bind:keepDisabledSelected="true"
-      v-bind:options="this.processedOptions"
+      v-bind:options="this.optionsObjects"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -128,8 +128,8 @@ export default {
   },
   data() {
     return {
-      selectedItems: this.selected,
-      processedOptions: this.processOptions(),
+      selectedObjects: this.selected,
+      optionsObjects: this.processOptions(),
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
@@ -155,10 +155,10 @@ export default {
       return opObjs;
     },
     includePopupUrl(i) {
-      return i === this.selectedItems.length ? this.popupUrl : null;
+      return i === this.selectedObjects.length ? this.popupUrl : null;
     },
     isRequired(i) {
-      return this.required && i === 0 && this.selectedItems.length < 2;
+      return this.required && i === 0 && this.selectedObjects.length < 2;
     },
     handleAddClicked(event) {
       /**
@@ -172,19 +172,19 @@ export default {
     },
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {
-        const item = this.selectedItems[i];
+        const item = this.selectedObjects[i];
         if (!this.allowDuplicateSelections) {
-          for (let option of this.processedOptions) {
+          for (let option of this.optionsObjects) {
             if (option.text == item) {
               option.disabled = false;
             }
           }
         }
-        this.selectedItems.splice(i, 1);
+        this.selectedObjects.splice(i, 1);
         this.valid.splice(i, 1);
         this.keyExtra++;
         /**
-         * We set the key attribute of SelectorBase using keyExtra. When the selectedItems list is
+         * We set the key attribute of SelectorBase using keyExtra. When the selectedObjects list is
          * spliced(during a delete), we change keyExtra, thus changing every SelectorBase key, causing
          * the SelectorBase to refresh causing their selectedOption property to update.
          * Solves the issue of the selectedOption property of SelectorBase not updating.
@@ -193,9 +193,9 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
-        const item = this.selectedItems[i];
+        const item = this.selectedObjects[i];
         if (!this.allowDuplicateSelections) {
-          for (let option of this.processedOptions) {
+          for (let option of this.optionsObjects) {
             if (option.text == event) {
               option.disabled = true;
             }
@@ -204,7 +204,7 @@ export default {
             }
           }
         }
-        this.selectedItems[i] = event;
+        this.selectedObjects[i] = event;
       }
 
       this.selectedIsPopulated();
@@ -212,19 +212,19 @@ export default {
        * The selected items have changed.
        * @property {Array<String>} event the names of the newly selected items.
        */
-      this.$emit('update:selected', this.selectedItems);
+      this.$emit('update:selected', this.selectedObjects);
     },
     handleValid(event, i) {
       this.valid[i] = event;
     },
     selectedIsPopulated() {
-      if (this.selectedItems.length === 0) {
+      if (this.selectedObjects.length === 0) {
         this.valid[0] = !this.required;
       }
     },
     disableSelectedOptions() {
-      this.processedOptions = this.processedOptions.map((option) => {
-        option.disabled = this.selectedItems.includes(option.text)
+      this.optionsObjects = this.optionsObjects.map((option) => {
+        option.disabled = this.selectedObjects.includes(option.text)
           ? true
           : false;
         return option;
@@ -234,14 +234,14 @@ export default {
   watch: {
     selected: {
       handler() {
-        this.selectedItems = this.selected;
+        this.selectedObjects = this.selected;
         this.selectedIsPopulated();
       },
       deep: true,
     },
     options: {
       handler() {
-        this.processedOptions = this.processOptions();
+        this.optionsObjects = this.processOptions();
         this.disableSelectedOptions();
       },
       deep: true,
@@ -249,24 +249,24 @@ export default {
     allowDuplicateSelections: {
       handler() {
         if (this.allowDuplicateSelections) {
-          this.processedOptions = this.processedOptions.map((option) => {
+          this.optionsObjects = this.optionsObjects.map((option) => {
             option.disabled = false;
             return option;
           });
         } else {
           let selectedMinusDuplicates = new Array();
           const encountered = new Set();
-          for (let i = 0; i < this.selectedItems.length; i++) {
-            if (!encountered.has(this.selectedItems[i])) {
-              selectedMinusDuplicates.push(this.selectedItems[i]);
-              encountered.add(this.selectedItems[i]);
+          for (let i = 0; i < this.selectedObjects.length; i++) {
+            if (!encountered.has(this.selectedObjects[i])) {
+              selectedMinusDuplicates.push(this.selectedObjects[i]);
+              encountered.add(this.selectedObjects[i]);
             }
           }
 
-          //not sure why, but this is only way vue will update selectedItems.
-          this.selectedItems.splice(
+          //not sure why, but this is only way vue will update selectedObjects.
+          this.selectedObjects.splice(
             0,
-            this.selectedItems.length,
+            this.selectedObjects.length,
             ...selectedMinusDuplicates
           );
         }
