@@ -287,7 +287,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  //-------------------------------Check if `update:area` emit reset area within the same type of location-----------------------------------//
+  //-------------------------------Check if `update:area` emit reset area within the same type of location if crops picked-----------------------------------//
 
   it('Should emit `update:area` and reset to 0 when switching between locations with beds after crops were picked', () => {
     const readySpy = cy.spy().as('readySpy');
@@ -367,7 +367,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  //-------------------------------Check if `update:area` emit reset area when switching across different types of location with no picked crops-----------------------------------//
+  //-------------------------------Check if `update:area` emit reset area when switching across different types of location if no picked crops-----------------------------------//
 
   it('Should emit `update:area` and reset to 100 when switching from a location with beds to a location with no beds', () => {
     const readySpy = cy.spy().as('readySpy');
@@ -504,7 +504,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  //-------------------------------Check if `update:area` emit reset area when switching across different types of location with picked crops-----------------------------------//
+  //-------------------------------Check if `update:area` emit reset area when switching across different types of location if crops picked-----------------------------------//
 
   it('Should emit `update:area` and reset to 100 when switching from a location with picked crops to a location with no beds', () => {
     const readySpy = cy.spy().as('readySpy');
