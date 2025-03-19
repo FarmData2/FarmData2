@@ -1,6 +1,6 @@
 import ActivePlantAssetPicklist from '@comps/ActivePlantAssetPicklist/ActivePlantAssetPicklist.vue';
 
-describe('Test the ActivePlantAssetPicklist component events', () => {
+describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
