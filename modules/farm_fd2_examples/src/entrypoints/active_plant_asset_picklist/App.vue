@@ -142,7 +142,7 @@ export default {
       form: {
         selected: '',
         picked: new Map(),
-        area: 100,
+        area: null,
         hasPlants: false,
       },
       validity: {

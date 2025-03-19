@@ -159,12 +159,17 @@ export default {
     },
 
     calculatePickedArea(picked) {
-      // If no plants are picked or there are no beds, default to 100%
-      if (picked.size === 0 || !this.picklistColumns.includes('bed')) {
-        return 100;
+      // If no plants are picked, return 0%
+      if (picked.size === 0) {
+        return 0;
       }
 
-      // Map "Bed -> # of entries in the picklistBase table"
+      // If no beds are in the dataset, default to 100%
+      if (!this.picklistColumns.includes('bed')) {
+        return Math.round((picked.size / this.affectedPlants.length) * 100);
+      }
+
+      // Map "Bed -> Total # of plants in that bed"
       const bedTotals = this.affectedPlants.reduce((acc, row) => {
         if (row.bed !== 'N/A') {
           acc[row.bed] = (acc[row.bed] || 0) + 1;
@@ -172,7 +177,7 @@ export default {
         return acc;
       }, {});
 
-      // Maps "Beds -> # of picked entries"
+      // Map "Bed -> # of picked plants in that bed"
       const bedPicks = [...picked.values()].reduce((acc, row) => {
         if (row.row.bed !== 'N/A') {
           acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
@@ -180,24 +185,23 @@ export default {
         return acc;
       }, {});
 
-      // Count how many beds have all their plants chosen
-      let fullyChosenBeds = 0;
+      // Get total number of unique beds
+      const totalUniqueBeds = Object.keys(bedTotals).length;
+      if (totalUniqueBeds === 0) {
+        return 0; // Avoid division by zero
+      }
+
+      // Area = ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds * 100
+      let weightedSum = 0;
+
       for (const [bed, totalForBed] of Object.entries(bedTotals)) {
         const pickedForBed = bedPicks[bed] || 0;
-        if (pickedForBed === totalForBed) {
-          fullyChosenBeds++;
-        }
+        weightedSum += pickedForBed / totalForBed;
       }
 
-      // If no beds are fully chosen, keep area at 100%
-      if (fullyChosenBeds === 0) {
-        return 100;
-      }
+      const areaPercentage = Math.round((weightedSum / totalUniqueBeds) * 100);
 
-      // Otherwise, calculate the percentage
-      return Math.round(
-        (fullyChosenBeds / Object.keys(bedTotals).length) * 100
-      );
+      return areaPercentage;
     },
 
     handleValid(event) {
@@ -263,7 +267,13 @@ export default {
           if (this.pickedRow.size > 0) {
             this.pickedRow = new Map();
             this.$emit('update:picked', this.pickedRow);
-            this.$emit('update:area', 100);
+          }
+
+          // Emit area reset logic when switching between locations with beds vs no beds
+          if (this.affectedPlants.length === 0) {
+            this.$emit('update:area', 100); // No active plants, default to 100%
+          } else {
+            this.$emit('update:area', 0); // Active plants present, reset to 0
           }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
@@ -280,6 +290,9 @@ export default {
             message: 'Unable to fetch plant assets.',
             error,
           });
+
+          // if no plants available due to error, then default area to 100%
+          this.$emit('update:area', 100);
         }
       } else {
         this.affectedPlants = [];
@@ -322,6 +335,7 @@ export default {
      * The component is ready for use.
      */
     this.$emit('ready');
+    this.$emit('update:area', 0);
   },
 };
 </script>
