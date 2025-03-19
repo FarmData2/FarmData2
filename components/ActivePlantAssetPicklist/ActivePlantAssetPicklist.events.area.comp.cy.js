@@ -218,7 +218,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
     });
   });
 
-  it('should not emit `update:area` when switching from a location with no beds but active plant assets to a location with NO beds BUT ACTIVE PLANT ASSET if no crops are selected', () => {
+  it('should not emit `update:area` when switching from a location with no beds but active plant if no crops are selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
 
@@ -506,7 +506,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
   //-------------------------------Check if `update:area` emit reset area when switching across different types of location if crops picked-----------------------------------//
 
-  it('Should emit `update:area` and reset to 100 when switching from a location with picked crops to a location with no beds', () => {
+  it('Should emit `update:area` and reset to 100 when switching from a location with picked crops to a location with no ', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
 
