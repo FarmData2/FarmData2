@@ -435,11 +435,7 @@ export default {
         );
 
         if (selectedOption) {
-          if (
-            selectedOption &&
-            !this.keepDisabledSelected &&
-            selectedOption.disabled
-          ) {
+          if (!this.keepDisabledSelected && selectedOption.disabled) {
             this.clearSelected();
           }
         } else {
