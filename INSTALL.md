@@ -8,11 +8,11 @@ FarmData2 provides a fully containerized Linux-based development environment for
 <img src="docs/install/images/FD2-dev-env.jpg" alt="The Linux-based FarmData2 Development Environment" width="512" />
 
 **The Linux-based FarmData2 Development Environment.**
-
 </center>
 
-The FarmData2 Development Environment can be installed in three ways:
+The FarmData2 Development Environment can be installed in four ways:
 
-- [Running the FarmData2 Development Environment in GitPod](docs/install/gitpod.md) - This is the quickest and easiest way to get started. With this install the Development Environment runs online and is accessed through the browser. But, it cannot be used off-line and GitPod limits free usage to 50 hours per month.
-- [Running the FarmData2 Development Environment Locally](docs/install/local.md) - This install has no free time limit and can be used off-line. But, it requires that your machine have enough resources (~16 GB RAM and 8 CPU cores) and that you install some dependencies on your machine.
-- [Native Install of the FarmData2 Development Tools](docs/install/native.md) - Use of the FarmData2 Development Environment, either by using GitPod or a local install is encouraged. But, if you strongly prefer to work directly on your local machine all the necessary dependencies can, in theory, be installed natively. This approach is much more labor intensive and you might encounter significant difficulties that are dependent upon the versions of software installed on your local machine.
+- [Running in GitHub Codespaces](docs/install/codespaces.md) - This is the quickest and easiest way to get started. With this install the Development Environment runs online and is accessed through the browser or a VNC client. But, it cannot be used off-line and GitHub Codespace usage limits will provide up to 90 hours of free use per month.
+- [Running Locally with Docker Desktop](docs/install/local.md) - This install has no free time limit and can be used off-line. But, it requires that your machine have enough resources (~16 GB RAM and 8 CPU cores) and that you install some dependencies on your machine.
+- [Running in GitPod](docs/install/gitpod.md) - **DEPRECATED: Will not work after April 2025 due to changes in GitPod's services. Use the Codespaces install instead.** ~~This is the quickest and easiest way to get started. With this install the Development Environment runs online and is accessed through the browser. But, it cannot be used off-line and GitPod limits free usage to 50 hours per month.~~
+- [Native Installation](docs/install/native.md) - Use of the FarmData2 Development Environment, either by using GitHub Codespaces or a local install is encouraged. But, if you strongly prefer to work directly on your local machine all the necessary dependencies can, in theory, be installed natively. This approach is much more labor intensive and you might encounter significant difficulties that are dependent upon the versions of software installed on your local machine.

@@ -21,6 +21,10 @@ Running a FarmData2 Development Environment locally requires that you install th
      - `git --version`
    - If git is not installed, visit [git Downloads](https://git-scm.com/downloads) to install git.
      - For Windows, you will need to install the Linux version of git within WSL rather than the Windows version of git.
+1. [Tiger VNC Viewer](https://sourceforge.net/projects/tigervnc/files/stable/1.13.0/)
+   - For Windows, download and run the `vncviewer64.1.13.0.exe` file.
+   - For Mac, download and open the `TigerVNC.1.13.0.dmg` file and then copy the "TigerVNC Viewer" to your Applications folder.
+   - Note: Newer versions of the Tiger VNC Viewer might work, but have not been tested.
 
 ## Creating a FarmData2 Development Environment Locally
 
@@ -36,17 +40,12 @@ Use the following steps to create a FarmData2 Development Environment on your lo
    1. `cd` into your FarmData2 repository directory.
    1. Run the command:
       - `bin/fd2-up.bash`
-      - When running on Windows (WSL) or Linux, this script must make some changes to your local machine configuration. To do so it will prompt you for your admin/root password. If you want to see what the script it doing before running it examine the source code in `bin/fd2-up.bash`.
-1. When running `bin/fd2-up.bash` your terminal will display information about starting the FarmData2 Development Environment. This will take about 2-5 minutes.
+      - When running on Windows (WSL) or Linux, this script must make some changes to your WSL instance. To do so it will prompt you for your admin/root password. If you want to see what the script it doing before running it examine the source code in `bin/fd2-up.bash` and `bin/fd2-up.linux.bash`.
+1. When running `bin/fd2-up.bash` your terminal will display information about starting the FarmData2 Development Environment. This will take 5-10 minutes depending upon your internet speed.
 1. Wait for the message "FarmData2 Development Environment started" to appear in your terminal.
-1. Connect to the FarmData2 Development Environment by using one of the following methods:
-   - Connect by using your web browser by visiting:
-     - `http://localhost:6109`
-       and then clicking the "Connect" button on the page that appears. See the [Connect Using Your Web Browser](connecting.md#connect-using-your-web-browser) section for more information.
-   - Connect to:
-     - `localhost:5901`
-       using a VNC client. See the [Connect Using a VNC Client](connecting.md#connect-using-a-vnc-client) section for more information.
+1. Launch the VNC Viewer and to connect to `localhost:5901`.
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md).
+1. See the [Working in the FarmData2 Development Environment](working.md) document for more information about working in the FarmData2 Developer Environment.
 
 ## Stopping a FarmData2 Development Environment Locally
 
@@ -67,11 +66,9 @@ The FarmData2 Development Environment will restart much faster that the first ti
    1. Run the command:
       - `bin/fd2-up.bash`
 1. Wait for the message "FarmData2 Development Environment started" to appear in your terminal.
-1. [Connect to the FarmData2 Development Environment](connecting.md):
-   - Using your web browser by visiting:
-     - `http://localhost:6901`
-   - Or by using a VNC client and connecting to:
-     - `localhost:5901`
+1. Connect to the FarmData2 Development Environment by using one of the following methods:
+   - Use a web browser to visit `http://localhost:6109` and click the "Connect" button on the page that is displayed.
+   - Use a VNC client to connect to`localhost:5901`.
 1. When you are done working:
    1. Push the branch you are working on to your GitHub as a backup.
    1. [Stop the FarmData2 Development Environment](#stopping-a-farmdata2-development-environment-locally)

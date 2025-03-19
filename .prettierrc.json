@@ -5,5 +5,6 @@
   "singleQuote": true,
   "printWidth": 80,
   "trailingComma": "es5",
-  "singleAttributePerLine": true
+  "singleAttributePerLine": true,
+  "plugins": ["prettier-plugin-sh"]
 }

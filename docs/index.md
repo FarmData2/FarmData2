@@ -17,12 +17,12 @@
 ## Installation
 
 - [INSTALL.md](../INSTALL.md) - starting point for installing the FarmData2 Developer Environment.
-  - [GitPod Installation](install/gitpod.md) - guide for installing the FarmData2 Developer Environment on Gitpod.
+  - [Codespaces Installation](install/codespaces.md) - guide for installing the FarmData2 Developer Environment using GitHub Codespaces.
+  - [GitPod Installation](install/gitpod.md) - **DEPRECATED: Will not work after April 2025 due to changes in GitPod's services. Use the Codespaces install instead.** ~~guide for installing the FarmData2 Developer Environment on Gitpod.~~
   - [Local Installation](install/local.md) - guide for installing the FarmData2 Developer Environment on your machine with Docker.
   - [Native Installation](install/native.md) - information about installing the FarmData2 Developer Environment on your machine without Docker.
 - [Developer Environment Setup](install/setup.md) - instructions for setting up the FarmData2 Developer Environment after installation.
-- [Connecting to the Developer Environment](install/connecting.md) - instructions for connecting to the FarmData2 Developer Environment with a browser or a VNC client.
-- [Credentials](install/credentials.md) - login credentials for the FarmData2 Developer Environment and its farmOS instance with example data.
+- [Working in the Development Environment](install/working.md) - information about working in the FarmData2 Developer Environment in a browser or a VNC client. This includes login credentials and information about how to copy and paste.
 
 ## Contributing
 
