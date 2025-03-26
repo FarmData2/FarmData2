@@ -88,7 +88,7 @@
             id="selector-delete-button"
             data-cy="selector-delete-button"
             variant="outline-warning"
-            v-on:click="handleDelete()"
+            v-on:click="clearSelected()"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -293,9 +293,7 @@ export default {
   },
   methods: {
     processOptions() {
-      /**
-       * The incoming list of options is adapted to the selector base format
-       */
+      // The incoming list of options is adapted to the selectorBase format
       const opObjs = this.options.map((option) => {
         if (typeof option === 'string') {
           option = { text: option, value: option, disabled: false };
@@ -306,7 +304,7 @@ export default {
 
       return opObjs;
     },
-    handleDelete() {
+    clearSelected() {
       this.selectedOption = '';
     },
     removeElements(page) {
@@ -420,16 +418,30 @@ export default {
         this.hidePopup(result.trim());
       }
     },
-    checkSelectedOption() {
-      for (let option of this.optionsObjects) {
-        if (option.text === this.selectedOption) {
-          if (!this.keepDisabledSelected && option.disabled) {
-            this.selectedOption = '';
+    /**
+     * Ensures that the current `selectedOption` is a valid choice otherwise, clears `selectedOption`
+     *
+     * Only updates the `selectedOption` when:
+     * - `optionObjects` is populated.
+     *    - This prevents premature clearing of `selectedOption` before api Calls return options
+     * - The option exists in the list of `optionsObjects`
+     * - The option is not disabled
+     *
+     */
+    verifySelectedOption() {
+      if (this.optionsObjects.length !== 0) {
+        const selectedOption = this.optionsObjects.find(
+          (option) => option.text === this.selectedOption
+        );
+
+        if (selectedOption) {
+          if (!this.keepDisabledSelected && selectedOption.disabled) {
+            this.clearSelected();
           }
-          return;
+        } else {
+          this.clearSelected();
         }
       }
-      this.selectedOption = '';
     },
   },
   watch: {
@@ -441,20 +453,10 @@ export default {
       this.$emit('valid', this.isValid);
     },
     selected() {
-      for (let option of this.optionsObjects) {
-        if (option.text === this.selected) {
-          if (!option.disabled || this.keepDisabledSelected) {
-            this.selectedOption = this.selected;
-          } else {
-            this.selectedOption = '';
-            this.$emit('update:selected', this.selectedOption);
-          }
-          return;
-        }
-      }
-      this.selectedOption = '';
+      this.selectedOption = this.selected;
     },
     selectedOption() {
+      this.verifySelectedOption();
       /**
        * The selected option has changed. When the selection is changed by clicking
        * the trash icon to clear it, this event is emitted with '' as the payload.
@@ -462,15 +464,17 @@ export default {
        */
       this.$emit('update:selected', this.selectedOption);
     },
-    keepDisabledSelected() {
-      this.checkSelectedOption();
-    },
     options: {
       handler() {
         this.optionsObjects = this.processOptions();
-        this.checkSelectedOption();
       },
       deep: true,
+    },
+    optionsObjects() {
+      this.verifySelectedOption();
+    },
+    keepDisabledSelected() {
+      this.verifySelectedOption();
     },
   },
   created() {

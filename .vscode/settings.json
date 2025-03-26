@@ -4,8 +4,10 @@
   "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.quickSuggestionsDelay": 3000,
-  "eslint.validate": [
-    "markdown",
-    "md"
-  ],
+  "eslint.validate": ["markdown", "md"],
+  // Setup to auto-save a second after any change.  This invokes the
+  // codeActionsOnSave that sends a heartbeat signal to
+  // the codespace that keeps it from timing out due to inactivity.
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000
 }
