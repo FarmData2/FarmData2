@@ -210,7 +210,6 @@ export default {
         beds: [],
         termination: false,
         picked: new Map(),
-        affectedPlants: [],
         equipment: [],
         depth: 0,
         speed: 0,
@@ -240,7 +239,7 @@ export default {
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount === 6;
+      return this.createdCount === 7;
     },
     submitEnabled() {
       return !this.validity.show || (this.validToSubmit && !this.submitting);
@@ -256,11 +255,12 @@ export default {
   },
   methods: {
     handleBedsUpdate(checkedBeds, totalBeds) {
-      this.form.beds = checkedBeds;
-      if (totalBeds > 0 && checkedBeds.length > 0) {
-        this.form.area = Math.round((checkedBeds.length / totalBeds) * 100);
-      } else {
-        this.form.area = 100;
+      if (!this.plantsAtLocation) {
+        this.form.beds = checkedBeds;
+        this.form.area =
+          totalBeds > 0
+            ? Math.round((checkedBeds.length / totalBeds) * 100)
+            : 100; // default to 100% if there are no beds
       }
     },
     submit() {
@@ -330,7 +330,6 @@ export default {
       this.form.beds = [];
       this.form.termination = false;
       this.form.picked = new Map();
-      this.form.affectedPlants = [];
       this.form.area = 100;
     },
   },

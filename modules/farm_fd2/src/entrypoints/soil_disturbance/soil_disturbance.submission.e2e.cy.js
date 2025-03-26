@@ -17,16 +17,6 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.saveSessionStorage();
   });
 
-  function checkPlantLocation(plants) {
-    for (const plant of plants) {
-      expect(plant.location).to.equal('ALF');
-
-      const inALF1 = plant.bed.includes('ALF-1');
-      const inALF2 = plant.bed.includes('ALF-2');
-      expect(inALF1 || inALF2).to.be.true;
-    }
-  }
-
   function submitForm(activePlantAsset) {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
@@ -117,9 +107,6 @@ describe('Soil Disturbance: Submission tests', () => {
         expect(formData.picked.get(1).row.crop).to.equal('LETTUCE-ICEBERG');
         expect(formData.picked.get(1).row.bed).to.equal('ALF-1');
 
-        expect(formData.affectedPlants).to.have.length(3);
-        checkPlantLocation(formData.affectedPlants);
-
         /* The termination flag should remain false in this test to avoid
          * terminating crops. If termination is mistakenly set to true,
          * subsequent tests may fail as the database will reflect fewer
@@ -132,7 +119,6 @@ describe('Soil Disturbance: Submission tests', () => {
         expect(formData.location).to.equal('H');
         expect(formData.beds[0]).to.equal('H-1');
         expect(formData.beds[1]).to.equal('H-2');
-        expect(formData.affectedPlants).to.have.length(0);
         expect(formData.termination).to.equal(false);
 
         expect(formData.area).to.equal(100);
@@ -175,7 +161,7 @@ describe('Soil Disturbance: Submission tests', () => {
       .find('[data-cy="selector-input"]')
       .should('have.value', null); // non-sticky
     cy.get('[data-cy="picker-group"]').should('not.exist');
-    cy.get('[data-cy="termination-event-group"]').should('not.exist');
+    cy.get('[data-cy="termination-event-group"]').should('not.be.visible');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
