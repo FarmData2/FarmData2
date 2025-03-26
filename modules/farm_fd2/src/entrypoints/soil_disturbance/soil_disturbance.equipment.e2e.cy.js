@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 describe('Soil Disturbance: Equipment Component', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -100,6 +99,7 @@ describe('Soil Disturbance: Equipment Component', () => {
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', 100);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy="picker-options"]')
       .find('input')
       .eq(0)
@@ -184,6 +184,7 @@ describe('Soil Disturbance: Equipment Component', () => {
       .should('have.value', 1);
 
     // Does not check the checkbox without the wait method
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-cy="picklist-checkbox-0"]').wait(1000).check();
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
