@@ -1,0 +1,160 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "mounts": [
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+  ],
+  "onCreateCommand": ".devcontainer/setup.bash",
+  "forwardPorts": [80, 5901, 6901, 8888],
+  "portsAttributes": {
+    "80": {
+      "label": "farmOS Instance"
+    },
+    "5901": {
+      "label": "FarmData2 VNC"
+    },
+    "6901": {
+      "label": "FarmData2 NoVNC"
+    },
+    "8888": {
+      "label": "FarmData2 Heartbeat"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "emeraldwalk.RunOnSave"
+      ],
+      "settings": {
+        // Hide most of the VSCode UI via settings.
+        // Here instead of .vscode/settings.json so that
+        // they apply only in the dev container.
+        "workbench.startupEditor": "none",
+        "workbench.activityBar.location": "hidden",
+        "workbench.statusBar.visible": false,
+        "window.commandCenter": false,
+        "window.menuBarVisibility": "hidden",
+        "workbench.editor.restoreViewState": false,
+        "workbench.editor.editorActionsLocation": "hidden",
+        "workbench.editor.showTabs": "none",
+        "workbench.layoutControl.enabled": false,
+        "breadcrumbs.enabled": false,
+        "extensions.ignoreRecommendations": true,
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        },
+        "window.restoreWindows": "none",
+        "terminal.integrated.hideOnStartup": "always",
+        "github.codespaces.devcontainerChangedNotificationStyle": "none",
+        "emeraldwalk.runonsave": {
+          "commands": [
+            {
+                "match": ".*",
+                "isAsync": true,
+                "autoShowOutputPanel": "never",
+                "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
+            }
+          ]
+        },
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": [
+            {
+              "label": "Open FarmData Dev Environment",
+              "dependsOrder": "sequence",
+              "dependsOn": [
+                "Hide UI Elements",
+                "Open Loading Page",
+                "Customize Welcome Page",
+                "Run fd2-up.bash Script",
+                "Open Welcome Page",
+                "Start Heartbeat Server",
+                "Start Heartbeat Listener"
+              ],
+              "runOptions": {
+                "runOn": "folderOpen"
+              },
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Hide UI Elements",
+              "type": "process",
+              "command": "${input:hideUIElements}",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Open Loading Page",
+              "type": "shell",
+              "command": "code -r .devcontainer/fd2_loading.md",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Customize Welcome Page",
+              "type": "shell",
+              "command": "./.devcontainer/homepage.bash",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Run fd2-up.bash Script",
+              "type": "shell",
+              "command": "bin/fd2-up.bash",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Open Welcome Page",
+              "type": "shell",
+              "command": "code -r .devcontainer/fd2_welcome.md",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Start Heartbeat Server",
+              "type": "shell",
+              "command": ".devcontainer/startHeartbeat.bash",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Start Heartbeat Listener",
+              "type": "shell",
+              "command": "ncat -lk 8888",
+              "presentation": {
+                "reveal": "never"
+              }
+            }
+          ],
+          "inputs": [
+            {
+              // Hides some additional VSCode UI elements for which there
+              // are no settings available.
+              "id": "hideUIElements",
+              "type": "command",
+              "command": "runCommands",
+              "args": {
+                "commands": [
+                  "workbench.action.closeAllEditors",
+                  "workbench.action.closeSidebar",
+                  "workbench.action.closePanel"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -38,3 +38,5 @@ docs/FarmData2.md
 scratch
 spikes
 .vale
+.fd2
+.devcontainer/fd2_welcome.md
