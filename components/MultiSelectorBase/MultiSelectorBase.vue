@@ -172,16 +172,9 @@ export default {
     },
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {
-        const item = this.selectedObjects[i];
-        if (!this.allowDuplicateSelections) {
-          for (let option of this.optionsObjects) {
-            if (option.text == item) {
-              option.disabled = false;
-            }
-          }
-        }
         this.selectedObjects.splice(i, 1);
         this.valid.splice(i, 1);
+        this.disableSelectedOptions();
         this.keyExtra++;
         /**
          * We set the key attribute of SelectorBase using keyExtra. When the selectedObjects list is
@@ -193,18 +186,8 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
-        const item = this.selectedObjects[i];
-        if (!this.allowDuplicateSelections) {
-          for (let option of this.optionsObjects) {
-            if (option.text == event) {
-              option.disabled = true;
-            }
-            if (option.text == item) {
-              option.disabled = false;
-            }
-          }
-        }
         this.selectedObjects[i] = event;
+        this.disableSelectedOptions();
       }
 
       this.selectedIsPopulated();
@@ -224,20 +207,45 @@ export default {
     },
     disableSelectedOptions() {
       this.optionsObjects = this.optionsObjects.map((option) => {
-        option.disabled = this.selectedObjects.includes(option.text)
-          ? true
-          : false;
+        option.disabled =
+          this.selectedObjects.includes(option.text) &&
+          !this.allowDuplicateSelections
+            ? true
+            : false;
         return option;
       });
+    },
+    removeDuplicateSelections() {
+      let selectedMinusDuplicates = new Array();
+      const encountered = new Set();
+      for (let i = 0; i < this.selectedObjects.length; i++) {
+        if (!encountered.has(this.selectedObjects[i])) {
+          selectedMinusDuplicates.push(this.selectedObjects[i]);
+          encountered.add(this.selectedObjects[i]);
+        }
+      }
+
+      //not sure why, but this is only way vue will update selectedObjects.
+      this.selectedObjects.splice(
+        0,
+        this.selectedObjects.length,
+        ...selectedMinusDuplicates
+      );
     },
   },
   watch: {
     selected: {
       handler() {
         this.selectedObjects = this.selected;
-        this.selectedIsPopulated();
+        if (!this.allowDuplicateSelections) {
+          this.removeDuplicateSelections();
+        }
       },
       deep: true,
+    },
+    selectedOptions() {
+      this.selectedIsPopulated();
+      this.disableSelectedOptions();
     },
     options: {
       handler() {
@@ -254,21 +262,7 @@ export default {
             return option;
           });
         } else {
-          let selectedMinusDuplicates = new Array();
-          const encountered = new Set();
-          for (let i = 0; i < this.selectedObjects.length; i++) {
-            if (!encountered.has(this.selectedObjects[i])) {
-              selectedMinusDuplicates.push(this.selectedObjects[i]);
-              encountered.add(this.selectedObjects[i]);
-            }
-          }
-
-          //not sure why, but this is only way vue will update selectedObjects.
-          this.selectedObjects.splice(
-            0,
-            this.selectedObjects.length,
-            ...selectedMinusDuplicates
-          );
+          this.removeDuplicateSelections();
         }
         this.disableSelectedOptions();
       },
