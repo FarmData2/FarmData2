@@ -1,7 +1,7 @@
 <template>
   <div>
     <SelectorBase
-      v-for="(item, i) in ['', ...selectedObjects]"
+      v-for="(item, i) in ['', ...selectedOptions]"
       v-bind:key="i + 'extra' + keyExtra"
       v-bind:id="'selector-' + (i + 1)"
       v-bind:data-cy="'selector-' + (i + 1)"
@@ -128,7 +128,7 @@ export default {
   },
   data() {
     return {
-      selectedObjects: this.selected,
+      selectedOptions: this.selected,
       optionsObjects: this.processOptions(),
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
@@ -155,10 +155,10 @@ export default {
       return opObjs;
     },
     includePopupUrl(i) {
-      return i === this.selectedObjects.length ? this.popupUrl : null;
+      return i === this.selectedOptions.length ? this.popupUrl : null;
     },
     isRequired(i) {
-      return this.required && i === 0 && this.selectedObjects.length < 2;
+      return this.required && i === 0 && this.selectedOptions.length < 2;
     },
     handleAddClicked(event) {
       /**
@@ -172,12 +172,12 @@ export default {
     },
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {
-        this.selectedObjects.splice(i, 1);
+        this.selectedOptions.splice(i, 1);
         this.valid.splice(i, 1);
         this.disableSelectedOptions();
         this.keyExtra++;
         /**
-         * We set the key attribute of SelectorBase using keyExtra. When the selectedObjects list is
+         * We set the key attribute of SelectorBase using keyExtra. When the selectedOptions list is
          * spliced(during a delete), we change keyExtra, thus changing every SelectorBase key, causing
          * the SelectorBase to refresh causing their selectedOption property to update.
          * Solves the issue of the selectedOption property of SelectorBase not updating.
@@ -186,7 +186,7 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
-        this.selectedObjects[i] = event;
+        this.selectedOptions[i] = event;
         this.disableSelectedOptions();
       }
 
@@ -195,40 +195,42 @@ export default {
        * The selected items have changed.
        * @property {Array<String>} event the names of the newly selected items.
        */
-      this.$emit('update:selected', this.selectedObjects);
+      this.$emit('update:selected', this.selectedOptions);
     },
     handleValid(event, i) {
       this.valid[i] = event;
     },
     selectedIsPopulated() {
-      if (this.selectedObjects.length === 0) {
+      if (this.selectedOptions.length === 0) {
         this.valid[0] = !this.required;
       }
     },
     disableSelectedOptions() {
-      this.optionsObjects = this.optionsObjects.map((option) => {
-        option.disabled =
-          this.selectedObjects.includes(option.text) &&
-          !this.allowDuplicateSelections
-            ? true
-            : false;
-        return option;
-      });
+      if (this.selectedOptions.length !== 0) {
+        this.optionsObjects = this.optionsObjects.map((option) => {
+          option.disabled =
+            this.selectedOptions.includes(option.text) &&
+            !this.allowDuplicateSelections
+              ? true
+              : false;
+          return option;
+        });
+      }
     },
     removeDuplicateSelections() {
       let selectedMinusDuplicates = new Array();
       const encountered = new Set();
-      for (let i = 0; i < this.selectedObjects.length; i++) {
-        if (!encountered.has(this.selectedObjects[i])) {
-          selectedMinusDuplicates.push(this.selectedObjects[i]);
-          encountered.add(this.selectedObjects[i]);
+      for (let i = 0; i < this.selectedOptions.length; i++) {
+        if (!encountered.has(this.selectedOptions[i])) {
+          selectedMinusDuplicates.push(this.selectedOptions[i]);
+          encountered.add(this.selectedOptions[i]);
         }
       }
 
-      //not sure why, but this is only way vue will update selectedObjects.
-      this.selectedObjects.splice(
+      //not sure why, but this is only way vue will update selectedOptions.
+      this.selectedOptions.splice(
         0,
-        this.selectedObjects.length,
+        this.selectedOptions.length,
         ...selectedMinusDuplicates
       );
     },
@@ -236,9 +238,9 @@ export default {
   watch: {
     selected: {
       handler() {
-        this.selectedObjects = this.selected;
+        this.selectedOptions = this.selected;
 
-        //this must be called from selected as removeDuplicateSelections() accesses the selectedObjects data
+        //this must be called from selected as removeDuplicateSelections() accesses the selectedOptions data
         if (!this.allowDuplicateSelections) {
           this.removeDuplicateSelections();
         }
