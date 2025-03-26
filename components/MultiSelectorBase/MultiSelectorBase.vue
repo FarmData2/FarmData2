@@ -209,7 +209,7 @@ export default {
       this.optionsObjects = this.optionsObjects.map((option) => {
         option.disabled =
           this.selectedObjects.includes(option.text) &&
-          this.allowDuplicateSelections
+          !this.allowDuplicateSelections
             ? true
             : false;
         return option;
