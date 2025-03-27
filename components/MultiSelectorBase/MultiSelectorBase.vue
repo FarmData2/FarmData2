@@ -7,7 +7,7 @@
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:keepDisabledSelected="true"
+      v-bind:keepSelectedEnabled="true"
       v-bind:options="this.optionsObjects"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
@@ -213,6 +213,13 @@ export default {
             !this.allowDuplicateSelections
               ? true
               : false;
+
+          console.log(
+            option.text,
+            'disabled was set to: ',
+            option.disabled,
+            ' in multiSelectorBase'
+          );
           return option;
         });
       }
@@ -247,9 +254,12 @@ export default {
       },
       deep: true,
     },
-    selectedOptions() {
-      this.selectedIsPopulated();
-      this.disableSelectedOptions();
+    selectedOptions: {
+      handler() {
+        this.selectedIsPopulated();
+        this.disableSelectedOptions();
+      },
+      deep: true,
     },
     options: {
       handler() {

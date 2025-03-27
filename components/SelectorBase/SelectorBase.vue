@@ -154,7 +154,7 @@
  *   id="crop-selector"
  *   data-cy="crop-selector"
  *   label="Crop"
- *   keepDisabledSelected:"keepDisabledSelected"
+ *   keepSelectedEnabled:"keepSelectedEnabled"
  *   invalidFeedbackText="A crop is required"
  *   v-bind:options="cropList"
  *   v-bind:required="required"
@@ -236,7 +236,7 @@ export default {
     /**
      * Whether the selected option is removed from the options when marked "disabled".
      */
-    keepDisabledSelected: {
+    keepSelectedEnabled: {
       type: Boolean,
       default: false,
     },
@@ -295,11 +295,21 @@ export default {
     processOptions() {
       // The incoming list of options is adapted to the selectorBase format
       const opObjs = this.options.map((option) => {
+        let newOption = {};
         if (typeof option === 'string') {
-          option = { text: option, value: option, disabled: false };
+          newOption = { text: option, value: option, disabled: false };
+        } else {
+          newOption = option;
         }
 
-        return option;
+        if (
+          this.selectedOption != undefined &&
+          newOption.text == this.selectedOption
+        ) {
+          newOption.disabled = this.keepSelectedEnabled ? false : true;
+        }
+
+        return newOption;
       });
 
       return opObjs;
@@ -429,19 +439,19 @@ export default {
      *
      */
     verifySelectedOption() {
-      if (this.optionsObjects.length !== 0) {
+      /* if (this.optionsObjects.length !== 0) {
         const selectedOption = this.optionsObjects.find(
           (option) => option.text === this.selectedOption
         );
 
         if (selectedOption) {
-          if (!this.keepDisabledSelected && selectedOption.disabled) {
+          if (!this.keepSelectedEnabled && selectedOption.disabled) {
             this.clearSelected();
           }
         } else {
           this.clearSelected();
         }
-      }
+      } */
     },
   },
   watch: {
@@ -455,14 +465,18 @@ export default {
     selected() {
       this.selectedOption = this.selected;
     },
-    selectedOption() {
-      this.verifySelectedOption();
-      /**
-       * The selected option has changed. When the selection is changed by clicking
-       * the trash icon to clear it, this event is emitted with '' as the payload.
-       * @property {String} option the name of the newly selected option.
-       */
-      this.$emit('update:selected', this.selectedOption);
+    selectedOption: {
+      handler() {
+        this.optionsObjects = this.processOptions();
+        this.verifySelectedOption();
+        /**
+         * The selected option has changed. When the selection is changed by clicking
+         * the trash icon to clear it, this event is emitted with '' as the payload.
+         * @property {String} option the name of the newly selected option.
+         */
+        this.$emit('update:selected', this.selectedOption);
+      },
+      deep: true,
     },
     options: {
       handler() {
@@ -474,7 +488,7 @@ export default {
     optionsObjects() {
       this.verifySelectedOption();
     },
-    keepDisabledSelected() {
+    keepSelectedEnabled() {
       this.verifySelectedOption();
     },
   },
