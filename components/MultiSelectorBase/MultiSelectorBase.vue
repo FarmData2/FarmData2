@@ -7,12 +7,7 @@
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:options="
-        optionsObjects.map((option) => ({
-          ...option,
-          disabled: option.text == selectedOptions[i] ? false : option.disabled,
-        }))
-      "
+      v-bind:options="processIndividualListOptions(i)"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -157,6 +152,13 @@ export default {
       });
 
       return opObjs;
+    },
+    processIndividualListOptions(index) {
+      return this.optionsObjects.map((option) => ({
+        ...option,
+        disabled:
+          option.text == this.selectedOptions[index] ? false : option.disabled,
+      }));
     },
     includePopupUrl(i) {
       return i === this.selectedOptions.length ? this.popupUrl : null;
