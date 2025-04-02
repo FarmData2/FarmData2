@@ -8,7 +8,12 @@
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
       v-bind:keepDisabledSelected="true"
-      v-bind:options="this.optionsObjects"
+      v-bind:options="
+        optionsObjects.map((option) => ({
+          ...option,
+          disabled: option.text == selectedOptions[i] ? false : option.disabled,
+        }))
+      "
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
