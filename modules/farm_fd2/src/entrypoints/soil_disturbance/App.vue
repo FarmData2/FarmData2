@@ -96,7 +96,7 @@
           <ActivePlantAssetPicklist
             id="termination-event-picklist"
             data-cy="termination-event-picklist"
-            required
+            v-bind:required="form.termination"
             v-bind:location="form.location"
             v-bind:showValidityStyling="validity.show"
             v-bind:picked="form.picked"
@@ -339,6 +339,11 @@ export default {
     },
   },
   watch: {
+    plantsAtLocation(newVal) {
+      if (!newVal) {
+        this.form.termination = false;
+      }
+    },
     pickedValidity(newVal) {
       this.validity.picked = newVal;
     },
