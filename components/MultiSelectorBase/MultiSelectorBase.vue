@@ -7,7 +7,6 @@
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:keepDisabledSelected="true"
       v-bind:options="
         optionsObjects.map((option) => ({
           ...option,

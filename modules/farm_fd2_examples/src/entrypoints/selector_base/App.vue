@@ -12,7 +12,6 @@
     label="Select"
     invalid-feedback-text="Selection cannot be empty."
     v-bind:required="required"
-    v-bind:keepDisabledSelected="keepDisabledSelected"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:options="options"
     v-on:add-clicked="handleAddClicked"
@@ -126,17 +125,6 @@
         </td>
       </tr>
       <tr>
-        <td>Keep Disabled Selected</td>
-        <td>
-          <BFormCheckbox
-            id="keep-disabled-checkbox"
-            data-cy="keep-disabled-checkbox"
-            switch
-            v-model="keepDisabledSelected"
-          />
-        </td>
-      </tr>
-      <tr>
         <td>Toggle Disabled Items</td>
         <td>
           <BButton
@@ -212,7 +200,6 @@ export default {
   data() {
     return {
       required: true,
-      keepDisabledSelected: false,
       showAllButton: true,
       popupUrl: null,
       options: ['one', 'two', 'three', 'four', 'five'],
