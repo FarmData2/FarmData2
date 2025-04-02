@@ -51,7 +51,7 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="!plantsAtLocation"
+          v-bind:allowBedSelection="true"
           v-bind:selectAllBedsByDefault="true"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
@@ -96,13 +96,14 @@
           <ActivePlantAssetPicklist
             id="termination-event-picklist"
             data-cy="termination-event-picklist"
+            required
             v-bind:location="form.location"
             v-bind:showValidityStyling="validity.show"
             v-bind:picked="form.picked"
             v-on:update:picked="form.picked = $event"
             v-on:hasPlants="plantsAtLocation = $event"
             v-on:update:area="form.area = $event"
-            v-on:valid="(valid) => (validity.picked = valid)"
+            v-on:valid="(valid) => (picklistValid = valid)"
             v-on:error="
               (error) => showErrorToast('Network Error', error.message)
             "
@@ -235,9 +236,13 @@ export default {
         bed: 'Bed',
         timestamp: 'Planted Date',
       },
+      picklistValid: false,
     };
   },
   computed: {
+    pickedValidity() {
+      return !this.plantsAtLocation || this.picklistValid;
+    },
     pageDoneLoading() {
       return this.createdCount === 7;
     },
@@ -333,11 +338,15 @@ export default {
       this.form.area = 100;
     },
   },
-  watch: {},
+  watch: {
+    pickedValidity(newVal) {
+      this.validity.picked = newVal;
+    },
+  },
   created() {
     this.createdCount++;
 
-    this.validity.picked = !this.plantsAtLocation;
+    this.validity.picked = this.pickedValidity;
 
     if (window.Cypress) {
       document.defaultView.lib = lib;
