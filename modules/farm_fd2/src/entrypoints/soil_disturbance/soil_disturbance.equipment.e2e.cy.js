@@ -1,4 +1,8 @@
 describe('Soil Disturbance: Equipment Component', () => {
+  before(() => {
+    cy.task('initDB');
+  });
+
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.restoreSessionStorage();
