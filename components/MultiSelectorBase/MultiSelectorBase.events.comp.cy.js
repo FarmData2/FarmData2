@@ -193,6 +193,58 @@ describe('Test the MultiSelectorBase component events', () => {
       });
   });
 
+  it('Emits "update:selected" when duplicate items are selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        selected: ['one'],
+        allowDuplicateSelections: true,
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+        options: ['one', 'two', 'three'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-input"]')
+          .select('one');
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-input"]')
+          .select('one');
+        cy.get('@updateSpy').should('have.been.calledOnce');
+        cy.get('@updateSpy').should('have.been.calledWith', ['one', 'one']);
+      });
+  });
+
+  it('Emits "update:selected" when allowDuplicateSelections is off and duplicate items are selected', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const updateSpy = cy.spy().as('updateSpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        selected: ['one', 'one'],
+        allowDuplicateSelections: true,
+        onReady: readySpy,
+        'onUpdate:selected': updateSpy,
+        options: ['one', 'two', 'three'],
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          wrapper.setProps({ allowDuplicateSelections: false });
+
+          cy.get('@updateSpy').should('have.been.calledOnce');
+          cy.get('@updateSpy').should('have.been.calledWith', ['one']);
+        });
+    });
+  });
+
   it('Emits "add-clicked" forwarded from SelectorBase with new option', () => {
     const readySpy = cy.spy().as('readySpy');
     const addSpy = cy.spy().as('addSpy');
