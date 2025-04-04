@@ -180,7 +180,7 @@ export default {
       if (event === '' || event === null) {
         this.selectedOptions.splice(i, 1);
         this.valid.splice(i, 1);
-        this.disableSelectedOptions();
+        this.disableSelectedOptions(true);
         this.keyExtra++;
         /**
          * We set the key attribute of SelectorBase using keyExtra. When the selectedOptions list is
@@ -193,7 +193,7 @@ export default {
          */
       } else {
         this.selectedOptions[i] = event;
-        this.disableSelectedOptions();
+        this.disableSelectedOptions(true);
       }
 
       this.selectedIsPopulated();
@@ -211,8 +211,11 @@ export default {
         this.valid[0] = !this.required;
       }
     },
-    disableSelectedOptions() {
-      if (this.selectedOptions.length !== 0) {
+    /* `SelectedOptions` only needs to be > 0 when the component is first created
+    without alreadyInitialized, when all items from the list are removed, 
+    the last selected item remains disabled. */
+    disableSelectedOptions(alreadyInitialized = false) {
+      if (this.selectedOptions.length !== 0 || alreadyInitialized) {
         this.optionsObjects = this.optionsObjects.map((option) => {
           option.disabled =
             this.selectedOptions.includes(option.text) &&

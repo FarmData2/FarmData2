@@ -459,4 +459,29 @@ describe('Test the MultiSelectorBase component behavior', () => {
       cy.get('[data-cy="selector-3"]').should('not.exist');
     });
   });
+
+  it('Check display correct disabled status when all selections are deleted.', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(MultiSelectorBase, {
+      props: {
+        onReady: readySpy,
+        required: false,
+        options: ['one'],
+        selected: ['one'],
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .click();
+
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-option-1"]')
+          .should('not.be.disabled');
+      });
+  });
 });
