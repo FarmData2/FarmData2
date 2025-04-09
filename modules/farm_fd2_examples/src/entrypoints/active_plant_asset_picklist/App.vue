@@ -29,6 +29,7 @@
     v-on:hasPlants="form.hasPlants = $event"
     v-on:update:picked="form.picked = $event"
     v-on:update:area="form.area = $event"
+    v-on:update:checkedBeds="form.checkedBeds = $event"
     v-on:valid="validity.selected = $event"
     v-on:error="handleError"
     v-on:ready="createdCount++"
@@ -109,6 +110,10 @@
         <td>{{ form.picked }}</td>
       </tr>
       <tr>
+        <td>update:checkedBeds</td>
+        <td>{{ form.checkedBeds }}</td>
+      </tr>
+      <tr>
         <td>update:area</td>
         <td>{{ form.area }}</td>
       </tr>
@@ -144,6 +149,7 @@ export default {
         picked: new Map(),
         area: null,
         hasPlants: false,
+        checkedBeds: [],
       },
       validity: {
         showStyling: false,

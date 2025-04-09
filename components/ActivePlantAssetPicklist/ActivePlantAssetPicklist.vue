@@ -1,4 +1,14 @@
 <template>
+  <BedPicker
+    v-if="location"
+    id="active-plant-asset-bed-picker"
+    data-cy="active-plant-asset-bed-picker"
+    v-bind:location="location"
+    v-model:picked="checkedBeds"
+    v-bind:showValidityStyling="showValidityStyling"
+    v-on:valid="handleBedsValid($event)"
+  />
+
   <PicklistBase
     id="active-plant-asset-picklist"
     data-cy="active-plant-asset-picklist"
@@ -10,15 +20,16 @@
     v-bind:labels="picklistLabels"
     v-bind:rows="affectedPlants"
     v-bind:showInfoIcons="false"
-    v-bind:picked="picked"
+    v-bind:picked="pickedRow"
     v-on:update:picked="handleUpdatePicked($event)"
-    v-on:valid="handleValid($event)"
+    v-on:valid="handlePicklistValid($event)"
   />
 </template>
 
 <script>
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
+import BedPicker from '@comps/BedPicker/BedPicker.vue';
 
 /**
  * The ActivePlantAssetPicklist allows the user to pick crops from a location.
@@ -42,8 +53,9 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
  *   v-bind:isInTrays="isInTrays"
  *   v-bind:isInGround="isInGround"
  *   v-on:hasPlants="form.hasPlants = $event"
- *   v-on:update:picked="(picked) => (form.picked = picked)"
+ *   v-on:update:picked="form.picked = $event"
  *   v-on:update:area="form.area = $event"
+ *   v-on:update:checkedBeds="form.checkedBeds = $event"
  *   v-on:valid="validity.selected = $event"
  *   v-on:error="handleError"
  *   v-on:ready="createdCount++"
@@ -52,19 +64,21 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name                       | Description
- * -------------------------------------| -----------
- * `active-plant-asset-picklist`        | The `PicklistBase` element showing the crops that can be picked.
+ * Attribute Name                  | Description
+ * --------------------------------| ---------------------------------------
+ * `active-plant-bed-picker`       | The `BedPicker` element shows the beds that can be picked.
+ * `active-plant-asset-picklist`   | The `PicklistBase` element shows the crops that can be picked.
  */
 export default {
   name: 'ActivePlantAssetPicklist',
-  components: { PicklistBase },
+  components: { PicklistBase, BedPicker },
   emits: [
     'ready',
     'valid',
     'hasPlants',
     'update:picked',
     'update:area',
+    'update:checkedBeds',
     'error',
   ],
   props: {
@@ -116,6 +130,7 @@ export default {
   data() {
     return {
       pickedRow: new Map(),
+      checkedBeds: [],
       affectedPlants: [],
       picklistColumns: ['crop', 'bed', 'timestamp'],
       picklistLabels: {
@@ -123,11 +138,17 @@ export default {
         bed: 'Bed',
         timestamp: 'Planted Date',
       },
+      bedsValid: false,
+      picklistValid: false,
     };
   },
   computed: {
     plantsAtLocation() {
       return this.affectedPlants.length > 0;
+    },
+
+    isValid() {
+      return this.picklistValid && this.bedsValid;
     },
   },
 
@@ -216,12 +237,12 @@ export default {
       return areaPercentage;
     },
 
-    handleValid(event) {
-      /**
-       * Indicates if this component's value is valid or not.
-       * @property {Boolean} event `true` if the component's value is valid; `false` if it is invalid.
-       */
-      this.$emit('valid', event);
+    handleBedsValid(event) {
+      this.bedsValid = event;
+    },
+
+    handlePicklistValid(valid) {
+      this.picklistValid = valid;
     },
 
     async checkPlantsAtLocation() {
@@ -310,6 +331,24 @@ export default {
         this.affectedPlants = [];
       }
     },
+
+    mapsAreEqual(mapA, mapB) {
+      if (mapA.size !== mapB.size) {
+        return false;
+      }
+      for (const [key, valueA] of mapA) {
+        if (!mapB.has(key)) {
+          return false;
+        }
+        const valueB = mapB.get(key);
+
+        // Converted to JSON strings for a simple deep comparison.
+        if (JSON.stringify(valueA) !== JSON.stringify(valueB)) {
+          return false;
+        }
+      }
+      return true;
+    },
   },
 
   watch: {
@@ -319,16 +358,19 @@ export default {
       },
       immediate: true,
     },
+
     isInTrays: {
       handler() {
         this.checkPlantsAtLocation();
       },
     },
+
     isInGround: {
       handler() {
         this.checkPlantsAtLocation();
       },
     },
+
     plantsAtLocation: {
       handler(newValue) {
         /**
@@ -339,6 +381,80 @@ export default {
          */
         this.$emit('hasPlants', newValue);
       },
+    },
+
+    checkedBeds(newBeds) {
+      if (!this.picklistColumns.includes('bed')) return;
+
+      const newPicked = new Map(this.pickedRow);
+
+      // Now add any new selections from the checked beds
+      this.affectedPlants.forEach((row, idx) => {
+        if (newBeds.includes(row.bed)) {
+          newPicked.set(idx, { row: row, picked: 1 });
+        }
+      });
+
+      // Only update pickedRow if there is an actual change
+      if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
+        this.pickedRow = new Map(newPicked);
+        this.$emit('update:picked', this.pickedRow);
+
+        const area = this.calculatePickedArea(newPicked);
+        this.$emit('update:area', area);
+      }
+
+      /**
+       * Emitted when the selected beds change.
+       *
+       * @event update:checkedBeds
+       * @property {Array} beds - An array of bed names that are currently checked.
+       */
+      this.$emit('update:checkedBeds', newBeds);
+    },
+
+    pickedRow: {
+      handler(newPicked) {
+        if (!this.picklistColumns.includes('bed')) return;
+
+        // Create a map of counts for each bed in affectedPlants
+        const bedTotals = this.affectedPlants.reduce((acc, row) => {
+          if (row.bed !== 'N/A') {
+            acc[row.bed] = (acc[row.bed] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        // Count how many rows per bed are selected in the newPicked map
+        const bedPicks = [...newPicked.values()].reduce((acc, { row }) => {
+          if (row.bed !== 'N/A') {
+            acc[row.bed] = (acc[row.bed] || 0) + 1;
+          }
+          return acc;
+        }, {});
+
+        // For each bed, if the number of picked rows equals the total rows, include that bed in checkedBeds
+        const newCheckedBeds = Object.keys(bedTotals).filter((bed) => {
+          return bedPicks[bed] === bedTotals[bed];
+        });
+
+        // Compare with current checkedBeds to avoid endless loops, then update if needed
+        if (
+          JSON.stringify(newCheckedBeds.sort()) !==
+          JSON.stringify(this.checkedBeds.sort())
+        ) {
+          this.checkedBeds = newCheckedBeds;
+        }
+      },
+      deep: true,
+    },
+
+    isValid() {
+      /**
+       * The validity of the bedPicker or PicklistBase has changed.
+       * @property {boolean} event whether the selections are valid or not.
+       */
+      this.$emit('valid', this.isValid);
     },
   },
 

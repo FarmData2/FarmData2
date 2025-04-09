@@ -52,7 +52,6 @@
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
           v-bind:allowBedSelection="true"
-          v-bind:selectAllBedsByDefault="true"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
