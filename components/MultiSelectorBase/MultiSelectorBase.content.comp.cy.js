@@ -63,43 +63,42 @@ describe('Test the default MultiSelectorBase content', () => {
       props: {
         onReady: readySpy,
         required: true,
+        selected: ['one'],
         options: ['one', 'two', 'three'],
         popupUrl: '',
       },
-    }).then(({ wrapper }) => {
-      wrapper.setProps({ selected: ['one'] });
-
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('[data-cy="selector-1"]').should('exist');
-          cy.get('[data-cy="selector-1"]')
-            .find('[data-cy="selector-delete-button"]')
-            .should('not.exist');
-          cy.get('[data-cy="selector-1"]')
-            .find('[data-cy="selector-add-button"]')
-            .should('not.exist');
-
-          cy.get('[data-cy="selector-2"]').should('exist');
-          cy.get('[data-cy="selector-2"]')
-            .find('[data-cy="selector-delete-button"]')
-            .should('not.exist');
-          cy.get('[data-cy="selector-2"]')
-            .find('[data-cy="selector-add-button"]')
-            .should('exist');
-
-          cy.get('[data-cy="selector-1"]')
-            .find('[data-cy="selector-required"]')
-            .should('exist');
-          cy.get('[data-cy="selector-2"]')
-            .find('[data-cy="selector-required"]')
-            .should('not.exist');
-
-          cy.get('[data-cy="selector-1"]')
-            .find('[data-cy="selector-input"]')
-            .should('have.value', 'one');
-        });
     });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-1"]').should('exist');
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-add-button"]')
+          .should('not.exist');
+
+        cy.get('[data-cy="selector-2"]').should('exist');
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-delete-button"]')
+          .should('not.exist');
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-add-button"]')
+          .should('exist');
+
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-required"]')
+          .should('exist');
+        cy.get('[data-cy="selector-2"]')
+          .find('[data-cy="selector-required"]')
+          .should('not.exist');
+
+        cy.get('[data-cy="selector-1"]')
+          .find('[data-cy="selector-input"]')
+          .should('have.value', 'one');
+      });
   });
 
   it('Check required prop', () => {
