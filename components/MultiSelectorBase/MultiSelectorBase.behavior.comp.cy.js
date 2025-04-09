@@ -21,17 +21,26 @@ describe('Test the MultiSelectorBase component behavior', () => {
         options: ['one', 'two', 'three', 'four', 'five'],
       },
     }).then(({ wrapper }) => {
-      /*
-       * Without extra then here, the wrapper.setProps usually executes before
-       * the cy.get() above, causing the test to fail.
-       */
-      wrapper.setProps({ selected: ['two', 'three'] });
-      cy.get('[data-cy="selector-1"]')
-        .find('[data-cy="selector-input"]')
-        .should('have.value', 'two');
-      cy.get('[data-cy="selector-2"]')
-        .find('[data-cy="selector-input"]')
-        .should('have.value', 'three');
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="selector-1"]')
+            .find('[data-cy="selector-input"]')
+            .should('have.value', 'one');
+        })
+        .then(() => {
+          /*
+           * Without extra then here, the wrapper.setProps usually executes before
+           * the cy.get() above, causing the test to fail.
+           */
+          wrapper.setProps({ selected: ['two', 'three'] });
+          cy.get('[data-cy="selector-1"]')
+            .find('[data-cy="selector-input"]')
+            .should('have.value', 'two');
+          cy.get('[data-cy="selector-2"]')
+            .find('[data-cy="selector-input"]')
+            .should('have.value', 'three');
+        });
     });
   });
 
