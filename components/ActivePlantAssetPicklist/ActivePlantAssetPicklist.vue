@@ -3,8 +3,10 @@
     v-if="location"
     id="active-plant-asset-bed-picker"
     data-cy="active-plant-asset-bed-picker"
+    v-bind:required="true"
     v-bind:location="location"
-    v-model:picked="checkedBeds"
+    v-bind:picked="checkedBeds"
+    v-on:update:picked="handleBedPickerUpdate($event)"
     v-bind:showValidityStyling="showValidityStyling"
     v-on:valid="handleBedsValid($event)"
   />
@@ -188,6 +190,79 @@ export default {
          *
          */
         this.$emit('update:area', area);
+
+        this.updateCheckedBedsFromPicked(this.pickedRow);
+      }
+    },
+
+    updateCheckedBedsFromPicked(newPicked) {
+      if (!this.picklistColumns.includes('bed')) return;
+
+      // Create a map of counts for each bed in affectedPlants
+      const bedTotals = this.affectedPlants.reduce((acc, row) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // Count how many rows per bed are selected in the newPicked map
+      const bedPicks = [...newPicked.values()].reduce((acc, { row }) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      // For each bed, if the number of picked rows equals the total rows, include that bed in checkedBeds
+      const fullyPickedBeds = Object.keys(bedTotals).filter((bed) => {
+        return bedPicks[bed] === bedTotals[bed];
+      });
+
+      // Preserve any existing checkedBeds for beds NOT in bedTotals
+      const manualOnly = this.checkedBeds.filter((b) => !(b in bedTotals));
+
+      // New checked beds
+      const merged = Array.from(new Set([...manualOnly, ...fullyPickedBeds]));
+
+      // Emit only if it really changed
+      if (
+        JSON.stringify(merged.sort()) !==
+        JSON.stringify(this.checkedBeds.sort())
+      ) {
+        this.checkedBeds = merged;
+      }
+    },
+
+    handleBedPickerUpdate(newBeds) {
+      this.checkedBeds = newBeds;
+
+      /**
+       * Emitted when the set of selected beds changes.
+       *
+       * @event update:checkedBeds
+       * @property {string[]} checkedBeds - An array of bed identifiers that are currently selected in the BedPicker.
+       */
+      this.$emit('update:checkedBeds', this.checkedBeds);
+
+      this.updatePickedFromCheckedBeds(newBeds);
+    },
+
+    updatePickedFromCheckedBeds(newBeds) {
+      if (!this.picklistColumns.includes('bed')) return;
+
+      const newPicked = new Map(this.pickedRow);
+
+      // Now add any new selections from the checked beds
+      this.affectedPlants.forEach((row, idx) => {
+        if (newBeds.includes(row.bed)) {
+          newPicked.set(idx, { row: row, picked: 1 });
+        }
+      });
+
+      // Only update pickedRow if there is an actual change
+      if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
+        this.pickedRow = new Map(newPicked);
       }
     },
 
@@ -381,72 +456,6 @@ export default {
          */
         this.$emit('hasPlants', newValue);
       },
-    },
-
-    checkedBeds(newBeds) {
-      if (!this.picklistColumns.includes('bed')) return;
-
-      const newPicked = new Map(this.pickedRow);
-
-      // Now add any new selections from the checked beds
-      this.affectedPlants.forEach((row, idx) => {
-        if (newBeds.includes(row.bed)) {
-          newPicked.set(idx, { row: row, picked: 1 });
-        }
-      });
-
-      // Only update pickedRow if there is an actual change
-      if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
-        this.pickedRow = new Map(newPicked);
-        this.$emit('update:picked', this.pickedRow);
-
-        const area = this.calculatePickedArea(newPicked);
-        this.$emit('update:area', area);
-      }
-
-      /**
-       * Emitted when the selected beds change.
-       *
-       * @event update:checkedBeds
-       * @property {Array} beds - An array of bed names that are currently checked.
-       */
-      this.$emit('update:checkedBeds', newBeds);
-    },
-
-    pickedRow: {
-      handler(newPicked) {
-        if (!this.picklistColumns.includes('bed')) return;
-
-        // Create a map of counts for each bed in affectedPlants
-        const bedTotals = this.affectedPlants.reduce((acc, row) => {
-          if (row.bed !== 'N/A') {
-            acc[row.bed] = (acc[row.bed] || 0) + 1;
-          }
-          return acc;
-        }, {});
-
-        // Count how many rows per bed are selected in the newPicked map
-        const bedPicks = [...newPicked.values()].reduce((acc, { row }) => {
-          if (row.bed !== 'N/A') {
-            acc[row.bed] = (acc[row.bed] || 0) + 1;
-          }
-          return acc;
-        }, {});
-
-        // For each bed, if the number of picked rows equals the total rows, include that bed in checkedBeds
-        const newCheckedBeds = Object.keys(bedTotals).filter((bed) => {
-          return bedPicks[bed] === bedTotals[bed];
-        });
-
-        // Compare with current checkedBeds to avoid endless loops, then update if needed
-        if (
-          JSON.stringify(newCheckedBeds.sort()) !==
-          JSON.stringify(this.checkedBeds.sort())
-        ) {
-          this.checkedBeds = newCheckedBeds;
-        }
-      },
-      deep: true,
     },
 
     isValid() {
