@@ -23,17 +23,17 @@
               >*</sup
             >
           </div>
-         <BButton
-           v-if="showAllButton"
-           id="picker-all-button"
-           data-cy="picker-all-button"
-           size="sm"
-           variant="primary"
-           v-on:click="pickAll"
+          <BButton
+            v-if="showAllButton"
+            id="picker-all-button"
+            data-cy="picker-all-button"
+            size="sm"
+            variant="primary"
+            v-on:click="pickAll"
           >
-           <span v-if="checked.length === options.length">🚫 All</span>
-           <span v-else>✅ All</span>
-         </BButton>
+            <span v-if="checked.length === options.length">🚫 All</span>
+            <span v-else>✅ All</span>
+          </BButton>
         </div>
       </template>
 
@@ -244,6 +244,10 @@ export default {
 </script>
 
 <style scoped>
+#picker-group {
+  display: flex;
+  align-items: center;
+}
 #picker-input {
   padding-top: 7px;
 }

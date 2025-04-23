@@ -1,31 +1,33 @@
 <template>
-  <BedPicker
-    v-if="location"
-    id="active-plant-asset-bed-picker"
-    data-cy="active-plant-asset-bed-picker"
-    v-bind:required="true"
-    v-bind:location="location"
-    v-bind:picked="checkedBeds"
-    v-on:update:picked="handleBedPickerUpdate($event)"
-    v-bind:showValidityStyling="showValidityStyling"
-    v-on:valid="handleBedsValid($event)"
-  />
+  <div class="active-plant-asset-picklist-container">
+    <BedPicker
+      v-if="location"
+      id="active-plant-asset-bed-picker"
+      data-cy="active-plant-asset-bed-picker"
+      v-bind:required="true"
+      v-bind:location="location"
+      v-bind:picked="checkedBeds"
+      v-on:update:picked="handleBedPickerUpdate($event)"
+      v-bind:showValidityStyling="showValidityStyling"
+      v-on:valid="handleBedsValid($event)"
+    />
 
-  <PicklistBase
-    id="active-plant-asset-picklist"
-    data-cy="active-plant-asset-picklist"
-    class="w-100"
-    v-bind:required="required"
-    invalidFeedbackText="At least one row must be selected."
-    v-bind:showValidityStyling="showValidityStyling"
-    v-bind:columns="picklistColumns"
-    v-bind:labels="picklistLabels"
-    v-bind:rows="affectedPlants"
-    v-bind:showInfoIcons="false"
-    v-bind:picked="pickedRow"
-    v-on:update:picked="handleUpdatePicked($event)"
-    v-on:valid="handlePicklistValid($event)"
-  />
+    <PicklistBase
+      id="active-plant-asset-picklist"
+      data-cy="active-plant-asset-picklist"
+      class="w-100"
+      v-bind:required="required"
+      invalidFeedbackText="At least one row must be selected."
+      v-bind:showValidityStyling="showValidityStyling"
+      v-bind:columns="picklistColumns"
+      v-bind:labels="picklistLabels"
+      v-bind:rows="affectedPlants"
+      v-bind:showInfoIcons="false"
+      v-bind:picked="pickedRow"
+      v-on:update:picked="handleUpdatePicked($event)"
+      v-on:valid="handlePicklistValid($event)"
+    />
+  </div>
 </template>
 
 <script>
@@ -516,3 +518,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#active-plant-asset-bed-picker {
+  display: flex;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  padding: 0.75rem 1rem;
+}
+.active-plant-asset-picklist-container {
+  width: 100%;
+  border: 1px solid rgb(222, 226, 230);
+}
+</style>
