@@ -142,6 +142,7 @@ export default {
       },
       bedsValid: false,
       picklistValid: false,
+      updateInProgress: false, // flag to ensure one update cycle
     };
   },
   computed: {
@@ -156,7 +157,12 @@ export default {
 
   methods: {
     handleUpdatePicked(event) {
+      // If we're already processing an update, don't trigger another update cycle
+      if (this.updateInProgress) return;
+
       if (event.size > 0 || this.pickedRow.size > 0) {
+        this.updateInProgress = true; // Start update cycle
+
         this.pickedRow = event;
 
         // Calculate the area based on picked crop
@@ -190,8 +196,10 @@ export default {
          *
          */
         this.$emit('update:area', area);
-
         this.updateCheckedBedsFromPicked(this.pickedRow);
+
+        // End update cycle
+        this.updateInProgress = false;
       }
     },
 
@@ -214,16 +222,14 @@ export default {
         return acc;
       }, {});
 
-      // For each bed, if the number of picked rows equals the total rows, include that bed in checkedBeds
-      const fullyPickedBeds = Object.keys(bedTotals).filter((bed) => {
-        return bedPicks[bed] === bedTotals[bed];
-      });
+      // For each bed with at least one picked row, include in checkedBeds
+      const AutoBeds = Object.keys(bedPicks).filter((bed) => bedPicks[bed] > 0);
 
-      // Preserve any existing checkedBeds for beds NOT in bedTotals
+      // Preserve any existing checkedBeds that are not in picklistBase
       const manualOnly = this.checkedBeds.filter((b) => !(b in bedTotals));
 
       // New checked beds
-      const merged = Array.from(new Set([...manualOnly, ...fullyPickedBeds]));
+      const merged = Array.from(new Set([...manualOnly, ...AutoBeds]));
 
       // Emit only if it really changed
       if (
@@ -231,10 +237,18 @@ export default {
         JSON.stringify(this.checkedBeds.sort())
       ) {
         this.checkedBeds = merged;
+        this.$emit('update:checkedBeds', this.checkedBeds);
       }
     },
 
     handleBedPickerUpdate(newBeds) {
+      // If we're already processing an update, don't trigger another update cycle
+      if (this.updateInProgress) return;
+
+      this.updateInProgress = true; // Start update cycle
+
+      // Track the previous state to detect changes
+      const previousBeds = [...this.checkedBeds];
       this.checkedBeds = newBeds;
 
       /**
@@ -245,24 +259,50 @@ export default {
        */
       this.$emit('update:checkedBeds', this.checkedBeds);
 
-      this.updatePickedFromCheckedBeds(newBeds);
+      // Find which beds were added and which were removed
+      const added = newBeds.filter((bed) => !previousBeds.includes(bed));
+      const removed = previousBeds.filter((bed) => !newBeds.includes(bed));
+
+      // If beds were added/removed, update the picklist
+      if (added.length > 0 || removed.length > 0) {
+        this.updatePickedFromCheckedBeds(added, removed);
+      }
+
+      // End update cycle
+      this.updateInProgress = false;
     },
 
-    updatePickedFromCheckedBeds(newBeds) {
+    updatePickedFromCheckedBeds(added = [], removed = []) {
       if (!this.picklistColumns.includes('bed')) return;
 
       const newPicked = new Map(this.pickedRow);
 
-      // Now add any new selections from the checked beds
-      this.affectedPlants.forEach((row, idx) => {
-        if (newBeds.includes(row.bed)) {
-          newPicked.set(idx, { row: row, picked: 1 });
-        }
-      });
+      // If beds were unchecked, remove those rows from pickedRow
+      if (removed.length > 0) {
+        this.affectedPlants.forEach((row, idx) => {
+          if (removed.includes(row.bed) && row.bed !== 'N/A') {
+            newPicked.delete(idx);
+          }
+        });
+      }
+
+      // If beds were checked, add all rows for those beds to pickedRow
+      if (added.length > 0) {
+        this.affectedPlants.forEach((row, idx) => {
+          if (added.includes(row.bed) && row.bed !== 'N/A') {
+            newPicked.set(idx, { row: row, picked: 1 });
+          }
+        });
+      }
 
       // Only update pickedRow if there is an actual change
       if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
         this.pickedRow = new Map(newPicked);
+        this.$emit('update:picked', this.pickedRow);
+
+        // Update area calculation too
+        const area = this.calculatePickedArea(this.pickedRow);
+        this.$emit('update:area', area);
       }
     },
 
