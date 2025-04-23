@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_page_attachments_alter().
  */
-function farm_fd2_preprocess_farm_fd2_toolbar(&$variables) {
-  $variables['#attached']['library'][] = 'farm_fd2/farm_fd2_toolbar';
+function farm_fd2_page_attachments_alter(&$variables) {
+  $variables['#attached']['library'][] = 'farm_fd2/main';
 }

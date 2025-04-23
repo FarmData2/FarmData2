@@ -7,9 +7,6 @@ main:
   css:
     component:
       style/style.css: {}
-
-farm_fd2_toolbar:
-  css:
     theme:
       farm_fd2_toolbar.css: {}
 
