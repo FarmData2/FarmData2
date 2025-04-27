@@ -41,14 +41,10 @@ let viteConfig = {
         },
         {
           src: '../module/*.css',
-          dest: '.',
+          dest: 'style/',
         },
         {
           src: '../module/*.module',
-          dest: '.',
-        },
-        {
-          src: '../module/*.svg',
           dest: '.',
         },
       ],
