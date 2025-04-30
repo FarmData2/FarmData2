@@ -514,6 +514,7 @@ export default {
      */
     this.$emit('ready');
     this.$emit('update:area', 0);
+    this.$emit('valid', this.isValid);
   },
 };
 </script>
