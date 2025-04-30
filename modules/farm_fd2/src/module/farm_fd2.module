@@ -3,6 +3,6 @@
 /**
  * Implements hook_page_attachments_alter().
  */
-function farm_fd2_page_attachments_alter(&$variables) {
+function farm_fd2_page_attachments(&$variables) {
   $variables['#attached']['library'][] = 'farm_fd2/fd2_icon';
 }
