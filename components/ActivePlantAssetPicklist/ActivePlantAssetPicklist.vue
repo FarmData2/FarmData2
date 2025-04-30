@@ -9,23 +9,19 @@
       v-bind:picked="checkedBeds"
       v-on:update:picked="handleBedPickerUpdate($event)"
       v-bind:showValidityStyling="showValidityStyling"
-      v-on:valid="handleBedsValid($event)"
+      v-on:valid="handleValid($event)"
     />
 
     <PicklistBase
       id="active-plant-asset-picklist"
       data-cy="active-plant-asset-picklist"
       class="w-100"
-      v-bind:required="required"
-      invalidFeedbackText="At least one row must be selected."
-      v-bind:showValidityStyling="showValidityStyling"
       v-bind:columns="picklistColumns"
       v-bind:labels="picklistLabels"
       v-bind:rows="affectedPlants"
       v-bind:showInfoIcons="false"
       v-bind:picked="pickedRow"
       v-on:update:picked="handleUpdatePicked($event)"
-      v-on:valid="handlePicklistValid($event)"
     />
   </div>
 </template>
@@ -50,7 +46,6 @@ import BedPicker from '@comps/BedPicker/BedPicker.vue';
  * <ActivePlantAssetPicklist
  *   id="active-plant-asset-picklist"
  *   data-cy="active-plant-asset-picklist"
- *   v-bind:required="required"
  *   v-bind:location="form.selected"
  *   v-bind:showValidityStyling="validity.showStyling"
  *   v-bind:picked="form.picked"
@@ -116,13 +111,6 @@ export default {
       default: () => new Map(),
     },
     /**
-     * Whether at least one crop must be picked or not.
-     */
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * Whether validity styling should appear on input elements.
      */
     showValidityStyling: {
@@ -142,18 +130,12 @@ export default {
         bed: 'Bed',
         timestamp: 'Planted Date',
       },
-      bedsValid: false,
-      picklistValid: false,
       updateInProgress: false, // flag to ensure one update cycle
     };
   },
   computed: {
     plantsAtLocation() {
       return this.affectedPlants.length > 0;
-    },
-
-    isValid() {
-      return this.picklistValid && this.bedsValid;
     },
   },
 
@@ -354,12 +336,12 @@ export default {
       return areaPercentage;
     },
 
-    handleBedsValid(event) {
-      this.bedsValid = event;
-    },
-
-    handlePicklistValid(valid) {
-      this.picklistValid = valid;
+    handleValid(event) {
+      /**
+       * Indicates if this component's value is valid or not.
+       * @property {Boolean} event `true` if the component's value is valid; `false` if it is invalid.
+       */
+      this.$emit('valid', event);
     },
 
     async checkPlantsAtLocation() {
@@ -498,14 +480,6 @@ export default {
          */
         this.$emit('hasPlants', newValue);
       },
-    },
-
-    isValid() {
-      /**
-       * The validity of the bedPicker or PicklistBase has changed.
-       * @property {boolean} event whether the selections are valid or not.
-       */
-      this.$emit('valid', this.isValid);
     },
   },
 
