@@ -20,6 +20,7 @@
   <ActivePlantAssetPicklist
     id="active-plant-asset-picklist"
     data-cy="active-plant-asset-picklist"
+    v-bind:required="required"
     v-bind:location="form.selected"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:picked="form.picked"
@@ -44,6 +45,17 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+      </tr>
       <tr>
         <td>showValidityStyling</td>
         <td>
@@ -143,6 +155,7 @@ export default {
         showStyling: false,
         selected: false,
       },
+      required: false,
       isInTrays: false,
       isInGround: true,
       createdCount: 0,
