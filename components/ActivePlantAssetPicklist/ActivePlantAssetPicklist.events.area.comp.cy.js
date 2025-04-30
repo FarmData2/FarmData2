@@ -661,4 +661,99 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
         });
     });
   });
+
+  //--------------------------------------------------check update area behavior based on bed picker selections-----------------------------------------------------------------------//
+  it('Should emit `update:area` when a bed is chosen and rows that correspond to that bed exist in picklist base', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+    const bedPickedSpy = cy.spy().as('bedPickedSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+        'onUpdate:checkedBeds': bedPickedSpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@areaSpy').should('have.been.calledTwice');
+          cy.get('@bedPickedSpy').should('not.have.been.called');
+
+          // Select a bed
+          cy.get(
+            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
+          ).check();
+
+          cy.get('@areaSpy')
+            .should('have.been.calledThrice')
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(50);
+            });
+
+          // unselect a bed
+          cy.get(
+            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
+          ).uncheck();
+
+          cy.get('@areaSpy')
+            .should((spy) => {
+              expect(spy.callCount).to.equal(4);
+            })
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+        });
+    });
+  });
+
+  it('Should not emit `update:area` when a bed is chosen and rows that correspond to that bed does not exist in picklist base', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+    const bedPickedSpy = cy.spy().as('bedPickedSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+        'onUpdate:checkedBeds': bedPickedSpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@areaSpy').should('have.been.calledTwice');
+          cy.get('@bedPickedSpy').should('not.have.been.called');
+
+          // Select a bed
+          cy.get(
+            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-4"]'
+          ).check();
+
+          cy.get('@areaSpy')
+            .should('have.been.calledTwice') // still the same number of emits
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+
+          // unselect a bed
+          cy.get(
+            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-4"]'
+          ).uncheck();
+
+          cy.get('@areaSpy')
+            .should('have.been.calledTwice') // still the same number of emits
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+        });
+    });
+  });
 });

@@ -142,49 +142,51 @@ export default {
   methods: {
     handleUpdatePicked(event) {
       // If we're already processing an update, don't trigger another update cycle
-      if (this.updateInProgress) return;
+      // or if nothing changed
+      if (this.updateInProgress || this.mapsAreEqual(event, this.pickedRow))
+        return;
 
-      if (event.size > 0 || this.pickedRow.size > 0) {
-        this.updateInProgress = true; // Start update cycle
+      this.updateInProgress = true; // Start update cycle
 
-        this.pickedRow = event;
+      this.pickedRow = event;
 
-        // Calculate the area based on picked crop
-        const area = this.calculatePickedArea(event);
+      // Calculate the area based on picked crop
+      const area = this.calculatePickedArea(event);
 
-        /**
-         * Emitted when the picked crops have changed.
-         *
-         * @event update:picked
-         * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
-         *
-         */
-        this.$emit('update:picked', this.pickedRow);
+      /**
+       * Emitted when the picked crops have changed.
+       *
+       * @event update:picked
+       * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+       *
+       */
+      this.$emit('update:picked', this.pickedRow);
 
-        /**
-         * Emitted when the calculated area percentage changes based on selected crops.
-         *
-         * **Calculation**:
-         *
-         *  - **Locations with beds:** The area is calculated based on the proportion of selected crops in each bed,
-         *   using the summation formula:
-         *   `[ ( SUM (picked crops in bed_i / total crops in bed_i) )  / total unique beds ] * 100`.
-         *
-         * - **Locations with active plant assets but no beds:** The area is evenly distributed across all available plant assets.
-         *  If half of the plants are picked, the area is 50%. If all are picked, the area is 100%.
-         *
-         * - **Locations with no active plant assets:** The area defaults to 100% since there are no crops to pick.
-         *
-         * @event update:area
-         * @property {number} area - The selected area percentage, ranging from 0 to 100.
-         *
-         */
-        this.$emit('update:area', area);
-        this.updateCheckedBedsFromPicked(this.pickedRow);
+      console.log('called update:picked from actual', this.pickedRow);
 
-        // End update cycle
-        this.updateInProgress = false;
-      }
+      /**
+       * Emitted when the calculated area percentage changes based on selected crops.
+       *
+       * **Calculation**:
+       *
+       *  - **Locations with beds:** The area is calculated based on the proportion of selected crops in each bed,
+       *   using the summation formula:
+       *   `[ ( SUM (picked crops in bed_i / total crops in bed_i) )  / total unique beds ] * 100`.
+       *
+       * - **Locations with active plant assets but no beds:** The area is evenly distributed across all available plant assets.
+       *  If half of the plants are picked, the area is 50%. If all are picked, the area is 100%.
+       *
+       * - **Locations with no active plant assets:** The area defaults to 100% since there are no crops to pick.
+       *
+       * @event update:area
+       * @property {number} area - The selected area percentage, ranging from 0 to 100.
+       *
+       */
+      this.$emit('update:area', area);
+      this.updateCheckedBedsFromPicked(this.pickedRow);
+
+      // End update cycle
+      this.updateInProgress = false;
     },
 
     updateCheckedBedsFromPicked(newPicked) {
@@ -221,7 +223,6 @@ export default {
         JSON.stringify(this.checkedBeds.sort())
       ) {
         this.checkedBeds = merged;
-        this.$emit('update:checkedBeds', this.checkedBeds);
       }
     },
 
