@@ -162,8 +162,6 @@ export default {
        */
       this.$emit('update:picked', this.pickedRow);
 
-      console.log('called update:picked from actual', this.pickedRow);
-
       /**
        * Emitted when the calculated area percentage changes based on selected crops.
        *

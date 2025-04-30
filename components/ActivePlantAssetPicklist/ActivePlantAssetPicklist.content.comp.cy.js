@@ -24,6 +24,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       .should('have.been.calledOnce')
       .then(() => {
         cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
 
         cy.get('[data-cy="picklist-table"]').should('exist');
         cy.get('[data-cy="picklist-all-button"]').should('not.exist');
@@ -50,6 +51,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
+        // check picklist base
         cy.get('[data-cy^="picklist-crop-"]')
           .its('length')
           .then((count) => {
@@ -65,6 +67,16 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
           'LETTUCE-ICEBERG'
         );
       });
+
+    // check bedPicker
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 5)
+      .first()
+      .should('have.value', 'CHUAU-1');
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 5)
+      .last()
+      .should('have.value', 'CHUAU-5');
 
     // ensure all column exist
     cy.get('[data-cy="picklist-header-crop"]').should('be.visible');
@@ -98,6 +110,16 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
           'have.text',
           'CAULIFLOWER'
         );
+
+        // check bedPicker
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 5)
+          .first()
+          .should('have.value', 'CHUAU-1');
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 5)
+          .last()
+          .should('have.value', 'CHUAU-5');
 
         // ensure that there is no bed column if all fetched assets have no beds
         cy.get('[data-cy="picklist-header-crop"]').should('be.visible');
@@ -140,6 +162,16 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
         // check assets with beds
         cy.get('[data-cy="picklist-bed-11"]').should('have.text', 'CHUAU-1');
         cy.get('[data-cy="picklist-bed-19"]').should('have.text', 'CHUAU-3');
+
+        // check bedPicker
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 5)
+          .first()
+          .should('have.value', 'CHUAU-1');
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 5)
+          .last()
+          .should('have.value', 'CHUAU-5');
       });
   });
 });
