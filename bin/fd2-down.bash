@@ -22,6 +22,6 @@ cd "$REPO_ROOT_DIR/docker" ||
     exit 255
   )
 
-docker compose down
+docker compose --profile "*" down
 
 echo "Done."
