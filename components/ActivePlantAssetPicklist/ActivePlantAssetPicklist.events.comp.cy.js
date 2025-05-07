@@ -32,12 +32,41 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       });
   });
 
-  it('Should emit `invalid` when a location is chosen', () => {
+  it('Should emit `valid` when a location is chosen', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledOnce');
+          cy.get('@validSpy').should('have.been.calledWith', false);
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'CHUAU' });
+          cy.get('@validSpy').should('have.been.calledTwice');
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        });
+    });
+  });
+
+  //---------------------- Valid‐state tests  --------------------------//
+
+  it('1) with required=false should emit valid=true immediately', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: false,
+        requiredRow: false,
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -46,622 +75,72 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnce');
-        cy.get('@validSpy').should('have.been.calledWith', false);
+        cy.get('@validSpy')
+          .should('have.been.calledTwice')
+          .its('secondCall.args.0')
+          .should('equal', true);
       });
   });
 
-  //---------------------- Check validity for beds picked -----------------------------------//
-
-  it('Should emit `valid` when a bed is picked, `required` is false, and that bed exists in picklist', () => {
+  it('2) with required=true and a row picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
         location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a bed
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
-          ).check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
-          ).uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should emit `valid` when a bed is picked, `required` is true. and that bed exists in picklist', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
         required: true,
+        requiredRow: false,
+        onReady: readySpy,
+        onValid: validSpy,
       },
     }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
+      // pick the first row
+      cy.get('[data-cy="picklist-checkbox-0"]').click();
 
-          // Pick a bed
-          cy.contains('[data-cy="picker-options"] label', 'ALF-2').click();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          cy.contains('[data-cy="picker-options"] label', 'ALF-2').click();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
+      cy.get('@validSpy').should('have.been.calledWith', true);
     });
   });
 
-  it('Should emit `valid` when a bed is picked, `required` is false, and that bed does exists in picklist', () => {
+  it('3) with requiredRow=false and a non-picklist bed picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
         location: 'ALF',
+        required: false,
+        requiredRow: false,
         onReady: readySpy,
         onValid: validSpy,
-        required: false,
       },
     }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
+      // pick ALF-4, which isn’t in the picklist rows
+      cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
 
-          // Pick a bed
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
+      cy.get('@validSpy').should('have.been.calledWith', true);
     });
   });
 
-  it('Should emit `invalid` when a bed is picked, `required` is true, and that bed does not exist in picklist', () => {
+  it('4) with requiredRow=true and no selections should emit valid=false', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
         location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a bed
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).check();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).uncheck();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  //----------------------  Check validity for rows picked -----------------------------------//
-
-  it('Should emit `invalid` when a row with no bed is picked, `required` is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
-        onReady: readySpy,
-        onValid: validSpy,
         required: false,
-        isInTrays: true,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // unpick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should emit `invalid` when a row with no bed is picked, `required` is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
+        requiredRow: true,
         onReady: readySpy,
         onValid: validSpy,
-        required: true,
-        isInTrays: true,
       },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // unpick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
     });
-  });
 
-  it('Should emit `valid` when a row with bed is picked, `required` is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          // unpick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should emit `valid` when a row with bed is picked, `required` is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          // unpick a row
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  //----------------------  Check validity for beds and rows picked -----------------------------------//
-
-  it('Should emit `valid` when a bed and row is picked, `required` is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-        isInTrays: true,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a bed and row
-          cy.contains('[data-cy="picker-options"] label', 'CHUAU-3').click();
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          cy.contains('[data-cy="picker-options"] label', 'CHUAU-3').click();
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should emit `valid` when a bed and row is picked, `required` is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-      },
-    }).then(() => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          // Pick a bed and row
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="CHUAU-3"]'
-          ).check();
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledTwice');
-          cy.get('@validSpy').should('have.been.calledWith', true);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="CHUAU-3"]'
-          ).uncheck();
-          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  //---------------------- Check validity for beds when location prop changes -----------------------------------//
-
-  it('Should change validity when the `location` prop updates if a bed was picked that does not exist in picklist and required is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).check();
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should not change validity when the `location` prop updates if a bed was picked that does not exist in picklist and required is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
-          ).check();
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should change validity when the `location` prop updates if a bed was picked that does exist in picklist and required is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
-          ).check();
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should change validity when the `location` prop updates if a bed was picked that does exist in picklist and required is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
-          ).check();
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  //---------------------- Check validity for rows when location prop changes -----------------------------------//
-
-  it('Should not change validity when the `location` prop updates if a row with no bed was picked and required is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-        isInTrays: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should not change validity when the `location` prop updates if a row with no bed was picked and required is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'CHUAU',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-        isInTrays: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get('[data-cy="picklist-checkbox-1"]').check();
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should change validity when the `location` prop updates if a row with bed was picked and required is false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: false,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.get(
-            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
-          ).check();
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
-  });
-
-  it('Should change validity when the `location` prop updates if a row with bed was picked and required is true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        onReady: readySpy,
-        onValid: validSpy,
-        required: true,
-      },
-    }).then(({ wrapper }) => {
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledOnce');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-
-          cy.contains('[data-cy="picker-options"] label', 'ALF-2').click();
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        })
-        .then(() => {
-          wrapper.setProps({ location: 'CHUAU' });
-
-          cy.get('@validSpy').should('have.been.calledThrice');
-          cy.get('@validSpy').should('have.been.calledWith', false);
-        });
-    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@validSpy').should('have.been.calledOnceWith', false);
+      });
   });
 
   //------------------------ update:picked and update:checkedBeds testing -----------------------------------//

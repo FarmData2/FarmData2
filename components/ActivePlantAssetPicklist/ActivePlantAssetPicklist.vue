@@ -4,7 +4,7 @@
       v-if="location"
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
-      v-bind:required="true"
+      v-bind:required="required"
       v-bind:location="location"
       v-bind:picked="checkedBeds"
       v-on:update:picked="handleBedPickerUpdate($event)"
@@ -16,7 +16,7 @@
       id="active-plant-asset-picklist"
       data-cy="active-plant-asset-picklist"
       class="w-100"
-      v-bind:required="required"
+      v-bind:required="picklistRequired"
       invalidFeedbackText="At least one row must be selected."
       v-bind:showValidityStyling="showValidityStyling"
       v-bind:columns="picklistColumns"
@@ -116,6 +116,14 @@ export default {
       default: () => new Map(),
     },
     /**
+     * If true, enforce at least one row in the PicklistBase.
+     * Ignored if `required` is true.
+     */
+    requiredRow: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Whether at least one crop must be picked or not.
      */
     required: {
@@ -150,6 +158,10 @@ export default {
   computed: {
     plantsAtLocation() {
       return this.affectedPlants.length > 0;
+    },
+
+    picklistRequired() {
+      return this.required || this.requiredRow;
     },
 
     isValid() {
