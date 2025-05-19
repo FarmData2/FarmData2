@@ -4,10 +4,10 @@
 # of FarmData2 to a Droplet on Digital Ocean.
 # 
 # Create a droplet with at least:
-#   - Ubuntu
+#   - Debian
 #   - Shared Basic CPU
 #   - Regular SSD Disk
-#   - 2GB RAM
+#   - 2GB RAM  (DOES 1GB WORK?)
 #   - Select Password login and give a root password.
 #
 # Open the console using the DigitalOcean web interface or via CLI SSH
@@ -27,23 +27,12 @@ echo "y" | ufw enable
 echo "Configured."
 
 # Install Docker
-# https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04
-#echo "Installing Docker..."
-#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-#echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-#apt update
-#apt install apt-transport-https ca-certificates curl software-properties-common -y
-#apt-cache policy docker-ce
-#apt install docker-ce -y
-#echo "Installed."
-
-# Install Docker
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-debian-10
 echo "Installing Docker..."
 apt update
 apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" -y
 sudo apt update
 sudo apt install docker-ce -y
 echo "Installed."
@@ -71,7 +60,7 @@ echo "Installed."
 echo "Creating non-root user..."
 useradd -m -G sudo,docker fd2dev
 echo -e "fd2dev\nfd2dev" | passwd fd2dev
-passwd -l fd2dev
+passwd -l fd2dev  # Disable login
 echo "Created."
 
 echo "Switching to non-root user..."
@@ -110,4 +99,25 @@ npm run build:school &> /dev/null
 echo "Built."
 EOF
 
+
+# docker exec -it fd2_dev /bin/bash
+#   cd FarmData2/bin
+#   gh auth login
+#   ./installDB.bash
+#   ./fd2-up.bash
+#   exit
+
+# docker exec fd2_farmos drush pm-uninstall farm_fd2_examples -y
+# docker exec fd2_farmos drush pm-uninstall farm_fd2_school -y
+
+# docker exec fd2_farmos drush user:password manager1 "posse2025"
+# docker exec fd2_farmos drush user:password manager2 "posse2025"
+
+# docker exec fd2_farmos drush user:password worker1 "posse2025"
+# docker exec fd2_farmos drush user:password worker2 "posse2025"
+# docker exec fd2_farmos drush user:password worker3 "posse2025"
+# docker exec fd2_farmos drush user:password worker4 "posse2025"
+# docker exec fd2_farmos drush user:password worker5 "posse2025"
+
+# docker exec fd2_farmos drush user:password guest "posse2025"
 
