@@ -8,6 +8,11 @@ main:
     component:
       style/style.css: {}
 
+fd2_icon:
+  css:
+    theme:
+      style/farm_fd2_toolbar.css: {}
+
 tray_seeding:
   js:
     tray_seeding/tray_seeding.js:

@@ -14,13 +14,13 @@ describe('Test the field utility functions', () => {
   it('Get the field land assets', () => {
     cy.wrap(farmosUtil.getFields()).then((fields) => {
       expect(fields).to.not.be.null;
-      expect(fields.length).to.equal(9);
+      expect(fields.length).to.equal(10);
 
       expect(fields[0].attributes.name).to.equal('A');
       expect(fields[0].type).to.equal('asset--land');
 
-      expect(fields[8].attributes.name).to.equal('H');
-      expect(fields[8].type).to.equal('asset--land');
+      expect(fields[9].attributes.name).to.equal('J');
+      expect(fields[9].type).to.equal('asset--land');
     });
   });
 
@@ -53,7 +53,7 @@ describe('Test the field utility functions', () => {
   it('Get the FieldNameToAsset map', () => {
     cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((fieldNameMap) => {
       expect(fieldNameMap).to.not.be.null;
-      expect(fieldNameMap.size).to.equal(9);
+      expect(fieldNameMap.size).to.equal(10);
 
       expect(fieldNameMap.get('A')).to.not.be.null;
       expect(fieldNameMap.get('A').type).to.equal('asset--land');
@@ -68,7 +68,7 @@ describe('Test the field utility functions', () => {
   it('Get the FieldIdToAsset map', () => {
     cy.wrap(farmosUtil.getFieldIdToAssetMap()).then((fieldIdMap) => {
       expect(fieldIdMap).to.not.be.null;
-      expect(fieldIdMap.size).to.equal(9);
+      expect(fieldIdMap.size).to.equal(10);
 
       cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((fieldNameMap) => {
         const fieldAId = fieldNameMap.get('A').id;

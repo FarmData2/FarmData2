@@ -39,6 +39,14 @@ let viteConfig = {
           src: '../composer.json',
           dest: '.',
         },
+        {
+          src: '../module/*.css',
+          dest: 'style/',
+        },
+        {
+          src: '../module/*.module',
+          dest: '.',
+        },
       ],
     }),
     {

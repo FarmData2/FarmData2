@@ -1,13 +1,13 @@
 <template>
   <div>
     <SelectorBase
-      v-for="(item, i) in ['', ...selectedItems]"
+      v-for="(item, i) in ['', ...selectedOptions]"
       v-bind:key="i + 'extra' + keyExtra"
       v-bind:id="'selector-' + (i + 1)"
       v-bind:data-cy="'selector-' + (i + 1)"
       v-bind:invalidFeedbackText="invalidFeedbackText"
       v-bind:label="String(i + 1)"
-      v-bind:options="options"
+      v-bind:options="processIndividualListOptions(i)"
       v-bind:required="isRequired(i)"
       v-bind:selected="selected[i]"
       v-bind:showValidityStyling="showValidityStyling"
@@ -43,6 +43,7 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:selected="form.selected"
     v-bind:options="options"
+    v-bind:allowDuplicateSelections="allowDuplicateSelections"
     v-bind:popupUrl="popupUrl"
     v-on:valid="
       (valid) => {
@@ -107,6 +108,13 @@ export default {
       default: () => [],
     },
     /**
+     * Whether a value can be selected more than once
+     */
+    allowDuplicateSelections: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * The URL of the form for adding a new option.
      *
      * If this prop is `null`, no "+" button will appear on the select.
@@ -119,7 +127,8 @@ export default {
   },
   data() {
     return {
-      selectedItems: this.selected,
+      selectedOptions: this.selected,
+      optionsObjects: this.processOptions(),
       valid: [null],
       keyExtra: 0, //used for refreshing SelectorBase
     };
@@ -130,11 +139,32 @@ export default {
     },
   },
   methods: {
+    processOptions() {
+      /**
+       * The incoming list of options is processed using the object format for the optionsObject prop in SelectorBase
+       */
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
+    processIndividualListOptions(index) {
+      return this.optionsObjects.map((option) => ({
+        ...option,
+        disabled:
+          option.text == this.selectedOptions[index] ? false : option.disabled,
+      }));
+    },
     includePopupUrl(i) {
-      return i === this.selectedItems.length ? this.popupUrl : null;
+      return i === this.selectedOptions.length ? this.popupUrl : null;
     },
     isRequired(i) {
-      return this.required && i === 0 && this.selectedItems.length < 2;
+      return this.required && i === 0 && this.selectedOptions.length < 2;
     },
     handleAddClicked(event) {
       /**
@@ -148,11 +178,12 @@ export default {
     },
     handleUpdateSelected(event, i) {
       if (event === '' || event === null) {
-        this.selectedItems.splice(i, 1);
+        this.selectedOptions.splice(i, 1);
         this.valid.splice(i, 1);
+        this.disableSelectedOptions(true);
         this.keyExtra++;
         /**
-         * We set the key attribute of SelectorBase using keyExtra. When the selectedItems list is
+         * We set the key attribute of SelectorBase using keyExtra. When the selectedOptions list is
          * spliced(during a delete), we change keyExtra, thus changing every SelectorBase key, causing
          * the SelectorBase to refresh causing their selectedOption property to update.
          * Solves the issue of the selectedOption property of SelectorBase not updating.
@@ -161,28 +192,93 @@ export default {
          * https://michaelnthiessen.com/force-re-render/#the-best-way-the-key-changing-technique
          */
       } else {
-        this.selectedItems[i] = event;
+        this.selectedOptions[i] = event;
+        this.disableSelectedOptions(true);
       }
 
-      if (this.selectedItems.length === 0) {
-        this.valid[0] = !this.required;
-      }
+      this.selectedIsPopulated();
       /**
        * The selected items have changed.
        * @property {Array<String>} event the names of the newly selected items.
        */
-      this.$emit('update:selected', this.selectedItems);
+      this.$emit('update:selected', this.selectedOptions);
     },
     handleValid(event, i) {
       this.valid[i] = event;
+    },
+    selectedIsPopulated() {
+      if (this.selectedOptions.length === 0) {
+        this.valid[0] = !this.required;
+      }
+    },
+    /* `SelectedOptions` only needs to be > 0 when the component is first created
+    without alreadyInitialized, when all items from the list are removed, 
+    the last selected item remains disabled. */
+    disableSelectedOptions(alreadyInitialized = false) {
+      if (this.selectedOptions.length !== 0 || alreadyInitialized) {
+        this.optionsObjects = this.optionsObjects.map((option) => {
+          option.disabled =
+            this.selectedOptions.includes(option.text) &&
+            !this.allowDuplicateSelections
+              ? true
+              : false;
+          return option;
+        });
+      }
+    },
+    removeDuplicateSelections() {
+      let selectedMinusDuplicates = new Array();
+      const encountered = new Set();
+      for (let i = 0; i < this.selectedOptions.length; i++) {
+        if (!encountered.has(this.selectedOptions[i])) {
+          selectedMinusDuplicates.push(this.selectedOptions[i]);
+          encountered.add(this.selectedOptions[i]);
+        }
+      }
+
+      //not sure why, but this is only way vue will update selectedOptions.
+      this.selectedOptions.splice(
+        0,
+        this.selectedOptions.length,
+        ...selectedMinusDuplicates
+      );
     },
   },
   watch: {
     selected: {
       handler() {
-        this.selectedItems = this.selected;
+        this.selectedOptions = this.selected;
+
+        //this must be called from selected as removeDuplicateSelections() accesses the selectedOptions data
+        if (!this.allowDuplicateSelections) {
+          this.removeDuplicateSelections();
+        }
       },
       deep: true,
+    },
+    selectedOptions() {
+      this.selectedIsPopulated();
+      this.disableSelectedOptions();
+    },
+    options: {
+      handler() {
+        this.optionsObjects = this.processOptions();
+        this.disableSelectedOptions();
+      },
+      deep: true,
+    },
+    allowDuplicateSelections: {
+      handler() {
+        if (this.allowDuplicateSelections) {
+          this.optionsObjects = this.optionsObjects.map((option) => {
+            option.disabled = false;
+            return option;
+          });
+        } else {
+          this.removeDuplicateSelections();
+        }
+        this.disableSelectedOptions();
+      },
     },
     isValid() {
       /**
@@ -196,6 +292,7 @@ export default {
     /**
      * The component is ready to be used.
      */
+    this.disableSelectedOptions();
     this.$emit('ready');
   },
 };

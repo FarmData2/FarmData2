@@ -154,7 +154,6 @@
  *   id="crop-selector"
  *   data-cy="crop-selector"
  *   label="Crop"
- *   keepDisabledSelected:"keepDisabledSelected"
  *   invalidFeedbackText="A crop is required"
  *   v-bind:options="cropList"
  *   v-bind:required="required"
@@ -232,13 +231,6 @@ export default {
     selected: {
       type: String,
       default: '',
-    },
-    /**
-     * Whether the selected option is removed from the options when marked "disabled".
-     */
-    keepDisabledSelected: {
-      type: Boolean,
-      default: false,
     },
     /**
      * Whether validity styling should appear on the dropdown.
@@ -435,7 +427,7 @@ export default {
         );
 
         if (selectedOption) {
-          if (!this.keepDisabledSelected && selectedOption.disabled) {
+          if (selectedOption.disabled) {
             this.clearSelected();
           }
         } else {
@@ -468,12 +460,10 @@ export default {
       handler() {
         this.optionsObjects = this.processOptions();
       },
+      immediate: true,
       deep: true,
     },
     optionsObjects() {
-      this.verifySelectedOption();
-    },
-    keepDisabledSelected() {
       this.verifySelectedOption();
     },
   },
