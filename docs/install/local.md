@@ -14,13 +14,16 @@ If you run into problems during the install visit the dedicated [install stream]
 Running a FarmData2 Development Environment locally requires that you install the following dependencies:
 
 1. [Docker Desktop](https://docs.docker.com/desktop/)
-   - If you are running Windows be sure not to miss the step of [turning on the WSL 2 feature on Windows](https://learn.microsoft.com/en-us/windows/wsl/install).
+   - If you are running Windows:
+     - use the _WSL 2 backend_.
+     - be sure to not to miss the step that directs you to instructions to "Turn on the WSL 2 feature on Windows".
+     - be sure to _Enable Docker support in WSL 2 distributions_ as described on the [Docker Desktop WSL 2 backend on Windows](https://docs.docker.com/desktop/features/wsl/) page.
 1. git
    - Most systems now come with git pre-installed.
    - Open a terminal on your local machine (use a WSL terminal if on Windows) and used the following command:
      - `git --version`
    - If git is not installed, visit [git Downloads](https://git-scm.com/downloads) to install git.
-     - For Windows, you will need to install the Linux version of git within WSL rather than the Windows version of git.
+     - If you are running Windows, install the Linux version of git within WSL rather than the Windows version of git.
 
 ## Creating a FarmData2 Development Environment Locally
 
