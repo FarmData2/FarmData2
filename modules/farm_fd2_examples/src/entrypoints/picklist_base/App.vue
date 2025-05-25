@@ -9,6 +9,7 @@
   <PicklistBase
     id="picklist"
     data-cy="picklist"
+    class="w-100"
     v-bind:required="required"
     invalidFeedbackText="At least one row must be selected."
     v-bind:showValidityStyling="validity.showStyling"
@@ -148,15 +149,7 @@
       <tr>
         <td>update:picked</td>
         <td>
-          <div v-if="form.picked.size === 0">{}</div>
-          <ul v-else>
-            <li
-              v-for="[key, value] in form.picked.entries()"
-              :key="key"
-            >
-              Key: {{ key }}, Value: {{ value }}
-            </li>
-          </ul>
+          {{ form.picked }}
         </td>
       </tr>
       <tr>

@@ -4,7 +4,7 @@ Once you have [installed the FarmData2 Development Environment](../../INSTALL.md
 
 ## Creating a Tray Seeding
 
-1. [Login to farmOS](http://farmos) and by using the [credentials for a manager](../install/credentials.md#farmos-credentials).
+1. [Login to farmOS](http://farmos) and by using the [credentials for a farmOS Farm Manager](../install/working.md#farmos-credentials).
 
 2. Use the _farmOS menu_ on the left and select "FarmData2 -> Seeding -> Tray Seeding" If the farmOS menu is not present, make your browser window a little wider or click the "more options" icon (&#9776;) in the top left.
 
@@ -97,7 +97,9 @@ When tray seedings are created they are then available to be transplanted.
 
 ### Equipment and Soil Disturbances
 
-When operations, such as transplanting, use equipment and disturb the soil, FarmData2 provides the option to enter information about the equipment used and how the soil was <!-- vale alex.ProfanityUnlikely = NO : it is soil that is physically disturbed here. -->disturbed<!-- vale alex.ProfanityUnlikely = YES-->. This data can be useful for studies of soil health (for example, the [Pasa Soil Health Benchmark Study](https://pasafarming.org/soil-health-benchmark-study/) and the [Soil Tillage Intensity Rating (STIR)](https://www.nrcs.usda.gov/sites/default/files/2022-11/CEAP-Croplands-2008-Methodology-SoilTillageIntensityRating.pdf)).
+When operations, such as transplanting, use equipment and disturb the soil, FarmData2 provides the option to enter information about the equipment used and how the soil was <!-- vale alex.ProfanityUnlikely = NO : it is soil that is physically disturbed here. -->disturbed<!-- vale alex.ProfanityUnlikely = YES-->. This data can be useful for studies of soil health (for example, the [Pasa Soil Health Benchmark Study](https://pasafarming.org/soil-health-benchmark-study/) and the [Soil Tillage Intensity Rating (STIR)](http://nmsp.cals.cornell.edu/publications/factsheets/factsheet126.pdf)).
+
+<!-- fails link check: https://www.nrcs.usda.gov/sites/default/files/2023-01/Soil-Tillage-Intensity-Rating-Fact-Sheet3-27-2020.pdf-->
 
 <!-- vale RedHat.Symbols = NO -->
 

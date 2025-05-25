@@ -65,12 +65,13 @@
             />
           </template>
           <BFormSelectOption
-            v-for="(option, i) in this.optionList"
-            v-bind:key="option"
-            v-bind:value="option"
+            v-for="(option, i) in this.optionsObjects"
+            v-bind:key="option.text"
+            v-bind:value="option.value"
+            v-bind:disabled="option.disabled"
             v-bind:data-cy="'selector-option-' + (i + 1)"
           >
-            {{ option }}
+            {{ option.text }}
           </BFormSelectOption>
         </BFormSelect>
         <BInputGroupAppend>
@@ -87,7 +88,7 @@
             id="selector-delete-button"
             data-cy="selector-delete-button"
             variant="outline-warning"
-            v-on:click="handleDelete()"
+            v-on:click="clearSelected()"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -205,9 +206,11 @@ export default {
     /**
      * The list of options for the dropdown.
      *
-     * The options shown will update if the prop is set to a new array.
+     * The list of options may take two forms. The first is an array of strings where each string represents an option.
      *
-     * However, the options shown will not change if only the contents of the array are changed.
+     * The second is an array of objects where each object has `text`, `value` and `disabled` attribute. For example `[ {text: 'foo', value: 'foo', disabled: false}, ... ]`. `text` is the option that is displayed, `value` is the value of the element when the options is chosen. `disabled` indicates (`true`/`false`) if the option can be chosen.
+     *
+     * The options displayed will update when the prop is modified.
      */
     options: {
       type: Array,
@@ -249,8 +252,8 @@ export default {
   },
   data() {
     return {
-      optionList: this.options,
       selectedOption: this.selected,
+      optionsObjects: this.processOptions(),
       isPopupVisible: false,
       popupSrc: '',
       isPopupLoaded: false,
@@ -281,7 +284,19 @@ export default {
     },
   },
   methods: {
-    handleDelete() {
+    processOptions() {
+      // The incoming list of options is adapted to the selectorBase format
+      const opObjs = this.options.map((option) => {
+        if (typeof option === 'string') {
+          option = { text: option, value: option, disabled: false };
+        }
+
+        return option;
+      });
+
+      return opObjs;
+    },
+    clearSelected() {
       this.selectedOption = '';
     },
     removeElements(page) {
@@ -395,6 +410,31 @@ export default {
         this.hidePopup(result.trim());
       }
     },
+    /**
+     * Ensures that the current `selectedOption` is a valid choice otherwise, clears `selectedOption`
+     *
+     * Only updates the `selectedOption` when:
+     * - `optionObjects` is populated.
+     *    - This prevents premature clearing of `selectedOption` before api Calls return options
+     * - The option exists in the list of `optionsObjects`
+     * - The option is not disabled
+     *
+     */
+    verifySelectedOption() {
+      if (this.optionsObjects.length !== 0) {
+        const selectedOption = this.optionsObjects.find(
+          (option) => option.text === this.selectedOption
+        );
+
+        if (selectedOption) {
+          if (selectedOption.disabled) {
+            this.clearSelected();
+          }
+        } else {
+          this.clearSelected();
+        }
+      }
+    },
   },
   watch: {
     isValid() {
@@ -408,6 +448,7 @@ export default {
       this.selectedOption = this.selected;
     },
     selectedOption() {
+      this.verifySelectedOption();
       /**
        * The selected option has changed. When the selection is changed by clicking
        * the trash icon to clear it, this event is emitted with '' as the payload.
@@ -417,13 +458,13 @@ export default {
     },
     options: {
       handler() {
-        this.optionList = this.options;
-
-        if (!this.optionList.includes(this.selected)) {
-          this.selectedOption = '';
-        }
+        this.optionsObjects = this.processOptions();
       },
+      immediate: true,
       deep: true,
+    },
+    optionsObjects() {
+      this.verifySelectedOption();
     },
   },
   created() {

@@ -78,7 +78,7 @@ describe('Test the SelectorBase component events', () => {
         label: `TheLabel`,
         required: true,
         options: ['One', 'Two', 'Three', 'Four', 'Five'],
-        selected: ['One'],
+        selected: 'One',
         onReady: readySpy,
         onValid: validSpy,
       },
@@ -191,9 +191,10 @@ describe('Test the SelectorBase component events', () => {
       });
   });
 
-  it('Emits "update:selected" when selection is cleared', () => {
+  it('Emits "update:selected" and "valid" when selection is cleared with button', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
+    const validSpy = cy.spy().as('validSpy');
 
     cy.mount(SelectorBase, {
       props: {
@@ -203,6 +204,7 @@ describe('Test the SelectorBase component events', () => {
         selected: 'Two',
         onReady: readySpy,
         'onUpdate:selected': updateSpy,
+        onValid: validSpy,
       },
     });
 
@@ -212,6 +214,8 @@ describe('Test the SelectorBase component events', () => {
         cy.get('[data-cy="selector-delete-button"]').click();
         cy.get('@updateSpy').should('have.been.calledOnce');
         cy.get('@updateSpy').should('have.been.calledWith', '');
+        cy.get('@validSpy').should('have.been.calledOnce');
+        cy.get('@validSpy').should('have.been.calledWith', true);
         cy.get('[data-cy="selector-input"]').should('have.value', null);
       });
   });

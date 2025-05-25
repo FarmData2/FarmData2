@@ -207,3 +207,14 @@ location_selector:
   css:
     component:
       style/style.css: {}
+
+active_plant_asset_picklist:
+  js:
+    active_plant_asset_picklist/active_plant_asset_picklist.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}
+    

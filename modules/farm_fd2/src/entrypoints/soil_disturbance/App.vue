@@ -51,41 +51,64 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
+          v-bind:allowBedSelection="!plantsAtLocation"
+          v-bind:selectAllBedsByDefault="true"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
             (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
           "
-          v-on:update:selected="(location) => handleLocationUpdate(location)"
+          v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
 
         <!-- Termination Event -->
-        <BFormGroup
+        <div
           id="termination-event-group"
           data-cy="termination-event-group"
-          label-for="termination-event-checkbox"
-          label-cols="auto"
-          label-align="end"
-          v-if="plantsAtLocation"
+          class="flex-column align-items-center"
+          v-show="plantsAtLocation"
         >
-          <template v-slot:label>
-            <span
-              id="termination-event-label"
-              data-cy="termination-event-label"
-              class="p-0"
-              >Termination Event:</span
-            >
-          </template>
+          <BFormGroup
+            id="termination-event-group-checkbox"
+            data-cy="termination-event-group-checkbox"
+            class="w-100"
+            label-for="termination-event-checkbox"
+            label-cols="auto"
+            label-align="end"
+          >
+            <template v-slot:label>
+              <span
+                id="termination-event-label"
+                data-cy="termination-event-label"
+                >Termination Event:</span
+              >
+            </template>
 
-          <BFormCheckbox
-            id="termination-event-checkbox"
-            data-cy="termination-event-checkbox"
-            v-model="form.termination"
-            size="lg"
+            <BFormCheckbox
+              id="termination-event-checkbox"
+              data-cy="termination-event-checkbox"
+              v-model="form.termination"
+              size="lg"
+            />
+          </BFormGroup>
+          <ActivePlantAssetPicklist
+            id="termination-event-picklist"
+            data-cy="termination-event-picklist"
+            v-bind:location="form.location"
+            v-bind:showValidityStyling="validity.show"
+            v-bind:picked="form.picked"
+            v-on:update:picked="form.picked = $event"
+            v-on:hasPlants="plantsAtLocation = $event"
+            v-on:update:area="form.area = $event"
+            v-on:valid="(valid) => (validity.picked = valid)"
+            v-on:error="
+              (error) => showErrorToast('Network Error', error.message)
+            "
+            v-on:ready="createdCount++"
           />
-        </BFormGroup>
+        </div>
         <hr />
 
         <!-- Equipment -->
@@ -166,9 +189,9 @@ import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
+import ActivePlantAssetPicklist from '@comps/ActivePlantAssetPicklist/ActivePlantAssetPicklist.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 export default {
   components: {
@@ -177,6 +200,7 @@ export default {
     SoilDisturbance,
     SubmitResetButtons,
     LocationSelector,
+    ActivePlantAssetPicklist,
   },
   data() {
     return {
@@ -185,7 +209,7 @@ export default {
         location: null,
         beds: [],
         termination: false,
-        affectedPlants: [],
+        picked: new Map(),
         equipment: [],
         depth: 0,
         speed: 0,
@@ -197,20 +221,25 @@ export default {
         show: false,
         date: false,
         location: false,
+        picked: false,
         soilDisturbance: false,
         comment: false,
       },
+      plantsAtLocation: false,
       submitting: false,
       errorShowing: false,
       createdCount: 0,
+      picklistColumns: ['crop', 'bed', 'timestamp'],
+      picklistLabels: {
+        crop: 'Crop',
+        bed: 'Bed',
+        timestamp: 'Planted Date',
+      },
     };
   },
   computed: {
-    plantsAtLocation() {
-      return this.form.affectedPlants.length > 0;
-    },
     pageDoneLoading() {
-      return this.createdCount === 6;
+      return this.createdCount === 7;
     },
     submitEnabled() {
       return !this.validity.show || (this.validToSubmit && !this.submitting);
@@ -225,36 +254,14 @@ export default {
     },
   },
   methods: {
-    async checkPlantsAtLocation() {
-      if (this.form.location) {
-        try {
-          let results = await farmosUtil.getPlantAssets(
-            this.form.location,
-            this.form.beds,
-            false,
-            true
-          );
-          this.form.affectedPlants = results;
-        } catch (error) {
-          console.error('Error fetching plant assets:', error);
-          this.form.affectedPlants = [];
-        }
-      } else {
-        this.form.affectedPlants = [];
-      }
-    },
-    handleLocationUpdate(location) {
-      this.form.location = location;
-      this.checkPlantsAtLocation();
-    },
     handleBedsUpdate(checkedBeds, totalBeds) {
-      this.form.beds = checkedBeds;
-      if (totalBeds > 0 && checkedBeds.length > 0) {
-        this.form.area = (checkedBeds.length / totalBeds) * 100;
-      } else {
-        this.form.area = 100;
+      if (!this.plantsAtLocation) {
+        this.form.beds = checkedBeds;
+        this.form.area =
+          totalBeds > 0
+            ? Math.round((checkedBeds.length / totalBeds) * 100)
+            : 100; // default to 100% if there are no beds
       }
-      this.checkPlantsAtLocation();
     },
     submit() {
       this.submitting = true;
@@ -312,7 +319,6 @@ export default {
 
       if (!sticky) {
         this.form.date = dayjs().format('YYYY-MM-DD');
-        this.form.termination = false;
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
@@ -322,12 +328,16 @@ export default {
 
       this.form.location = null;
       this.form.beds = [];
+      this.form.termination = false;
+      this.form.picked = new Map();
       this.form.area = 100;
     },
   },
   watch: {},
   created() {
     this.createdCount++;
+
+    this.validity.picked = !this.plantsAtLocation;
 
     if (window.Cypress) {
       document.defaultView.lib = lib;
@@ -337,8 +347,8 @@ export default {
 </script>
 
 <style>
-/* 
- * Import a set of standard CSS styles for FarmData2 
+/*
+ * Import a set of standard CSS styles for FarmData2
  * entry points that optimize the page for mobile devices.
  */
 @import url('@css/fd2-mobile.css');
@@ -398,5 +408,15 @@ export default {
   padding-top: 2px;
   font-size: 1.15rem;
   font-weight: 350;
+}
+
+#termination-event-group-checkbox {
+  align-items: center;
+  padding: 0.25rem;
+  background-color: #fff;
+}
+
+#termination-event-group {
+  border: 1px solid rgb(222, 226, 230);
 }
 </style>

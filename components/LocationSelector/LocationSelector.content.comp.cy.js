@@ -81,9 +81,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 10); // includes '' first item.
+          .should('have.length', 11); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-9"]').should('have.text', 'H');
+        cy.get('[data-cy="selector-option-10"]').should('have.text', 'J');
       });
   });
 
@@ -103,9 +103,9 @@ describe('Test the default LocationSelector content', () => {
       .then(() => {
         cy.get('[data-cy="selector-input"]')
           .find('option')
-          .should('have.length', 13); // includes '' first item.
+          .should('have.length', 14); // includes '' first item.
         cy.get('[data-cy="selector-option-1"]').should('have.text', 'A');
-        cy.get('[data-cy="selector-option-12"]').should('have.text', 'JASMINE');
+        cy.get('[data-cy="selector-option-13"]').should('have.text', 'JASMINE');
       });
   });
 
