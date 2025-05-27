@@ -1312,9 +1312,14 @@ export async function getPermissions() {
   return fetchWithCaching('permissions', async () => {
     try {
       const farm = await getFarmOSInstance();
-      const resp = await farm.remote.request.get(
-        'http://farmos/api/permissions'
-      );
+      let url = '';
+      if (inFarmOS()) {
+        const host = 'http://' + document.URL.split('/')[2];
+        url = host + '/api/permissions';
+      } else {
+        url = 'http://farmos/api/permissions';
+      }
+      const resp = await farm.remote.request.get(url);
       return resp.data.permissions;
     } catch (err) {
       throw new Error('Unable to fetch permissions.', err);

@@ -58,7 +58,7 @@
           v-on:update:beds="
             (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
           "
-          v-on:update:selected="(location) => handleLocationUpdate(location)"
+          v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
@@ -67,8 +67,8 @@
         <div
           id="termination-event-group"
           data-cy="termination-event-group"
-          class="d-flex flex-column align-items-center"
-          v-if="plantsAtLocation"
+          class="flex-column align-items-center"
+          v-show="plantsAtLocation"
         >
           <BFormGroup
             id="termination-event-group-checkbox"
@@ -93,20 +93,19 @@
               size="lg"
             />
           </BFormGroup>
-          <PicklistBase
+          <ActivePlantAssetPicklist
             id="termination-event-picklist"
             data-cy="termination-event-picklist"
-            class="w-100"
+            v-bind:location="form.location"
             v-bind:showValidityStyling="validity.show"
-            v-bind:columns="picklistColumns"
-            v-bind:labels="picklistLabels"
-            v-bind:rows="form.affectedPlants"
-            v-bind:showInfoIcons="false"
             v-bind:picked="form.picked"
-            v-on:valid="
-              (valid) => (validity.picked = !plantsAtLocation || valid)
+            v-on:update:picked="form.picked = $event"
+            v-on:hasPlants="plantsAtLocation = $event"
+            v-on:update:area="form.area = $event"
+            v-on:valid="(valid) => (validity.picked = valid)"
+            v-on:error="
+              (error) => showErrorToast('Network Error', error.message)
             "
-            v-on:update:picked="handlePickedUpdate($event)"
             v-on:ready="createdCount++"
           />
         </div>
@@ -190,10 +189,9 @@ import LocationSelector from '@comps/LocationSelector/LocationSelector.vue';
 import SoilDisturbance from '@comps/SoilDisturbance/SoilDisturbance.vue';
 import CommentBox from '@comps/CommentBox/CommentBox.vue';
 import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue';
-import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
+import ActivePlantAssetPicklist from '@comps/ActivePlantAssetPicklist/ActivePlantAssetPicklist.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 export default {
   components: {
@@ -202,7 +200,7 @@ export default {
     SoilDisturbance,
     SubmitResetButtons,
     LocationSelector,
-    PicklistBase,
+    ActivePlantAssetPicklist,
   },
   data() {
     return {
@@ -212,7 +210,6 @@ export default {
         beds: [],
         termination: false,
         picked: new Map(),
-        affectedPlants: [],
         equipment: [],
         depth: 0,
         speed: 0,
@@ -228,6 +225,7 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
+      plantsAtLocation: false,
       submitting: false,
       errorShowing: false,
       createdCount: 0,
@@ -240,11 +238,8 @@ export default {
     };
   },
   computed: {
-    plantsAtLocation() {
-      return this.form.affectedPlants.length > 0;
-    },
     pageDoneLoading() {
-      return this.createdCount === 6;
+      return this.createdCount === 7;
     },
     submitEnabled() {
       return !this.validity.show || (this.validToSubmit && !this.submitting);
@@ -259,125 +254,14 @@ export default {
     },
   },
   methods: {
-    async checkPlantsAtLocation() {
-      if (this.form.location) {
-        try {
-          let results = await farmosUtil.getPlantAssets(
-            this.form.location,
-            [],
-            false,
-            true
-          );
-          // Map results to rows for PicklistBase
-          this.form.affectedPlants = results.flatMap((plant) =>
-            plant.beds.length > 0
-              ? plant.beds.map((bed) => ({
-                  crop: plant.crop.join(', '),
-                  bed,
-                  timestamp: plant.timestamp,
-                  uuid: plant.uuid,
-                  location: plant.location,
-                  created_by: plant.created_by.join(', '),
-                }))
-              : [
-                  {
-                    crop: plant.crop.join(', '),
-                    bed: 'N/A',
-                    timestamp: plant.timestamp,
-                    uuid: plant.uuid,
-                    location: plant.location,
-                    created_by: plant.created_by.join(', '),
-                  },
-                ]
-          );
-
-          // Check if all plants have 'N/A' beds and adjust columns accordingly
-          const allBedsNA = this.form.affectedPlants.every(
-            (plant) => plant.bed === 'N/A'
-          );
-
-          if (allBedsNA) {
-            this.picklistColumns = ['crop', 'timestamp'];
-            this.picklistLabels = {
-              crop: 'Crop',
-              timestamp: 'Planted Date',
-            };
-          } else {
-            this.picklistColumns = ['crop', 'bed', 'timestamp'];
-            this.picklistLabels = {
-              crop: 'Crop',
-              bed: 'Bed',
-              timestamp: 'Planted Date',
-            };
-          }
-        } catch (error) {
-          console.error('Error fetching plant assets:', error);
-          this.form.affectedPlants = [];
-        }
-      } else {
-        this.form.affectedPlants = [];
-      }
-    },
-    async handleLocationUpdate(location) {
-      this.form.location = location;
-      this.checkPlantsAtLocation();
-    },
     handleBedsUpdate(checkedBeds, totalBeds) {
-      this.form.beds = checkedBeds;
-      if (totalBeds > 0 && checkedBeds.length > 0) {
-        this.form.area = Math.round((checkedBeds.length / totalBeds) * 100);
-      } else {
-        this.form.area = 100;
+      if (!this.plantsAtLocation) {
+        this.form.beds = checkedBeds;
+        this.form.area =
+          totalBeds > 0
+            ? Math.round((checkedBeds.length / totalBeds) * 100)
+            : 100; // default to 100% if there are no beds
       }
-    },
-    handlePickedUpdate(picked) {
-      this.form.picked = picked;
-
-      // If there are beds but nothing is picked or if there are no beds, default to 100%
-      if (picked.size === 0 || !this.picklistColumns.includes('bed')) {
-        this.form.area = 100;
-        return;
-      }
-      // else, find area percentage
-
-      // Map "Bed -> # of entries in the picklistBase table"
-      const bedTotals = this.form.affectedPlants.reduce((acc, row) => {
-        if (row.bed !== 'N/A') {
-          acc[row.bed] = (acc[row.bed] || 0) + 1;
-        }
-        return acc;
-      }, {});
-
-      // Maps "Beds -> # of picked entries"
-      // For example, if Chuau-3 -> 1 (Chuau-3 has two entires in the table
-      // but only one was chosen so this bed wont count towards the area percentage)
-      const bedPicks = [...picked.values()].reduce((acc, row) => {
-        if (row.row.bed !== 'N/A') {
-          acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
-        }
-        return acc;
-      }, {});
-
-      // Count how many beds have all their plants chosen
-      let fullyChosenBeds = 0;
-      for (const [bed, totalForBed] of Object.entries(bedTotals)) {
-        const pickedForBed = bedPicks[bed] || 0;
-        // A bed is fully chosen only if ALL of its entries were picked
-        if (pickedForBed == totalForBed) {
-          fullyChosenBeds++;
-        }
-      }
-
-      // If no beds are fully chosen, still keep area at 100%
-      if (fullyChosenBeds === 0) {
-        this.form.area = 100;
-        return;
-      }
-
-      // Otherwise, calculate the percentage
-      this.form.area = Math.round(
-        (fullyChosenBeds / Object.keys(bedTotals).length) * 100
-      );
     },
     submit() {
       this.submitting = true;
@@ -446,7 +330,6 @@ export default {
       this.form.beds = [];
       this.form.termination = false;
       this.form.picked = new Map();
-      this.form.affectedPlants = [];
       this.form.area = 100;
     },
   },

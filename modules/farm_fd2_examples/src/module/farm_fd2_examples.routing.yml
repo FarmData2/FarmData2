@@ -146,3 +146,10 @@ farm.fd2_examples_location_selector.content:
     _title: 'LocationSelector Example'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_active_plant_asset_picklist.content:
+  path: '/fd2_examples/active_plant_asset_picklist'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'ActivePlantAssetPicklist'
+  requirements:
+    _permission: 'access content'

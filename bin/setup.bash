@@ -46,7 +46,9 @@ if [ -f /usr/local/bin/vale ]; then
   echo "fd2dev" | sudo -Sk -p "" rm /usr/local/bin/vale
 fi
 # Link to the version of vale installed by npm
-echo "fd2dev" | sudo -Sk -p "" ln -s "$REPO_ROOT_DIR"/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
+if [ ! -f "$REPO_ROOT_DIR"/bin/vale ]; then
+  echo "fd2dev" | sudo -Sk -p "" ln -s "$REPO_ROOT_DIR"/node_modules/@vvago/vale/bin/vale "$REPO_ROOT_DIR"/bin/vale
+fi
 vale sync
 echo "  Configured."
 
@@ -56,18 +58,41 @@ echo "    that you make from the FarmData2 development environment."
 echo ""
 
 CONFIRM="N"
+GIT_USER=$(git config --global --list | grep user.name | cut -d"=" -f2)
+GIT_EMAIL=$(git config --global --list | grep user.email | cut -d"=" -f2)
 while [ "${CONFIRM,,}" != "y" ]; do
-  read -rp "    Name (user.name): " GIT_USER
-  read -rp "    Email (user.email): " GIT_EMAIL
+
+  if [ "$GIT_USER" = "" ]; then
+    read -rp "    Name (user.name): " GIT_USER
+  fi
+
+  if [ "$GIT_EMAIL" = "" ]; then
+    read -rp "    Email (user.email): " GIT_EMAIL
+  fi
+
+  echo ""
+  echo "user.name=$GIT_USER"
+  echo "user.email=$GIT_EMAIL"
   echo ""
   read -rp "    Is the above information correct? (Y/n) " CONFIRM
+
+  if [ "$CONFIRM" = "N" ] || [ "$CONFIRM" = "n" ]; then
+    GIT_USER=""
+    GIT_EMAIL=""
+  fi
 done
+
 git config --global user.name "$GIT_USER"
 git config --global user.email "$GIT_EMAIL"
 echo ""
-echo "    Setting the upstream remote..."
-git remote add upstream https://github.com/FarmData2/FarmData2.git
-echo "    Set."
+
+UPSTREAM=$(git remote -v | grep "upstream.*https://github.com/FarmData2/FarmData2.git")
+if [ "$UPSTREAM" = "" ]; then
+  echo "    Setting the upstream remote..."
+  git remote add upstream https://github.com/FarmData2/FarmData2.git
+  echo "    Set."
+fi
+
 echo "  Configured."
 
 echo ""
