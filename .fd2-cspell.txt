@@ -33,6 +33,7 @@ FOSS
 getent
 getopt
 gids
+githubcli
 isready
 jsdoc
 jsdocrc
@@ -42,6 +43,7 @@ localstorage
 mfinelli
 Michal
 mkhl
+mktemp
 mryhryki
 newgrp
 novnc
