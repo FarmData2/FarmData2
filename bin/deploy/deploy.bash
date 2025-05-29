@@ -46,7 +46,7 @@ echo "Installed."
 
 # Create and configure a non-root user.
 echo "Creating non-root user..."
-useradd -m -G sudo,docker fd2dev
+useradd -m -G sudo fd2dev
 echo -e "fd2dev\nfd2dev" | passwd fd2dev
 passwd -l fd2dev # Disable login
 echo "Created."
@@ -81,6 +81,11 @@ echo "Started."
 
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
+echo "  FarmData2..."
 npm run build:fd2 &> /dev/null
+echo "  Examples..."
+npm run build:examples &> /dev/null
+echo "  School..."
+npm run build:school &> /dev/null
 echo "Built."
 EOF
