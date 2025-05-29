@@ -3,8 +3,11 @@
 # Disable check that generated a warning in the GitHub CLI install script.
 # shellcheck disable=SC2174
 
-# This script will deploy the development branch
+# This script will deploy the a branch (defaults to development)
 # of FarmData2 to a Droplet on Digital Ocean.
+
+# Get the branch to deploy
+BRANCH=${1:-"development"}
 
 # Enable the firewall
 echo "Configuring the firewall..."
@@ -66,6 +69,7 @@ echo "Installed."
 echo "Cloning FD2..."
 cd ~
 git clone https://github.com/FarmData2/FarmData2.git
+git switch "$BRANCH"
 echo "Cloned."
 
 # Installing FD2 Dependencies
