@@ -27,20 +27,20 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 2. Choose "Access Console"
 3. Click "Launch Droplet Console"
 
+### Configuring the Droplet
+
+Within the Droplet Console:
+
+1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/config.bash -o config.bash`
+2. `chmod 755 config.bash`
+3. `./config.bash`
+
 ### Deploying the FarmData2 Instance
 
 Within the Droplet Console:
 
-1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/deploy.bash -o deploy.bash`
-2. `chmod 755 deploy.bash`
-3. `./deploy.bash [<branch name>]`
-   - The `development` branch will be deployed if no branch is specified.
-
-### Setting up the FarmData2 Instance
-
-Within the Droplet Console:
-
-1. `docker exec -it fd2_dev /bin/bash`
+1. `su - fd2dev`
+2. `docker exec -it fd2_dev /bin/bash`
 
 Then at the bash shell prompt of the `fd2_dev` container:
 
