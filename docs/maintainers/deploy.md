@@ -44,20 +44,14 @@ Within the Droplet Console:
 
 Then at the bash shell prompt of the `fd2_dev` container:
 
-1. `cd FarmData2/bin`
-2. `gh auth login`
+1. `gh auth login`
    - Log in to GitHub using a Personal Access Token (PAT) with repo permission.
+2. `cd FarmData2/bin`
 3. `./installDB.bash`
-4. `exit`
-
-Then within the Droplet Console:
-
-1. `docker stop fd2_dev`
-
-### Change the FarmData2 User's Passwords
-
-1. `cd deploy`
-2. `./setPasswords.bash`
+4. `cd deploy`
+5. `./setPasswords.bash`
+   - Change the passwords for each of the different types of FarmData2 users.
+6. `docker stop fd2_dev`
 
 ### Connect to the Live FarmData2 Instance
 
