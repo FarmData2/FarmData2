@@ -40,12 +40,14 @@ jsdocrc
 linkcheck
 lintstagedrc
 localstorage
+longform
 mfinelli
 Michal
 mkhl
 mktemp
 mryhryki
 newgrp
+NOPASSWD
 novnc
 PASA
 pgid
@@ -79,4 +81,3 @@ vuese
 vvago
 XDEBUG
 Zulip
-longform

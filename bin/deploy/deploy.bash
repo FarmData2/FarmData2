@@ -3,7 +3,7 @@
 # Disable check that generated a warning in the GitHub CLI install script.
 # shellcheck disable=SC2174
 
-# This script will deploy either the development branch
+# This script will deploy the development branch
 # of FarmData2 to a Droplet on Digital Ocean.
 
 # Enable the firewall
@@ -47,8 +47,9 @@ echo "Installed."
 # Create and configure a non-root user.
 echo "Creating non-root user..."
 useradd -m -G sudo fd2dev
-echo -e "fd2dev\nfd2dev" | passwd fd2dev
 passwd -l fd2dev # Disable login
+echo "fd2dev:fd2dev" | chpasswd
+echo "fd2dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 echo "Created."
 
 echo "Switching to non-root user..."
