@@ -69,6 +69,7 @@ echo "Installed."
 echo "Cloning FD2..."
 cd ~
 git clone https://github.com/FarmData2/FarmData2.git
+cd FarmData2
 git switch "$BRANCH"
 echo "Cloned."
 

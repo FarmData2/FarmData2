@@ -33,7 +33,8 @@ Within the Droplet Console:
 
 1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/deploy.bash -o deploy.bash`
 2. `chmod 755 deploy.bash`
-3. `./deploy.bash`
+3. `./deploy.bash [<branch name>]`
+   - The `development` branch will be deployed if no branch is specified.
 
 ### Setting up the FarmData2 Instance
 
