@@ -21,20 +21,19 @@ else
   echo "  docker group exists on host with GID=$DOCKER_GRP_GID."
 fi
 
-# If the current user is not in the docker group add them.
-USER_IN_DOCKER_GRP=$(groups | grep "docker")
-if [ -z "$USER_IN_DOCKER_GRP" ]; then
-  echo "  Adding user $(id -un) to the docker group."
-  sudo usermod -a -G docker "$(id -un)"
-  error_check
-  echo "  User $(id -un) added to the docker group."
-  echo "  ***"
-  echo "  *** Run the ./fd2-up.bash script again to continue."
-  echo "  ***"
-  exec newgrp docker
-else
-  echo "  User $(id -un) is in docker group."
-fi
+  # If the current user is not in the docker group add them
+  # and run the script again with the user in the docker group.
+  USER_IN_DOCKER_GRP=$(groups | grep "docker")
+  if [ -z "$USER_IN_DOCKER_GRP" ]; then
+    echo "  Adding user $(id -un) to the docker group."
+    sudo usermod -a -G docker "$(id -un)"
+    error_check
+    echo "  User $(id -un) added to the docker group."
+    echo "  Running fd2-up.bash again with user $(id -un) in the docker group."
+    sg "docker" "$SCRIPT_DIR/fd2-up.bash"
+  else
+    echo "  User $(id -un) is in docker group."
+  fi
 
 # If the docker.sock does not belong to the docker group assign it.
 # shellcheck disable=SC2010
@@ -99,20 +98,18 @@ else
   echo "  fd2grp group exists on host with GID=$FD2GRP_GID."
 fi
 
-# If the current user is not in the fd2grp then add them.
-USER_IN_FD2GRP=$(groups | grep "fd2grp")
-if [ -z "$USER_IN_FD2GRP" ]; then
-  echo "  Adding user $(id -un) to the fd2grp group."
-  sudo usermod -a -G fd2grp "$(id -un)"
-  error_check
-  echo "  User user $(id -un) added to the fd2grp group."
-  echo "  ***"
-  echo "  *** Run the fd2-up.bash script again to continue."
-  echo "  ***"
-  exec newgrp fd2grp
-else
-  echo "  User $(id -un) is in fd2grp group."
-fi
+  # If the current user is not in the fd2grp then add them.
+  USER_IN_FD2GRP=$(groups | grep "fd2grp")
+  if [ -z "$USER_IN_FD2GRP" ]; then
+    echo "  Adding user $(id -un) to the fd2grp group."
+    sudo usermod -a -G fd2grp "$(id -un)"
+    error_check
+    echo "  User user $(id -un) added to the fd2grp group."
+    echo "  Running fd2-up.bash again with user $(id -un) in the fd2grp group."
+    sg "fd2grp" "$SCRIPT_DIR/fd2-up.bash"
+  else
+    echo "  User $(id -un) is in fd2grp group."
+  fi
 
 # If the FarmData2 directory is not in the fd2grp then set it.
 # shellcheck disable=SC2010
