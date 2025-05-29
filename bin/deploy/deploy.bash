@@ -87,10 +87,10 @@ echo "Started."
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
 echo "  FarmData2..."
-npm run build:fd2 &> /dev/null
+npm run build:fd2 > /dev/null 2>&1
 echo "  Examples..."
-npm run build:examples &> /dev/null
+npm run build:examples > /dev/null 2>&1
 echo "  School..."
-npm run build:school &> /dev/null
+npm run build:school > /dev/null 2>&1
 echo "Built."
 EOF
