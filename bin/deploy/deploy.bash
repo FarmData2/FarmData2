@@ -75,7 +75,6 @@ echo "Cloned."
 
 # Installing FD2 Dependencies
 echo "Installing dependencies..."
-cd FarmData2
 npm ci
 echo "Installed."
 
