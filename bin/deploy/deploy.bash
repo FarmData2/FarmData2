@@ -32,3 +32,4 @@ npm run build:examples
 echo "  School..."
 npm run build:school
 echo "Built."
+

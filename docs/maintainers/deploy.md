@@ -40,9 +40,18 @@ Within the Droplet Console:
 Within the Droplet Console:
 
 1. `su - fd2dev`
-2. `docker exec -it fd2_dev /bin/bash`
+2. `cd FarmData2/bin/deploy`
+3. `./deploy.bash [branch]`
+   - Replace `branch` with the branch to be deployed.
+   - Defaults to `development`.
 
-Then at the bash shell prompt of the `fd2_dev` container:
+### Configuring the Deployed Instance
+
+Within the Droplet Console:
+
+1. `docker exec -it fd2_dev /bin/bash`
+
+At the bash shell prompt in the `fd2_dev` container:
 
 1. `gh auth login`
    - Log in to GitHub using a Personal Access Token (PAT) with repo permission.
