@@ -46,7 +46,7 @@ echo "Installed."
 
 # Create and configure a non-root user.
 echo "Creating non-root user..."
-useradd -m -G sudo fd2dev
+useradd -m -G sudo,docker fd2dev
 passwd -l fd2dev # Disable login
 echo "fd2dev:fd2dev" | chpasswd
 echo "fd2dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers

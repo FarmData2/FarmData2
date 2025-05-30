@@ -57,11 +57,12 @@ At the bash shell prompt in the `fd2_dev` container:
 1. `gh auth login`
    - Log in to GitHub using a Personal Access Token (PAT) with repo permission.
 2. `cd FarmData2/bin`
-3. `./installDB.bash`
-4. `cd deploy`
-5. `./setPasswords.bash`
+3. `gh auth login`
+4. `./installDB.bash`
+5. `cd deploy`
+6. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
-6. `docker stop fd2_dev`
+7. `docker stop fd2_dev`
 
 ### Connect to the Live FarmData2 Instance
 
