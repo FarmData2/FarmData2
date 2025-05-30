@@ -12,12 +12,6 @@ echo "Installing dependencies..."
 npm ci
 echo "Installed."
 
-# Starting FD2
-echo "Starting FD2..."
-cd bin || exit
-./fd2-up.bash
-echo "Started."
-
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
 echo "  FarmData2..."
@@ -28,3 +22,7 @@ echo "  School..."
 sg fd2grp "npm run build:school"
 echo "Built."
 
+# Installing the sample Database
+echo "Installing the sample database..."
+./installDB.bash
+echo "Installed."
