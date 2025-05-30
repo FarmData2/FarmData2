@@ -98,23 +98,6 @@ if [ ! -d "$FD2_PATH/.fd2" ]; then
   echo "  The $FD2_PATH/.fd2 configuration directory created."
 fi
 
-# Create the dist directories if they do not exist
-if [ ! -d "$FD2_PATH"/modules/farm_fd2/dist ]; then
-  echo "Creating the modules/farm_fd2/dist directory."
-  mkdir "$FD2_PATH"/modules/farm_fd2/dist
-  echo "  Created."
-fi
-if [ ! -d "$FD2_PATH"/modules/farm_fd2_examples/dist ]; then
-  echo "Creating the modules/farm_fd2_examples/dist directory."
-  mkdir "$FD2_PATH"/modules/farm_fd2_examples/dist
-  echo "  Created."
-fi
-if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
-  echo "Creating the modules/farm_fd2_school/dist directory."
-  mkdir "$FD2_PATH"/modules/farm_fd2_school/dist
-  echo "  Created."
-fi
-
 if [[ "$PROFILE" == "gitpod" ]]; then
   echo "Running fd2-up.gitpod.bash..."
   source "$SCRIPT_DIR/fd2-up.gitpod.bash"
@@ -133,11 +116,28 @@ else
   echo " Done."
 fi
 
+# Create the dist directories if they do not exist
+if [ ! -d "$FD2_PATH"/modules/farm_fd2/dist ]; then
+  echo "Creating the modules/farm_fd2/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2/dist
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH"/modules/farm_fd2_examples/dist ]; then
+  echo "Creating the modules/farm_fd2_examples/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2_examples/dist
+  echo "  Created."
+fi
+if [ ! -d "$FD2_PATH"/modules/farm_fd2_school/dist ]; then
+  echo "Creating the modules/farm_fd2_school/dist directory."
+  mkdir "$FD2_PATH"/modules/farm_fd2_school/dist
+  echo "  Created."
+fi
+
 # Delete any of the existing containers.
 echo "Removing any stale containers..."
-docker rm fd2_postgres &> /dev/null
-docker rm fd2_farmos &> /dev/null
-docker rm fd2_dev &> /dev/null
+docker rm fd2_postgres > /dev/null 2>&1
+docker rm fd2_farmos > /dev/null 2>&1
+docker rm fd2_dev > /dev/null 2>&1
 
 echo "Starting containers..."
 safe_cd "$FD2_PATH/docker"

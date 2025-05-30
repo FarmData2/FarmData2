@@ -44,7 +44,7 @@ Within the Droplet Console:
 3. `cd FarmData2/bin/deploy`
 4. `./deploy.bash [branch]`
    - Replace `branch` with the branch to be deployed.
-   - Defaults to `development`.
+   - Defaults to `development` if no branch is specified.
 
 ### Configuring the Deployed Instance
 
@@ -55,7 +55,7 @@ Within the Droplet Console:
 At the bash shell prompt in the `fd2_dev` container:
 
 1. `gh auth login`
-   - Log in to GitHub using a Personal Access Token (PAT) with repo permission.
+   - Log in to GitHub using a Personal Access Token (PAT) with `repo` and `read:org` permission.
 2. `cd FarmData2/bin`
 3. `gh auth login`
 4. `./installDB.bash`
