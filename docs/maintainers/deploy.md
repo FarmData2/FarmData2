@@ -40,8 +40,9 @@ Within the Droplet Console:
 Within the Droplet Console:
 
 1. `su - fd2dev`
-2. `cd FarmData2/bin/deploy`
-3. `./deploy.bash [branch]`
+2. `git clone https://github.com/FarmData2/FarmData2.git`
+3. `cd FarmData2/bin/deploy`
+4. `./deploy.bash [branch]`
    - Replace `branch` with the branch to be deployed.
    - Defaults to `development`.
 
