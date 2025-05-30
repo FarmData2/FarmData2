@@ -1,10 +1,10 @@
-# Deploying FarmData2 to a Cloud Server
+# Deploying a FarmData2 Test Instance to a Cloud Server
 
 A running instance of FarmData2 can be deployed to a cloud server for testing purposes. Instances of FarmData2 deployed using these instructions should not be used in production.
 
 ## Deploying to Digital Ocean
 
-The instructions in this document have been used on [DigitalOcean](https://www.digitalocean.com). It should be straightforward to port them to any other hosting platform that provides `ssh` access to a Linux server.
+The instructions in this document have been used on [DigitalOcean](https://www.digitalocean.com) with a Debian Droplet. It should be straightforward to port them to any other hosting platform that provides `ssh` access to a Linux server.
 
 ### Creating a Droplet
 
@@ -41,28 +41,18 @@ Within the Droplet Console:
 
 1. `su - fd2dev`
 2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `cd FarmData2/bin/deploy`
-4. `./deploy.bash [branch]`
-   - Replace `branch` with the branch to be deployed.
-   - Defaults to `development` if no branch is specified.
-
-### Configuring the Deployed Instance
-
-Within the Droplet Console:
-
-1. `docker exec -it fd2_dev /bin/bash`
-
-At the bash shell prompt in the `fd2_dev` container:
-
-1. `gh auth login`
-   - Log in to GitHub using a Personal Access Token (PAT) with `repo` and `read:org` permission.
-2. `cd FarmData2/bin`
-3. `gh auth login`
-4. `./installDB.bash`
-5. `cd deploy`
-6. `./setPasswords.bash`
-   - Change the passwords for each of the different types of FarmData2 users.
-7. `docker stop fd2_dev`
+3. `docker exec -it fd2_dev /bin/bash`
+   - At the bash shell prompt in the `fd2_dev` container:
+     1. `gh auth login`
+        - Log in to GitHub using a Personal Access Token (PAT) with `repo` and `read:org` permission.
+     2. `cd FarmData2`
+     3. `npm ci`
+     4. `cd FarmData2/bin`
+     5. `./installDB.bash`
+     6. `cd deploy`
+     7. `./setPasswords.bash`
+        - Change the passwords for each of the different types of FarmData2 users.
+     8. `docker stop fd2_dev`
 
 ### Connect to the Live FarmData2 Instance
 
