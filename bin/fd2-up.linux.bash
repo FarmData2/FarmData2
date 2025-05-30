@@ -31,6 +31,7 @@ fi
     echo "  User $(id -un) added to the docker group."
     echo "  Running fd2-up.bash again with user $(id -un) in the docker group."
     sg "docker" "$SCRIPT_DIR/fd2-up.bash"
+    exit 0
   else
     echo "  User $(id -un) is in docker group."
   fi
@@ -107,6 +108,7 @@ fi
     echo "  User user $(id -un) added to the fd2grp group."
     echo "  Running fd2-up.bash again with user $(id -un) in the fd2grp group."
     sg "fd2grp" "$SCRIPT_DIR/fd2-up.bash"
+    exit 0
   else
     echo "  User $(id -un) is in fd2grp group."
   fi

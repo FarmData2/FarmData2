@@ -41,18 +41,23 @@ Within the Droplet Console:
 
 1. `su - fd2dev`
 2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `docker exec -it fd2_dev /bin/bash`
+3. `cd FarmData2/bin`
+4. `./fd2-up.bash`
+5. `docker exec -it fd2_dev /bin/bash`
    - At the bash shell prompt in the `fd2_dev` container:
      1. `gh auth login`
-        - Log in to GitHub using a Personal Access Token (PAT) with `repo` and `read:org` permission.
+        - Log in to GitHub using a Personal Access Token (PAT) with `repo`, `read:org` and `workflow` permission.
      2. `cd FarmData2`
      3. `npm ci`
-     4. `cd FarmData2/bin`
-     5. `./installDB.bash`
-     6. `cd deploy`
-     7. `./setPasswords.bash`
-        - Change the passwords for each of the different types of FarmData2 users.
-     8. `docker stop fd2_dev`
+     4. `npm run build:fd2`
+     5. `npm run build:examples`
+     6. `npm run build:school`
+     7. `cd FarmData2/bin`
+     8. `./installDB.bash`
+     9. `cd deploy`
+     10. `./setPasswords.bash`
+         - Change the passwords for each of the different types of FarmData2 users.
+     11. `docker stop fd2_dev`
 
 ### Connect to the Live FarmData2 Instance
 
