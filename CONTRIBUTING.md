@@ -62,7 +62,7 @@ The [Getting Started with Zulip Page](https://zulip.com/help/getting-started-wit
 
 FarmData2 provides a containerized Linux-based development environment with all the necessary tools and dependencies already installed. This simplifies the process of getting up and working toward your first FarmData2 contribution.
 
-The `INSTALL.md` document gives descriptions and links to detailed instructions for several different approaches to installing the FarmData2 Development Environment.
+The `INSTALL.md` document gives descriptions and links to detailed instructions for different approaches to installing the FarmData2 Development Environment.
 
 - [Installing the FarmData2 Development Environment](INSTALL.md)
 
@@ -114,17 +114,22 @@ If you decide not to continue working on that issue, make another comment on the
 
 ### 3. Synchronize `development` with the Upstream
 
-New work in FarmData2 occurs on the `development` branch. Before beginning to address an issue you should synchronize the `development` branch of your local repository and your `origin` repository (your fork on GitHub) with the `upstream` FarmData2 repository. This ensures that you begin your changes with the most up to date code and documentation.
+New work in FarmData2 occurs on the `development` branch. Before beginning to address an issue you should synchronize the `development` branch of your local repository with the `upstream` FarmData2 repository. This ensures that you begin your changes with the most up to date code and documentation.
 
 Open a Terminal window and use the following commands:
 
 ```bash
 cd FarmData2
 git pull --ff-only upstream development
-git push origin development
 ```
 
 If you cloned your FarmData2 repository somewhere other than the `FarmData2` directory in the `fd2dev` home directory you'll need to adjust the `cd` command that you use.
+
+If you want to also synchronize the `development` branch of your `origin` repository with the `upstream`:
+
+1. Visit your FarmData2 repo on GitHub.
+2. Make sure that the `Development` branch is active.
+3. Click the "Sync Fork" button.
 
 Note that all future sections of this document will assume that the directory containing your FarmData2 repository is the current working directory.
 
@@ -206,7 +211,7 @@ At this point you might:
 
 - go back to [Step #5](#5-make-and-test-your-changes) and add more changes to your feature branch.
 - continue to the next step and create a draft pull request to let the maintainers know what you are working on and get some preliminary feedback.
-- go to step [Step #10](#10-merge-development-branch-into-your-feature-branch) and then step [Step #11](#11-mark-your-pull-request-as-ready-for-review) to let the maintainers know your pull request is ready for them to review and consider merging it.
+- go to [Step #10](#10-merge-development-branch-into-your-feature-branch) and then [Step #11](#11-mark-your-pull-request-as-ready-for-review) to let the maintainers know your pull request is ready for them to review and consider merging it.
 
 ### 8. Create a Draft Pull Request
 
