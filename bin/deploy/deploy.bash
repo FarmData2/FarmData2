@@ -26,3 +26,9 @@ echo "Built."
 echo "Installing the sample database..."
 ./installDB.bash
 echo "Installed."
+
+# Removing the examples and school modules.
+echo "Uninstalling the examples and school modules..."
+docker exec fd2_farmos drush pm-uninstall farm_fd2_examples -y
+docker exec fd2_farmos drush pm-uninstall farm_fd2_school -y
+echo "Uninstalled."

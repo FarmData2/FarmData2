@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Make sure that the fd2 examples and fd2 school modules are not installed.
-docker exec fd2_farmos drush pm-uninstall farm_fd2_examples -y
-docker exec fd2_farmos drush pm-uninstall farm_fd2_school -y
-
 # Change the passwords for each of the farmOS/drupal users created by the sample database.
 echo "When entering passwords, the password will not be displayed."
 echo "Press enter when finished entering a password."
