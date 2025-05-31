@@ -67,16 +67,13 @@ Within the Droplet Console:
 
 ## Updating the Deployed Instance
 
-If the `development` or `production` branch is updated the deployed instance can be updated by fetching the changes and rebuilding the `farm_fd2` module.
+If the deployed branch is updated, or you want to deploy a different branch fetching any changes to the branch and rebuild the `farm_fd2` module.
 
 Within the Droplet console:
 
-- `su - fd2dev`
-- `cd FarmData2`
-- For `development`
-  - `git switch development`
-  - `git pull origin development`
-- For `production`
-  - `git switch production`
-  - `git pull origin production`
-- `npm run build:fd2`
+- `docker exec -it fd2_dev /bin/bash`
+  - At the bash shell prompt in the `fd2_dev` container:
+    1. `cd FarmData2`
+    2. `git switch <branch>`
+    3. `git pull origin <branch>`
+    4. `npm run build:fd2`
