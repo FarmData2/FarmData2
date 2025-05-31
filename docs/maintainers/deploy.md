@@ -12,7 +12,7 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
    - Choose a region and data center close to you.
    - Image: Debian 12 or newer
    - Size: Shared CPU (Basic)
-   - CPU Options: Regular, 2~GB RAM, 50~GB SSD Disk, 2~TB transfer.
+   - CPU Options: Regular, 1~GB RAM, 35~GB SSD Disk, 1000-GB transfer.
    - Authentication Method: Password
    - Create root password: Give a secure root password for your droplet.
    - Click "Create Droplet" at the bottom of the form.
