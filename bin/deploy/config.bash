@@ -25,25 +25,6 @@ sudo apt update
 sudo apt install docker-ce -y
 echo "Installed."
 
-# Install node.js and npm
-#echo "Installing npm..."
-#apt install nodejs -y
-#apt install npm -y
-#echo "Installed."
-
-# Install gh CLI
-# https://github.com/cli/cli/blob/trunk/docs/install_linux.md
-#echo "Installing gh..."
-#(type -p wget > /dev/null || (apt update && apt-get install wget -y)) \
-#  && mkdir -p -m 755 /etc/apt/keyrings \
-#  && out=$(mktemp) && wget -nv -O"$out" https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-#  && tee /etc/apt/keyrings/githubcli-archive-keyring.gpg < "$out" > /dev/null \
-#  && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-#  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-#  && apt update \
-#  && apt install gh -y
-#echo "Installed."
-
 # Create and configure a non-root user.
 echo "Creating non-root user..."
 useradd -m -G sudo,docker fd2dev
