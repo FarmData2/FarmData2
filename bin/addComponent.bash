@@ -136,6 +136,7 @@ DRUPAL_ROUTE="$DRUPAL_ROUTE_PREFIX""\/$COMPONENT_ID"
 DRUPAL_ROUTE_NAME="$DRUPAL_ROUTE_PREFIX""_$COMPONENT_ID"
 # shellcheck disable=SC1003
 DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
+DRUPAL_PERMISSIONS="'access content'"
 
 echo "About to add a component and example page for the component as follows:"
 echo "           Component name: $COMPONENT_NAME (UpperCamelCase)"
@@ -148,7 +149,7 @@ echo "        Example directory: $EXAMPLE_SRC_DIR"
 echo "           Feature branch: $FEATURE_BRANCH_NAME"
 echo "            drupal route: $DISPLAY_DRUPAL_ROUTE"
 echo "       drupal route name: $DRUPAL_ROUTE_NAME"
-echo "    permissions required: $ENTRY_POINT_PERMISSIONS"
+echo "    permissions required: $DRUPAL_PERMISSIONS"
 echo ""
 
 # Confirm that the component should be created.
