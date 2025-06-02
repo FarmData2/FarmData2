@@ -18,7 +18,7 @@
  *
  * ## Live Example
  * 
-* <a href="http://farmos/fd2_examples/%example_name%">The %COMPONENT_NAME% Example</a>
+* <a href="http://farmos/fd2_examples/%COMPONENT_ID%">The %COMPONENT_NAME% Example</a>
  * 
  * ## Usage Example
  *
