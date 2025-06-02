@@ -89,9 +89,9 @@ ENTRY_POINT_TEMPLATE_DIR="$REPO_ROOT_DIR/bin/templates/entrypoint"
 COMPONENT_ID=$(echo "$COMPONENT_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
 EXAMPLE_SRC_DIR="$EXAMPLES_DIR/$COMPONENT_ID"
 EXAMPLE_MODULE_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples"
-ROUTING_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.routing.yml"
-LINKS_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.links.menu.yml"
-LIBRARIES_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.libraries.yml"
+ROUTING_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/farm_fd2_examples.routing.yml"
+LINKS_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/farm_fd2_examples.links.menu.yml"
+LIBRARIES_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/farm_fd2_examples.libraries.yml"
 
 # Check if the directory for the component exits...
 if [ -d "$COMPONENT_SRC_DIR" ]; then
