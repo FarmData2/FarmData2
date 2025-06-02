@@ -29,7 +29,7 @@ echo ""
 
 FEATURE_BRANCH_NAME="add_$COMPONENT_NAME""_component"
 
-# Check if a feature branch already exists for the component...
+# Check if a feature branch already exists for the component and the example page...
 FEATURE_BRANCH_EXISTS=$(git branch -a | grep "$FEATURE_BRANCH_NAME")
 if [[ ! "$FEATURE_BRANCH_EXISTS" == "" ]]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} The feature branch $FEATURE_BRANCH_NAME already exists."
@@ -51,8 +51,12 @@ if [ -d "$COMPONENT_SRC_DIR" ]; then
   exit 255
 fi
 
-echo "About to add a component as follows:"
+# Convert CamelCase COMPONENT_NAME to snake_case COMPONENT_ID
+COMPONENT_ID=$(echo "$COMPONENT_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
+
+echo "About to add a component and example page for the component as follows:"
 echo "        Component name: $COMPONENT_NAME"
+echo "          Component ID: $COMPONENT_ID"
 echo "  Components directory: $COMPONENTS_DIR"
 echo "   Component directory: $COMPONENT_SRC_DIR"
 echo "        Feature branch: $FEATURE_BRANCH_NAME"
@@ -149,19 +153,26 @@ if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo "    Switch to the development branch"
   echo "    Delete the $FEATURE_BRANCH_NAME branch."
   echo "    Run this script again."
+  exit "$COMP_TEST_EXIT_CODE"
 else
   # Print a message...
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
   echo ""
-
-  # Give some instruction on what to do next...
-  echo "  * Use git status to review the changes."
-  echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
-  echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
-  echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
-  echo "  * When ready, push your feature branch to your origin and create a pull request."
-  echo ""
 fi
 
-exit "$COMP_TEST_EXIT_CODE"
+
+
+
+
+
+
+
+# Give some instruction on what to do next...
+echo "  * Use git status to review the changes."
+echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
+echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
+echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file to manually test the component."
+echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
+echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
+echo "  * When ready, push your feature branch to your origin and create a pull request."
+echo ""

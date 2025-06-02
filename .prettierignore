@@ -4,6 +4,7 @@ node_modules
 docker/db
 bin/templates/entrypoint/*.yml
 bin/templates/component
+bin/templates/example
 licenses
 CHANGELOG.md
 docs/library

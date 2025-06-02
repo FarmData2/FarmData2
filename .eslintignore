@@ -9,6 +9,7 @@ bin/templates/entrypoint/*.yml
 **/*.routing.yml
 
 bin/templates/component
+bin/templates/example
 
 **/dist
 modules/farm_fd2/src/public

@@ -3,30 +3,41 @@
     id="new-comp-group"
     data-cy="new-comp-group"
   >
+    <!-- Add BootstrapVueNext components here to build this component. -->
     <p data-cy="placeholder">Component content goes here.</p>
   </BFormGroup>
 </template>
 
 <script>
+// Import any libraries or FarmData2 components being used in this component here.
+
 /**
- * A new component.
+ * One line description of the new component.
+ * 
+ * Longer description of the component can go here...
  *
+ * ## Live Example
+ * 
+* <a href="http://farmos/fd2_examples/%example_name%">The %COMPONENT_NAME% Example</a>
+ * 
  * ## Usage Example
  *
  * ```html
  * Add example of how to add this component to a template.
- * See the other components in the `components` directory for examples.
+ * See the other components in the `components` directory for samples.
  * ```
  *
  * ## `data-cy` Attributes
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `attr-value`          | identify element with the `data-cy="attr-value"`
+ * `attr-value`          | describe the purpose of the element with the `data-cy="attr-value"`
  */
 export default {
   name: '%COMPONENT_NAME%',
-  components: {},
+  components: {
+    // List any FarmData2 components being used in this component here.
+  },
   emits: ['ready', 'valid'],
   props: {
     /**
@@ -51,19 +62,20 @@ export default {
     isValid() {
       /*
        * Edit this computed property to return true if the component's value is valid,
-       * or false if it is invalid.  This should account for whether the value is 
-       * required or not if necessary.
+       * or false if it is invalid.  A value is valid if it can be submitted to farmOS.  
+       * This property should account for whether the value is required or not as necessary.
        */
       return false;
     },
     // Controls component styling (i.e. when green check or red X and invalid feedback) should be displayed.
     validityStyling() {
       /*
-       * Edit this computed property to indicted the type of styling that should be applied 
-       * to the component based upon `required`, `isValid`, `showInvalidStyling`, and any
+       * Edit this computed property to indicate the type of styling that should be applied 
+       * to the component based upon `required`, `isValid`, `showValidityStyling`, and any
        * other criteria that is necessary.
        * 
-       * Bind this computed property to the `state` prop of the components to be styled.
+       * Bind this computed property to the `state` prop of the BootstrapVueNext components
+       * that are used in the template.
        */
       return false;
     },
@@ -72,7 +84,7 @@ export default {
   watch: {
     isValid() {
       /**
-       * The validity of the component has changed.  Also emitted when the component is created.
+       * The validity of the component has changed. Also emitted when the component is created.
        * @property {Boolean} valid `true` if the component's value is valid; `false` if it is invalid.
        */
       this.$emit('valid', this.isValid);
