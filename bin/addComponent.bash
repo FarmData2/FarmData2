@@ -335,6 +335,13 @@ sed -i "s/%MODULE_NAME%/$COMPONENT_ID/g" "$ROUTING_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$DRUPAL_PERMISSIONS/g" "$ROUTING_YML_FILE"
 echo "    Updated."
+echo "Added."
+echo ""
+
+echo "  Building the examples module..."
+npm run build-examples
+error_check "Failed to build examples module."
+echo "  Built."
 echo ""
 
 echo "Running e2e tests on $COMPONENT_NAME example..."
@@ -377,5 +384,3 @@ else
   echo "  * When ready, push your feature branch to your origin and create a pull request."
   echo ""
 fi
-
-
