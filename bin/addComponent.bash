@@ -25,7 +25,7 @@ echo ""
 
 if [[ ! $COMPONENT_NAME =~ ^[A-Z][a-z]+([A-Z][a-z]+)*$ ]]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Component name must be UpperCamelCase."
-  return 255
+  exit 255
 fi
 
 # Check if a feature branch already exists for the component and the example page...
