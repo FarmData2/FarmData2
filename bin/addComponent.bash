@@ -339,7 +339,7 @@ echo "Added."
 echo ""
 
 echo "  Building the examples module..."
-npm run build-examples
+npm run build:examples
 error_check "Failed to build examples module."
 echo "  Built."
 echo ""
