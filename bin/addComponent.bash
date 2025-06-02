@@ -130,6 +130,13 @@ if [[ ! ("$IN_ROUTES" == "" && "$IN_LINKS" == "" && "$IN_LIBRARIES" == "") ]]; t
   exit 255
 fi
 
+# Define some additional Drupal specific variables.
+DRUPAL_ROUTE_PREFIX="fd2_examples"
+DRUPAL_ROUTE="$DRUPAL_ROUTE_PREFIX""\/$ENTRY_POINT"
+DRUPAL_ROUTE_NAME="$DRUPAL_ROUTE_PREFIX""_$ENTRY_POINT"
+# shellcheck disable=SC1003
+DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
+
 echo "About to add a component and example page for the component as follows:"
 echo "           Component name: $COMPONENT_NAME (UpperCamelCase)"
 echo "             Component ID: $COMPONENT_ID (snake_case)"
@@ -139,6 +146,9 @@ echo " Example Module directory: $EXAMPLE_MODULE_DIR"
 echo "       Examples directory: $EXAMPLES_DIR"
 echo "        Example directory: $EXAMPLE_SRC_DIR"
 echo "           Feature branch: $FEATURE_BRANCH_NAME"
+echo "            drupal route: $DISPLAY_DRUPAL_ROUTE"
+echo "       drupal route name: $DRUPAL_ROUTE_NAME"
+echo "    permissions required: $ENTRY_POINT_PERMISSIONS"
 echo ""
 
 # Confirm that the component should be created.
