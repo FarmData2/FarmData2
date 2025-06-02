@@ -74,7 +74,7 @@ if [ -d "$EXAMPLE_SRC_DIR" ]; then
 fi
 
 echo "About to add a component and example page for the component as follows:"
-echo "        Component name: $COMPONENT_NAME (CamelCase)"
+echo "        Component name: $COMPONENT_NAME (UpperCamelCase)"
 echo "          Component ID: $COMPONENT_ID (snake_case)"
 echo "  Components directory: $COMPONENTS_DIR"
 echo "   Component directory: $COMPONENT_SRC_DIR"
@@ -94,8 +94,6 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
     exit 255
   fi
 done
-
-
 
 #
 # Create the new component
@@ -166,16 +164,14 @@ else
   echo "    Success."
 fi
 
-echo "  Tests complete."
-echo "Created."
-
 if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Failed component tests."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} New component failed the initial component tests."
   echo ""
   echo -e "$COMP_TEST_OUT"
   echo ""
   echo -e "${ON_RED}ERROR:${NO_COLOR} Check output of failed tests above."
-  echo "  Correct any errors and rerun tests using test.bash."
+  echo "  Correct any errors and rerun tests using:"
+  echo "    test.bash --comp --glob=components/**/$COMPONENT_NAME/*.comp.cy.js"
   echo "  Or try again by:"
   echo "    Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
   echo "    Switch to the development branch"
@@ -183,7 +179,6 @@ if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo "    Run this script again."
   exit "$COMP_TEST_EXIT_CODE"
 else
-  # Print a message...
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
   echo ""
 fi
@@ -191,8 +186,8 @@ fi
 #
 # Create the example page
 #
-# Copy templates over to example directory
-EXAMPLE_TEMPLATE_DIR="$SCRIPT_DIR/templates/example"
+
+echo "Creating new example $COMPONENT_ID..."
 
 # Create a new directory for the example.
 echo "  Creating directory $EXAMPLE_SRC_DIR for component..."
@@ -201,17 +196,41 @@ mkdir "$COMPONENT_SRC_DIR"
 error_check "Failed to create directory $COMPONENT_SRC_DIR."
 echo "  Created."
 
+EXAMPLE_TEMPLATE_DIR="$SCRIPT_DIR/templates/example"
+
 echo "  Creating component example page from templates..."
 echo "    Creating App.vue from templates..."
-cp "$COMPONENT_TEMPLATE_DIR/NewComponent.vue" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
-sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
-sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
+cp "$EXAMPLE_TEMPLATE_DIR/App.vue" "$EXAMPLE_SRC_DIR/App.vue"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/App.vue"
+sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/App.vue"
 echo "    Created."
 
-echo "    Creating $COMPONENT_NAME.content.comp.cy.js from templates..."
-cp "$COMPONENT_TEMPLATE_DIR/NewComponent.content.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
-sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.content.comp.cy.js"
+echo "    Creating index.html from templates..."
+cp "$EXAMPLE_TEMPLATE_DIR/index.html" "$EXAMPLE_SRC_DIR/index.html"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/index.html"
+sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/index.html"
 echo "    Created."
+
+echo "    Creating $COMPONENT_ID.html from templates..."
+cp "$EXAMPLE_TEMPLATE_DIR/new_component.html" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
+sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
+sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
+echo "    Created."
+
+echo "    Copying $COMPONENT_ID.js from templates..."
+cp "$EXAMPLE_TEMPLATE_DIR/new_component.js" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.js"
+echo "    Copied."
+
+echo "    Creating $COMPONENT_ID.exists.e2e.cy.js from templates..."
+cp "$EXAMPLE_TEMPLATE_DIR/new_component.exists.e2e.cy.js" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists.e2e.cy.js"
+sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists.e2e.cy.js"
+echo "    Created."
+
+
+
+
+
+### ALSO NEED TO INSERT INTO THE MODULE FILES FOR EXAMPLES!!!!!!
 
 
 

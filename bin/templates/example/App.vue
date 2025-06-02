@@ -81,14 +81,15 @@
 </template>
 
 <script>
-import DateSelector from '@comps/DateSelector/DateSelector.vue';
-import { BButton } from 'bootstrap-vue-next';
-import dayjs from 'dayjs';
+/*
+ * Import the components being used in this example here.
+ */
 
 export default {
   components: {
-    DateSelector,
-    BButton,
+    /**
+     * List the components being used in this example here.
+     */
   },
   data() {
     return {
