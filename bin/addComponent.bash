@@ -191,9 +191,9 @@ echo "Creating new example $COMPONENT_ID..."
 
 # Create a new directory for the example.
 echo "  Creating directory $EXAMPLE_SRC_DIR for component..."
-safe_cd "$COMPONENTS_DIR"
-mkdir "$COMPONENT_SRC_DIR"
-error_check "Failed to create directory $COMPONENT_SRC_DIR."
+safe_cd "$EXAMPLES_DIR"
+mkdir "$EXAMPLE_SRC_DIR"
+error_check "Failed to create directory $EXAMPLE_SRC_DIR."
 echo "  Created."
 
 EXAMPLE_TEMPLATE_DIR="$SCRIPT_DIR/templates/example"
