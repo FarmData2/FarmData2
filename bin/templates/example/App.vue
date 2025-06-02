@@ -9,7 +9,7 @@
   <!-- v-model or v-bind other props and v-on additional event handlers
        here as they are added to the component. 
   -->
-  <%COMPONENT_NAME%>
+  <%COMPONENT_NAME%
     id="%COMPONENT_ID%"
     data-cy="%COMPONENT_ID%"
     v-bind:required="required"
