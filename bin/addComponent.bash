@@ -88,9 +88,9 @@ EXAMPLES_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples/src/entrypoints"
 COMPONENT_ID=$(echo "$COMPONENT_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
 EXAMPLE_SRC_DIR="$EXAMPLES_DIR/$COMPONENT_ID"
 EXAMPLE_MODULE_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples"
-ROUTING_YML_FILE="MODULE_DIR/src/module/$MODULE_NAME.routing.yml"
-LINKS_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$MODULE_NAME.links.menu.yml"
-LIBRARIES_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$MODULE_NAME.libraries.yml"
+ROUTING_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.routing.yml"
+LINKS_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.links.menu.yml"
+LIBRARIES_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$COMPONENT_ID.libraries.yml"
 
 # Check if the directory for the component exits...
 if [ -d "$COMPONENT_SRC_DIR" ]; then
@@ -136,11 +136,11 @@ DRUPAL_ROUTE="$DRUPAL_ROUTE_PREFIX""\/$COMPONENT_ID"
 DRUPAL_ROUTE_NAME="$DRUPAL_ROUTE_PREFIX""_$COMPONENT_ID"
 # shellcheck disable=SC1003
 DISPLAY_DRUPAL_ROUTE=$(echo "$DRUPAL_ROUTE" | tr -d '\\')
-DRUPAL_PERMISSIONS="'access content'"
+DRUPAL_PERMISSIONS="access content"
 
 echo "About to add a component and example page for the component as follows:"
-echo "           Component name: $COMPONENT_NAME (UpperCamelCase)"
-echo "             Component ID: $COMPONENT_ID (snake_case)"
+echo "           Component name: $COMPONENT_NAME"
+echo "             Component ID: $COMPONENT_ID"
 echo "     Components directory: $COMPONENTS_DIR"
 echo "      Component directory: $COMPONENT_SRC_DIR"
 echo " Example Module directory: $EXAMPLE_MODULE_DIR"
