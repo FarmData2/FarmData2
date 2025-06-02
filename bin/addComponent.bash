@@ -84,6 +84,7 @@ fi
 COMPONENTS_DIR="$REPO_ROOT_DIR/components"
 COMPONENT_SRC_DIR="$COMPONENTS_DIR/$COMPONENT_NAME"
 EXAMPLES_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples/src/entrypoints"
+ENTRY_POINT_TEMPLATE_DIR="$REPO_ROOT_DIR/bin/templates/entrypoint"
 # Convert CamelCase COMPONENT_NAME to snake_case COMPONENT_ID
 COMPONENT_ID=$(echo "$COMPONENT_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
 EXAMPLE_SRC_DIR="$EXAMPLES_DIR/$COMPONENT_ID"
@@ -305,47 +306,76 @@ cp "$EXAMPLE_TEMPLATE_DIR/new_component.exists.e2e.cy.js" "$EXAMPLE_SRC_DIR/$COM
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists.e2e.cy.js"
 echo "    Created."
 
-
-
-
+echo "  Created."
 # Add the new example entry point to the farm_fd2_examples drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
 
+echo "  Adding new example entry point to drupal Module files..."
+echo "    Updating $LIBRARIES_YML_FILE from templates..."
+cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
+sed -i "s/%ENTRY_POINT%/$COMPONENT_ID/g" "$LIBRARIES_YML_FILE"
+echo "    Updated."
 
+echo "    Updating $LINKS_YML_FILE from templates..."
+ENTRY_POINT_TITLE="$COMPONENT_NAME"
+ENTRY_POINT_DESCRIPTION="Example of the use of the $COMPONENT_NAME component."
+ENTRY_POINT_PARENT="farm.fd2_examples_component_examples"
+cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
+echo "    Updated."
 
-# cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
-# sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
-# echo "Updated $LIBRARIES_YML_FILE from templates."
-
-# cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
-# sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
-# sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
-# sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
-# sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
-# echo "Updated $LINKS_YML_FILE from templates."
-
-# cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
-# sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
-# sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
-# sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ROUTING_YML_FILE"
-# sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
-# sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FILE"
-# echo "Updated $ROUTING_YML_FILE from templates."
-# echo ""
-
-
-
-
-
-
-
-
-# Give some instruction on what to do next...
-echo "  * Use git status to review the changes."
-echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
-echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file to manually test the component."
-echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
-echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
-echo "  * When ready, push your feature branch to your origin and create a pull request."
+echo "    Updating $ROUTING_YML_FILE from templates..."
+cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
+sed -i "s/%MODULE_NAME%/$COMPONENT_ID/g" "$ROUTING_YML_FILE"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
+sed -i "s/%ENTRY_POINT_PERMISSIONS%/$DRUPAL_PERMISSIONS/g" "$ROUTING_YML_FILE"
+echo "    Updated."
 echo ""
+
+echo "Running e2e tests on $COMPONENT_NAME example..."
+TEST_FILE="modules/farm_fd2_examples/src/entrypoints/$COMPONENT_ID/$COMPONENT_ID.exists.e2e.cy.js"
+E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE")
+E2E_EXIT_CODE=$?
+if [ ! "$E2E_EXIT_CODE" == "0" ]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests."
+  echo ""
+  echo -e "$E2E_TEST_OUT"
+  echo ""
+
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Check the output of the failed tests above."
+  echo "  Correct any errors and rerun tests using:"
+  echo "    test.bash --e2e --live --examples --glob=$TEST_FILE"
+  echo "  Or try again by:"
+  echo "    Commit changes to the feature branch: $FEATURE_BRANCH_NAME."
+  echo "    Switch to the development branch"
+  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    Run this script again."
+else
+  echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
+  echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component example page for $COMPONENT_NAME created."
+
+  # Commit the changes to the feature branch and print some info...
+  echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
+  git add .
+  git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
+  error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
+  echo "Committed."
+  echo ""
+
+  # Give some instruction on what to do next...
+  echo "  * Use git status to review the changes."
+  echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
+  echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file to manually test the component."
+  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
+  echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
+  echo "  * When ready, push your feature branch to your origin and create a pull request."
+  echo ""
+fi
+
+
