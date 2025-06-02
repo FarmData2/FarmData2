@@ -87,6 +87,10 @@ EXAMPLES_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples/src/entrypoints"
 # Convert CamelCase COMPONENT_NAME to snake_case COMPONENT_ID
 COMPONENT_ID=$(echo "$COMPONENT_NAME" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
 EXAMPLE_SRC_DIR="$EXAMPLES_DIR/$COMPONENT_ID"
+EXAMPLE_MODULE_DIR="$REPO_ROOT_DIR/modules/farm_fd2_examples"
+ROUTING_YML_FILE="MODULE_DIR/src/module/$MODULE_NAME.routing.yml"
+LINKS_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$MODULE_NAME.links.menu.yml"
+LIBRARIES_YML_FILE="$EXAMPLE_MODULE_DIR/src/module/$MODULE_NAME.libraries.yml"
 
 # Check if the directory for the component exits...
 if [ -d "$COMPONENT_SRC_DIR" ]; then
@@ -99,7 +103,7 @@ if [ -d "$COMPONENT_SRC_DIR" ]; then
   exit 255
 fi
 
-# Check if the directory for the example exits...
+# Check if the directory for the example entry point exits...
 if [ -d "$EXAMPLE_SRC_DIR" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} A directory for the example $COMPONENT_ID already exists"
   echo "in the directory $EXAMPLES_DIR."
@@ -110,14 +114,31 @@ if [ -d "$EXAMPLE_SRC_DIR" ]; then
   exit 255
 fi
 
+# Check that the example entry point is not already in the module .yml files.
+IN_ROUTES=$(grep "^farm.fd2_examples_$COMPONENT_ID.content:$" "$ROUTING_YML_FILE")
+IN_LINKS=$(grep "^farm.fd2_$COMPONENT_ID:$" "$LINKS_YML_FILE")
+IN_LIBRARIES=$(grep "^$COMPONENT_ID:$" "$LIBRARIES_YML_FILE")
+
+# Check that the entry point information is not already in any of the .yml files.
+if [[ ! ("$IN_ROUTES" == "" && "$IN_LINKS" == "" && "$IN_LIBRARIES" == "") ]]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} The entry point $COMPONENT_ID was previously defined."
+  echo "Remove definitions related to the entry point $COMPONENT_ID from the files:"
+  echo "  $ROUTING_YML_FILE"
+  echo "  $LINKS_YML_FILE"
+  echo "  $LIBRARIES_YML_FILE"
+  echo "Then run this script again."
+  exit 255
+fi
+
 echo "About to add a component and example page for the component as follows:"
-echo "        Component name: $COMPONENT_NAME (UpperCamelCase)"
-echo "          Component ID: $COMPONENT_ID (snake_case)"
-echo "  Components directory: $COMPONENTS_DIR"
-echo "   Component directory: $COMPONENT_SRC_DIR"
-echo "    Examples directory: $EXAMPLES_DIR"
-echo "     Example directory: $EXAMPLE_SRC_DIR"
-echo "        Feature branch: $FEATURE_BRANCH_NAME"
+echo "           Component name: $COMPONENT_NAME (UpperCamelCase)"
+echo "             Component ID: $COMPONENT_ID (snake_case)"
+echo "     Components directory: $COMPONENTS_DIR"
+echo "      Component directory: $COMPONENT_SRC_DIR"
+echo "       Examples directory: $EXAMPLES_DIR"
+echo " Example Module directory: $EXAMPLE_MODULE_DIR"
+echo "        Example directory: $EXAMPLE_SRC_DIR"
+echo "           Feature branch: $FEATURE_BRANCH_NAME"
 echo ""
 
 # Confirm that the component should be created.
@@ -273,7 +294,40 @@ cp "$EXAMPLE_TEMPLATE_DIR/new_component.exists.e2e.cy.js" "$EXAMPLE_SRC_DIR/$COM
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists.e2e.cy.js"
 echo "    Created."
 
-### ALSO NEED TO INSERT INTO THE MODULE FILES FOR EXAMPLES!!!!!!
+
+
+
+# Add the new example entry point to the farm_fd2_examples drupal Module by adding to the
+# libraries, links.menu and routing  yml files.
+
+
+
+cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
+sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
+echo "Updated $LIBRARIES_YML_FILE from templates."
+
+cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
+sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
+echo "Updated $LINKS_YML_FILE from templates."
+
+cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
+sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
+sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ROUTING_YML_FILE"
+sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
+sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FILE"
+echo "Updated $ROUTING_YML_FILE from templates."
+echo ""
+
+
+
+
+
+
+
 
 # Give some instruction on what to do next...
 echo "  * Use git status to review the changes."
