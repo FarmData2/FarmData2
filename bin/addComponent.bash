@@ -5,10 +5,47 @@ source lib.bash
 
 PWD="$(pwd)"
 
+function usage {
+  echo "addEntryComponent.bash usage:"
+  echo "  -h|--help : Display this message."
+  echo ""
+  echo "  -d|--dev: Create the new entry component from the current branch"
+  echo "            instead of from the development branch."
+  echo "            This is useful for testing changes to the templates."
+  echo ""
+  exit 255
+}
+
 # Get the path to the main repo directory.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
+
+# Process the command line flags
+FLAGS=$(getopt -o d::h::m:: \
+  --long dev::,help::,min:: \
+  -- "$@")
+error_check "Unrecognized option provided."
+eval set -- "$FLAGS"
+
+while true; do
+  case $1 in
+    -d | --dev)
+      DEV_FLAG=1
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
 
 # Check that working tree is clean
 GIT_STATUS=$(git status | tail -1)
@@ -79,7 +116,7 @@ echo "          Component ID: $COMPONENT_ID (snake_case)"
 echo "  Components directory: $COMPONENTS_DIR"
 echo "   Component directory: $COMPONENT_SRC_DIR"
 echo "    Examples directory: $EXAMPLES_DIR"
-echo "     Example directory: $EXAMPLE_SRC_DIR" 
+echo "     Example directory: $EXAMPLE_SRC_DIR"
 echo "        Feature branch: $FEATURE_BRANCH_NAME"
 echo ""
 
@@ -100,16 +137,26 @@ done
 #
 echo "Creating new component $COMPONENT_NAME"
 
-# Create a new feature branch for the component from the development branch
-echo "  Updating development branch..."
-git switch --quiet development
-git pull --quiet origin development
-error_check "Failed to update development branch."
-echo "  Updated."
-echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
-git branch --quiet "$FEATURE_BRANCH_NAME"
-error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
-echo "  Created."
+if [ -z "$DEV_FLAG" ]; then
+  # Create a new feature branch for the entrypoint from the development branch
+  echo "  Updating development branch..."
+  git switch --quiet development
+  git pull --quiet origin development
+  error_check "Failed to update development branch."
+  echo "  Updated."
+  echo "  Creating new feature branch $FEATURE_BRANCH_NAME from development..."
+  git branch --quiet "$FEATURE_BRANCH_NAME"
+  error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+  echo "  Created."
+else
+  # Create a new feature branch for the entrypoint from the current branch
+  # Used for testing changes to the templates.
+  echo "  Creating new feature branch $FEATURE_BRANCH_NAME from current branch..."
+  git branch --quiet "$FEATURE_BRANCH_NAME"
+  error_check "Failed to create feature branch $FEATURE_BRANCH_NAME."
+  echo "  Created."
+fi
+
 echo "  Switching to feature branch $FEATURE_BRANCH_NAME..."
 git switch --quiet "$FEATURE_BRANCH_NAME"
 error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
@@ -226,15 +273,7 @@ cp "$EXAMPLE_TEMPLATE_DIR/new_component.exists.e2e.cy.js" "$EXAMPLE_SRC_DIR/$COM
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists.e2e.cy.js"
 echo "    Created."
 
-
-
-
-
 ### ALSO NEED TO INSERT INTO THE MODULE FILES FOR EXAMPLES!!!!!!
-
-
-
-
 
 # Give some instruction on what to do next...
 echo "  * Use git status to review the changes."
