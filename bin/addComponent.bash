@@ -27,7 +27,7 @@ if [[ ! $COMPONENT_NAME =~ ^[A-Z][a-z]+([A-Z][a-z]+)*$ ]]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Component name must be UpperCamelCase."
   exit 255
 fi
-if [[ ! $COMPONENT_NAME =~ ^([A-Z][a-z]+)+$ ]]; then
+if [[ ! $COMPONENT_NAME =~ ^[A-Z][a-z]+([A-Z][a-z]+)+$ ]]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Component name must be at least 2 words."
   exit 255
 fi
