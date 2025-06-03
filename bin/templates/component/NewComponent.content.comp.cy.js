@@ -32,7 +32,7 @@ describe('Test the default %COMPONENT_NAME% content', () => {
        * Replace this assertion with assertions that check that all of the
        * default data-cy elements exist and have the correct initial content.
        */
-      cy.get('[data-cy="new-comp-group"]').should('exist');
+      cy.get('[data-cy="component-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
         'have.text',
         'Component content goes here.'

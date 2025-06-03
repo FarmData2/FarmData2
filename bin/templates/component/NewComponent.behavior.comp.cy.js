@@ -32,7 +32,7 @@ describe('Test the %COMPONENT_NAME% component behavior', () => {
     cy.get('@readySpy')
     .should('have.been.calledOnce')
     .then(() => {
-      cy.get('[data-cy="new-comp-group"]').should('exist');
+      cy.get('[data-cy="component-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
         'have.text',
         'Component content goes here.'

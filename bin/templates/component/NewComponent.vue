@@ -1,7 +1,7 @@
 <template>
   <BFormGroup
-    id="new-comp-group"
-    data-cy="new-comp-group"
+    id="component-group"
+    data-cy="component-group"
   >
     <!-- Add BootstrapVueNext components here to build this component. -->
     <p data-cy="placeholder">Component content goes here.</p>
@@ -23,7 +23,8 @@
  * ## Usage Example
  *
  * ```html
- * Add example of how to add this component to a template.
+ * Include an example of how to add this component to a template.
+ * This can often be pulled from the example page for the component.
  * See the other components in the `components` directory for samples.
  * ```
  *
@@ -31,7 +32,7 @@
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * `attr-value`          | describe the purpose of the element with the `data-cy="attr-value"`
+ * `attr-value`          | describe the purpose of all elements with `data-cy` attributes.
  */
 export default {
   name: '%COMPONENT_NAME%',
@@ -64,6 +65,8 @@ export default {
        * Edit this computed property to return true if the component's value is valid,
        * or false if it is invalid.  A value is valid if it can be submitted to farmOS.  
        * This property should account for whether the value is required or not as necessary.
+       * 
+       * See other components in the `components/` directory for examples.
        */
       return false;
     },
@@ -74,8 +77,10 @@ export default {
        * to the component based upon `required`, `isValid`, `showValidityStyling`, and any
        * other criteria that is necessary.
        * 
-       * Bind this computed property to the `state` prop of the BootstrapVueNext components
+       * Bind this computed property to the `state` prop of the BootstrapVueNext components 
        * that are used in the template.
+       * 
+       * See other components in the `components/` directory for examples.
        */
       return false;
     },
