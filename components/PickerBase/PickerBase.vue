@@ -23,17 +23,17 @@
               >*</sup
             >
           </div>
-         <BButton
-           v-if="showAllButton"
-           id="picker-all-button"
-           data-cy="picker-all-button"
-           size="sm"
-           variant="primary"
-           v-on:click="pickAll"
+          <BButton
+            v-if="showAllButton"
+            id="picker-all-button"
+            data-cy="picker-all-button"
+            size="sm"
+            variant="primary"
+            v-on:click="pickAll"
           >
-           <span v-if="checked.length === options.length">🚫 All</span>
-           <span v-else>✅ All</span>
-         </BButton>
+            <span v-if="checked.length === options.length">🚫 All</span>
+            <span v-else>✅ All</span>
+          </BButton>
         </div>
       </template>
 
@@ -64,7 +64,7 @@
 
 <script>
 /**
- * A base component that allows the user to pick multiple items using checkboxes.
+ * The PickerBase is a base component that allows the user to pick multiple items using checkboxes.
  * This will typically be used as a base for building special purpose
  * "picker" components (e.g. `BedPicker`).
  *

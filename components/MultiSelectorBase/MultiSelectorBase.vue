@@ -22,9 +22,9 @@
 <script>
 import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
 /**
- * A component for selecting multiple items. It initially displays a single
- * dropdown.  When an item is selected another dropdown appears to allow
- * the user to select another item.
+ * The MultiSelectorBase is a component for selecting multiple items. 
+ * It initially displays a single dropdown.  When an item is selected another dropdown 
+ * appears to allow the user to select another item.
  *
  * ## Live Example
  *

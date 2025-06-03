@@ -74,7 +74,7 @@
 import { BButton } from 'bootstrap-vue-next';
 
 /**
- * A button component for toggling the sort order between ascending and descending.
+ * The SortOrderButton component is used to toggle the sort order between ascending and descending.
  * It displays an icon that changes based on the current sort order.
  *
  * ## Live Example

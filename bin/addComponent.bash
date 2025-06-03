@@ -168,6 +168,7 @@ done
 #
 # Create the new component
 #
+echo ""
 echo "Creating new component $COMPONENT_NAME"
 
 if [ -z "$DEV_FLAG" ]; then
@@ -308,6 +309,7 @@ sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.exists
 echo "    Created."
 
 echo "  Created."
+
 # Add the new example entry point to the farm_fd2_examples drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
 
@@ -367,26 +369,70 @@ if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo "    Switch to the development branch"
   echo "    Delete the $FEATURE_BRANCH_NAME branch."
   echo "    Run this script again."
+
+  exit "$E2E_EXIT_CODE"
 else
-  echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component example page for $COMPONENT_NAME created."
   echo ""
-  
-  # Commit the changes to the feature branch and print some info...
-  echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
-  safe_cd "$REPO_ROOT_DIR"
-  git add .
-  git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
-  error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
-  echo "Committed."
-  echo ""
-
-  # Give some instruction on what to do next...
-  echo "To complete your new component:"
-  echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-  echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file and manually test the component."
-  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform automated testing."
-  echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
-  echo "  * When ready, push your feature branch to your origin and create a pull request."
-  echo ""
 fi
+
+#
+# Rebuild the component_examples entry point so that the list includes the new component.
+#
+
+echo "Rebuilding component_examples entry point..."
+INDEX_PAGE="$REPO_ROOT_DIR/modules/farm_fd2_examples/src/entrypoints/component_examples/App.vue"
+# Remove the temporary files that we are using.
+rm /var/tmp/App.vue 2> /dev/null
+touch /var/tmp/App.vue
+
+head -4 "$INDEX_PAGE" >> /var/tmp/App.vue
+
+COMPONENTS=$(ls "$REPO_ROOT_DIR/components")
+for COMPONENT in $COMPONENTS; do
+  if [ "$COMPONENT" != "vite.config.js" ] && [ "$COMPONENT" != "components.d.ts" ]; then
+
+    DESCRIPTION=$(grep "^ \*.*$COMPONENT" "$REPO_ROOT_DIR/components/$COMPONENT/$COMPONENT.vue" | head -1)
+    DESCRIPTION=${DESCRIPTION:3}
+    COMPONENT_ID=$(echo "$COMPONENT" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
+
+    {
+      echo "    <li>"
+      echo "      <a href=\"$COMPONENT_ID\">$COMPONENT</a>: $DESCRIPTION"
+      echo "    </li>"
+    } >> /var/tmp/App.vue
+  fi
+done
+
+tail -29 "$INDEX_PAGE" >> /var/tmp/App.vue
+
+mv /var/tmp/App.vue "$INDEX_PAGE"
+echo "Rebuilt."
+echo ""
+
+echo "Rebuilding component_examples entry point..."
+npm run build:fd2 &> /dev/null
+echo "Built."
+echo ""
+
+#
+# Wrap it up...
+#
+
+# Commit the changes to the feature branch and print some info...
+echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
+safe_cd "$REPO_ROOT_DIR"
+git add .
+git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
+error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
+echo "Committed."
+echo ""
+
+# Give some instruction on what to do next...
+echo "To complete your new component:"
+echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
+echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file and manually test the component."
+echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform automated testing."
+echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
+echo "  * When ready, push your feature branch to your origin and create a pull request."
+echo ""
