@@ -232,19 +232,13 @@ echo "    Creating $COMPONENT_NAME.behavior.comp.cy.js from templates..."
 cp "$COMPONENT_TEMPLATE_DIR/NewComponent.behavior.comp.cy.js" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.behavior.comp.cy.js"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.behavior.comp.cy.js"
 echo "    Created."
-
 echo "  Created."
+echo ""
 
 # Run the included component tests to be sure everything is working...
 echo "  Running component tests on $COMPONENT_NAME..."
 COMP_TEST_OUT=$(test.bash --comp --glob="components/**/$COMPONENT_NAME/*.comp.cy.js")
 COMP_TEST_EXIT_CODE=$?
-if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
-  echo "    Errors occurred when running the component tests. Output will be shown below"
-else
-  echo "    Success."
-fi
-
 if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} New component failed the initial component tests."
   echo ""
@@ -356,7 +350,7 @@ TEST_FILE="modules/farm_fd2_examples/src/entrypoints/$COMPONENT_ID/$COMPONENT_ID
 E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE")
 E2E_EXIT_CODE=$?
 if [ ! "$E2E_EXIT_CODE" == "0" ]; then
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Example page has failed e2e tests."
   echo ""
   echo -e "$E2E_TEST_OUT"
   echo ""
@@ -372,7 +366,8 @@ if [ ! "$E2E_EXIT_CODE" == "0" ]; then
 else
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component example page for $COMPONENT_NAME created."
-
+  echo ""
+  
   # Commit the changes to the feature branch and print some info...
   echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
   safe_cd "$ROOT_DIR"
