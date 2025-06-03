@@ -375,6 +375,7 @@ else
 
   # Commit the changes to the feature branch and print some info...
   echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
+  safe_cd "$ROOT_DIR"
   git add .
   git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
   error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
@@ -382,11 +383,10 @@ else
   echo ""
 
   # Give some instruction on what to do next...
-  echo "  * Use git status to review the changes."
-  echo "  * Commit them to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "To complete your new component:"
   echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to create the desired functionality"
-  echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file to manually test the component."
-  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform testing."
+  echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file and manually test the component."
+  echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform automated testing."
   echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
   echo "  * When ready, push your feature branch to your origin and create a pull request."
   echo ""
