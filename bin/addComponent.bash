@@ -236,9 +236,11 @@ echo "  Created."
 echo ""
 
 # Run the included component tests to be sure everything is working...
-echo "  Running component tests on $COMPONENT_NAME..."
+echo "Running component tests on $COMPONENT_NAME..."
 COMP_TEST_OUT=$(test.bash --comp --glob="components/**/$COMPONENT_NAME/*.comp.cy.js")
 COMP_TEST_EXIT_CODE=$?
+echo "Component tests complete."
+
 if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} New component failed the initial component tests."
   echo ""
@@ -349,6 +351,8 @@ echo "Running e2e tests on $COMPONENT_NAME example..."
 TEST_FILE="modules/farm_fd2_examples/src/entrypoints/$COMPONENT_ID/$COMPONENT_ID.exists.e2e.cy.js"
 E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE")
 E2E_EXIT_CODE=$?
+echo "E2e tests complete."
+
 if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Example page has failed e2e tests."
   echo ""
@@ -370,7 +374,7 @@ else
   
   # Commit the changes to the feature branch and print some info...
   echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
-  safe_cd "$ROOT_DIR"
+  safe_cd "$REPO_ROOT_DIR"
   git add .
   git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
   error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
