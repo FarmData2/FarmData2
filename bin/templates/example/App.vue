@@ -125,7 +125,7 @@ export default {
   methods: {},
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 1;
+      return this.createdCount == 2;
     },
   },
   created() {
