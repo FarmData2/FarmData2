@@ -209,6 +209,7 @@ echo "  Creating component's files from templates..."
 echo "    Creating $COMPONENT_NAME.vue from templates..."
 cp "$COMPONENT_TEMPLATE_DIR/NewComponent.vue" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
+sleep 1
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$COMPONENT_SRC_DIR/$COMPONENT_NAME.vue"
 echo "    Created."
 
@@ -282,18 +283,22 @@ echo "  Creating component example page from templates..."
 echo "    Creating App.vue from templates..."
 cp "$EXAMPLE_TEMPLATE_DIR/App.vue" "$EXAMPLE_SRC_DIR/App.vue"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/App.vue"
+sleep 1
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/App.vue"
 echo "    Created."
 
 echo "    Creating index.html from templates..."
 cp "$EXAMPLE_TEMPLATE_DIR/index.html" "$EXAMPLE_SRC_DIR/index.html"
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/index.html"
+sleep 1
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/index.html"
 echo "    Created."
 
 echo "    Creating $COMPONENT_ID.html from templates..."
 cp "$EXAMPLE_TEMPLATE_DIR/new_component.html" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
+sleep 1
 sed -i "s/%COMPONENT_NAME%/$COMPONENT_NAME/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
+sleep 1
 sed -i "s/%COMPONENT_ID%/$COMPONENT_ID/g" "$EXAMPLE_SRC_DIR/$COMPONENT_ID.html"
 echo "    Created."
 
@@ -323,18 +328,22 @@ ENTRY_POINT_PARENT="farm.fd2_examples_component_examples"
 
 cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
 sleep 1
 sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
 echo "    Updated."
 
 echo "    Updating $ROUTING_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
 sleep 1
 sed -i "s/%MODULE_NAME%/farm_fd2_examples/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
 sleep 1
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$DRUPAL_PERMISSIONS/g" "$ROUTING_YML_FILE"
