@@ -320,9 +320,11 @@ echo "    Updating $LINKS_YML_FILE from templates..."
 ENTRY_POINT_TITLE="$COMPONENT_NAME"
 ENTRY_POINT_DESCRIPTION="Example of the use of the $COMPONENT_NAME component."
 ENTRY_POINT_PARENT="farm.fd2_examples_component_examples"
+
 cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
 sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
 echo "    Updated."
@@ -331,17 +333,13 @@ echo "    Updating $ROUTING_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%MODULE_NAME%/farm_fd2_examples/g" "$ROUTING_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$DRUPAL_PERMISSIONS/g" "$ROUTING_YML_FILE"
 echo "    Updated."
 echo "Added."
-echo ""
-
-echo "  Building the examples module..."
-npm run build:examples
-error_check "Failed to build examples module."
-echo "  Built."
 echo ""
 
 echo "Running e2e tests on $COMPONENT_NAME example..."
