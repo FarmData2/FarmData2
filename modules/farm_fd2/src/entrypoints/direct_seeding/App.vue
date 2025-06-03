@@ -125,6 +125,7 @@
           <BAccordionItem
             id="direct-seeding-soil-disturbance-accordion-item"
             data-cy="direct-seeding-soil-disturbance-accordion-item"
+            v-model="directSeedingAccordionOpen"
           >
             <template #title>
               <span
@@ -243,6 +244,7 @@ export default {
       submitting: false,
       errorShowing: false,
       createdCount: 0,
+      directSeedingAccordionOpen: false,
     };
   },
   computed: {
@@ -327,6 +329,7 @@ export default {
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
+        this.directSeedingAccordionOpen = false;
       }
 
       this.form.cropName = null;
