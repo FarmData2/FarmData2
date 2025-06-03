@@ -31,6 +31,7 @@
       id="launchpad-categories-container"
       data-cy="launchpad-categories-container"
     >
+      <a id="seeding"></a>
       <BCard
         header="Seeding"
         header-tag="header"
@@ -180,6 +181,7 @@
         </div>
       </BCard>
 
+      <a id="soil"></a>
       <BCard
         header="Soil"
         header-tag="header"
