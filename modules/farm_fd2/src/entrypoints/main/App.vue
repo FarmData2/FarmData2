@@ -335,7 +335,6 @@ export default {
 @import url('@css/fd2-mobile.css');
 
 .launch-pad-container {
-  min-height: 100vh;
   background-color: rgb(246, 251, 255);
   padding: 0.5rem 1rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
