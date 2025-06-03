@@ -62,7 +62,6 @@
             </BTh>
           </BTr>
           <BTr v-if="validityStyling === false">
-            <th style="height: 0px" />
             <BTh
               colspan="100"
               style="font-weight: normal"
