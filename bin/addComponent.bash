@@ -407,11 +407,8 @@ done
 tail -29 "$INDEX_PAGE" >> /var/tmp/App.vue
 
 mv /var/tmp/App.vue "$INDEX_PAGE"
-echo "Rebuilt."
-echo ""
 
-echo "Rebuilding component_examples entry point..."
-npm run build:fd2 &> /dev/null
+npm run build:examples &> /dev/null
 echo "Built."
 echo ""
 

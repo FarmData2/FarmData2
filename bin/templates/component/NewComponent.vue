@@ -12,7 +12,7 @@
 // Import any libraries or FarmData2 components being used in this component here.
 
 /**
- * One line description of the new component.
+ * The %COMPONENT_NAME% is ... give a one line description of the component here.
  * 
  * Longer description of the component can go here...
  *
