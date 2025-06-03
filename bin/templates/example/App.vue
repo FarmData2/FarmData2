@@ -85,11 +85,14 @@
  * Import the components being used in this example here.
  */
 
+import %COMPONENT_NAME% from '@comps/%COMPONENT_NAME%/%COMPONENT_NAME%.vue';
+
 export default {
   components: {
     /**
      * List the components being used in this example here.
      */
+     %COMPONENT_NAME%,
   },
   data() {
     return {
