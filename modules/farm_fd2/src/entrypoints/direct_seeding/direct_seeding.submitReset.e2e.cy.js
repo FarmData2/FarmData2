@@ -251,6 +251,7 @@ describe('Direct Seeding: Submit/Reset Buttons component', () => {
       '[data-cy="direct-seeding-soil-disturbance-accordion-title"]'
     ).click();
     cy.get('[data-cy="multi-equipment-selector"]').should('be.visible');
+    cy.get('[data-cy="selector-input"]').should('have.value', null);
 
     cy.get('[data-cy="multi-equipment-selector"]')
       .find('[data-cy="selector-1"]')
