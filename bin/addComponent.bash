@@ -237,24 +237,25 @@ echo "  Created."
 echo ""
 
 # Run the included component tests to be sure everything is working...
-echo "Running component tests on $COMPONENT_NAME..."
+echo "  Running component tests on $COMPONENT_NAME..."
 COMP_TEST_OUT=$(test.bash --comp --glob="components/**/$COMPONENT_NAME/*.comp.cy.js")
 COMP_TEST_EXIT_CODE=$?
-echo "Component tests complete."
+echo "  Component tests complete."
 
 if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} New component failed the initial component tests."
   echo ""
   echo -e "$COMP_TEST_OUT"
   echo ""
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Check output of failed tests above."
-  echo "  Correct any errors and rerun tests using:"
-  echo "    test.bash --comp --glob=components/**/$COMPONENT_NAME/*.comp.cy.js"
-  echo "  Or try again by:"
-  echo "    Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the development branch"
-  echo "    Delete the $FEATURE_BRANCH_NAME branch."
-  echo "    Run this script again."
+  echo "  Check output of failed tests above."
+  echo "    Correct any errors and rerun tests using:"
+  echo "      test.bash --comp --glob=components/**/$COMPONENT_NAME/*.comp.cy.js"
+  echo "    Or try again by:"
+  echo "      Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "      Switch to the development branch"
+  echo "      Delete the $FEATURE_BRANCH_NAME branch."
+  echo "      Run this script again."
+
   exit "$COMP_TEST_EXIT_CODE"
 else
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New component $COMPONENT_NAME created."
@@ -314,6 +315,7 @@ echo "  Created."
 # libraries, links.menu and routing  yml files.
 
 echo "  Adding new example entry point to drupal Module files..."
+
 echo "    Updating $LIBRARIES_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
 sed -i "s/%ENTRY_POINT%/$COMPONENT_ID/g" "$LIBRARIES_YML_FILE"
@@ -346,14 +348,14 @@ sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
 sleep 1
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$DRUPAL_PERMISSIONS/g" "$ROUTING_YML_FILE"
 echo "    Updated."
-echo "Added."
+echo "  Added."
 echo ""
 
-echo "Running e2e tests on $COMPONENT_NAME example..."
+echo "  Running e2e tests on $COMPONENT_NAME example..."
 TEST_FILE="modules/farm_fd2_examples/src/entrypoints/$COMPONENT_ID/$COMPONENT_ID.exists.e2e.cy.js"
 E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE")
 E2E_EXIT_CODE=$?
-echo "E2e tests complete."
+echo "  E2e tests complete."
 
 if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo -e "${ON_RED}ERROR:${NO_COLOR} Example page has failed e2e tests."
@@ -361,14 +363,14 @@ if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo -e "$E2E_TEST_OUT"
   echo ""
 
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Check the output of the failed tests above."
-  echo "  Correct any errors and rerun tests using:"
-  echo "    test.bash --e2e --live --examples --glob=$TEST_FILE"
-  echo "  Or try again by:"
-  echo "    Commit changes to the feature branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the development branch"
-  echo "    Delete the $FEATURE_BRANCH_NAME branch."
-  echo "    Run this script again."
+  echo "  Check the output of the failed tests above."
+  echo "    Correct any errors and rerun tests using:"
+  echo "      test.bash --e2e --live --examples --glob=$TEST_FILE"
+  echo "    Or try again by:"
+  echo "      Commit changes to the feature branch: $FEATURE_BRANCH_NAME."
+  echo "      Switch to the development branch"
+  echo "      Delete the $FEATURE_BRANCH_NAME branch."
+  echo "      Run this script again."
 
   exit "$E2E_EXIT_CODE"
 else
@@ -381,35 +383,8 @@ fi
 #
 
 echo "Rebuilding component_examples entry point..."
-INDEX_PAGE="$REPO_ROOT_DIR/modules/farm_fd2_examples/src/entrypoints/component_examples/App.vue"
-# Remove the temporary files that we are using.
-rm /var/tmp/App.vue 2> /dev/null
-touch /var/tmp/App.vue
-
-head -4 "$INDEX_PAGE" >> /var/tmp/App.vue
-
-COMPONENTS=$(ls "$REPO_ROOT_DIR/components")
-for COMPONENT in $COMPONENTS; do
-  if [ "$COMPONENT" != "vite.config.js" ] && [ "$COMPONENT" != "components.d.ts" ]; then
-
-    DESCRIPTION=$(grep "^ \*.*$COMPONENT" "$REPO_ROOT_DIR/components/$COMPONENT/$COMPONENT.vue" | head -1)
-    DESCRIPTION=${DESCRIPTION:3}
-    COMPONENT_ID=$(echo "$COMPONENT" | sed 's/\([A-Z]\)/_\L\1/g' | sed 's/^_//')
-
-    {
-      echo "    <li>"
-      echo "      <a href=\"$COMPONENT_ID\">$COMPONENT</a>: $DESCRIPTION"
-      echo "    </li>"
-    } >> /var/tmp/App.vue
-  fi
-done
-
-tail -29 "$INDEX_PAGE" >> /var/tmp/App.vue
-
-mv /var/tmp/App.vue "$INDEX_PAGE"
-
-npm run build:examples &> /dev/null
-echo "Built."
+"$SCRIPT_DIR/buildCompExListPage.bash"
+echo "Rebuilt."
 echo ""
 
 #
@@ -431,5 +406,7 @@ echo "  * Modify the components/$COMPONENT_NAME/$COMPONENT_NAME.vue file to crea
 echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file and manually test the component."
 echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform automated testing."
 echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
+echo "  * Ensure that the component is fully documented."
+echo "  * Run the buildCompExListPage.bash script."
 echo "  * When ready, push your feature branch to your origin and create a pull request."
 echo ""

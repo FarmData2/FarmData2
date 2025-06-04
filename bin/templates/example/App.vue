@@ -26,8 +26,10 @@
   <h5>Component Props:</h5>
   <table class="example-table">
     <thead>
-      <th>Prop</th>
-      <th>Control</th>
+      <tr>
+        <th>Prop</th>
+        <th>Control</th>
+      </tr>
     </thead>
     <tbody>
       <tr>
@@ -61,8 +63,10 @@
   <h5>Component Event Payloads</h5>
   <table class="example-table">
     <thead>
-      <th>Event</th>
-      <th>Payload</th>
+      <tr>
+        <th>Event</th>
+        <th>Payload</th>
+      </tr>
     </thead>
     <tbody>
       <tr>
