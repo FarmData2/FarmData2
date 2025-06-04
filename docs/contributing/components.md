@@ -32,7 +32,7 @@ The `addComponent.bash` script is run in the FD2 development environment with th
 addComponent.bash ComponentName
 ```
 
-The _`ComponentName`_ is the name of the new component that will be created and must be at least two words in _UpperCamelCase_.
+Replace _`ComponentName`_ with the name of the new component that you want to create. The name must be at least two words and must be in _UpperCamelCase_.
 
 When the script completes:
 
@@ -47,10 +47,7 @@ When the script completes:
   - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
   - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
 
-## Tour of a Component
-
-
-
+## Tour of the new Component
 
 - tour the created component...
   - structure
@@ -59,9 +56,10 @@ When the script completes:
 
 - point them at DateSelector as another example
   - Add comments to DateSelector
-
 - point to traysizeselector as another example where data is fetched.
   - add comments to TraySizeSelector
+
+## Tour of the new Example Page
 
 ## Component Testing
 
