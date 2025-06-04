@@ -401,6 +401,7 @@ echo "  * Edit the examples/$COMPONENT_ID/$COMPONENT_ID.vue file and manually te
 echo "  * Edit the $COMPONENT_NAME.*.comp.cy.js files to perform automated testing."
 echo "  * Add additional *.comp.cy.js files as necessary to fully test the the component."
 echo "  * Ensure that the component is fully documented."
+echo "  * Run npm run docs:gen and verify documentation is complete."
 echo "  * Run the buildCompExListPage.bash script."
 echo "  * When ready, push your feature branch to your origin and create a pull request."
 echo ""
