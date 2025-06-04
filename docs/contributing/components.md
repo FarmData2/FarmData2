@@ -1,9 +1,8 @@
-# Working on Components
+# Working on Vue.js Components
 
 The purpose of this document is to describe how to create, change and test custom Vue components in FarmData2.
 
-Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) and with [Vue3 Component Fundamentals](https://vueschool.io/courses/vue-js-3-components-fundamentals) will be helpful in reading this document
-
+Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document
 
 ## Components in an Entrypoint
 
@@ -15,15 +14,21 @@ Using custom Vue components increases user interface consistency across entrypoi
 
 ## Existing Components
 
-A complete list of the available components can be found in the [FarmData2 Documentation](../FarmData2.md) page. Clicking on the name of a component will take you to the documentation for that component.
+A complete list of the available components can be found on the [FarmData2 Documentation](../FarmData2.md) page.
 
-## Live Component Examples
+Clicking on the name of a component will take you to the complete documentation for that component.
 
-The documentation for each component contains a link to a live example of the component running in isolation.
+The documentation for each component also contains a link to an example page with a live version of the component. The example page for a component can be used to learn about, experiment with and manually test the component.
+
+The live example pages are also available from the [Components option](http://farmos/fd2_examples/component_examples) on the FD2 Examples menu in farmOS.
+
+## Tour of a Component
 
 ## Creating a New Component
 
+## Component Testing
 
+## Component Documentation
 
 ===
 
