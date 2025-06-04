@@ -247,14 +247,11 @@ if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo ""
   echo -e "$COMP_TEST_OUT"
   echo ""
-  echo "  Check output of failed tests above."
-  echo "    Correct any errors and rerun tests using:"
-  echo "      test.bash --comp --glob=components/**/$COMPONENT_NAME/*.comp.cy.js"
-  echo "    Or try again by:"
-  echo "      Commit changes to the current git branch: $FEATURE_BRANCH_NAME."
-  echo "      Switch to the development branch"
-  echo "      Delete the $FEATURE_BRANCH_NAME branch."
-  echo "      Run this script again."
+  echo "  Try again by:"
+  echo "    Commit all changes to the current git branch: $FEATURE_BRANCH_NAME."
+  echo "    Switch to the development branch"
+  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    Run this script again."
 
   exit "$COMP_TEST_EXIT_CODE"
 else
@@ -363,14 +360,11 @@ if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo -e "$E2E_TEST_OUT"
   echo ""
 
-  echo "  Check the output of the failed tests above."
-  echo "    Correct any errors and rerun tests using:"
-  echo "      test.bash --e2e --live --examples --glob=$TEST_FILE"
-  echo "    Or try again by:"
-  echo "      Commit changes to the feature branch: $FEATURE_BRANCH_NAME."
-  echo "      Switch to the development branch"
-  echo "      Delete the $FEATURE_BRANCH_NAME branch."
-  echo "      Run this script again."
+  echo "  Try again by:"
+  echo "    Commit all changes to the feature branch: $FEATURE_BRANCH_NAME."
+  echo "    Switch to the development branch"
+  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    Run this script again."
 
   exit "$E2E_EXIT_CODE"
 else
@@ -395,7 +389,7 @@ echo ""
 echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
 safe_cd "$REPO_ROOT_DIR"
 git add .
-git commit --quiet -m "Add starter code for $COMPONENT_NAME component."
+git commit --quiet -m "Add starter code for $COMPONENT_NAME component." --no-verify
 error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
 echo "Committed."
 echo ""
