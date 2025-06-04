@@ -22,13 +22,49 @@ The documentation for each component also contains a link to an example page wit
 
 The live example pages are also available from the [Components option](http://farmos/fd2_examples/component_examples) on the FD2 Examples menu in farmOS.
 
+## Creating a New Component
+
+The `addComponent.bash` script is used to create a new Vue.js component in FarmData2. This script uses templates to create the new component, starter files for the component tests, and a basic example page for the component. The new component, tests and example page provide the basic framework for creating and testing a new component.
+
+The `addComponent.bash` script is run in the FD2 development environment with the command:
+
+```bash
+addComponent.bash ComponentName
+```
+
+The _`ComponentName`_ is the name of the new component that will be created and must be at least two words in _UpperCamelCase_.
+
+When the script completes:
+
+- There will be a new directory with the name `ComponentName` in the `components/` directory. This directory will contain:
+  - `ComponentName.vue` - the `.vue` file that defines the component.
+  - `ComponentName.content.comp.cy.js` - tests that check the default content of the component.
+  - `ComponentName.behavior.comp.cy.js` - tests that check the behavior of the component.
+  - `ComponentName.events.comp.cy.js` - tests that check that the component emits the correct events.
+  - `ComponentName.styling.comp.cy.js` - tests that check the validity styling of the component.
+- There will be a new directory with the name `component_name` in the `modules/farm_fd2_examples/src/entrypoints/` directory. This directory will contain:
+  - `App.vue` - the `.vue` file that defines the example page for the component. 
+  - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
+  - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
+
 ## Tour of a Component
 
-## Creating a New Component
+
+
+
+- tour the created component...
+  - structure
+  - docs
+  - props / events
+
+- point them at DateSelector as another example
+  - Add comments to DateSelector
+
+- point to traysizeselector as another example where data is fetched.
+  - add comments to TraySizeSelector
 
 ## Component Testing
 
-## Component Documentation
 
 ===
 
