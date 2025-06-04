@@ -1,16 +1,25 @@
-# Working on Vue.js Components or Examples
+# Working on Components
 
-The purpose of this document is to describe how to create, change and test components in FarmData2.
+The purpose of this document is to describe how to create, change and test custom Vue components in FarmData2.
 
-Components are reusable user interface (UI) elements that FarmData2 uses in its entrypoints - the forms it uses to collet input. Each component serves a specific purpose (for example `CropSelector` or `LocationSelector`). Building this functionality into components reduces code duplication and makes it possible to test their functionality isolation.
-
-Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document.
-
-## The Components
+Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) and with [Vue3 Component Fundamentals](https://vueschool.io/courses/vue-js-3-components-fundamentals) will be helpful in reading this document
 
 
-## Tour of an Existing Component
+## Components in an Entrypoint
 
+FarmData2 uses custom Vue Components to create its entrypoints. For example, the following screenshot shows the components that are used in the Direct Seeding entrypoint.
+
+<a href="images/Components.png"><img src="images/Components.png" alt="The DateSelector, CropSelector LocationSelector and other components that are used in the Direct Seeding entrypoint." width="320" style="border: 1px solid black"></a>
+
+Using custom Vue components increases user interface consistency across entrypoints, reduces code duplication, and makes it possible to test the component functionality isolation.
+
+## Existing Components
+
+A complete list of the available components can be found in the [FarmData2 Documentation](../FarmData2.md) page. Clicking on the name of a component will take you to the documentation for that component.
+
+## Live Component Examples
+
+The documentation for each component contains a link to a live example of the component running in isolation.
 
 ## Creating a New Component
 
