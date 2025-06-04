@@ -163,6 +163,7 @@
           <BAccordionItem
             id="transplanting-soil-disturbance-accordion-item"
             data-cy="transplanting-soil-disturbance-accordion-item"
+            v-model="seedApplicationAccordionOpen"
           >
             <template #title>
               <span
@@ -305,6 +306,7 @@ export default {
       },
       submitting: false,
       errorShowing: false,
+      seedApplicationAccordionOpen: false,
       createdCount: 0,
     };
   },
@@ -390,6 +392,7 @@ export default {
         this.form.equipment = [];
         this.form.depth = 0;
         this.form.speed = 0;
+        this.seedApplicationAccordionOpen = false;
       }
 
       this.form.beds = [];
