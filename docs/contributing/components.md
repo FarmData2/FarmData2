@@ -1,15 +1,24 @@
 # Working on Vue.js Components or Examples
 
-- Details coming soon.
+The purpose of this document is to describe how to create, change and test components in FarmData2.
 
-- Tour of a Component
+Components are reusable user interface (UI) elements that FarmData2 uses in its entrypoints - the forms it uses to collet input. Each component serves a specific purpose (for example `CropSelector` or `LocationSelector`). Building this functionality into components reduces code duplication and makes it possible to test their functionality isolation.
+
+Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document.
+
+## The Components
+
+
+## Tour of an Existing Component
+
+
+## Creating a New Component
+
 
 
 ===
 
-Include discussion of why build simple custom components..
-- reusability (e.g. fetching locations)
-- testability
+
 
 ## Components
 
