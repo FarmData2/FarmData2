@@ -353,7 +353,7 @@ echo ""
 
 echo "  Running e2e tests on $COMPONENT_NAME example..."
 TEST_FILE="modules/farm_fd2_examples/src/entrypoints/$COMPONENT_ID/$COMPONENT_ID.exists.e2e.cy.js"
-E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE")
+E2E_TEST_OUT=$(test.bash --e2e --live --examples --glob="$TEST_FILE" 2> /dev/null)
 E2E_EXIT_CODE=$?
 echo "  E2e tests complete."
 
