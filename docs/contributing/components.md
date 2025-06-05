@@ -67,7 +67,7 @@ The new directory for the component in the `components/` directory will contain 
 
 If you are already familiar with creating components you can remove the instructive comments from the started code with the `removeComments.bash` script.
 
-Change into the `components/` subdirectory for your new component and run the following command, replacing `ComponentName` with the name of your new component.
+Change into the subdirectory of `components/` for your new component and run the following command, replacing `ComponentName` with the name of your new component.
 
 ```bash
 removeComments.bash ComponentName.vue
@@ -75,7 +75,17 @@ removeComments.bash ComponentName.vue
 
 ### Running the Component Tests
 
-
+The component tests for the an individual component can be run by replacing `ComponentName` in the following commands with the name of your component:
+- Run all the tests for the component:
+  ```bash
+  test.bash --comp --glob=components/ComponentName/*.comp.cy.js
+  ```
+  Appending a `--gui` flag to any `test.bash` command will cause the tests to be run in the Cypress GUI.
+- Run just the `content` tests for the component:
+  ```bash
+  test.bash --comp --gui --glob=components/ComponentName/*.content.comp.cy.js
+  ```
+  Similar commands can be used to run the `behavior`, `events`, or any other specific set of tests.
 
 ## The Example Page Starter Code
 

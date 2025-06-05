@@ -40,6 +40,7 @@ jsdocrc
 linkcheck
 lintstagedrc
 localstorage
+loglevel
 longform
 mfinelli
 Michal
