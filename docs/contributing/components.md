@@ -34,34 +34,45 @@ addComponent.bash ComponentName
 
 Replace _`ComponentName`_ with the name of the new component that you want to create. The name must be at least two words and must be in _UpperCamelCase_.
 
-When the script completes:
+The script will create new directory with the name `ComponentName` in the `components/` directory that contains the starter code for the new component. It will also create a new directory with the name `component_name` in the `modules/farm_fd2_examples/src/entrypoints/` directory containing the starter code for the example page for the new component. The following sections describe the starter code for the new component and example page and point to other useful examples.
 
-- There will be a new directory with the name `ComponentName` in the `components/` directory. This directory will contain:
-  - `ComponentName.vue` - the `.vue` file that defines the component.
-  - `ComponentName.content.comp.cy.js` - tests that check the default content of the component.
-  - `ComponentName.behavior.comp.cy.js` - tests that check the behavior of the component.
-  - `ComponentName.events.comp.cy.js` - tests that check that the component emits the correct events.
-  - `ComponentName.styling.comp.cy.js` - tests that check the validity styling of the component.
-- There will be a new directory with the name `component_name` in the `modules/farm_fd2_examples/src/entrypoints/` directory. This directory will contain:
-  - `App.vue` - the `.vue` file that defines the example page for the component. 
-  - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
-  - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
+## The Component Starter Code
 
-## Tour of the new Component
+The new directory for the component in the `components/` directory will contain the following files (`ComponentName` will be replaced with the name of the new component):
 
-- tour the created component...
-  - structure
-  - docs
-  - props / events
+- `ComponentName.vue` - the `.vue` file that defines the component. This file contains extensive comments that document the structure and purpose of the different elements of the component. A few other components that provide good examples for learning are:
+  - `DateSelector` - this is a good next example to study. It illustrates how to add a BootstrapVueNext component, how to add new `prop`s, how to maintain the state of the component in the `data`, how to update that state when a `prop` changes, how to emit an event when the component's value changes, and how the `valid` and `showValidityStyling` computed properties can be written.
+  - `
+- `ComponentName.content.comp.cy.js` - tests that check the default content of the component.
+- `ComponentName.behavior.comp.cy.js` - tests that check the behavior of the component.
+- `ComponentName.events.comp.cy.js` - tests that check that the component emits the correct events.
+- `ComponentName.styling.comp.cy.js` - tests that check the validity styling of the component.
+
+
+
+
+
+`removeComments.bash` script
+
+
+### Running the Component Tests
+
+### Other Useful Component Examples
 
 - point them at DateSelector as another example
   - Add comments to DateSelector
 - point to traysizeselector as another example where data is fetched.
   - add comments to TraySizeSelector
 
-## Tour of the new Example Page
+## The Example Page Starter Code
 
-## Component Testing
+  - `App.vue` - the `.vue` file that defines the example page for the component. 
+  - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
+  - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
+
+### Other Useful Example Pages
+
+
 
 
 ===

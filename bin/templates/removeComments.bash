@@ -8,6 +8,16 @@
 # lib.js files in these templates. It will not handle more 
 # general cases well.
 
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then 
+  echo "Usage: removeComments.bash <filename>" ]
+  exit 1
+fi
+
+if [ "$#" -ne 1 ]; then 
+  echo "Usage: removeComments.bash <filename>"
+  exit 1
+fi
+
 # Remove JavaScript block comments.
 NO_JS=$(sed -r ':a; s%(.*)/\*.*\*/%\1%; ta; /\/\*/ !b; N; ba' "$1")
 

@@ -35,7 +35,7 @@ describe('Test the %COMPONENT_NAME% component behavior', () => {
       cy.get('[data-cy="component-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
         'have.text',
-        'Component content goes here.'
+        'Replace this `p` element with your component content.'
       );
     });
   });
