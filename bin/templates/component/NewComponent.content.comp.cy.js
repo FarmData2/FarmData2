@@ -34,7 +34,7 @@ describe('Test the default %COMPONENT_NAME% content', () => {
        */
       cy.get('[data-cy="component-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
-        'have.text',
+        'contain.text',
         'Replace this `p` element with your component content.'
       );
     });
