@@ -400,4 +400,49 @@ describe('Test the PicklistBase component behavior', () => {
       .find('span')
       .should('contain', '✅ All');
   });
+
+  it('checks that row highlights on event change', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item 1', quantity: 5, location: 'GHANA' },
+          { name: 'Item 2', quantity: 3, location: 'KENYA' },
+        ],
+        columns: ['name', 'quantity'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+        picked: new Map(),
+        showInfoIcons: true,
+      },
+    });
+
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should('have.class', 'selected-row');
+
+    cy.get('[data-cy="picklist-checkbox-1"]').click();
+    cy.get('[data-cy="picklist-row-1"]').should('have.class', 'selected-row');
+  });
+
+  it('clears row selection when clicking on the same row', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item 1', quantity: 5, location: 'GHANA' },
+          { name: 'Item 2', quantity: 3, location: 'KENYA' },
+        ],
+        columns: ['name', 'quantity'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+        picked: new Map(),
+        showInfoIcons: true,
+      },
+    });
+
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should('have.class', 'selected-row');
+
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should(
+      'not.have.class',
+      'selected-row'
+    );
+  });
 });
