@@ -536,10 +536,10 @@ export default {
       if (this.allPicked) {
         this.pickedRows = new Array(this.pickedRows.length).fill(0);
       } else {
-        const newPickedRows = new Array(this.pickedRows.length);
+        const newPickedRows = new Array(this.pickedRows.length).fill(1);
 
         this.sortedRows.forEach((row, index) => {
-          newPickedRows[index] = row[this.quantityAttribute] || 1;
+          newPickedRows[index] = row[this.quantityAttribute];
         });
         this.pickedRows = newPickedRows;
       }
@@ -783,18 +783,9 @@ td {
   margin: 0px;
 }
 
-.selected-row {
-  background-color: #e3f2fd !important;
-  border-left: 4px solid #2196f3 !important;
-}
-
-.selected-row td {
-  background-color: #e3f2fd !important;
-}
-
 .selected-row > td,
 .selected-row > th {
   background-color: #e3f2fd !important;
-  border-color: #2196f3 !important;
+  border-color: #e3f2fd !important;
 }
 </style>
