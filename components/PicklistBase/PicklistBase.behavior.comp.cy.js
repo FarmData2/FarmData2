@@ -401,7 +401,7 @@ describe('Test the PicklistBase component behavior', () => {
       .should('contain', '✅ All');
   });
 
-  it('checks that row highlights on event change', () => {
+  it('checks that row highlights when row is selected', () => {
     cy.mount(PicklistBase, {
       props: {
         rows: [
@@ -415,14 +415,22 @@ describe('Test the PicklistBase component behavior', () => {
       },
     });
 
+    cy.get('[data-cy="picklist-row-0"]').should(
+      'not.have.class',
+      'selected-row'
+    );
     cy.get('[data-cy="picklist-checkbox-0"]').click();
     cy.get('[data-cy="picklist-row-0"]').should('have.class', 'selected-row');
 
+    cy.get('[data-cy="picklist-row-1"]').should(
+      'not.have.class',
+      'selected-row'
+    );
     cy.get('[data-cy="picklist-checkbox-1"]').click();
     cy.get('[data-cy="picklist-row-1"]').should('have.class', 'selected-row');
   });
 
-  it('clears row selection when clicking on the same row', () => {
+  it('highlighting is cleared when row is deselected', () => {
     cy.mount(PicklistBase, {
       props: {
         rows: [

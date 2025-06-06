@@ -93,9 +93,8 @@
                 v-bind:name="'picklist-checkbox-' + i"
                 v-bind:key="'checkbox' + i"
                 v-bind:disabled="showOverlay != null"
-                v-bind:checked="pickedRows[i] > 0"
+                v-bind:checked="pickedRows[i]"
                 v-on:change="(state) => handleCheckboxChange(i, state)"
-                v-on:click.stop
                 size="lg"
               />
               <BFormSelect
