@@ -32,3 +32,12 @@ installDB.bash --release=v3.1.0-development.3 --asset=db.sample.tar.gz
 - When setting or checking the value of a _selector_ or _numeric_ input be sure to get the element from the sub-component (e.g. `selector-input` or `numeric-input`). Some methods work on the parent component, but others do not. So, it is always safest to work with the `*-input` element itself.
 - If a contained `data-cy` is unique to a page just use it. `cy.get`ting the parent element and using `find` may not work. Very strange behavior.
 - To use `select()` on a component built on top of the `SelectorBase` component, you must use `cy.get(<component>).find('selector-input').select(<item>)`
+
+
+Note: Every test `it` should wait for the `ready` event to be emitted before performing any tests. In some components this will be immediately, in others it will wait for an API call to complete. This is included in all tests for consistency and to reduce test flake.
+
+Use: `cy.task('log', 'message')` to log messages to the console.
+Use: `cy.task('logObject', obj)` to log an object to the console.
+
+- Visible in the console when running headless.
+- Click on the task in the test events output to print to console in Cypress gui.
