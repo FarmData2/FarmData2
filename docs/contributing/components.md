@@ -1,5 +1,5 @@
 # Working on Vue.js Components
-
+ 
 The purpose of this document is to describe how to create, change and test custom Vue components in FarmData2.
 
 Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document
@@ -28,9 +28,7 @@ The `addComponent.bash` script is used to create a new Vue.js component in FarmD
 
 The `addComponent.bash` script is run in the FD2 development environment with the command:
 
-```bash
-addComponent.bash ComponentName
-```
+`addComponent.bash ComponentName`
 
 Replace _`ComponentName`_ with the name of the new component that you want to create. The name must be at least two words and must be in _UpperCamelCase_.
 
@@ -48,9 +46,11 @@ The following sections describe the starter code for the new component and its e
 
 ## The Component Starter Code
 
-The new directory for the component in the `components/` directory will contain the following files (`ComponentName` will be replaced with the name of the new component):
+The source code for the new component will be in the `components/ComponentName` directory, where `ComponentName` will be replaced by the component's name. You will edit the files in this directory to change the component's content and behavior, and to test it.
 
-- `ComponentName.vue` - the `.vue` file that defines the component. This file contains extensive comments that document the structure and purpose of the different elements of the component. A few other components that provide good examples for learning are:
+This directory will contain the following files:
+
+- `ComponentName.vue` - this is the `.vue` file that defines the component. This file contains extensive comments that document the structure and purpose of the different elements of the component. A few other components that provide good examples for learning are:
   - [`DateSelector.vue`](../../components/DateSelector/DateSelector.vue) - this is a good next example to study. It illustrates how to add a BootstrapVueNext component, how to add new `prop`s, how to maintain the state of the component in the `data`, how to update that state when a `prop` changes, how to emit an event when the component's value changes, and how the `valid` and `showValidityStyling` computed properties can be written.
   - [`TraySizeSelector.vue`](../../components/TraySizeSelector/TraySizeSelector.vue) - this is a good example to study to see how a component can request and incorporate data from farmOS.
 - `ComponentName.content.comp.cy.js` - this file contains tests that check the basic content of the component and that the values of props are passed into the component.
@@ -69,34 +69,34 @@ If you are already familiar with creating components you can remove the instruct
 
 Change into the subdirectory of `components/` for your new component and run the following command, replacing `ComponentName` with the name of your new component.
 
-```bash
-removeComments.bash ComponentName.vue
-```
+`removeComments.bash ComponentName.vue`
 
 ### Running the Component Tests
 
 The component tests for the an individual component can be run by replacing `ComponentName` in the following commands with the name of your component:
 - Run all the tests for the component:
-  ```bash
-  test.bash --comp --glob=components/ComponentName/*.comp.cy.js
-  ```
+
+  `test.bash --comp --glob=components/ComponentName/*.comp.cy.js`
+
   Appending a `--gui` flag to any `test.bash` command will cause the tests to be run in the Cypress GUI.
+
 - Run just the `content` tests for the component:
-  ```bash
-  test.bash --comp --gui --glob=components/ComponentName/*.content.comp.cy.js
-  ```
+
+  `test.bash --comp --gui --glob=components/ComponentName/*.content.comp.cy.js`
+
   Similar commands can be used to run the `behavior`, `events`, or any other specific set of tests.
 
 ## The Example Page Starter Code
 
-  - `App.vue` - the `.vue` file that defines the example page for the component. 
-  - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
-  - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
+The source code for the new component's example page will be in the `modules/farm_fd2_examples/src/entrypoints/new_component/` directory, where `new_component` is replaced with the _snake_case_ version of the component's name. You will edit the files in this directory to change the example page's content and behavior.
+
+This directory will contain the following files:
+
+- `App.vue` - the `.vue` file that defines the example page for the component.
+- `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
+- `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
 
 ### Other Useful Example Pages
-
-
-
 
 ===
 
