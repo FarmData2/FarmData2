@@ -150,7 +150,4 @@ export default {
 tray-size-selector-example-hack {
   display: none;
 }
-.text-danger {
-  color: red;
-}
 </style>
