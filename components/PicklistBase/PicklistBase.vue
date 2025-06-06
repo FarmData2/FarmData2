@@ -84,7 +84,6 @@
             v-bind:id="'picklist-row-' + i"
             v-bind:data-cy="'picklist-row-' + i"
             v-bind:class="getRowClass(i)"
-            v-on:change="toggleRowSelection(i)"
           >
             <BTh stickyColumn>
               <BFormCheckbox
@@ -94,7 +93,7 @@
                 v-bind:name="'picklist-checkbox-' + i"
                 v-bind:key="'checkbox' + i"
                 v-bind:disabled="showOverlay != null"
-                v-bind:checked="isRowSelected(i)"
+                v-bind:checked="pickedRows[i] > 0"
                 v-on:change="(state) => handleCheckboxChange(i, state)"
                 v-on:click.stop
                 size="lg"
@@ -377,7 +376,6 @@ export default {
   },
   data() {
     return {
-      selectedRows: [],
       showOverlay: null,
       overlayWidth: null,
       overlayLeft: null,
@@ -452,27 +450,9 @@ export default {
     },
   },
   methods: {
-    toggleRowSelection(rowIndex) {
-      // Find the row index from the ID
-
-      const index = this.selectedRows.indexOf(rowIndex);
-      if (index > -1) {
-        // Currently selected - deselect
-        this.selectedRows.splice(index, 1);
-        this.pickedRows[rowIndex] = 0;
-      } else {
-        // Currently not selected - select
-        this.selectedRows.push(rowIndex);
-        this.pickedRows[rowIndex] = 1;
-      }
-    },
-    isRowSelected(id) {
-      return this.selectedRows.includes(id);
-    },
-
-    getRowClass(id) {
+    getRowClass(rowIndex) {
       return {
-        'selected-row': this.isRowSelected(id),
+        'selected-row': this.pickedRows[rowIndex] > 0,
       };
     },
     syncPickedRows(newPickedEntries) {
@@ -543,20 +523,6 @@ export default {
         this.pickedRows[row] = 1;
       } else {
         this.pickedRows[row] = 0;
-      }
-
-      const rowId = this.sortedRows[row].id;
-      if (state) {
-        // Checkbox checked - add to selection
-        if (!this.selectedRows.includes(rowId)) {
-          this.selectedRows.push(rowId);
-        }
-      } else {
-        // Checkbox unchecked - remove from selection
-        const index = this.selectedRows.indexOf(rowId);
-        if (index > -1) {
-          this.selectedRows.splice(index, 1);
-        }
       }
     },
     handleAllButton() {
@@ -705,13 +671,6 @@ export default {
     this.$emit('valid', this.isValid);
     this.sortedRows = [...this.rows]; // Initialize sortedRows with the rows prop
     this.quantityOptionsMap = this.initializeQuantityOptionsMap(this.rows); // Initialize quantity options map
-
-    this.selectedRows = [];
-    for (let i = 0; i < this.pickedRows.length; i++) {
-      if (this.pickedRows[i] > 0) {
-        this.selectedRows.push(i);
-      }
-    }
 
     if (this.picked instanceof Map && this.picked.size > 0) {
       this.pickedRows = new Array(this.sortedRows.length).fill(0);
