@@ -1,5 +1,5 @@
 # Working on Vue.js Components
- 
+
 The purpose of this document is to describe how to create, change and test custom Vue components in FarmData2.
 
 Familiarity with the [Quick Tour of FarmData2](tour.md) and the [Overview of the FarmData2 Codebase](codebase.md) will be helpful in reading this document
@@ -74,6 +74,7 @@ Change into the subdirectory of `components/` for your new component and run the
 ### Running the Component Tests
 
 The component tests for the an individual component can be run by replacing `ComponentName` in the following commands with the name of your component:
+
 - Run all the tests for the component:
 
   `test.bash --comp --glob=components/ComponentName/*.comp.cy.js`
@@ -95,8 +96,6 @@ This directory will contain the following files:
 - `App.vue` - the `.vue` file that defines the example page for the component.
 - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed.
 - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page.
-
-### Other Useful Example Pages
 
 ===
 
