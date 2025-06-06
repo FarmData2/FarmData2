@@ -21,6 +21,10 @@ module.exports = {
     {
       files: ['**/*.comp.cy.js', '**/*.unit.cy.js', '**/*.e2e.cy.js'],
       extends: ['plugin:cypress/recommended'],
+      rules: {
+        'cypress/no-force': 'error',
+        'no-console': 'error',
+      },
     },
     {
       files: ['*.md'],
