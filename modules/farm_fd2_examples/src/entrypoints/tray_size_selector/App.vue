@@ -15,8 +15,7 @@
     v-bind:showValidityStyling="validity.showStyling"
     v-model:selected="form.selected"
     v-on:valid="(valid) => (validity.selected = valid)"
-    v-on:ready="handleTraySizeSelectorReady"
-    v-on:error="handleTraySizeSelectorError"
+    v-on:ready="createdCount++"
   />
   <hr />
   <h5>Component Props:</h5>
@@ -59,8 +58,7 @@
             variant="outline-primary"
             size="sm"
             v-on:click="selectFirstAvailableOption"
-            title="Selects the first non-disabled option fetched by TraySizeSelector. Will only work after 'ready' event."
-            v-bind:disabled="!traySizeSelectorIsReady"
+            title="Selects '72' which is expected to be an available option."
           >
             Select first available
           </BButton>
@@ -74,36 +72,20 @@
           >
             Clear
           </BButton>
-          <small
-            class="d-block mt-1"
-            v-if="!traySizeSelectorIsReady && !traySizeSelectorError"
-          >
-            (Button disabled until TraySizeSelector is ready)
-          </small>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <h5>Component Event Payloads / Status:</h5>
+  <h5>Component Event Payloads:</h5>
   <table class="example-table">
     <thead>
       <tr>
-        <th>Event/Status</th>
+        <th>Event</th>
         <th>Payload/Value</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>ready (from TraySizeSelector)</td>
-        <td>{{ traySizeSelectorIsReady }}</td>
-      </tr>
-      <tr>
-        <td>error (from TraySizeSelector)</td>
-        <td v-bind:class="{ 'text-danger': traySizeSelectorError }">
-          {{ traySizeSelectorError || 'null' }}
-        </td>
-      </tr>
       <tr>
         <td>update:selected</td>
         <td>{{ form.selected === null ? 'null' : form.selected }}</td>
@@ -142,31 +124,22 @@ export default {
         showStyling: false,
         selected: false,
       },
-      traySizeSelectorIsReady: false,
-      traySizeSelectorError: null,
+      createdCount: 0,
     };
   },
   methods: {
-    handleTraySizeSelectorReady() {
-      this.traySizeSelectorIsReady = true;
-      this.traySizeSelectorError = null;
-    },
-    handleTraySizeSelectorError(errorMessage) {
-      this.traySizeSelectorError = errorMessage;
-      this.traySizeSelectorIsReady = false;
-    },
     selectFirstAvailableOption() {
-      if (this.traySizeSelectorIsReady) {
-        this.form.selected = '72';
-      }
+      this.form.selected = '72';
     },
   },
   computed: {
     pageDoneLoading() {
-      return this.traySizeSelectorIsReady || !!this.traySizeSelectorError;
+      return this.createdCount >= 2;
     },
   },
-  created() {},
+  created() {
+    this.createdCount++;
+  },
 };
 </script>
 
