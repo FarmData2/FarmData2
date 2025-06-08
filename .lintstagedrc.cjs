@@ -68,9 +68,8 @@ const getModuleTestsVue = (files) => {
 const getModuleTestsE2ECyJs = (files) => {
   testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
-      // Skip this if the entrypoint has already been tested
       if (fd2EntrypointsTested.get(path.basename(path.dirname(file)))) {
-        return 'stat --printf="Skipping %n" file';
+        return 'skipping ' + file;
       } else {
         return (
           'test.bash --fd2 --e2e --live --glob=' +
