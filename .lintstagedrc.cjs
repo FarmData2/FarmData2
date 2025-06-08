@@ -63,7 +63,7 @@ const getModuleTestsVue = (files) => {
  * Construct a test command for each entrypoint e2e.cy.js file that is staged.
  */
 const getModuleTestsE2ECyJs = (files) => {
-  const testCommands = files.map((file) => {
+  testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
       return (
         'test.bash --fd2 --e2e --live --glob=' +
@@ -86,6 +86,12 @@ const getModuleTestsE2ECyJs = (files) => {
       );
     }
   });
+
+  // Remove any previously run tests.
+  const prevTests = getModuleTestsVue(files);
+  testCommands = testCommands.filter(
+    (testCommand) => !prevTests.includes(testCommand)
+  );
 
   return testCommands;
 };
