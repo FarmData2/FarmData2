@@ -1,7 +1,7 @@
 const { ESLint } = require('eslint');
 const path = require('path');
 
-const modulesTested = new Map();
+const fd2EntrypointsTested = new Map();
 
 /*
  * lint-staged provides the command for each pattern with an explicit
@@ -29,10 +29,8 @@ const removeIgnoredFiles = async (files) => {
  */
 const getModuleTestsVue = (files) => {
   const testCommands = files.map((file) => {
-    // note the module being tested so we don't re-run individual test files.
-    modulesTested.set(path.basename(path.dirname(file)), true);
-
     if (file.includes('/farm_fd2/')) {
+      fd2EntrypointsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --fd2 --e2e --live --glob=' +
         '/modules/farm_fd2/src/entrypoints/' +
@@ -70,8 +68,8 @@ const getModuleTestsVue = (files) => {
 const getModuleTestsE2ECyJs = (files) => {
   testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
-      // Skip this if the module has already been tested
-      if (!modulesTested.get(`farm_fd2`)) {
+      // Skip this if the entrypoint has already been tested
+      if (!fd2EntrypointsTested.get(path.basename(path.dirname(file)))) {
         return (
           'test.bash --fd2 --e2e --live --glob=' +
           file.substring(file.indexOf('/modules'))
