@@ -445,7 +445,7 @@ if [ ! "$TESTS_PASSED" == "0" ]; then
     echo ""
   fi
 
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Entry point was not created."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} The new entrypoint failed e2e and/or unit tests."
   echo "  Check the error messages above."
   echo "  Try again by:"
   echo "    git restore --staged ."
