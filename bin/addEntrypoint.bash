@@ -208,6 +208,8 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
+echo "Creating new entrypoint..."
+
 if [ -z "$DEV_FLAG" ]; then
   # Create a new feature branch for the entrypoint from the development branch
   echo "  Updating development branch..."
@@ -234,9 +236,10 @@ error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
 echo "  Switched."
 
 # Make the directory for the entrypoint and populate it with the template files.
+echo "  Creating entry point directory '$ENTRY_POINT_SRC_DIR'..."
 mkdir "$ENTRY_POINT_SRC_DIR"
 error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
-echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
+echo "  Created."
 
 if [ -z "$MIN_FLAG" ]; then
   # Creating a full entry point.
@@ -356,14 +359,18 @@ else
   echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
 fi
 
+echo "Created."
 echo ""
 
+echo "Adding new entrypoint to the $MODULE_NAME drupal Module..."
 # Add the new entry point to the drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
-cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
+echo "  Updating $LIBRARIES_YML_FILE from templates..."
+cat "  $ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
-echo "Updated $LIBRARIES_YML_FILE from templates."
+echo "  Updated."
 
+echo "  Updating $LINKS_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
 sleep 1
@@ -372,8 +379,9 @@ sleep 1
 sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
 sleep 1
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
-echo "Updated $LINKS_YML_FILE from templates."
+echo "  Updated ."
 
+echo "Updating $ROUTING_YML_FILE from templates."
 cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
 sleep 1
@@ -384,8 +392,9 @@ sleep 1
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
 sleep 1
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FILE"
-echo "Updated $ROUTING_YML_FILE from templates."
-echo ""
+echo "  Updated."
+
+echo "Added."
 
 # Run the e2e exists tests to be sure dev and preview versions work.
 # Note: Do not need to run all tests here because they will be run
@@ -394,14 +403,14 @@ TEST_MODULE=${MODULE_NAME##*_}
 
 echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
 TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.e2e.cy.js"
-E2E_TEST_OUT=$(test.bash --e2e --live --"$TEST_MODULE" --glob="$TEST_FILE")
+E2E_TEST_OUT=$(test.bash --e2e --live --"$TEST_MODULE" --glob="$TEST_FILE" 2> /dev/null)
 E2E_EXIT_CODE=$?
 echo "E2E tests complete."
 echo ""
 
 echo "Running unit tests on lib.js in the $MODULE_NAME module..."
 TEST_FILES="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/*.unit.cy.js"
-UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILES")
+UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILES" 2> /dev/null)
 UNIT_EXIT_CODE=$?
 echo "Unit tests complete."
 echo ""
