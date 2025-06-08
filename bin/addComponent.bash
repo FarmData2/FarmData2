@@ -248,9 +248,10 @@ if [ ! "$COMP_TEST_EXIT_CODE" == "0" ]; then
   echo -e "$COMP_TEST_OUT"
   echo ""
   echo "  Try again by:"
-  echo "    Commit all changes to the current git branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the development branch"
-  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    git restore --staged ."
+  echo "    git restore ."
+  echo "    git switch development"
+  echo "    git branch -D $FEATURE_BRANCH_NAME"
   echo "    Run this script again."
 
   exit "$COMP_TEST_EXIT_CODE"
@@ -361,9 +362,10 @@ if [ ! "$E2E_EXIT_CODE" == "0" ]; then
   echo ""
 
   echo "  Try again by:"
-  echo "    Commit all changes to the feature branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the development branch"
-  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo "    git restore --staged ."
+  echo "    git restore ."
+  echo "    git switch development"
+  echo "    git branch -D $FEATURE_BRANCH_NAME"
   echo "    Run this script again."
 
   exit "$E2E_EXIT_CODE"
