@@ -1,6 +1,8 @@
 const { ESLint } = require('eslint');
 const path = require('path');
 
+const modulesTested = new Map();
+
 /*
  * lint-staged provides the command for each pattern with an explicit
  * list of files.  If one of those files is ignored by .eslintignore
@@ -27,6 +29,9 @@ const removeIgnoredFiles = async (files) => {
  */
 const getModuleTestsVue = (files) => {
   const testCommands = files.map((file) => {
+    // note the module being tested so we don't re-run individual test files.
+    modulesTested.set(path.basename(path.dirname(file)), true);
+
     if (file.includes('/farm_fd2/')) {
       return (
         'test.bash --fd2 --e2e --live --glob=' +
@@ -65,10 +70,13 @@ const getModuleTestsVue = (files) => {
 const getModuleTestsE2ECyJs = (files) => {
   testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
-      return (
-        'test.bash --fd2 --e2e --live --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      // Skip this if the module has already been tested
+      if (!modulesTested.get(`farm_fd2`)) {
+        return (
+          'test.bash --fd2 --e2e --live --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else if (file.includes('/farm_fd2_examples/')) {
       return (
         'test.bash --examples --e2e --live --glob=' +
