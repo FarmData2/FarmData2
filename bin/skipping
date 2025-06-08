@@ -1,6 +1,6 @@
-#/bin/bash
+#!/bin/bash
 
-# This script is used in lintstagedrc.cjs to skip test files 
+# This script is used in lintstagedrc.cjs to skip test files
 # that have already been run.  It is a bit of a hack because
 # lintstagedrc.cjs requires a command for each staged file.
 # So we just use this command.
