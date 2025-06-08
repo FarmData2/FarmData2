@@ -243,14 +243,16 @@ echo "  Created."
 
 if [ -z "$MIN_FLAG" ]; then
   # Creating a full entry point.
+  echo "  Creating $ENTRY_POINT_SRC_DIR/App.vue from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
   sleep 1 # Sleep to prevent sed permission issue bug in mounted file system.
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
   sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
-  echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   sleep 1
@@ -259,8 +261,9 @@ if [ -z "$MIN_FLAG" ]; then
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.date.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
   sleep 1
@@ -269,8 +272,9 @@ if [ -z "$MIN_FLAG" ]; then
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
   sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.comment.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
   sleep 1
@@ -279,8 +283,9 @@ if [ -z "$MIN_FLAG" ]; then
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
   sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submitReset.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
   sleep 1
@@ -289,8 +294,9 @@ if [ -z "$MIN_FLAG" ]; then
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
   sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submission.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
   sleep 1
@@ -299,33 +305,39 @@ if [ -z "$MIN_FLAG" ]; then
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
   sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/index.html from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
   sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
-  echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
+  echo "  Created."
 
+  echo "  Copying $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
   cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
-  echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
+  echo "  Copied."
 
+  echo "  Copying $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
+  echo "  Copied."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.js"
   sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submitError.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
+  echo "  Created."
 else
   # Creating a minimum entry point.
   cp "$ENTRY_POINT_TEMPLATE_DIR/App-min.vue" "$ENTRY_POINT_SRC_DIR/App.vue"
@@ -366,7 +378,7 @@ echo "Adding new entrypoint to the $MODULE_NAME drupal Module..."
 # Add the new entry point to the drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
 echo "  Updating $LIBRARIES_YML_FILE from templates..."
-cat "  $ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
+cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
 echo "  Updated."
 
