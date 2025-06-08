@@ -445,7 +445,8 @@ if [ ! "$TESTS_PASSED" == "0" ]; then
     echo ""
   fi
 
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Check output of failed tests above."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Entry point was not created."
+  echo "  Check the error messages above."
   echo "  Try again by:"
   echo "    git restore --staged ."
   echo "    git restore ."
