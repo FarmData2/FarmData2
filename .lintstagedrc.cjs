@@ -29,21 +29,21 @@ const getModuleTestsVue = (files) => {
   const testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
       return (
-        'test.bash --fd2 --e2e --dev --glob=' +
+        'test.bash --fd2 --e2e --live --glob=' +
         '/modules/farm_fd2/src/entrypoints/' +
         path.basename(path.dirname(file)) +
         '/*.e2e.cy.js'
       );
     } else if (file.includes('/farm_fd2_examples/')) {
       return (
-        'test.bash --examples --e2e --dev --glob=' +
+        'test.bash --examples --e2e --live --glob=' +
         '/modules/farm_fd2_examples/src/entrypoints/' +
         path.basename(path.dirname(file)) +
         '/*.e2e.cy.js'
       );
     } else if (file.includes('/farm_fd2_school/')) {
       return (
-        'test.bash --school --e2e --dev --glob=' +
+        'test.bash --school --e2e --live --glob=' +
         '/modules/farm_fd2_school/src/entrypoints/' +
         path.basename(path.dirname(file)) +
         '/*.e2e.cy.js'
@@ -66,17 +66,17 @@ const getModuleTestsE2ECyJs = (files) => {
   const testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
       return (
-        'test.bash --fd2 --e2e --dev --glob=' +
+        'test.bash --fd2 --e2e --live --glob=' +
         file.substring(file.indexOf('/modules'))
       );
     } else if (file.includes('/farm_fd2_examples/')) {
       return (
-        'test.bash --examples --e2e --dev --glob=' +
+        'test.bash --examples --e2e --live --glob=' +
         file.substring(file.indexOf('/modules'))
       );
     } else if (file.includes('/farm_fd2_school/')) {
       return (
-        'test.bash --school --e2e --dev --glob=' +
+        'test.bash --school --e2e --live --glob=' +
         file.substring(file.indexOf('/modules'))
       );
     } else {
