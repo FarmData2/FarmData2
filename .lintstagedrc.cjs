@@ -75,7 +75,7 @@ const getModuleTestsVue = (files) => {
  * Construct a test command for each entrypoint e2e.cy.js file that is staged.
  */
 const getModuleTestsE2ECyJs = (files) => {
-  testCommands = files.map((file) => {
+  const testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
       if (fd2EntrypointsTested.get(path.basename(path.dirname(file)))) {
         return 'skipping ' + file;
