@@ -7,6 +7,8 @@ const schoolEntrypointsTested = new Map();
 const fd2LibsTested = new Map();
 const examplesLibsTested = new Map();
 const schoolLibsTested = new Map();
+const compsTested = new Map();
+
 /*
  * lint-staged provides the command for each pattern with an explicit
  * list of files.  If one of those files is ignored by .eslintignore
@@ -203,6 +205,7 @@ const getModuleTestsUnitCyJs = (files) => {
  */
 const getCompTestsVue = (files) => {
   const testCommands = files.map((file) => {
+    compsTested.set(path.basename(path.dirname(file)), true);
     return (
       'test.bash --comp --glob=' +
       '/components/' +
@@ -219,9 +222,13 @@ const getCompTestsVue = (files) => {
  */
 const getCompTestsCompCyJs = (files) => {
   const testCommands = files.map((file) => {
-    return (
-      'test.bash --comp --glob=' + file.substring(file.indexOf('/components'))
-    );
+    if (compsTested.get(path.basename(path.dirname(file)))) {
+      return 'skipping ' + file;
+    } else {
+      return (
+        'test.bash --comp --glob=' + file.substring(file.indexOf('/components'))
+      );
+    }
   });
 
   return testCommands;
