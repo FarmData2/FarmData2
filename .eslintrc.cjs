@@ -3,6 +3,7 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   root: true,
+
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
@@ -10,6 +11,10 @@ module.exports = {
     'plugin:json/recommended',
     'plugin:prettier/recommended',
   ],
+  plugins: ['no-only-tests'],
+  rules: {
+    'no-only-tests/no-only-tests': 'error',
+  },
   overrides: [
     {
       files: ['*.vue'],
@@ -22,7 +27,6 @@ module.exports = {
       files: ['**/*.comp.cy.js', '**/*.unit.cy.js', '**/*.e2e.cy.js'],
       extends: ['plugin:cypress/recommended'],
       rules: {
-        'cypress/no-force': 'error',
         'no-console': 'error',
       },
     },
