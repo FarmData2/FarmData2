@@ -8,6 +8,7 @@ const fd2LibsTested = new Map();
 const examplesLibsTested = new Map();
 const schoolLibsTested = new Map();
 const compsTested = new Map();
+const libsTested = new Map();
 
 /*
  * lint-staged provides the command for each pattern with an explicit
@@ -241,6 +242,7 @@ const getCompTestsCompCyJs = (files) => {
  */
 const getLibTestsJs = (files) => {
   const testCommands = files.map((file) => {
+    libsTested.set(path.basename(path.dirname(file)), true);
     return (
       'test.bash --unit --lib --glob=' +
       '/library/' +
@@ -257,10 +259,14 @@ const getLibTestsJs = (files) => {
  */
 const getLibTestsUnitCyJs = (files) => {
   const testCommands = files.map((file) => {
-    return (
-      'test.bash --unit --lib --glob=' +
-      file.substring(file.indexOf('/library'))
-    );
+    if (libsTested.get(path.basename(path.dirname(file)))) {
+      return 'skipping ' + file;
+    } else {
+      return (
+        'test.bash --unit --lib --glob=' +
+        file.substring(file.indexOf('/library'))
+      );
+    }
   });
 
   return testCommands;
