@@ -177,7 +177,7 @@ const getModuleTestsUnitCyJs = (files) => {
         );
       }
     } else if (file.includes('/farm_fd2_school/')) {
-      if (schoolEntrypointsTested.get(path.basename(path.dirname(file)))) {
+      if (schoolLibsTested.get(path.basename(path.dirname(file)))) {
         return 'skipping ' + file;
       } else {
         return (
