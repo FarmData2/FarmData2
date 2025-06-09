@@ -40,7 +40,7 @@ const getModuleTestsVue = (files) => {
         '/*.e2e.cy.js'
       );
     } else if (file.includes('/farm_fd2_examples/')) {
-      examples2EntrypointsTested.set(path.basename(path.dirname(file)), true);
+      examplesEntrypointsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --examples --e2e --live --glob=' +
         '/modules/farm_fd2_examples/src/entrypoints/' +
