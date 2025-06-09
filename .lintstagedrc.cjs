@@ -2,6 +2,8 @@ const { ESLint } = require('eslint');
 const path = require('path');
 
 const fd2EntrypointsTested = new Map();
+const examplesEntrypointsTested = new Map();
+const schoolEntrypointsTested = new Map();
 
 /*
  * lint-staged provides the command for each pattern with an explicit
@@ -38,6 +40,7 @@ const getModuleTestsVue = (files) => {
         '/*.e2e.cy.js'
       );
     } else if (file.includes('/farm_fd2_examples/')) {
+      examples2EntrypointsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --examples --e2e --live --glob=' +
         '/modules/farm_fd2_examples/src/entrypoints/' +
@@ -45,6 +48,7 @@ const getModuleTestsVue = (files) => {
         '/*.e2e.cy.js'
       );
     } else if (file.includes('/farm_fd2_school/')) {
+      schoolEntrypointsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --school --e2e --live --glob=' +
         '/modules/farm_fd2_school/src/entrypoints/' +
@@ -77,15 +81,23 @@ const getModuleTestsE2ECyJs = (files) => {
         );
       }
     } else if (file.includes('/farm_fd2_examples/')) {
-      return (
-        'test.bash --examples --e2e --live --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      if (examplesEntrypointsTested.get(path.basename(path.dirname(file)))) {
+        return 'skipping ' + file;
+      } else {
+        return (
+          'test.bash --examples --e2e --live --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else if (file.includes('/farm_fd2_school/')) {
-      return (
-        'test.bash --school --e2e --live --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      if (schoolEntrypointsTested.get(path.basename(path.dirname(file)))) {
+        return 'skipping ' + file;
+      } else {
+        return (
+          'test.bash --school --e2e --live --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else {
       console.log('.cy.js file found in unrecognized module.');
       console.log(
@@ -93,12 +105,6 @@ const getModuleTestsE2ECyJs = (files) => {
       );
     }
   });
-
-  // Remove any previously run tests.
-  const prevTests = getModuleTestsVue(files);
-  testCommands = testCommands.filter(
-    (testCommand) => !prevTests.includes(testCommand)
-  );
 
   return testCommands;
 };
