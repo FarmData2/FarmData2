@@ -4,7 +4,9 @@ const path = require('path');
 const fd2EntrypointsTested = new Map();
 const examplesEntrypointsTested = new Map();
 const schoolEntrypointsTested = new Map();
-
+const fd2LibsTested = new Map();
+const examplesLibsTested = new Map();
+const schoolLibsTested = new Map();
 /*
  * lint-staged provides the command for each pattern with an explicit
  * list of files.  If one of those files is ignored by .eslintignore
@@ -116,6 +118,7 @@ const getModuleTestsE2ECyJs = (files) => {
 const getModuleTestsJs = (files) => {
   const testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
+      fd2LibsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --fd2 --unit --glob=' +
         '/modules/farm_fd2/src/entrypoints/' +
@@ -123,6 +126,7 @@ const getModuleTestsJs = (files) => {
         '/lib.*.unit.cy.js'
       );
     } else if (file.includes('/farm_fd2_examples/')) {
+      examplesLibsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --examples --unit --glob=' +
         '/modules/farm_fd2_examples/src/entrypoints/' +
@@ -130,6 +134,7 @@ const getModuleTestsJs = (files) => {
         '/lib.*.unit.cy.js'
       );
     } else if (file.includes('/farm_fd2_school/')) {
+      schoolLibsTested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --school --unit --glob=' +
         '/modules/farm_fd2_school/src/entrypoints/' +
@@ -154,20 +159,32 @@ const getModuleTestsJs = (files) => {
 const getModuleTestsUnitCyJs = (files) => {
   const testCommands = files.map((file) => {
     if (file.includes('/farm_fd2/')) {
-      return (
-        'test.bash --fd2 --unit --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      if (fd2LibsTested.get(path.basename(path.dirname(file)))) {
+        return 'skipping ' + file;
+      } else {
+        return (
+          'test.bash --fd2 --unit --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else if (file.includes('/farm_fd2_examples/')) {
-      return (
-        'test.bash --examples --unit --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      if (examplesLibsTested.get(path.basename(path.dirname(file)))) {
+        return 'skipping ' + file;
+      } else {
+        return (
+          'test.bash --examples --unit --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else if (file.includes('/farm_fd2_school/')) {
-      return (
-        'test.bash --school --unit --glob=' +
-        file.substring(file.indexOf('/modules'))
-      );
+      if (schoolEntrypointsTested.get(path.basename(path.dirname(file)))) {
+        return 'skipping ' + file;
+      } else {
+        return (
+          'test.bash --school --unit --glob=' +
+          file.substring(file.indexOf('/modules'))
+        );
+      }
     } else {
       console.log('lib.*.unit.cy.js file found in unrecognized module.');
       console.log(
