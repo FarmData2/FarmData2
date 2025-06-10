@@ -65,7 +65,6 @@ var libSessionStorage = null;
  * @returns {boolean} true if the page is within farmOS, false if not.
  */
 export function inFarmOS() {
-  // 'export' is necessary for other modules to use this.
   try {
     const onLocalhost = document.URL.startsWith('http://localhost');
     const inFarmOS = !onLocalhost;
@@ -121,8 +120,6 @@ export function getFarmGlobal() {
  * to interact with the farmOS host. There will only ever be one instance of the
  * `farmOS` object.
  *
- * ... (rest of original comments)
- *
  * @param {String} hostURL url of the farmOS instance to which to connect.
  * @param {String} client the farmOS api client to use.
  * @param {String} user the username of the farmOS user to use for authentication.
@@ -177,11 +174,10 @@ export const getFarmOSInstance = runExclusive.build(
         return await getFarmOSInstanceForInFarmOS();
       }
     } else {
-      // Here we are not running within farmOS...
       if (hostURL && client && user && pass) {
         /*
          * We have been called from a test that provides specific credentials.
-         * So we will create a new farmOS object with those credentials.
+         * Create a new farmOS object with the credentials.
          */
         clearCachedFarm();
         return await getFarmOSInstanceForNotInFarmOS(
@@ -288,11 +284,7 @@ async function getFarmOSInstanceForNotInFarmOS(
   let newFarm = false;
   if (!fd2Cache.farm) {
     newFarm = true;
-    /*
-     * We don't yet have a farmOS instance, and no credentials were provided
-     * so we will create a new farmOS instance using the default credentials
-     * Note: We know we are running only in the dev environment here!
-     */
+    // Create a new farmOS instance using the default credentials if none are provided.
 
     if (!hostURL && !client && !user && !pass) {
       hostURL = 'http://farmos';
@@ -349,13 +341,10 @@ async function getFarmOSInstanceForNotInFarmOS(
  * it in the session storage for next time.
  */
 export async function setFarmSchema(farm) {
-  // 'export' is necessary for testing.
-  // Try the session storage first...
   let schema = JSON.parse(libSessionStorage.getItem('schema'));
   if (schema == null) {
-    // Not in session storage, so fetch schema from the farmOS host.
     await farm.schema.fetch();
-    schema = farm.schema.get(); // Cache in the session storage for next time.
+    schema = farm.schema.get();
     libSessionStorage.setItem('schema', JSON.stringify(schema));
   } else {
     await farm.schema.set(schema);
@@ -364,8 +353,7 @@ export async function setFarmSchema(farm) {
 
 /**
  * Print out the JSON structure of the specified farmOS record type.
- * (e.g. asset--land, log--harvest, etc... This is useful as a development
- * and debugging tool.
+ * (e.g. asset--land, log--harvest, etc...
  *
  * @param {object} farm a `farmOS` object returned from `getFarmOSInstance`.
  * @param {string} recordType the type of farmOS record to display.
@@ -393,7 +381,6 @@ export function printObject(farm, recordType) {
  * containing the requested data.
  */
 export async function fetchWithCaching(key, fetchFunction) {
-  // 'export' is necessary
   /*
    * If the value to be fetched exits in the global variable cache
    * return it from there.
@@ -402,7 +389,7 @@ export async function fetchWithCaching(key, fetchFunction) {
     return fd2Cache[key];
   }
   /*
-   * Note we don't necessarily need a farmOS object here but we need
+   * We don't necessarily need a farmOS object here but we need
    * to be sure one has been created before we use the libSessionStorage
    * so that we know it ha been initialized.
    */
@@ -445,7 +432,6 @@ export async function fetchWithCaching(key, fetchFunction) {
  * @returns the value associated with the key in fd2Cache.
  */
 export function getFromGlobalVariableCache(key) {
-  // 'export' is necessary for testing
   return fd2Cache[key];
 }
 
@@ -458,7 +444,6 @@ export function getFromGlobalVariableCache(key) {
  * @param {String} key the key for the value to be cleared.
  */
 export function clearFromGlobalVariableCache(key) {
-  // 'export' is necessary for testing
   fd2Cache[key] = null;
 }
 
@@ -471,7 +456,6 @@ export function clearFromGlobalVariableCache(key) {
  * @param {String} key the key associated with the value to be cleared.
  */
 export function clearCachedValue(key) {
-  // 'export' is necessary
   fd2Cache[key] = null;
   if (libSessionStorage) {
     libSessionStorage.removeItem(key);
