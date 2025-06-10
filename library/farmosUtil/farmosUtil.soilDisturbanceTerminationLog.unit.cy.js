@@ -80,7 +80,7 @@ describe('Test the soil disturbance termination log functions', () => {
     if (deletePlantAsset) {
       cy.get('@newPlantAsset').then((plantAsset) => {
         cy.wrap(farmosUtil.deletePlantAsset(plantAsset.id)).then((result) => {
-          expect(result.status).to.equal(204); // Successful deletion
+          expect(result.status).to.equal(204);
         });
       });
     }
