@@ -6,7 +6,6 @@
 
 import dayjs from 'dayjs';
 import { getFarmOSInstance } from './farmosUtil.core.js';
-// Import the helper functions from the utilities module.
 import {
   getPlantingLocationObjects,
   getLogCategoryObjects,

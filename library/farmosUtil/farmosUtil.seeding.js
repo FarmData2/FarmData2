@@ -7,7 +7,6 @@
 import dayjs from 'dayjs';
 import { getFarmOSInstance } from './farmosUtil.core.js';
 import { getCropIdToTermMap } from './farmosUtil.crops.js';
-// Import the helper functions from the restored utilities module.
 import {
   getPlantingLocationObjects,
   getLogCategoryObjects,
@@ -36,7 +35,7 @@ export async function createSeedingLog(
   plantAsset,
   quantities
 ) {
-  // Use the clean helper functions from the utilities module.
+  // Helper functions from the utilities module.
   const locationsArray = await getPlantingLocationObjects([
     locationName,
     ...bedNames,

@@ -9,7 +9,6 @@ import { getFarmOSInstance } from './farmosUtil.core.js';
 import { getBeds, getBedNameToAssetMap } from './farmosUtil.beds.js';
 import { getCropIdToTermMap } from './farmosUtil.crops.js';
 import { archivePlantAsset } from './farmosUtil.plant.js';
-// Import the helper functions from the restored utilities module.
 import {
   getPlantingLocationObjects,
   getLogCategoryObjects,
@@ -55,7 +54,6 @@ export async function createSoilDisturbanceTerminationLog(
     })
     .filter((name) => name);
 
-  // Now we can use the clean helper functions again.
   const locationsArray = await getPlantingLocationObjects([
     locationName,
     ...bedsToKeep,
