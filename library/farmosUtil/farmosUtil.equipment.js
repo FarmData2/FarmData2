@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.equipment
- *
- * @description Equipment-related utility functions.
+/*
+ * Utility functions for getting and working with equipment.
  */
 
 import {
