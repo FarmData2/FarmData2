@@ -85,4 +85,54 @@ describe('Test error when submitting tray seeding lib', () => {
       );
     }
   );
+
+  it(
+    'Verify 3 quantities are deleted when seedingLog is deleted',
+    { retries: 4 },
+    () => {
+      let postRequestCount = 0;
+
+      cy.intercept('POST', '**/api/log/seeding', (req) => {
+        postRequestCount += 1;
+        if (postRequestCount === 1) {
+          req.reply({
+            statusCode: 401,
+          });
+        } else {
+          req.continue();
+        }
+      });
+
+      let quantityDeleteAttempts = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        quantityDeleteAttempts++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain('Error creating tray seeding.');
+            expect(error.message).to.contain(
+              'Result of operation traysQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation traySizeQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedsQuantity could not be cleaned up.'
+            );
+
+            expect(quantityDeleteAttempts).to.equal(3);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
 });
