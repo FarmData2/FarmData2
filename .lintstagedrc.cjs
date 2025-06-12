@@ -236,24 +236,25 @@ const getCompTestsCompCyJs = (files) => {
 };
 
 /*
- * Construct a test command for each library that has a .js file staged.
+ * Construct a test command for each library .js file that is staged.
  * The command will use a glob to run all unit.cy.js unit tests in the
- * library directory containing the staged .js file.
+ * library directory containing the .js file.
  */
 const getLibTestsJs = (files) => {
   const testCommands = files.map((file) => {
-    if (!libsTested.get(path.basename(path.dirname(file)))) {
-      libsTested.set(path.basename(path.dirname(file)), true);
-      return (
-        'test.bash --unit --lib --glob=' +
-        '/library/' +
-        path.basename(path.dirname(file)) +
-        '/*.unit.cy.js'
-      );
-    }
+    libsTested.set(path.basename(path.dirname(file)), true);
+    return (
+      'test.bash --unit --lib --glob=' +
+      '/library/' +
+      path.basename(path.dirname(file)) +
+      '/*.unit.cy.js'
+    );
   });
 
-  return testCommands;
+  // remove duplicate commands
+  const uniqueCommands = Array.from(new Set(testCommands));
+
+  return uniqueCommands;
 };
 
 /*
