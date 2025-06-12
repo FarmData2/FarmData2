@@ -79,9 +79,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['depthQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteSoilDisturbanceActivityLog(
+                results['depthQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(depthQuantity);
@@ -97,9 +99,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['speedQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteSoilDisturbanceActivityLog(
+                results['speedQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(speedQuantity);
@@ -115,9 +119,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['areaQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteSoilDisturbanceActivityLog(
+                results['areaQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(areaQuantity);
