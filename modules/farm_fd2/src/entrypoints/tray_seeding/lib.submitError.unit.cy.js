@@ -90,17 +90,10 @@ describe('Test error when submitting tray seeding lib', () => {
     'Verify 3 quantities are deleted when seedingLog is deleted',
     { retries: 4 },
     () => {
-      let postRequestCount = 0;
-
       cy.intercept('POST', '**/api/log/seeding', (req) => {
-        postRequestCount += 1;
-        if (postRequestCount === 1) {
-          req.reply({
-            statusCode: 401,
-          });
-        } else {
-          req.continue();
-        }
+        req.reply({
+          statusCode: 401,
+        });
       });
 
       let quantityDeleteAttempts = 0;
