@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.seeding
- *
- * @description Seeding-log-related utility functions.
+/*
+ * Utility functions for getting and working with seeding.
  */
 
 import dayjs from 'dayjs';

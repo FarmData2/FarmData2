@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.quantity
- *
- * @description Quantity-related utility functions.
+/*
+ * Utility functions for getting and working with quantity.
  */
 
 import { getFarmOSInstance } from './farmosUtil.core.js';

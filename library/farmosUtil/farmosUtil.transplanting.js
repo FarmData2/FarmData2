@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.transplanting
- *
- * @description Transplanting-log-related utility functions.
+/*
+ * Utility functions for getting and working with transplanting.
  */
 
 import dayjs from 'dayjs';

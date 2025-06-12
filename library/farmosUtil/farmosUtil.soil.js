@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.soil
- *
- * @description Soil disturbance-related utility functions.
+/*
+ * Utility functions for getting and working with soil.
  */
 
 import dayjs from 'dayjs';

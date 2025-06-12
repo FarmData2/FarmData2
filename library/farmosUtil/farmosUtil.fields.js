@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.fields
- *
- * @description Field-related utility functions.
+/*
+ * Utility functions for getting and working with fields.
  */
 
 import {

@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.logCategories
- *
- * @description Log-category-related utility functions.
+/*
+ * Utility functions for getting and working with logCategories.
  */
 
 import {

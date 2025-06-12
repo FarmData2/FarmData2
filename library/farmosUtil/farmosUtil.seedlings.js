@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.seedlings
- *
- * @description Seedling-related utility functions, primarily for identifying transplant candidates.
+/*
+ * Utility functions for getting and working with seedlings.
  */
 
 import { getFarmOSInstance } from './farmosUtil.core.js';

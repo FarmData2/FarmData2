@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.soilDisturbanceTermination
- *
- * @description Logic for creating soil disturbance termination logs.
+/*
+ * Utility functions for getting and working with soilDisturbanceTerminationLog.
  */
 
 import dayjs from 'dayjs';

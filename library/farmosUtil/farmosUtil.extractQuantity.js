@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.extractQuantity
- *
- * @description Utility for extracting a quantity value from a farmOS quantity string.
+/*
+ * Utility functions for getting and working with extractQuantity.
  */
 
 /**

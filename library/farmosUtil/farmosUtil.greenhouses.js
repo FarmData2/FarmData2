@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.greenhouses
- *
- * @description Greenhouse-related utility functions.
+/*
+ * Utility functions for getting and working with greenhouses.
  */
 
 import {

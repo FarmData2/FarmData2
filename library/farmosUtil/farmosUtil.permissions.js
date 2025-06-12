@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.permissions
- *
- * @description Permission-related utility functions.
+/*
+ * Utility functions for getting and working with permissions.
  */
 
 import {

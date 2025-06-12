@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.winterKill
- *
- * @description Logic for creating winter kill termination logs.
+/*
+ * Utility functions for getting and working with winterKill.
  */
 
 import dayjs from 'dayjs';

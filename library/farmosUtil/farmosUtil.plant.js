@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.plant
- *
- * @description Plant asset-related utility functions.
+/*
+ * Utility functions for getting and working with plant.
  */
 
 import { getFarmOSInstance } from './farmosUtil.core.js';

@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.users
- *
- * @description User-related utility functions.
+/*
+ * Utility functions for getting and working with users.
  */
 
 import {

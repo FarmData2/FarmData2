@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.traySizes
- *
- * @description Tray-size-related utility functions.
+/*
+ * Utility functions for getting and working with traySizes.
  */
 
 import {

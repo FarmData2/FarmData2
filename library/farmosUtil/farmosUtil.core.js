@@ -1,7 +1,7 @@
-/**
- * @module farmosUtil.core
+/*
+ * Utility functions for getting and working with core.
  *
- * @description Core utility functions for working with a farmOS host. This is the
+ * Core utility functions for working with a farmOS host. This is the
  * foundational piece of the library, handling instance management, caching,
  * and authentication. It is a direct copy of the original `farmosUtil.js`
  * logic, with only the necessary exports added for modularization.

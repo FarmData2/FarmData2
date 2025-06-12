@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.transaction
- *
- * @description Transaction-related utility functions.
+/*
+ * Utility functions for getting and working with transaction.
  */
 
 /**

@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.units
- *
- * @description Unit-related utility functions.
+/*
+ * Utility functions for getting and working with units.
  */
 
 import {

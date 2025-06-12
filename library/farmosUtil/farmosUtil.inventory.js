@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.inventory
- *
- * @description Utility for reading inventory values from an asset.
+/*
+ * Utility functions for getting and working with inventory.
  */
 
 /**
