@@ -14,9 +14,16 @@ Javascript library of FarmData2 custom reusable functions.
   - `.js` files for the library
   - `.unit.cy.js` files for the unit tests
 
+## Structure
+
+- Either
+  - a single `.js` file containing the code for the library
+  - or a barrel file that only exports a collection of other`.js` files in the directory that contain the code for the library.
+    - the `.js` files must begin with a comment block with a single line description of the contents.
+
 ## farmOS Permissions Checking
 
-A component can check the permissions of the logged in farmOS user using appropriate function in `farmosUtil.js`.
+A component can check the permissions of the logged in farmOS user with appropriate function in `farmosUtil.js`.
 
 If a permission needs to be checked that is not yet supported it can be added to the `$perms` array in the `permissions` function in `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
 

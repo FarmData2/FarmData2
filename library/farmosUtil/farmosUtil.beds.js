@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.beds
- *
- * @description Bed-related utility functions.
+/*
+ * Utility functions for getting and working with beds.
  */
 
 import {

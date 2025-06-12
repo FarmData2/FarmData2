@@ -1,7 +1,5 @@
-/**
- * @module farmosUtil.crops
- *
- * @description Crop-related utility functions.
+/*
+ * Utility functions for getting and working with crops.
  */
 
 import {
