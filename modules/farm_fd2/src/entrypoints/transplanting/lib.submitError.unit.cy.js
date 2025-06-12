@@ -192,4 +192,65 @@ describe('Error when submitting using the transplanting lib.', () => {
       );
     }
   );
+
+  it(
+    'Check error messages when cannot clean up only for soilDisturbance',
+    { retries: 4 },
+    () => {
+      /*
+       * Create a error on submission of the activity log which is the
+       * final step.  At that point all other records should have been
+       * created and thus should also all be deleted.
+       */
+      // Counter to track the number of POST requests
+      let postRequestCount = 0;
+
+      // Intercept POST requests to the endpoint
+      cy.intercept('POST', '**/api/log/activity', (req) => {
+        postRequestCount += 1;
+        if (postRequestCount === 2) {
+          // On the second request, modify the response to have a status code of 401
+          req.reply({
+            statusCode: 401,
+          });
+        } else {
+          // Continue with the request normally for other requests
+          req.continue();
+        }
+      }).as('postRequest');
+
+      /*
+       * Now create an intercept with a spy for each of the other endpoints
+       * where records are being deleted.  We'll then check that each was
+       * called the appropriate number of times.
+       */
+      let standardQuantityDeletes = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        standardQuantityDeletes++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            // Shouldn't run because submitForm throws an error.
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain('Error creating transplanting.');
+            expect(error.message).to.contain(
+              'Result of operation depthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation speedQuantity could not be cleaned up.'
+            );
+            expect(standardQuantityDeletes).to.equal(2);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
 });

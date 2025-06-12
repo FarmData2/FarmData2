@@ -230,7 +230,11 @@ export async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(results['depthQuantity'].id);
+          if (results[activityLog] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['depthQuantity'].id
+            );
+          }
         },
       };
       ops.push(depthQuantity);
@@ -246,7 +250,11 @@ export async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(results['speedQuantity'].id);
+          if (results[activityLog] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['speedQuantity'].id
+            );
+          }
         },
       };
       ops.push(speedQuantity);

@@ -97,7 +97,7 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
     LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
     LIB_MD_FILE="$LIB_NAME.md"
     LIB_MD_PATH="docs/library/$LIB_MD_FILE"
-    DOCS_DIR="docs"
+    DOCS_DIR="docs"jsdoc2md
 
     echo "      Generating docs for $LIB_NAME..."
     echo "        Creating docs for $LIB_NAME..."
