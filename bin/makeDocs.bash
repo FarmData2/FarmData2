@@ -103,7 +103,7 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
     echo "      Creating docs for $LIB_NAME..."
 
     # Generate docs for the main library file which may be a barrel file
-    # Docs for additional .js files (e.g. those exported from the barrel) 
+    # Docs for additional .js files (e.g. those exported from the barrel)
     # will be added to this page.
     echo "        Adding docs for main library file: $LIB_JS_MAIN_FILE..."
     npx jsdoc2md "$LIB_JS_MAIN_FILE" > "$LIB_MD_PATH"
@@ -113,10 +113,11 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
     LS_CMD="ls $LIB_JS_PATH/*.js"
     JS_FILES=$($LS_CMD)
     HEAD_LINKS_FILE="/var/tmp/headLinks.md"
-    { echo "## Sections";
-      echo "";
-      echo "| Name | Description |";
-      echo "|------|-------------|" 
+    {
+      echo "## Sections"
+      echo ""
+      echo "| Name | Description |"
+      echo "|------|-------------|"
     } > "$HEAD_LINKS_FILE"
     FUNC_LINKS_FILE="/var/tmp/funcLinks.md"
     echo "## Functions" > "$FUNC_LINKS_FILE"
@@ -140,16 +141,19 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
         echo "* [$SECT_NAME](#$SECT_NAME-details) \
           [[$JS_FILE_NAME]](../../library/$LIB_NAME/$JS_FILE_NAME) - $SECT_DESC" >> "$FUNC_LINKS_FILE"
         NPX_CMD="npx jsdoc2md $JS_FILE_PATH"
-        NUM_HEAD_LINES=$($NPX_CMD | tail -n+3 |  grep -n '^$' | head -1 | cut -d: -f1)
-        HEAD_LINES=$($NPX_CMD | head -n "$NUM_HEAD_LINES"  | grep "<dt><a" | \
-          cut -d'>' -f2- | sed 's/.....$//' | sed 's/^/  * /')
+        NUM_HEAD_LINES=$($NPX_CMD | tail -n+3 | grep -n '^<a name' | head -1 | cut -d: -f1)
+        if [ "$NUM_HEAD_LINES" == "" ]; then
+          NUM_HEAD_LINES=$($NPX_CMD | tail -n+3 | grep -n '^$' | head -1 | cut -d: -f1)
+        fi
+        HEAD_LINES=$($NPX_CMD | head -n "$NUM_HEAD_LINES" | grep "<dt><a" \
+          | cut -d'>' -f2- | sed 's/.....$//' | sed 's/^/  * /')
         echo "$HEAD_LINES" >> "$FUNC_LINKS_FILE"
 
         # Give all of the function details
         FUNC_DETAILS=$($NPX_CMD | tail -n +"$NUM_HEAD_LINES" | sed 's/^##/###/g')
         {
-          echo "<a name=\"$SECT_NAME-details\"></a>";
-          echo "## $(echo "$JS_FILE_NAME" | cut -d'.' -f2)";
+          echo "<a name=\"$SECT_NAME-details\"></a>"
+          echo "## $(echo "$JS_FILE_NAME" | cut -d'.' -f2)"
           echo "$FUNC_DETAILS"
         } >> "$FUNC_DESC_FILE"
       fi
@@ -157,11 +161,11 @@ for LIB in $LIBS; do                      # Names of the libraries with a traili
 
     # Add these if this library is a barrel file...
     if [ $IS_BARREL -eq 1 ]; then
-    {
-      cat "$HEAD_LINKS_FILE";
-      cat "$FUNC_LINKS_FILE";
-      cat "$FUNC_DESC_FILE"
-    } >> "$LIB_MD_PATH"
+      {
+        cat "$HEAD_LINKS_FILE"
+        cat "$FUNC_LINKS_FILE"
+        cat "$FUNC_DESC_FILE"
+      } >> "$LIB_MD_PATH"
     fi
 
     echo "      Created."

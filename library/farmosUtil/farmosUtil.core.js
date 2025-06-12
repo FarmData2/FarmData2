@@ -120,6 +120,10 @@ export function getFarmGlobal() {
  * to interact with the farmOS host. There will only ever be one instance of the
  * `farmOS` object.
  *
+ * While this is documented as an `object`, `getFarmOSInstance` is called as a function. See
+ * the example at the top of the documentation. This is because `getFarmOSInstance` uses the
+ * `runExclusive` library to prevent race conditions.
+ *
  * @param {String} hostURL url of the farmOS instance to which to connect.
  * @param {String} client the farmOS api client to use.
  * @param {String} user the username of the farmOS user to use for authentication.
