@@ -244,17 +244,8 @@ describe('Error when submitting using the cover_crop lib.', () => {
     'Verify 1 quantity is deleted when seedingLog is deleted with a (401 on the first post request)',
     { retries: 4 },
     () => {
-      let postRequestCount = 0;
-
-      cy.intercept('POST', '**/api/log/activity', (req) => {
-        postRequestCount += 1;
-        if (postRequestCount === 1) {
-          req.reply({
-            statusCode: 401,
-          });
-        } else {
-          req.continue();
-        }
+      cy.intercept('POST', '**/api/log/activity', {
+        statusCode: 401,
       });
 
       let quantityDeleteAttempts = 0;
