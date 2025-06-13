@@ -251,7 +251,10 @@ const getLibTestsJs = (files) => {
     );
   });
 
-  return testCommands;
+  // remove duplicate commands
+  const uniqueCommands = Array.from(new Set(testCommands));
+
+  return uniqueCommands;
 };
 
 /*
