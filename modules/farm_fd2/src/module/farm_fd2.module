@@ -1,8 +1,36 @@
 <?php
 
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_page_attachments_alter().
  */
 function farm_fd2_page_attachments(&$variables) {
   $variables['#attached']['library'][] = 'farm_fd2/fd2_icon';
+}
+
+/**
+ * Adds the fd2_land_area field to asset--land bundles.
+ */
+function farm_fd2_farm_entity_bundle_field_info(EntityTypeInterface $entity_type, $bundle) {
+  $fields = [];
+
+  if ($entity_type->id() == 'taxonomy_term' && $bundle == 'plant_type') {
+    $options = [
+      'label' => t('Land area (acres)'),
+      'description' => t('Area of land asset in acres.'),
+      'required' => 'true',
+      'type' => 'decimal',
+      'scale' => 2,
+      'min' => 0.00,
+      'weight' => [
+        'form' => -85,
+        'view' => 10,
+      ],
+    ];
+    $fields['fd2_land_area'] = \Drupal::service('farm_field.factory')->bundleFieldDefinition($options);
+  }
+
+  return $fields;
 }
