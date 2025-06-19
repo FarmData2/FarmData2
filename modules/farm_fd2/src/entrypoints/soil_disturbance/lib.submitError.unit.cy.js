@@ -20,138 +20,138 @@ function runTest(activePlantAsset) {
       comment: 'A comment',
     };
 
-    // function createPlantAsset(name, type, date, alias) {
-    //   return cy
-    //     .wrap(farmosUtil.createPlantAsset(date, type, name))
-    //     .as(alias)
-    //     .then((plantAsset) => {
-    //       plantAssets.push(plantAsset); // storing for deletion later
-    //       return plantAsset;
-    //     });
-    // }
+    function createPlantAsset(name, type, date, alias) {
+      return cy
+        .wrap(farmosUtil.createPlantAsset(date, type, name))
+        .as(alias)
+        .then((plantAsset) => {
+          plantAssets.push(plantAsset); // storing for deletion later
+          return plantAsset;
+        });
+    }
 
-    // function createMovementLog(
-    //   plantAsset,
-    //   locations,
-    //   categories,
-    //   timestamp,
-    //   alias
-    // ) {
-    //   const locationsArrayPromise =
-    //     farmosUtil.getPlantingLocationObjects(locations);
-    //   const logCategoriesPromise = farmosUtil.getLogCategoryObjects(categories);
+    function createMovementLog(
+      plantAsset,
+      locations,
+      categories,
+      timestamp,
+      alias
+    ) {
+      const locationsArrayPromise =
+        farmosUtil.getPlantingLocationObjects(locations);
+      const logCategoriesPromise = farmosUtil.getLogCategoryObjects(categories);
 
-    //   cy.wrap(Promise.all([locationsArrayPromise, logCategoriesPromise])).then(
-    //     ([locationsArray, logCategoriesArray]) => {
-    //       const logName = `${timestamp}_activity_log_${plantAsset.id}`;
-    //       const activityLogData = {
-    //         type: 'log--activity',
-    //         attributes: {
-    //           name: logName,
-    //           timestamp: `${timestamp}T00:00:00Z`,
-    //           status: 'done',
-    //           is_movement: true,
-    //         },
-    //         relationships: {
-    //           location: locationsArray,
-    //           asset: [{ type: 'asset--plant', id: plantAsset.id }],
-    //           category: logCategoriesArray,
-    //         },
-    //       };
+      cy.wrap(Promise.all([locationsArrayPromise, logCategoriesPromise])).then(
+        ([locationsArray, logCategoriesArray]) => {
+          const logName = `${timestamp}_activity_log_${plantAsset.id}`;
+          const activityLogData = {
+            type: 'log--activity',
+            attributes: {
+              name: logName,
+              timestamp: `${timestamp}T00:00:00Z`,
+              status: 'done',
+              is_movement: true,
+            },
+            relationships: {
+              location: locationsArray,
+              asset: [{ type: 'asset--plant', id: plantAsset.id }],
+              category: logCategoriesArray,
+            },
+          };
 
-    //       const activityLog = farmosUtil
-    //         .getFarmOSInstance()
-    //         .then((farm) => farm.log.send(farm.log.create(activityLogData)));
+          const activityLog = farmosUtil
+            .getFarmOSInstance()
+            .then((farm) => farm.log.send(farm.log.create(activityLogData)));
 
-    //       cy.wrap(activityLog).as(alias);
+          cy.wrap(activityLog).as(alias);
 
-    //       cy.get(`@${alias}`).then((activityLog) => {
-    //         movementLogs.push(activityLog); // storing log for deletion later
-    //         expect(activityLog.attributes.name).to.contain('activity_log');
-    //         expect(activityLog.attributes.status).to.equal('done');
-    //         expect(activityLog.attributes.is_movement).to.be.true;
-    //       });
-    //     }
-    //   );
-    // }
+          cy.get(`@${alias}`).then((activityLog) => {
+            movementLogs.push(activityLog); // storing log for deletion later
+            expect(activityLog.attributes.name).to.contain('activity_log');
+            expect(activityLog.attributes.status).to.equal('done');
+            expect(activityLog.attributes.is_movement).to.be.true;
+          });
+        }
+      );
+    }
 
-    // function cleanupLogsAndAssets(movementLogs, plantAssets) {
-    //   // Delete movement logs
-    //   cy.then(() => {
-    //     return Cypress.Promise.mapSeries(movementLogs, (log) => {
-    //       return farmosUtil
-    //         .getFarmOSInstance()
-    //         .then((farm) => farm.log.delete('activity', log.id))
-    //         .then((result) => {
-    //           expect(result.status).to.equal(204); // Successful deletion
-    //         });
-    //     });
-    //   })
-    //     // Delete plant assets
-    //     .then(() => {
-    //       return Cypress.Promise.mapSeries(plantAssets, (asset) => {
-    //         return farmosUtil.deletePlantAsset(asset.id).then((result) => {
-    //           expect(result.status).to.equal(204); // Successful deletion
-    //         });
-    //       });
-    //     })
-    //     // Reset arrays after cleanup
-    //     .then(() => {
-    //       movementLogs.length = 0;
-    //       plantAssets.length = 0;
-    //     });
-    // }
+    function cleanupLogsAndAssets(movementLogs, plantAssets) {
+      // Delete movement logs
+      cy.then(() => {
+        return Cypress.Promise.mapSeries(movementLogs, (log) => {
+          return farmosUtil
+            .getFarmOSInstance()
+            .then((farm) => farm.log.delete('activity', log.id))
+            .then((result) => {
+              expect(result.status).to.equal(204); // Successful deletion
+            });
+        });
+      })
+        // Delete plant assets
+        .then(() => {
+          return Cypress.Promise.mapSeries(plantAssets, (asset) => {
+            return farmosUtil.deletePlantAsset(asset.id).then((result) => {
+              expect(result.status).to.equal(204); // Successful deletion
+            });
+          });
+        })
+        // Reset arrays after cleanup
+        .then(() => {
+          movementLogs.length = 0;
+          plantAssets.length = 0;
+        });
+    }
 
-    // before(() => {
-    //   if (activePlantAsset) {
-    //     createPlantAsset(
-    //       'Test Plant Asset 1',
-    //       'HERB-CILANTRO',
-    //       '2023-11-20',
-    //       'newPlantAsset1'
-    //     ).then(() => {
-    //       return cy.get('@newPlantAsset1').then((plantAsset) => {
-    //         createMovementLog(
-    //           plantAsset,
-    //           ['ALF', 'ALF-1', 'ALF-3'],
-    //           ['seeding', 'tillage'],
-    //           '2023-11-20',
-    //           'activityLog1'
-    //         );
+    before(() => {
+      if (activePlantAsset) {
+        createPlantAsset(
+          'Test Plant Asset 1',
+          'HERB-CILANTRO',
+          '2023-11-20',
+          'newPlantAsset1'
+        ).then(() => {
+          return cy.get('@newPlantAsset1').then((plantAsset) => {
+            createMovementLog(
+              plantAsset,
+              ['ALF', 'ALF-1', 'ALF-3'],
+              ['seeding', 'tillage'],
+              '2023-11-20',
+              'activityLog1'
+            );
 
-    //         const value1 = {
-    //           row: {
-    //             crop: 'HERB-CILANTRO',
-    //             bed: 'ALF-1',
-    //             timestamp: '2023-11-20',
-    //             uuid: plantAsset.id,
-    //             location: 'ALF',
-    //             created_by: 'seeding, seeding_direct',
-    //           },
-    //           picked: 1,
-    //         };
+            const value1 = {
+              row: {
+                crop: 'HERB-CILANTRO',
+                bed: 'ALF-1',
+                timestamp: '2023-11-20',
+                uuid: plantAsset.id,
+                location: 'ALF',
+                created_by: 'seeding, seeding_direct',
+              },
+              picked: 1,
+            };
 
-    //         const value2 = {
-    //           row: {
-    //             crop: 'HERB-CILANTRO',
-    //             bed: 'ALF-3',
-    //             timestamp: '2023-11-20',
-    //             uuid: plantAsset.id,
-    //             location: 'ALF',
-    //             created_by: 'seeding, seeding_direct',
-    //           },
-    //           picked: 1,
-    //         };
+            const value2 = {
+              row: {
+                crop: 'HERB-CILANTRO',
+                bed: 'ALF-3',
+                timestamp: '2023-11-20',
+                uuid: plantAsset.id,
+                location: 'ALF',
+                created_by: 'seeding, seeding_direct',
+              },
+              picked: 1,
+            };
 
-    //         form.picked.set(0, value1);
-    //         form.picked.set(1, value2);
-    //       });
-    //     });
-    //   } else {
-    //     form.beds.push('ALF-1');
-    //     form.beds.push('ALF-3');
-    //   }
-    // });
+            form.picked.set(0, value1);
+            form.picked.set(1, value2);
+          });
+        });
+      } else {
+        form.beds.push('ALF-1');
+        form.beds.push('ALF-3');
+      }
+    });
 
     beforeEach(() => {
       cy.restoreLocalStorage();
