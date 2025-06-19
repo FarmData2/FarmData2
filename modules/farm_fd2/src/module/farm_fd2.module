@@ -30,7 +30,7 @@ function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $f
         'placeholder' => '',
       ],
       'region' => 'content',
-      'weight' => 25,
+      'weight' => 3,
     ]);
   }
 }
