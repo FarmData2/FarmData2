@@ -4,7 +4,11 @@ This is a draft!
 
 The purpose of this document is to describe how to add new fields to farmOS entities.
 
+## Adding a Field to a Taxonomy Term
+
 To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
+
+### Create the Field and its Storage
 
 - Go to Administration -> Structure -> Taxonomy
   - Pick "Edit Vocabulary" in the dropdown for the Vocabulary to be edited.
@@ -15,14 +19,14 @@ To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
     - Use `npm run printlog taxonomy_term--????` to confirm the field has been created.
       - Replace `????` with the name of the vocabulary to which the field has been added.
   - Under "Manage Form Display"
-    - ~~Move the field to the preferred location.~~
+    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration).
     - Use the "Gear" icon to configure the field edit widget.
     - Save
     - Go to Administration -> Structure -> Taxonomy
       - Pick "Add Terms" in the dropdown for the Vocabulary being edited.
       - Confirm that the widget for the new field is present.
   - Under "Manage Display"
-    - ~~Move the field to the preferred location.~~
+    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration).
     - Use the dropdowns and "Gear" icon to configure the field display widget.
     - Save
     - Go to Administration -> Structure -> Taxonomy
@@ -44,4 +48,7 @@ To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
     - `npm run build:fd2`
     - `installDB.bash --current`
     - use `npm run printlog taxonomy_term--???` to confirm that the field has been added to the database
+
+### Add the Field to the Form and Display
+
 - Add code to the `modules/farm_fd2/src/module/farm_fd2.module` file to add the new field to the `farm_plant_type` entity.
