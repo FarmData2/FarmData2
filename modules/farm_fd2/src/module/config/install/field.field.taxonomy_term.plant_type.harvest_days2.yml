@@ -23,3 +23,4 @@ settings:
   prefix: ''
   suffix: ' day| days'
 field_type: integer
+hidden: {  }

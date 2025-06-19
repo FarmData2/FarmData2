@@ -23,21 +23,21 @@ function farm_fd2_page_attachments(&$variables) {
  */
 
 function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
-  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type' && $form_display->getMode() == 'default' && $form_display->isNew()) {
+  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
     $form_display->setComponent('harvest_days2', [
       'type' => 'number',
       'settings' => [
         'placeholder' => '',
       ],
       'region' => 'content',
-      'weight' => 20,
+      'weight' => 25,
     ]);
   }
 }
 
 function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
-  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type' && $display->getMode() == 'full' && $display->isNew()) {
-    $display->setComponent('maturity_days2', [
+  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
+    $display->setComponent('harvest_days2', [
       'type' => 'number_integer',
       'label' => 'inline',
       'settings' => [
@@ -45,7 +45,7 @@ function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $d
         'prefix_suffix' => TRUE,
       ],
       'region' => 'content',
-      'weight' => 20,
+      'weight' => 25,
     ]);
   }
 }
