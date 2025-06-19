@@ -3,19 +3,22 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Submission with multiple passes', () => {
   const form = {
-    date: '2025-06-19',
-    crops: ['WHEAT'],
-    location: 'FIELD A',
-    beds: [],
-    areaSeeded: 100,
-    seedApplicationEquipment: ['Seeding Drill'],
-    seedApplicationDepth: 2,
-    seedApplicationSpeed: 4,
-    seedApplicationPasses: 3,
-    seedIncorporationEquipment: [],
+    date: '1950-01-02',
+    crops: ['BEAN', 'CARROT'],
+    location: 'ALF',
+    beds: ['ALF-1', 'ALF-3'],
+    areaSeeded: 50,
+    seedApplicationEquipment: ['Tractor'],
+    seedIncorporationEquipment: ['Rake'],
+    seedApplicationDepth: 6,
+    seedApplicationSpeed: 5,
+    seedApplicationPasses: 1,
+    seedIncorporationDepth: 8,
+    seedIncorporationSpeed: 3,
     seedIncorporationPasses: 1,
+    winterKill: true,
+    winterKillDate: '1950-12-31',
     comment: 'Multi-pass test',
-    winterKill: false,
   };
 
   let results = null;
