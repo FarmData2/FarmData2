@@ -18,12 +18,12 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   seedApplicationSpeedQuantity: {quantity--standard},
  *   seedApplicationAreaQuantity: {quantity--standard},
  *   seedApplicationEquipment: [ {asset--equipment} ],
- *   seedApplicationActivityLog: {log--activity},
+ *   seedApplicationActivityLog: [ {log--activity} ],
  *   seedIncorporationDepthQuantity: {quantity--standard},
  *   seedIncorporationSpeedQuantity: {quantity--standard},
  *   seedIncorporationAreaQuantity: {quantity--standard},
  *   seedIncorporationEquipment: [ {asset--equipment} ],
- *   seedIncorporationActivityLog: {log--activity},
+ *   seedIncorporationActivityLog: [ {log--activity} ],
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
@@ -167,30 +167,38 @@ async function submitForm(formData) {
         seedApplicationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
 
-      const seedApplicationActivityLog = {
-        name: 'seedApplicationActivityLog',
-        do: async (results) => {
-          return await farmosUtil.createSoilDisturbanceActivityLog(
-            formData.date,
-            formData.location,
-            formData.beds,
-            ['tillage', 'seeding_cover_crop'],
-            results.plantAsset,
-            [
-              results.seedApplicationDepthQuantity,
-              results.seedApplicationSpeedQuantity,
-              results.seedApplicationAreaQuantity,
-            ],
-            seedApplicationEquipmentAssets
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteSoilDisturbanceActivityLog(
-            results['seedApplicationActivityLog'].id
-          );
-        },
-      };
-      ops.push(seedApplicationActivityLog);
+      // Loop for the number of passes specified in the form data.
+      for (let i = 0; i < formData.seedApplicationPasses; i++) {
+        const seedApplicationActivityLog = {
+          // The name for each operation in the transaction must be unique.
+          name: `seedApplicationActivityLog-${i}`,
+          do: async (results) => {
+            // To make the log name itself unique in farmOS, we append the pass number.
+            const logName = `Seed Application Pass ${i + 1}`;
+            return await farmosUtil.createSoilDisturbanceActivityLog(
+              formData.date,
+              formData.location,
+              formData.beds,
+              ['tillage', 'seeding_cover_crop'],
+              results.plantAsset,
+              [
+                results.seedApplicationDepthQuantity,
+                results.seedApplicationSpeedQuantity,
+                results.seedApplicationAreaQuantity,
+              ],
+              seedApplicationEquipmentAssets,
+              logName // Pass the unique name to the creation utility.
+            );
+          },
+          undo: async (results) => {
+            // Use the unique operation name to find the correct log to delete.
+            await farmosUtil.deleteSoilDisturbanceActivityLog(
+              results[`seedApplicationActivityLog-${i}`].id
+            );
+          },
+        };
+        ops.push(seedApplicationActivityLog);
+      }
     }
 
     if (formData.seedIncorporationEquipment.length > 0) {
@@ -252,36 +260,60 @@ async function submitForm(formData) {
         seedIncorporationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
 
-      const seedIncorporationActivityLog = {
-        name: 'seedIncorporationActivityLog',
-        do: async (results) => {
-          return await farmosUtil.createSoilDisturbanceActivityLog(
-            formData.date,
-            formData.location,
-            formData.beds,
-            ['tillage', 'seeding_cover_crop'],
-            results.plantAsset,
-            [
-              results.seedIncorporationDepthQuantity,
-              results.seedIncorporationSpeedQuantity,
-              results.seedIncorporationAreaQuantity,
-            ],
-            seedIncorporationEquipmentAssets
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteSoilDisturbanceActivityLog(
-            results['seedIncorporationActivityLog'].id
-          );
-        },
-      };
-      ops.push(seedIncorporationActivityLog);
+      // Loop for the number of passes specified in the form data.
+      for (let i = 0; i < formData.seedIncorporationPasses; i++) {
+        const seedIncorporationActivityLog = {
+          // The name for each operation in the transaction must be unique.
+          name: `seedIncorporationActivityLog-${i}`,
+          do: async (results) => {
+            // To make the log name itself unique in farmOS, we append the pass number.
+            const logName = `Seed Incorporation Pass ${i + 1}`;
+            return await farmosUtil.createSoilDisturbanceActivityLog(
+              formData.date,
+              formData.location,
+              formData.beds,
+              ['tillage', 'seeding_cover_crop'],
+              results.plantAsset,
+              [
+                results.seedIncorporationDepthQuantity,
+                results.seedIncorporationSpeedQuantity,
+                results.seedIncorporationAreaQuantity,
+              ],
+              seedIncorporationEquipmentAssets,
+              logName // Pass the unique name to the creation utility.
+            );
+          },
+          undo: async (results) => {
+            // Use the unique operation name to find the correct log to delete.
+            await farmosUtil.deleteSoilDisturbanceActivityLog(
+              results[`seedIncorporationActivityLog-${i}`].id
+            );
+          },
+        };
+        ops.push(seedIncorporationActivityLog);
+      }
     }
 
     const result = await farmosUtil.runTransaction(ops);
+    // Initialize arrays to hold the multiple activity logs that are now created.
+    result.seedApplicationActivityLog = [];
+    result.seedIncorporationActivityLog = [];
+    // Loop through all the results from the transaction.
+    for (const key in result) {
+      // If a result key matches the seedApplication pattern, add it to our array.
+      if (key.startsWith('seedApplicationActivityLog-')) {
+        result.seedApplicationActivityLog.push(result[key]);
+      }
+      // If a result key matches the seedIncorporation pattern, add it to our array.
+      if (key.startsWith('seedIncorporationActivityLog-')) {
+        result.seedIncorporationActivityLog.push(result[key]);
+      }
+    }
+
     if (!formData.winterKill) {
       result['winterKillLog'] = null;
     }
+
     if (seedApplicationEquipmentAssets.length > 0) {
       result['seedApplicationEquipment'] = seedApplicationEquipmentAssets;
     } else {
@@ -289,7 +321,7 @@ async function submitForm(formData) {
       result['seedApplicationDepthQuantity'] = null;
       result['seedApplicationSpeedQuantity'] = null;
       result['seedApplicationAreaQuantity'] = null;
-      result['seedApplicationActivityLog'] = null;
+      //result['seedApplicationActivityLog'] = null;
     }
     if (seedIncorporationEquipmentAssets.length > 0) {
       result['seedIncorporationEquipment'] = seedIncorporationEquipmentAssets;
@@ -298,7 +330,7 @@ async function submitForm(formData) {
       result['seedIncorporationDepthQuantity'] = null;
       result['seedIncorporationSpeedQuantity'] = null;
       result['seedIncorporationAreaQuantity'] = null;
-      result['seedIncorporationActivityLog'] = null;
+      //result['seedIncorporationActivityLog'] = null;
     }
 
     return result;

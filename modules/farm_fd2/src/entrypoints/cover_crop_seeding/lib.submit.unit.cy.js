@@ -246,59 +246,61 @@ describe('Submission using the cover_crop lib.', () => {
   });
 
   it('Check the seed application activity log--activity', () => {
-    expect(results.seedApplicationActivityLog.type).to.equal('log--activity');
-    expect(results.seedApplicationActivityLog.attributes.name).to.equal(
+    expect(results.seedApplicationActivityLog[0].type).to.equal(
+      'log--activity'
+    );
+    expect(results.seedApplicationActivityLog[0].attributes.name).to.equal(
       form.date + '_sd_' + form.location
     );
-    expect(results.seedApplicationActivityLog.attributes.timestamp).to.contain(
-      form.date
-    );
+    expect(
+      results.seedApplicationActivityLog[0].attributes.timestamp
+    ).to.contain(form.date);
 
     expect(
-      results.seedApplicationActivityLog.relationships.location.length
+      results.seedApplicationActivityLog[0].relationships.location.length
     ).to.equal(3);
     expect(
-      results.seedApplicationActivityLog.relationships.location[0].id
+      results.seedApplicationActivityLog[0].relationships.location[0].id
     ).to.equal(fieldMap.get(form.location).id);
     expect(
-      results.seedApplicationActivityLog.relationships.location[1].id
+      results.seedApplicationActivityLog[0].relationships.location[1].id
     ).to.equal(bedMap.get(form.beds[0]).id);
     expect(
-      results.seedApplicationActivityLog.relationships.location[2].id
+      results.seedApplicationActivityLog[0].relationships.location[2].id
     ).to.equal(bedMap.get(form.beds[1]).id);
 
     expect(
-      results.seedApplicationActivityLog.relationships.asset[0].id
+      results.seedApplicationActivityLog[0].relationships.asset[0].id
     ).to.equal(results.plantAsset.id);
 
     expect(
-      results.seedApplicationActivityLog.relationships.category.length
+      results.seedApplicationActivityLog[0].relationships.category.length
     ).to.equal(2);
     expect(
-      results.seedApplicationActivityLog.relationships.category[0].id
+      results.seedApplicationActivityLog[0].relationships.category[0].id
     ).to.equal(categoryMap.get('tillage').id);
     expect(
-      results.seedApplicationActivityLog.relationships.category[1].id
+      results.seedApplicationActivityLog[0].relationships.category[1].id
     ).to.equal(categoryMap.get('seeding_cover_crop').id);
 
     expect(
-      results.seedApplicationActivityLog.relationships.quantity.length
+      results.seedApplicationActivityLog[0].relationships.quantity.length
     ).to.equal(3);
     expect(
-      results.seedApplicationActivityLog.relationships.quantity[0].id
+      results.seedApplicationActivityLog[0].relationships.quantity[0].id
     ).to.equal(results.seedApplicationDepthQuantity.id);
     expect(
-      results.seedApplicationActivityLog.relationships.quantity[1].id
+      results.seedApplicationActivityLog[0].relationships.quantity[1].id
     ).to.equal(results.seedApplicationSpeedQuantity.id);
     expect(
-      results.seedApplicationActivityLog.relationships.quantity[2].id
+      results.seedApplicationActivityLog[0].relationships.quantity[2].id
     ).to.equal(results.seedApplicationAreaQuantity.id);
 
     expect(
-      results.seedApplicationActivityLog.relationships.equipment.length
+      results.seedApplicationActivityLog[0].relationships.equipment.length
     ).to.equal(1);
     expect(
-      results.seedApplicationActivityLog.relationships.equipment[0].id
+      results.seedApplicationActivityLog[0].relationships.equipment[0].id
     ).to.equal(equipmentMap.get(form.seedApplicationEquipment[0]).id);
   });
 
@@ -375,59 +377,93 @@ describe('Submission using the cover_crop lib.', () => {
   });
 
   it('Check the seed incorporation activity log--activity', () => {
-    expect(results.seedIncorporationActivityLog.type).to.equal('log--activity');
-    expect(results.seedIncorporationActivityLog.attributes.name).to.equal(
+    expect(results.seedIncorporationActivityLog[0].type).to.equal(
+      'log--activity'
+    );
+    expect(results.seedIncorporationActivityLog[0].attributes.name).to.equal(
       form.date + '_sd_' + form.location
     );
     expect(
-      results.seedIncorporationActivityLog.attributes.timestamp
+      results.seedIncorporationActivityLog[0].attributes.timestamp
     ).to.contain(form.date);
 
     expect(
-      results.seedIncorporationActivityLog.relationships.location.length
+      results.seedIncorporationActivityLog[0].relationships.location.length
     ).to.equal(3);
     expect(
-      results.seedIncorporationActivityLog.relationships.location[0].id
+      results.seedIncorporationActivityLog[0].relationships.location[0].id
     ).to.equal(fieldMap.get(form.location).id);
     expect(
-      results.seedIncorporationActivityLog.relationships.location[1].id
+      results.seedIncorporationActivityLog[0].relationships.location[1].id
     ).to.equal(bedMap.get(form.beds[0]).id);
     expect(
-      results.seedIncorporationActivityLog.relationships.location[2].id
+      results.seedIncorporationActivityLog[0].relationships.location[2].id
     ).to.equal(bedMap.get(form.beds[1]).id);
 
     expect(
-      results.seedIncorporationActivityLog.relationships.asset[0].id
+      results.seedIncorporationActivityLog[0].relationships.asset[0].id
     ).to.equal(results.plantAsset.id);
 
     expect(
-      results.seedIncorporationActivityLog.relationships.category.length
+      results.seedIncorporationActivityLog[0].relationships.category.length
     ).to.equal(2);
     expect(
-      results.seedIncorporationActivityLog.relationships.category[0].id
+      results.seedIncorporationActivityLog[0].relationships.category[0].id
     ).to.equal(categoryMap.get('tillage').id);
     expect(
-      results.seedIncorporationActivityLog.relationships.category[1].id
+      results.seedIncorporationActivityLog[0].relationships.category[1].id
     ).to.equal(categoryMap.get('seeding_cover_crop').id);
 
     expect(
-      results.seedIncorporationActivityLog.relationships.quantity.length
+      results.seedIncorporationActivityLog[0].relationships.quantity.length
     ).to.equal(3);
     expect(
-      results.seedIncorporationActivityLog.relationships.quantity[0].id
+      results.seedIncorporationActivityLog[0].relationships.quantity[0].id
     ).to.equal(results.seedIncorporationDepthQuantity.id);
     expect(
-      results.seedIncorporationActivityLog.relationships.quantity[1].id
+      results.seedIncorporationActivityLog[0].relationships.quantity[1].id
     ).to.equal(results.seedIncorporationSpeedQuantity.id);
     expect(
-      results.seedIncorporationActivityLog.relationships.quantity[2].id
+      results.seedIncorporationActivityLog[0].relationships.quantity[2].id
     ).to.equal(results.seedIncorporationAreaQuantity.id);
 
     expect(
-      results.seedIncorporationActivityLog.relationships.equipment.length
+      results.seedIncorporationActivityLog[0].relationships.equipment.length
     ).to.equal(1);
     expect(
-      results.seedIncorporationActivityLog.relationships.equipment[0].id
+      results.seedIncorporationActivityLog[0].relationships.equipment[0].id
     ).to.equal(equipmentMap.get(form.seedIncorporationEquipment[0]).id);
+  });
+
+  /*
+   * Test for multiple passes
+   */
+  it('Check for multiple activity logs when passes is greater than 1', () => {
+    const multiPassForm = {
+      date: '1950-01-02',
+      crops: ['BEAN'],
+      location: 'ALF',
+      beds: ['ALF-1'],
+      areaSeeded: 100,
+      seedApplicationEquipment: ['Tractor'],
+      seedApplicationDepth: 6,
+      seedApplicationSpeed: 5,
+      seedApplicationPasses: 3, // Set passes to 3 for this test
+      seedIncorporationEquipment: [],
+      seedIncorporationPasses: 1,
+      winterKill: false,
+      winterKillDate: null,
+      comment: 'A comment on the multi-pass test',
+    };
+
+    cy.wrap(lib.submitForm(multiPassForm), { timeout: 10000 }).then(
+      (multiPassResults) => {
+        expect(multiPassResults.seedApplicationActivityLog).to.be.an('array');
+        expect(multiPassResults.seedApplicationActivityLog).to.have.lengthOf(3);
+        expect(multiPassResults.seedApplicationActivityLog[0].type).to.equal(
+          'log--activity'
+        );
+      }
+    );
   });
 });
