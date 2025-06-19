@@ -2,7 +2,7 @@ import { lib } from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Submission with one pass', () => {
-  let form = {
+  const form = {
     date: '1950-01-02',
     crops: ['BEAN', 'CARROT'],
     location: 'ALF',
@@ -20,6 +20,7 @@ describe('Submission with one pass', () => {
     winterKillDate: '1950-12-31',
     comment: 'A comment',
   };
+
   let results = null;
   let bedMap, categoryMap, cropMap, equipmentMap, fieldMap, unitMap;
 
@@ -105,7 +106,6 @@ describe('Submission with one pass', () => {
     expect(log.relationships.quantity[0].id).to.equal(depthQty.id);
     expect(log.relationships.quantity[1].id).to.equal(speedQty.id);
     expect(log.relationships.quantity[2].id).to.equal(areaQty.id);
-    // Check that a second log does not exist
     expect(results).to.not.have.property('seedApplicationActivityLog1');
   });
 
@@ -122,7 +122,6 @@ describe('Submission with one pass', () => {
     expect(log.relationships.quantity[0].id).to.equal(depthQty.id);
     expect(log.relationships.quantity[1].id).to.equal(speedQty.id);
     expect(log.relationships.quantity[2].id).to.equal(areaQty.id);
-    // Check that a second log does not exist
     expect(results).to.not.have.property('seedIncorporationActivityLog1');
   });
 });
