@@ -10,8 +10,13 @@ describe('Submission without equipment', () => {
     areaSeeded: 100,
     seedApplicationEquipment: [],
     seedIncorporationEquipment: [],
+    seedApplicationDepth: 6,
+    seedApplicationSpeed: 5,
     seedApplicationPasses: 1,
+    seedIncorporationDepth: 8,
+    seedIncorporationSpeed: 3,
     seedIncorporationPasses: 1,
+    winterKillDate: '1950-12-31',
     comment: 'Test with no equipment',
     winterKill: false,
   };
