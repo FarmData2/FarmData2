@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.taxonomy_term.field_harvest_units
+    - field.storage.taxonomy_term.fd2_harvest_units
     - taxonomy.vocabulary.plant_type
     - taxonomy.vocabulary.unit
   module:
@@ -12,8 +12,8 @@ third_party_settings:
     circular_reference: false
     circular_reference_deep: false
     duplicate_reference: true
-id: taxonomy_term.plant_type.field_harvest_units
-field_name: field_harvest_units
+id: taxonomy_term.plant_type.fd2_harvest_units
+field_name: fd2_harvest_units
 entity_type: taxonomy_term
 bundle: plant_type
 label: 'Harvest Units'

@@ -33,10 +33,15 @@ To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
     - For "Configuration type" pick "Field"
       - For "Configuration name" pick the new field that you added.
         - Copy the configuration except for the `uuid` line.
-        - Save it in `modules/farm_fd2/src/module/config/install` using the filename given below the configuration.
+        - Replace the `field_` prefix throughout with `fd2_`.
+        - Save it in `modules/farm_fd2/src/module/config/install` using the filename given below the configuration with the `field_` prefix replaced with `fd2_`.
     - For "Configuration type" pick "Field storage"
       - - For "Configuration name" pick the new field that you added.
         - Copy the configuration except for the `uuid` line.
-        - Save it in `modules/farm_fd2/src/module/config/install` using the filename given below the configuration.
+        - Replace the `field_` prefix throughout with `fd2_`.
+        - Save it in `modules/farm_fd2/src/module/config/install` using the filename given below the configuration with the `field_` prefix replaced with `fd2_`.
+  - Run
+    - `npm run build:fd2`
+    - `installDB.bash --current`
+    - use `npm run printlog taxonomy_term--???` to confirm that the field has been added to the database
 - Add code to the `modules/farm_fd2/src/module/farm_fd2.module` file to add the new field to the `farm_plant_type` entity.
-

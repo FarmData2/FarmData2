@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - taxonomy
-id: taxonomy_term.field_harvest_units
-field_name: field_harvest_units
+id: taxonomy_term.fd2_harvest_units
+field_name: fd2_harvest_units
 entity_type: taxonomy_term
 type: entity_reference
 settings:
