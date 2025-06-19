@@ -18,21 +18,16 @@ describe('Submission without equipment', () => {
     winterKill: false,
   };
 
-  // Use the same, complete before() hook as the onepass test.
   before(() => {
     const timeout = { timeout: 20000 };
-    cy.wrap(farmosUtil.getBedNameToAssetMap(), timeout)
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getLogCategoryToTermMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getCropNameToTermMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getEquipmentNameToAssetMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getFieldNameToAssetMap(), timeout))
-      .then(() => {})
+    cy.wrap(farmosUtil.getLogCategoryToTermMap(), timeout)
+      .then((map) => {
+        categoryMap = map;
+      })
       .then(() => cy.wrap(farmosUtil.getUnitToTermMap(), timeout))
-      .then(() => {})
+      .then((map) => {
+        unitMap = map;
+      })
       .then(() => cy.wrap(lib.submitForm(form), timeout))
       .then((res) => {
         results = res;
