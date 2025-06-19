@@ -1,7 +1,15 @@
 <?php
 
+/*
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+*/
+
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * Implements hook_page_attachments_alter().
@@ -11,26 +19,211 @@ function farm_fd2_page_attachments(&$variables) {
 }
 
 /**
- * Adds the fd2_land_area field to asset--land bundles.
+ * Adds the fd2_harvest_units field to plant_type taxonomy terms.
  */
-function farm_fd2_farm_entity_bundle_field_info(EntityTypeInterface $entity_type, $bundle) {
-  $fields = [];
 
-  if ($entity_type->id() == 'taxonomy_term' && $bundle == 'plant_type') {
-    $options = [
-      'label' => t('Land area (acres)'),
-      'description' => t('Area of land asset in acres.'),
-      'required' => 'true',
-      'type' => 'decimal',
-      'scale' => 2,
-      'min' => 0.00,
-      'weight' => [
-        'form' => -85,
-        'view' => 10,
+function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type' && $form_display->getMode() == 'default' && $form_display->isNew()) {
+    $form_display->setComponent('harvest_days2', [
+      'type' => 'number',
+      'settings' => [
+        'placeholder' => '',
       ],
-    ];
-    $fields['fd2_land_area'] = \Drupal::service('farm_field.factory')->bundleFieldDefinition($options);
+      'region' => 'content',
+      'weight' => 20,
+    ]);
   }
-
-  return $fields;
 }
+
+function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type' && $display->getMode() == 'full' && $display->isNew()) {
+    $display->setComponent('maturity_days2', [
+      'type' => 'number_integer',
+      'label' => 'inline',
+      'settings' => [
+        'thousand_separator' => '',
+        'prefix_suffix' => TRUE,
+      ],
+      'region' => 'content',
+      'weight' => 20,
+    ]);
+  }
+}
+
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+/*
+function farm_fd2_entity_extra_field_info() {
+  $extra = [];
+
+  $extra['taxonomy_term']['your_vocabulary_machine_name']['display'] = [
+    'your_field_name' => [
+      'label' => t('Your Field Label'),
+      'description' => t('Description for your field.'),
+      'weight' => 10,
+      'visible' => TRUE,
+    ],
+  ];
+
+  return $extra;
+}
+*/
+
+/**
+ * Implements hook_entity_field_storage_info().
+ */
+ /*
+function mymodule_entity_field_storage_info() {
+  $storage = [];
+
+  $storage['taxonomy_term']['your_vocabulary_machine_name']['fields']['your_field_name'] = [
+    'field_storage_definition' => [
+      'field_name' => 'your_field_name',
+      'entity_type' => 'taxonomy_term',
+      'bundle' => 'your_vocabulary_machine_name',
+      'type' => 'text', // Or your desired field type.
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'settings' => [],
+      'translatable' => FALSE,
+    ],
+  ];
+
+  return $storage;
+}
+*/
+
+/*
+function farm_fd2_post_update_add_harvest_units()  {
+ $field_storage = FieldStorageConfig::create([
+    'id' => 'taxonomy_term.field_fd2_harvest_units',
+    'field_name' => 'field_fd2_harvest_units',
+    'entity_type' => 'taxonomy_term',
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'module' => 'core',
+    'locked' => 'false',
+    'cardinality' => -1,
+    'translatable' => True,
+    'indexes' => [],
+    'persist_with_no_fields' => False,
+    'custom_storage' => False,
+    'dependencies' => [
+      'enforced' => [
+        'module' => [
+          'farm_plant_type',
+        ],
+      ],
+      'module' => [
+        'taxonomy',
+      ],
+    ],
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'id' => 'taxonomy_term.plant_type.field_fd2_harvest_units',
+    'field_name' => 'field_fd2_harvest_units',
+    'entity_type' => 'taxonomy_term',
+    'bundle' => 'plant_type',
+    'label' => 'Harvest Units',
+    'description' => '',
+    'required' => True,
+    'translatable' => False,
+    'default_value' => [],
+    'default_value_callback' => '',
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          'unit' => 'Units',
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'asc',
+        ],
+        'auto_create' => False,
+        'auto_create_bundle' => '',
+      ],
+    ],
+    field_type => 'entity_reference',
+    'dependencies' => [
+      'enforced' => [
+        'module' => [
+          'farm_plant_type',
+        ],
+      ],
+      'module' => [
+        'taxonomy',
+      ],
+    ],
+  ]);
+  $field->save();
+}
+*/
+
+/*
+
+function farm_fd2_post_update_add_harvest_days2(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'id' => 'taxonomy_term.harvest_days2',
+    'field_name' => 'harvest_days2',
+    'entity_type' => 'taxonomy_term',
+    'type' => 'integer',
+    'settings' => [
+      'unsigned' => TRUE,
+      'size' => 'normal',
+    ],
+    'module' => 'core',
+    'locked' => FALSE,
+    'cardinality' => 1,
+    'indexes' => [],
+    'persist_with_no_fields' => FALSE,
+    'custom_storage' => FALSE,
+    'dependencies' => [
+      'enforced' => [
+        'module' => [
+          'farm_plant_type',
+        ],
+      ],
+      'module' => [
+        'taxonomy',
+      ],
+    ],
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'id' => 'taxonomy_term.plant_type.harvest_days2',
+    'field_name' => 'harvest_days2',
+    'entity_type' => 'taxonomy_term',
+    'bundle' => 'plant_type',
+    'label' => 'Days of harvest',
+    'description' => '',
+    'required' => FALSE,
+    'default_value' => [],
+    'default_value_callback' => '',
+    'settings' => [
+      'min' => 1,
+      'max' => NULL,
+      'prefix' => '',
+      'suffix' => ' day| days',
+    ],
+    'field_type' => 'integer',
+    'dependencies' => [
+      'enforced' => [
+        'module' => [
+          'farm_plant_type',
+        ],
+      ],
+      'module' => [
+        'taxonomy',
+      ],
+    ],
+  ]);
+  $field->save();
+}
+*/
