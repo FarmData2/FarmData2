@@ -16,7 +16,7 @@ id: taxonomy_term.plant_type.fd2_harvest_units
 field_name: fd2_harvest_units
 entity_type: taxonomy_term
 bundle: plant_type
-label: 'Harvest Units'
+label: 'Harvest units'
 description: ''
 required: true
 translatable: false
