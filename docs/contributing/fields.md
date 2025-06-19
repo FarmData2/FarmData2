@@ -19,14 +19,14 @@ To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
     - Use `npm run printlog taxonomy_term--????` to confirm the field has been created.
       - Replace `????` with the name of the vocabulary to which the field has been added.
   - Under "Manage Form Display"
-    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration).
+    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration so this is a waste of time).
     - Use the "Gear" icon to configure the field edit widget.
     - Save
     - Go to Administration -> Structure -> Taxonomy
       - Pick "Add Terms" in the dropdown for the Vocabulary being edited.
       - Confirm that the widget for the new field is present.
   - Under "Manage Display"
-    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration).
+    - ~~Move the field to the preferred location.~~ (locations cannot be specified in the configuration so this is a waste of time).
     - Use the dropdowns and "Gear" icon to configure the field display widget.
     - Save
     - Go to Administration -> Structure -> Taxonomy
@@ -52,3 +52,47 @@ To add a field to a Vocabulary of Taxonomy Terms (`plant_type`)
 ### Add the Field to the Form and Display
 
 - Add code to the `modules/farm_fd2/src/module/farm_fd2.module` file to add the new field to the `farm_plant_type` entity.
+  - The code below shows the general structure of the code.
+  - Typically an appropriate `if` block containing the necessary `$form_display->setComponent` and `$display->setComponent` calls can be added.
+    - The `weight` of the field in the form and display can then be adjusted to position the field.
+
+```php
+function farm_plant_type_entity_form_display_alter(
+  EntityFormDisplayInterface $form_display,
+  array $context
+) {
+  if (
+    $context['entity_type'] == 'taxonomy_term' &&
+    $context['bundle'] == 'plant_type'
+  ) {
+    $form_display->setComponent('fd2_harvest_units', [
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'region' => 'content',
+      'weight' => 2,
+    ]);
+  }
+}
+
+function farm_plant_type_entity_view_display_alter(
+  EntityViewDisplayInterface $display,
+  array $context
+) {
+  if (
+    $context['entity_type'] == 'taxonomy_term' &&
+    $context['bundle'] == 'plant_type'
+  ) {
+    $display->setComponent('fd2_harvest_units', [
+      'type' => 'entity_reference',
+      'label' => 'inline',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'region' => 'content',
+      'weight' => 25,
+    ]);
+  }
+}
+```
