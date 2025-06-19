@@ -76,17 +76,22 @@ function runTest(activePlantAsset) {
     }
 
     function cleanupLogsAndAssets(movementLogs, plantAssets) {
-      // Delete movement logs
+      // Clear all intercepts
       cy.then(() => {
-        return Cypress.Promise.mapSeries(movementLogs, (log) => {
-          return farmosUtil
-            .getFarmOSInstance()
-            .then((farm) => farm.log.delete('activity', log.id))
-            .then((result) => {
-              expect(result.status).to.equal(204); // Successful deletion
-            });
-        });
+        Cypress.state('routes', []);
       })
+
+        // Delete movement logs
+        .then(() => {
+          return Cypress.Promise.mapSeries(movementLogs, (log) => {
+            return farmosUtil
+              .getFarmOSInstance()
+              .then((farm) => farm.log.delete('activity', log.id))
+              .then((result) => {
+                expect(result.status).to.equal(204); // Successful deletion
+              });
+          });
+        })
         // Delete plant assets
         .then(() => {
           return Cypress.Promise.mapSeries(plantAssets, (asset) => {
@@ -163,9 +168,9 @@ function runTest(activePlantAsset) {
       cy.saveSessionStorage();
     });
 
-    // after(() => {
-    //   cleanupLogsAndAssets(movementLogs, plantAssets);
-    // });
+    after(() => {
+      cleanupLogsAndAssets(movementLogs, plantAssets);
+    });
 
     it(
       'Soil Disturbance: records are deleted if there is a submission error',
@@ -188,8 +193,16 @@ function runTest(activePlantAsset) {
           });
 
           let standardQuantityDeletes = 0;
-          cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+          let deletedQuantityNames = [];
+
+          cy.intercept('DELETE', '**/api/quantity/standard/*', async (req) => {
             standardQuantityDeletes++;
+            const quantityId = req.url.split('/').pop();
+
+            deletedQuantityNames.push(
+              quantityId + ' ' + standardQuantityDeletes
+            );
+            console.log('Deleted quantity IDs:', deletedQuantityNames);
             req.reply({
               statusCode: 401,
             });
