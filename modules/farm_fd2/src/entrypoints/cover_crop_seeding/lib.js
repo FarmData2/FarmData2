@@ -2,7 +2,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 /**
  * Create the farmOS records (asset, quantities and log) to represent
- * a cover crop seeding
+ * a cover crop seeding.
  *
  * @param {Object} formData the form data from the cover crop seeding form.
  * @returns {Promise} a promise that resolves when the records are successfully created.
@@ -10,20 +10,20 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  * were sent to the server.  This object has the following properties:
  * ```Javascript
  * {
- *   plantAsset: {asset--plant},
- *   areaSeededQuantity: {quantity--standard},
- *   winterKillLog: {log--activity},
- *   seedingLog: {log--seeding},
- *   seedApplicationDepthQuantity: {quantity--standard},
- *   seedApplicationSpeedQuantity: {quantity--standard},
- *   seedApplicationAreaQuantity: {quantity--standard},
- *   seedApplicationEquipment: [ {asset--equipment} ],
- *   seedApplicationActivityLog: [ {log--activity} ],
- *   seedIncorporationDepthQuantity: {quantity--standard},
- *   seedIncorporationSpeedQuantity: {quantity--standard},
- *   seedIncorporationAreaQuantity: {quantity--standard},
- *   seedIncorporationEquipment: [ {asset--equipment} ],
- *   seedIncorporationActivityLog: [ {log--activity} ],
+ * plantAsset: {asset--plant},
+ * areaSeededQuantity: {quantity--standard},
+ * winterKillLog: {log--activity},
+ * seedingLog: {log--seeding},
+ * seedApplicationDepthQuantity(i): {quantity--standard},
+ * seedApplicationSpeedQuantity(i): {quantity--standard},
+ * seedApplicationAreaQuantity(i): {quantity--standard},
+ * seedApplicationEquipment: [ {asset--equipment} ],
+ * seedApplicationActivityLog(i): {log--activity},
+ * seedIncorporationDepthQuantity(i): {quantity--standard},
+ * seedIncorporationSpeedQuantity(i): {quantity--standard},
+ * seedIncorporationAreaQuantity(i): {quantity--standard},
+ * seedIncorporationEquipment: [ {asset--equipment} ],
+ * seedIncorporationActivityLog(i): {log--activity},
  * }
  * ```
  * @throws {Error} if an error occurs while creating the farmOS records.
@@ -109,72 +109,75 @@ async function submitForm(formData) {
     ops.push(seedingLog);
 
     if (formData.seedApplicationEquipment.length > 0) {
-      const seedApplicationDepthQuantity = {
-        name: 'seedApplicationDepthQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'length',
-            formData.seedApplicationDepth,
-            'Depth',
-            'INCHES'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationDepthQuantity'].id
-          );
-        },
-      };
-      ops.push(seedApplicationDepthQuantity);
-
-      const seedApplicationSpeedQuantity = {
-        name: 'seedApplicationSpeedQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'rate',
-            formData.seedApplicationSpeed,
-            'Speed',
-            'MPH'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationSpeedQuantity'].id
-          );
-        },
-      };
-      ops.push(seedApplicationSpeedQuantity);
-
-      const seedApplicationAreaQuantity = {
-        name: 'seedApplicationAreaQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'ratio',
-            formData.areaSeeded,
-            'Area Seeded for Seed Application',
-            'PERCENT'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationAreaQuantity'].id
-          );
-        },
-      };
-      ops.push(seedApplicationAreaQuantity);
-
+      // First, get the equipment assets once, outside the loop.
       for (const equipmentName of formData.seedApplicationEquipment) {
         seedApplicationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
-
-      // Loop for the number of passes specified in the form data.
       for (let i = 0; i < formData.seedApplicationPasses; i++) {
+        const seedApplicationDepthQuantity = {
+          name: 'seedApplicationDepthQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'length',
+              formData.seedApplicationDepth,
+              'Depth',
+              'INCHES'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationDepthQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedApplicationDepthQuantity);
+
+        const seedApplicationSpeedQuantity = {
+          name: 'seedApplicationSpeedQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'rate',
+              formData.seedApplicationSpeed,
+              'Speed',
+              'MPH'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationSpeedQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedApplicationSpeedQuantity);
+
+        const seedApplicationAreaQuantity = {
+          name: 'seedApplicationAreaQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'ratio',
+              formData.areaSeeded,
+              'Area Seeded for Seed Application',
+              'PERCENT'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationAreaQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedApplicationAreaQuantity);
+
         const seedApplicationActivityLog = {
-          // The name for each operation in the transaction must be unique.
-          name: `seedApplicationActivityLog-${i}`,
+          name: 'seedApplicationActivityLog' + i,
           do: async (results) => {
-            // To make the log name itself unique in farmOS, we append the pass number.
-            const logName = `Seed Application Pass ${i + 1}`;
+            const note =
+              'Pass ' +
+              (i + 1) +
+              ' of ' +
+              formData.seedApplicationPasses +
+              '. ' +
+              (formData.comment || '');
             return await farmosUtil.createSoilDisturbanceActivityLog(
               formData.date,
               formData.location,
@@ -182,18 +185,17 @@ async function submitForm(formData) {
               ['tillage', 'seeding_cover_crop'],
               results.plantAsset,
               [
-                results.seedApplicationDepthQuantity,
-                results.seedApplicationSpeedQuantity,
-                results.seedApplicationAreaQuantity,
+                results['seedApplicationDepthQuantity' + i],
+                results['seedApplicationSpeedQuantity' + i],
+                results['seedApplicationAreaQuantity' + i],
               ],
               seedApplicationEquipmentAssets,
-              logName // Pass the unique name to the creation utility.
+              note
             );
           },
           undo: async (results) => {
-            // Use the unique operation name to find the correct log to delete.
             await farmosUtil.deleteSoilDisturbanceActivityLog(
-              results[`seedApplicationActivityLog-${i}`].id
+              results['seedApplicationActivityLog' + i].id
             );
           },
         };
@@ -202,72 +204,75 @@ async function submitForm(formData) {
     }
 
     if (formData.seedIncorporationEquipment.length > 0) {
-      const seedIncorporationDepthQuantity = {
-        name: 'seedIncorporationDepthQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'length',
-            formData.seedIncorporationDepth,
-            'Depth',
-            'INCHES'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationDepthQuantity'].id
-          );
-        },
-      };
-      ops.push(seedIncorporationDepthQuantity);
-
-      const seedIncorporationSpeedQuantity = {
-        name: 'seedIncorporationSpeedQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'rate',
-            formData.seedIncorporationSpeed,
-            'Speed',
-            'MPH'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationSpeedQuantity'].id
-          );
-        },
-      };
-      ops.push(seedIncorporationSpeedQuantity);
-
-      const seedIncorporationAreaQuantity = {
-        name: 'seedIncorporationAreaQuantity',
-        do: async () => {
-          return await farmosUtil.createStandardQuantity(
-            'ratio',
-            formData.areaSeeded,
-            'Area Seeded for Seed Incorporation',
-            'PERCENT'
-          );
-        },
-        undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationAreaQuantity'].id
-          );
-        },
-      };
-      ops.push(seedIncorporationAreaQuantity);
-
       for (const equipmentName of formData.seedIncorporationEquipment) {
         seedIncorporationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
 
-      // Loop for the number of passes specified in the form data.
       for (let i = 0; i < formData.seedIncorporationPasses; i++) {
+        const seedIncorporationDepthQuantity = {
+          name: 'seedIncorporationDepthQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'length',
+              formData.seedIncorporationDepth,
+              'Depth',
+              'INCHES'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationDepthQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedIncorporationDepthQuantity);
+
+        const seedIncorporationSpeedQuantity = {
+          name: 'seedIncorporationSpeedQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'rate',
+              formData.seedIncorporationSpeed,
+              'Speed',
+              'MPH'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationSpeedQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedIncorporationSpeedQuantity);
+
+        const seedIncorporationAreaQuantity = {
+          name: 'seedIncorporationAreaQuantity' + i,
+          do: async () => {
+            return await farmosUtil.createStandardQuantity(
+              'ratio',
+              formData.areaSeeded,
+              'Area Seeded for Seed Incorporation',
+              'PERCENT'
+            );
+          },
+          undo: async (results) => {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationAreaQuantity' + i].id
+            );
+          },
+        };
+        ops.push(seedIncorporationAreaQuantity);
+
         const seedIncorporationActivityLog = {
-          // The name for each operation in the transaction must be unique.
-          name: `seedIncorporationActivityLog-${i}`,
+          name: 'seedIncorporationActivityLog' + i,
           do: async (results) => {
-            // To make the log name itself unique in farmOS, we append the pass number.
-            const logName = `Seed Incorporation Pass ${i + 1}`;
+            const note =
+              'Pass ' +
+              (i + 1) +
+              ' of ' +
+              formData.seedIncorporationPasses +
+              '. ' +
+              (formData.comment || '');
             return await farmosUtil.createSoilDisturbanceActivityLog(
               formData.date,
               formData.location,
@@ -275,64 +280,26 @@ async function submitForm(formData) {
               ['tillage', 'seeding_cover_crop'],
               results.plantAsset,
               [
-                results.seedIncorporationDepthQuantity,
-                results.seedIncorporationSpeedQuantity,
-                results.seedIncorporationAreaQuantity,
+                results['seedIncorporationDepthQuantity' + i],
+                results['seedIncorporationSpeedQuantity' + i],
+                results['seedIncorporationAreaQuantity' + i],
               ],
               seedIncorporationEquipmentAssets,
-              logName // Pass the unique name to the creation utility.
+              note
             );
           },
           undo: async (results) => {
-            // Use the unique operation name to find the correct log to delete.
             await farmosUtil.deleteSoilDisturbanceActivityLog(
-              results[`seedIncorporationActivityLog-${i}`].id
+              results['seedIncorporationActivityLog' + i].id
             );
           },
         };
         ops.push(seedIncorporationActivityLog);
       }
     }
-
     const result = await farmosUtil.runTransaction(ops);
-    // Initialize arrays to hold the multiple activity logs that are now created.
-    result.seedApplicationActivityLog = [];
-    result.seedIncorporationActivityLog = [];
-    // Loop through all the results from the transaction.
-    for (const key in result) {
-      // If a result key matches the seedApplication pattern, add it to our array.
-      if (key.startsWith('seedApplicationActivityLog-')) {
-        result.seedApplicationActivityLog.push(result[key]);
-      }
-      // If a result key matches the seedIncorporation pattern, add it to our array.
-      if (key.startsWith('seedIncorporationActivityLog-')) {
-        result.seedIncorporationActivityLog.push(result[key]);
-      }
-    }
-
-    if (!formData.winterKill) {
-      result['winterKillLog'] = null;
-    }
-
-    if (seedApplicationEquipmentAssets.length > 0) {
-      result['seedApplicationEquipment'] = seedApplicationEquipmentAssets;
-    } else {
-      result['seedApplicationEquipment'] = null;
-      result['seedApplicationDepthQuantity'] = null;
-      result['seedApplicationSpeedQuantity'] = null;
-      result['seedApplicationAreaQuantity'] = null;
-      //result['seedApplicationActivityLog'] = null;
-    }
-    if (seedIncorporationEquipmentAssets.length > 0) {
-      result['seedIncorporationEquipment'] = seedIncorporationEquipmentAssets;
-    } else {
-      result['seedIncorporationEquipment'] = null;
-      result['seedIncorporationDepthQuantity'] = null;
-      result['seedIncorporationSpeedQuantity'] = null;
-      result['seedIncorporationAreaQuantity'] = null;
-      //result['seedIncorporationActivityLog'] = null;
-    }
-
+    result['seedApplicationEquipment'] = seedApplicationEquipmentAssets;
+    result['seedIncorporationEquipment'] = seedIncorporationEquipmentAssets;
     return result;
   } catch (error) {
     console.error('CoverCropSeeding: \n' + error.message);
@@ -350,10 +317,10 @@ async function submitForm(formData) {
         ) {
           errorMsg += '\n   Manually delete log or asset with:';
           errorMsg += '\n     name: ' + error.results[key].attributes.name;
-          // errorMsg += '\n     uuid: ' + error.results[key].id;
+          errorMsg += '\n     uuid: ' + error.results[key].id;
         } else {
           errorMsg += '\n   May be safely ignored';
-          // errorMsg += '\n     uuid: ' + error.results[key].id;
+          errorMsg += '\n     uuid: ' + error.results[key].id;
         }
       }
     }
