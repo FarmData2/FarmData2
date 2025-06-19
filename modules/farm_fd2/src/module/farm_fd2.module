@@ -21,7 +21,7 @@ function farm_fd2_page_attachments(&$variables) {
 /**
  * Adds the fd2_harvest_units field to plant_type taxonomy terms.
  */
-
+/*
 function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
   if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
     $form_display->setComponent('harvest_days2', [
@@ -49,6 +49,7 @@ function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $d
     ]);
   }
 }
+*/
 
 
 /**

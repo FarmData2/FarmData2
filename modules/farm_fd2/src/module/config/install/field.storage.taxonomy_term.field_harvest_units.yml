@@ -1,23 +1,18 @@
 langcode: en
 status: true
 dependencies:
-  enforced:
-    module:
-      - farm_plant_type
   module:
     - taxonomy
-id: taxonomy_term.harvest_days2
-field_name: harvest_days2
+id: taxonomy_term.field_harvest_units
+field_name: field_harvest_units
 entity_type: taxonomy_term
-type: integer
+type: entity_reference
 settings:
-  unsigned: true
-  size: normal
+  target_type: taxonomy_term
 module: core
 locked: false
-cardinality: 1
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
 custom_storage: false
-hidden: {  }
