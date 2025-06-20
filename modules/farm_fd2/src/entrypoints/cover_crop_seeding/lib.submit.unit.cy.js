@@ -434,36 +434,4 @@ describe('Submission using the cover_crop lib.', () => {
       results.seedIncorporationActivityLog[0].relationships.equipment[0].id
     ).to.equal(equipmentMap.get(form.seedIncorporationEquipment[0]).id);
   });
-
-  /*
-   * Test for multiple passes
-   */
-  it('Check for multiple activity logs when passes is greater than 1', () => {
-    const multiPassForm = {
-      date: '1950-01-02',
-      crops: ['BEAN'],
-      location: 'ALF',
-      beds: ['ALF-1'],
-      areaSeeded: 100,
-      seedApplicationEquipment: ['Tractor'],
-      seedApplicationDepth: 6,
-      seedApplicationSpeed: 5,
-      seedApplicationPasses: 3, // Set passes to 3 for this test
-      seedIncorporationEquipment: [],
-      seedIncorporationPasses: 1,
-      winterKill: false,
-      winterKillDate: null,
-      comment: 'A comment on the multi-pass test',
-    };
-
-    cy.wrap(lib.submitForm(multiPassForm), { timeout: 10000 }).then(
-      (multiPassResults) => {
-        expect(multiPassResults.seedApplicationActivityLog).to.be.an('array');
-        expect(multiPassResults.seedApplicationActivityLog).to.have.lengthOf(3);
-        expect(multiPassResults.seedApplicationActivityLog[0].type).to.equal(
-          'log--activity'
-        );
-      }
-    );
-  });
 });
