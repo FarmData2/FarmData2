@@ -49,7 +49,6 @@ async function submitForm(formData) {
       },
     };
     ops.push(plantAsset);
-
     const areaSeededQuantity = {
       name: 'areaSeededQuantity',
       do: async () => {
@@ -109,7 +108,6 @@ async function submitForm(formData) {
     ops.push(seedingLog);
 
     if (formData.seedApplicationEquipment.length > 0) {
-      // First, get the equipment assets once, outside the loop.
       for (const equipmentName of formData.seedApplicationEquipment) {
         seedApplicationEquipmentAssets.push(equipmentMap.get(equipmentName));
       }
