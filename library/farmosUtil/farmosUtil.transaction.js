@@ -28,6 +28,24 @@
  * If an operation was never attempted (and thus also not undone) the attribute for that operation will be `undefined`.
  *
  * @category Utilities
+ *  @example
+ * // Create a transaction with a quantity and a log
+ * const operations = [
+ *   {
+ *     name: 'createQuantity',
+ *     do: async (done) => ({ value: 100, unit: 'kg' }),
+ *     undo: async (done) => console.log('Undo createQuantity'),
+ *   },
+ *   {
+ *     name: 'createLog',
+ *     do: async (done) => ({ type: 'harvest', notes: 'Harvested 100kg of apples' }),
+ *     undo: async (done) => console.log('Undo createLog'),
+ *   }
+ * ];
+ * 
+ * runTransaction(operations)
+ *   .then((results) => console.log('Transaction completed successfully:', results))
+ *   .catch((error) => console.error('Transaction failed:', error));
  */
 export async function runTransaction(operations) {
   const done = {};
