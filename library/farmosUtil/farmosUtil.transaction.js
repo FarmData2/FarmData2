@@ -28,18 +28,65 @@
  * If an operation was never attempted (and thus also not undone) the attribute for that operation will be `undefined`.
  *
  * @category Utilities
- *  @example
- * // Create a transaction with a quantity and a log
+ * 
+ * Executes a transaction with the provided operations.
+ *
+ * @param {Array<Object>} operations the operations to execute as a transaction.
+ * Each operation must have the following structure:
+ *
+ * ```
+ * {
+ * name: string,
+ * do: (Object) => async function performs an action and returns a result (e.g. creates a log, asset or quantity.) The argument has the same format as the return value. It contains the result of all prior operations, allowing them to be used by future operations.
+ * undo: (Object) => async function that undoes the action performed by `do` (e.g. deletes a log, asset or quantity). The argument has the same format as the return value and contains the result of all successfully completed operations.
+ * }
+ * ```
+ *
+ * @example
+ * // Create a transaction with a plant asset, a quantity, and a log
  * const operations = [
  *   {
+ *     name: 'createPlantAsset',
+ *     do: async () => {
+ *       return await farmosUtil.createPlantAsset(
+ *         '2023-10-01', // Example date
+ *         'ZUCCHINI',   // Example crop name
+ *         'Planting zucchini in the greenhouse' // Example comment
+ *       );
+ *     },
+ *     undo: async (results) => {
+ *       await farmosUtil.deletePlantAsset(results['createPlantAsset'].id);
+ *     },
+ *   },
+ *   {
  *     name: 'createQuantity',
- *     do: async (done) => ({ value: 100, unit: 'kg' }),
- *     undo: async (done) => console.log('Undo createQuantity'),
+ *     do: async () => {
+ *       return await farmosUtil.createStandardQuantity(
+ *         'count',
+ *         50, // Example quantity value
+ *         'Harvested Zucchini', // Example description
+ *         'KG' // Example unit
+ *       );
+ *     },
+ *     undo: async (results) => {
+ *       await farmosUtil.deleteStandardQuantity(results['createQuantity'].id);
+ *     },
  *   },
  *   {
  *     name: 'createLog',
- *     do: async (done) => ({ type: 'harvest', notes: 'Harvested 100kg of apples' }),
- *     undo: async (done) => console.log('Undo createLog'),
+ *     do: async (results) => {
+ *       return await farmosUtil.createSeedingLog(
+ *         '2023-10-01', // Example date
+ *         'Greenhouse A', // Example location
+ *         [], // Example attachments
+ *         ['seeding'], // Example tags
+ *         results.createPlantAsset, // Link to plant asset
+ *         [results.createQuantity] // Link to quantities
+ *       );
+ *     },
+ *     undo: async (results) => {
+ *       await farmosUtil.deleteSeedingLog(results['createLog'].id);
+ *     },
  *   }
  * ];
  * 
