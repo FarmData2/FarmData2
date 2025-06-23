@@ -168,9 +168,9 @@ function runTest(activePlantAsset) {
       cy.saveSessionStorage();
     });
 
-    after(() => {
-      cleanupLogsAndAssets(movementLogs, plantAssets);
-    });
+    // after(() => {
+    //   cleanupLogsAndAssets(movementLogs, plantAssets);
+    // });
 
     it(
       'Soil Disturbance: records are deleted if there is a submission error',
@@ -193,16 +193,8 @@ function runTest(activePlantAsset) {
           });
 
           let standardQuantityDeletes = 0;
-          let deletedQuantityNames = [];
-
           cy.intercept('DELETE', '**/api/quantity/standard/*', async (req) => {
             standardQuantityDeletes++;
-            const quantityId = req.url.split('/').pop();
-
-            deletedQuantityNames.push(
-              quantityId + ' ' + standardQuantityDeletes
-            );
-            console.log('Deleted quantity IDs:', deletedQuantityNames);
             req.reply({
               statusCode: 401,
             });
