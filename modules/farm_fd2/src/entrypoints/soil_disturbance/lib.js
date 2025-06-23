@@ -297,7 +297,7 @@ async function submitForm(formData) {
     let errorMsg = 'Error creating Soil Disturbance records.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (

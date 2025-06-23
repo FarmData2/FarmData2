@@ -127,7 +127,7 @@ async function submitForm(formData) {
     let errorMsg = 'Error creating tray seeding.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (

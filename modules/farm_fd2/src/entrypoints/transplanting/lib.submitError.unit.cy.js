@@ -120,7 +120,7 @@ describe('Error when submitting using the transplanting lib.', () => {
             expect(error.message).to.contain(
               'Result of operation transplantingBedWidthQuantity could not be cleaned up.'
             );
-            expect(error.message).to.contain(
+            expect(error.message).to.not.contain(
               'Result of operation parents could not be cleaned up'
             );
 
