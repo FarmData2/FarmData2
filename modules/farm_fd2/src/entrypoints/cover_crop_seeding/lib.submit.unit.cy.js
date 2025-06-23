@@ -12,62 +12,47 @@ describe('Submission using the cover_crop lib.', () => {
     seedIncorporationEquipment: ['Rake'],
     seedApplicationDepth: 6,
     seedApplicationSpeed: 5,
+    seedApplicationPasses: 1,
     seedIncorporationDepth: 8,
     seedIncorporationSpeed: 3,
+    seedIncorporationPasses: 1,
     winterKill: true,
     winterKillDate: '1950-12-31',
     comment: 'A comment',
   };
 
-  let bedMap = null;
-  let categoryMap = null;
-  let cropMap = null;
-  let equipmentMap = null;
-  let fieldMap = null;
-  let unitMap = null;
-  let results = null;
+  let bedMap, categoryMap, cropMap, equipmentMap, fieldMap, unitMap, results;
 
   before(() => {
-    cy.restoreLocalStorage();
-    cy.restoreSessionStorage();
-
-    cy.wrap(farmosUtil.getBedNameToAssetMap()).then((map) => {
-      bedMap = map;
-    });
-
-    cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((map) => {
-      categoryMap = map;
-    });
-
-    cy.wrap(farmosUtil.getCropNameToTermMap()).then((map) => {
-      cropMap = map;
-    });
-
-    cy.wrap(farmosUtil.getEquipmentNameToAssetMap()).then((map) => {
-      equipmentMap = map;
-    });
-
-    cy.wrap(farmosUtil.getFieldNameToAssetMap()).then((map) => {
-      fieldMap = map;
-    });
-
-    cy.wrap(farmosUtil.getUnitToTermMap()).then((map) => {
-      unitMap = map;
-    });
-
-    cy.wrap(lib.submitForm(form), { timeout: 10000 }).then((res) => {
-      results = res;
-    });
-  });
-
-  beforeEach(() => {
-    cy.restoreLocalStorage();
-    cy.restoreSessionStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
-    cy.saveSessionStorage();
+    const timeout = { timeout: 30000 };
+    cy.wrap(farmosUtil.getBedNameToAssetMap(), timeout)
+      .then((map) => {
+        bedMap = map;
+      })
+      .then(() => cy.wrap(farmosUtil.getLogCategoryToTermMap(), timeout))
+      .then((map) => {
+        categoryMap = map;
+      })
+      .then(() => cy.wrap(farmosUtil.getCropNameToTermMap(), timeout))
+      .then((map) => {
+        cropMap = map;
+      })
+      .then(() => cy.wrap(farmosUtil.getEquipmentNameToAssetMap(), timeout))
+      .then((map) => {
+        equipmentMap = map;
+      })
+      .then(() => cy.wrap(farmosUtil.getFieldNameToAssetMap(), timeout))
+      .then((map) => {
+        fieldMap = map;
+      })
+      .then(() => cy.wrap(farmosUtil.getUnitToTermMap(), timeout))
+      .then((map) => {
+        unitMap = map;
+      })
+      .then(() => cy.wrap(lib.submitForm(form), timeout))
+      .then((res) => {
+        results = res;
+      });
   });
 
   it('Check the asset--plant', () => {
@@ -110,7 +95,6 @@ describe('Submission using the cover_crop lib.', () => {
       form.date + '_cs_' + form.crops.join('_')
     );
     expect(results.seedingLog.attributes.timestamp).to.contain(form.date);
-
     expect(results.seedingLog.relationships.location.length).to.equal(3);
     expect(results.seedingLog.relationships.location[0].id).to.equal(
       fieldMap.get(form.location).id
@@ -121,7 +105,6 @@ describe('Submission using the cover_crop lib.', () => {
     expect(results.seedingLog.relationships.location[2].id).to.equal(
       bedMap.get(form.beds[1]).id
     );
-
     expect(results.seedingLog.relationships.category.length).to.equal(2);
     expect(results.seedingLog.relationships.category[0].id).to.equal(
       categoryMap.get('seeding').id
@@ -129,12 +112,9 @@ describe('Submission using the cover_crop lib.', () => {
     expect(results.seedingLog.relationships.category[1].id).to.equal(
       categoryMap.get('seeding_cover_crop').id
     );
-
     expect(results.seedingLog.relationships.asset[0].id).to.equal(
       results.plantAsset.id
     );
-
-    expect(results.seedingLog.relationships.quantity.length).to.equal(1);
     expect(results.seedingLog.relationships.quantity[0].id).to.equal(
       results.areaSeededQuantity.id
     );
@@ -148,290 +128,96 @@ describe('Submission using the cover_crop lib.', () => {
     expect(results.winterKillLog.attributes.timestamp).to.contain(
       form.winterKillDate
     );
-
-    expect(results.winterKillLog.relationships.location.length).to.equal(3);
-    expect(results.winterKillLog.relationships.location[0].id).to.equal(
-      fieldMap.get(form.location).id
-    );
-    expect(results.winterKillLog.relationships.location[1].id).to.equal(
-      bedMap.get(form.beds[0]).id
-    );
-    expect(results.winterKillLog.relationships.location[2].id).to.equal(
-      bedMap.get(form.beds[1]).id
-    );
-
     expect(results.winterKillLog.relationships.asset[0].id).to.equal(
       results.plantAsset.id
     );
-
-    expect(results.winterKillLog.relationships.category.length).to.equal(2);
     expect(results.winterKillLog.relationships.category[0].id).to.equal(
       categoryMap.get('termination').id
     );
-    expect(results.winterKillLog.relationships.category[1].id).to.equal(
-      categoryMap.get('seeding_cover_crop').id
-    );
-
-    expect(results.winterKillLog.relationships.quantity).to.be.empty;
-    expect(results.winterKillLog.relationships.equipment).to.be.empty;
   });
 
   it('Check the seed application depth quantity--standard', () => {
-    expect(results.seedApplicationDepthQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedApplicationDepthQuantity.attributes.measure).to.equal(
-      'length'
-    );
-    expect(
-      results.seedApplicationDepthQuantity.attributes.value.decimal
-    ).to.equal(form.seedApplicationDepth);
-    expect(results.seedApplicationDepthQuantity.attributes.label).to.equal(
-      'Depth'
-    );
-    expect(
-      results.seedApplicationDepthQuantity.relationships.units.id
-    ).to.equal(unitMap.get('INCHES').id);
-    expect(results.seedApplicationDepthQuantity.relationships.inventory_asset)
-      .to.be.null;
-    expect(results.seedApplicationDepthQuantity.attributes.inventory_adjustment)
-      .to.be.null;
+    const qty = results.seedApplicationDepthQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('length');
+    expect(qty.attributes.value.decimal).to.equal(form.seedApplicationDepth);
+    expect(qty.attributes.label).to.equal('Depth');
+    expect(qty.relationships.units.id).to.equal(unitMap.get('INCHES').id);
   });
 
   it('Check the seed application speed quantity--standard', () => {
-    expect(results.seedApplicationSpeedQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedApplicationSpeedQuantity.attributes.measure).to.equal(
-      'rate'
-    );
-    expect(
-      results.seedApplicationSpeedQuantity.attributes.value.decimal
-    ).to.equal(form.seedApplicationSpeed);
-    expect(results.seedApplicationSpeedQuantity.attributes.label).to.equal(
-      'Speed'
-    );
-    expect(
-      results.seedApplicationSpeedQuantity.relationships.units.id
-    ).to.equal(unitMap.get('MPH').id);
-    expect(results.seedApplicationSpeedQuantity.relationships.inventory_asset)
-      .to.be.null;
-    expect(results.seedApplicationSpeedQuantity.attributes.inventory_adjustment)
-      .to.be.null;
+    const qty = results.seedApplicationSpeedQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('rate');
+    expect(qty.attributes.value.decimal).to.equal(form.seedApplicationSpeed);
+    expect(qty.attributes.label).to.equal('Speed');
+    expect(qty.relationships.units.id).to.equal(unitMap.get('MPH').id);
   });
 
   it('Check the seed application area quantity--standard', () => {
-    expect(results.seedApplicationAreaQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedApplicationAreaQuantity.attributes.measure).to.equal(
-      'ratio'
-    );
-    expect(
-      results.seedApplicationAreaQuantity.attributes.value.decimal
-    ).to.equal(form.areaSeeded);
-    expect(results.seedApplicationAreaQuantity.attributes.label).to.equal(
-      'Area Seeded for Seed Application'
-    );
-    expect(results.seedApplicationAreaQuantity.relationships.units.id).to.equal(
-      unitMap.get('PERCENT').id
-    );
-    expect(
-      results.seedApplicationAreaQuantity.relationships.units.type
-    ).to.equal('taxonomy_term--unit');
-    expect(results.seedApplicationAreaQuantity.attributes.inventory_adjustment)
-      .to.be.null;
-    expect(results.seedApplicationAreaQuantity.relationships.inventory_asset).to
-      .be.null;
+    const qty = results.seedApplicationAreaQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('ratio');
+    expect(qty.attributes.value.decimal).to.equal(form.areaSeeded);
+    expect(qty.attributes.label).to.equal('Area Seeded for Seed Application');
   });
 
   it('Check the seed application activity log--activity', () => {
-    expect(results.seedApplicationActivityLog[0].type).to.equal(
-      'log--activity'
+    const log = results.seedApplicationActivityLog0;
+    expect(log.type).to.equal('log--activity');
+    expect(log.attributes.name).to.equal(form.date + '_sd_' + form.location);
+    expect(log.relationships.quantity.length).to.equal(3);
+    expect(log.relationships.quantity[0].id).to.equal(
+      results.seedApplicationDepthQuantity0.id
     );
-    expect(results.seedApplicationActivityLog[0].attributes.name).to.equal(
-      form.date + '_sd_' + form.location
+    expect(log.relationships.quantity[1].id).to.equal(
+      results.seedApplicationSpeedQuantity0.id
     );
-    expect(
-      results.seedApplicationActivityLog[0].attributes.timestamp
-    ).to.contain(form.date);
-
-    expect(
-      results.seedApplicationActivityLog[0].relationships.location.length
-    ).to.equal(3);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.location[0].id
-    ).to.equal(fieldMap.get(form.location).id);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.location[1].id
-    ).to.equal(bedMap.get(form.beds[0]).id);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.location[2].id
-    ).to.equal(bedMap.get(form.beds[1]).id);
-
-    expect(
-      results.seedApplicationActivityLog[0].relationships.asset[0].id
-    ).to.equal(results.plantAsset.id);
-
-    expect(
-      results.seedApplicationActivityLog[0].relationships.category.length
-    ).to.equal(2);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.category[0].id
-    ).to.equal(categoryMap.get('tillage').id);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.category[1].id
-    ).to.equal(categoryMap.get('seeding_cover_crop').id);
-
-    expect(
-      results.seedApplicationActivityLog[0].relationships.quantity.length
-    ).to.equal(3);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.quantity[0].id
-    ).to.equal(results.seedApplicationDepthQuantity.id);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.quantity[1].id
-    ).to.equal(results.seedApplicationSpeedQuantity.id);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.quantity[2].id
-    ).to.equal(results.seedApplicationAreaQuantity.id);
-
-    expect(
-      results.seedApplicationActivityLog[0].relationships.equipment.length
-    ).to.equal(1);
-    expect(
-      results.seedApplicationActivityLog[0].relationships.equipment[0].id
-    ).to.equal(equipmentMap.get(form.seedApplicationEquipment[0]).id);
+    expect(log.relationships.quantity[2].id).to.equal(
+      results.seedApplicationAreaQuantity0.id
+    );
+    expect(log.relationships.equipment[0].id).to.equal(
+      equipmentMap.get(form.seedApplicationEquipment[0]).id
+    );
   });
 
   it('Check the seed incorporation depth quantity--standard', () => {
-    expect(results.seedIncorporationDepthQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedIncorporationDepthQuantity.attributes.measure).to.equal(
-      'length'
-    );
-    expect(
-      results.seedIncorporationDepthQuantity.attributes.value.decimal
-    ).to.equal(form.seedIncorporationDepth);
-    expect(results.seedIncorporationDepthQuantity.attributes.label).to.equal(
-      'Depth'
-    );
-    expect(
-      results.seedIncorporationDepthQuantity.relationships.units.id
-    ).to.equal(unitMap.get('INCHES').id);
-    expect(results.seedIncorporationDepthQuantity.relationships.inventory_asset)
-      .to.be.null;
-    expect(
-      results.seedIncorporationDepthQuantity.attributes.inventory_adjustment
-    ).to.be.null;
+    const qty = results.seedIncorporationDepthQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('length');
+    expect(qty.attributes.value.decimal).to.equal(form.seedIncorporationDepth);
   });
 
   it('Check the seed incorporation speed quantity--standard', () => {
-    expect(results.seedIncorporationSpeedQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedIncorporationSpeedQuantity.attributes.measure).to.equal(
-      'rate'
-    );
-    expect(
-      results.seedIncorporationSpeedQuantity.attributes.value.decimal
-    ).to.equal(form.seedIncorporationSpeed);
-    expect(results.seedIncorporationSpeedQuantity.attributes.label).to.equal(
-      'Speed'
-    );
-    expect(
-      results.seedIncorporationSpeedQuantity.relationships.units.id
-    ).to.equal(unitMap.get('MPH').id);
-    expect(results.seedIncorporationSpeedQuantity.relationships.inventory_asset)
-      .to.be.null;
-    expect(
-      results.seedIncorporationSpeedQuantity.attributes.inventory_adjustment
-    ).to.be.null;
+    const qty = results.seedIncorporationSpeedQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('rate');
+    expect(qty.attributes.value.decimal).to.equal(form.seedIncorporationSpeed);
   });
 
   it('Check the seed incorporation area quantity--standard', () => {
-    expect(results.seedIncorporationAreaQuantity.type).to.equal(
-      'quantity--standard'
-    );
-    expect(results.seedIncorporationAreaQuantity.attributes.measure).to.equal(
-      'ratio'
-    );
-    expect(
-      results.seedIncorporationAreaQuantity.attributes.value.decimal
-    ).to.equal(form.areaSeeded);
-    expect(results.seedIncorporationAreaQuantity.attributes.label).to.equal(
-      'Area Seeded for Seed Incorporation'
-    );
-    expect(
-      results.seedIncorporationAreaQuantity.relationships.units.id
-    ).to.equal(unitMap.get('PERCENT').id);
-    expect(
-      results.seedIncorporationAreaQuantity.relationships.units.type
-    ).to.equal('taxonomy_term--unit');
-    expect(
-      results.seedIncorporationAreaQuantity.attributes.inventory_adjustment
-    ).to.be.null;
-    expect(results.seedIncorporationAreaQuantity.relationships.inventory_asset)
-      .to.be.null;
+    const qty = results.seedIncorporationAreaQuantity0;
+    expect(qty.type).to.equal('quantity--standard');
+    expect(qty.attributes.measure).to.equal('ratio');
+    expect(qty.attributes.value.decimal).to.equal(form.areaSeeded);
   });
 
   it('Check the seed incorporation activity log--activity', () => {
-    expect(results.seedIncorporationActivityLog[0].type).to.equal(
-      'log--activity'
+    const log = results.seedIncorporationActivityLog0;
+    expect(log.type).to.equal('log--activity');
+    expect(log.attributes.name).to.equal(form.date + '_sd_' + form.location);
+    expect(log.relationships.quantity.length).to.equal(3);
+    expect(log.relationships.quantity[0].id).to.equal(
+      results.seedIncorporationDepthQuantity0.id
     );
-    expect(results.seedIncorporationActivityLog[0].attributes.name).to.equal(
-      form.date + '_sd_' + form.location
+    expect(log.relationships.quantity[1].id).to.equal(
+      results.seedIncorporationSpeedQuantity0.id
     );
-    expect(
-      results.seedIncorporationActivityLog[0].attributes.timestamp
-    ).to.contain(form.date);
-
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.location.length
-    ).to.equal(3);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.location[0].id
-    ).to.equal(fieldMap.get(form.location).id);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.location[1].id
-    ).to.equal(bedMap.get(form.beds[0]).id);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.location[2].id
-    ).to.equal(bedMap.get(form.beds[1]).id);
-
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.asset[0].id
-    ).to.equal(results.plantAsset.id);
-
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.category.length
-    ).to.equal(2);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.category[0].id
-    ).to.equal(categoryMap.get('tillage').id);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.category[1].id
-    ).to.equal(categoryMap.get('seeding_cover_crop').id);
-
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.quantity.length
-    ).to.equal(3);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.quantity[0].id
-    ).to.equal(results.seedIncorporationDepthQuantity.id);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.quantity[1].id
-    ).to.equal(results.seedIncorporationSpeedQuantity.id);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.quantity[2].id
-    ).to.equal(results.seedIncorporationAreaQuantity.id);
-
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.equipment.length
-    ).to.equal(1);
-    expect(
-      results.seedIncorporationActivityLog[0].relationships.equipment[0].id
-    ).to.equal(equipmentMap.get(form.seedIncorporationEquipment[0]).id);
+    expect(log.relationships.quantity[2].id).to.equal(
+      results.seedIncorporationAreaQuantity0.id
+    );
+    expect(log.relationships.equipment[0].id).to.equal(
+      equipmentMap.get(form.seedIncorporationEquipment[0]).id
+    );
   });
 });

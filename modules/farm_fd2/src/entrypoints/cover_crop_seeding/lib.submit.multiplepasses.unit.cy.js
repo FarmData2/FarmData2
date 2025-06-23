@@ -20,13 +20,22 @@ describe('Submission with multiple passes', () => {
     winterKillDate: '1950-12-31',
     comment: 'Multi-pass test',
   };
-
   let results = null;
 
   before(() => {
-    const timeout = { timeout: 20000 };
+    const timeout = { timeout: 30000 };
     cy.wrap(farmosUtil.getBedNameToAssetMap(), timeout)
+      .then(() => {})
+      .then(() => cy.wrap(farmosUtil.getLogCategoryToTermMap(), timeout))
+      .then(() => {})
+      .then(() => cy.wrap(farmosUtil.getCropNameToTermMap(), timeout))
+      .then(() => {})
       .then(() => cy.wrap(farmosUtil.getEquipmentNameToAssetMap(), timeout))
+      .then(() => {})
+      .then(() => cy.wrap(farmosUtil.getFieldNameToAssetMap(), timeout))
+      .then(() => {})
+      .then(() => cy.wrap(farmosUtil.getUnitToTermMap(), timeout))
+      .then(() => {})
       .then(() => cy.wrap(lib.submitForm(form), timeout))
       .then((res) => {
         results = res;
@@ -34,11 +43,17 @@ describe('Submission with multiple passes', () => {
   });
 
   Cypress._.times(form.seedApplicationPasses, (i) => {
-    it(`Check record types for pass ${i + 1}`, () => {
+    it(`Check the log note and types for application pass ${i + 1}`, () => {
       const activityLog = results[`seedApplicationActivityLog${i}`];
       const depthQty = results[`seedApplicationDepthQuantity${i}`];
+
       expect(activityLog.type).to.equal('log--activity');
       expect(depthQty.type).to.equal('quantity--standard');
+
+      const expectedNote = `Pass ${i + 1} of ${form.seedApplicationPasses}. ${
+        form.comment
+      }`;
+      expect(activityLog.attributes.notes.value).to.equal(expectedNote);
     });
   });
 
