@@ -1,7 +1,6 @@
 import { lib } from './lib.js';
 
 describe('Error when submitting using the cover_crop lib.', () => {
-  // This form is updated to test a multi-pass failure scenario.
   let form = {
     date: '1950-01-02',
     crops: ['BEAN', 'CARROT'],
