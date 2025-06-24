@@ -36,8 +36,8 @@ import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
- * A component for selecting multiple crops. It initially displays a single
- * dropdown for selecting a crop.  When a crop
+ * The MultiCropSelector is a component for selecting multiple crops.
+ * It initially displays a single dropdown for selecting a crop.  When a crop
  * is selected another dropdown appears to allow the user to select
  * another crop.
  *

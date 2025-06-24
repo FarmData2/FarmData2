@@ -41,3 +41,7 @@
 ## FarmData2 Component and Library Documentation
 
 - [FarmData2 Documentation](FarmData2.md) - API documentation for the FarmData2 custom Vue components and JavaScript libraries.
+
+## Maintainer Documentation
+
+- [Deploy](maintainers/deploy.md) - a step-by-step guide to deploying a live instance of FarmData2 for testing.

@@ -62,7 +62,6 @@
             </BTh>
           </BTr>
           <BTr v-if="validityStyling === false">
-            <th style="height: 0px" />
             <BTh
               colspan="100"
               style="font-weight: normal"
@@ -84,6 +83,7 @@
             v-bind:key="i"
             v-bind:id="'picklist-row-' + i"
             v-bind:data-cy="'picklist-row-' + i"
+            v-bind:class="getRowClass(i)"
           >
             <BTh stickyColumn>
               <BFormCheckbox
@@ -449,6 +449,11 @@ export default {
     },
   },
   methods: {
+    getRowClass(rowIndex) {
+      return {
+        'selected-row': this.pickedRows[rowIndex] > 0,
+      };
+    },
     syncPickedRows(newPickedEntries) {
       // Ensure we are mapping the original row indices to pickedRows
       const newPickedRows = this.sortedRows.map((row) => {
@@ -531,6 +536,7 @@ export default {
         this.pickedRows = new Array(this.pickedRows.length).fill(0);
       } else {
         const newPickedRows = new Array(this.pickedRows.length).fill(1);
+
         this.sortedRows.forEach((row, index) => {
           newPickedRows[index] = row[this.quantityAttribute];
         });
@@ -774,5 +780,11 @@ td {
 
 .b-table {
   margin: 0px;
+}
+
+.selected-row > td,
+.selected-row > th {
+  background-color: #e3f2fd !important;
+  border-color: #e3f2fd !important;
 }
 </style>

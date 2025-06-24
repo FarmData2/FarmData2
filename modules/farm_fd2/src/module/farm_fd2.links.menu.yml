@@ -9,6 +9,7 @@ farm.fd2_seeding:
   description: 'FarmData2 features for seedings.'
   parent: farm.fd2_main
   route_name: farm.fd2_seeding.content
+  url: 'internal:/fd2/main#seeding'
   weight: 100
 farm.fd2_tray_seeding:
   title: 'Tray Seeding'
@@ -27,6 +28,7 @@ farm.fd2_soil:
   description: 'FarmData2 features for soil.'
   parent: farm.fd2_main
   route_name: farm.fd2_soil.content
+  url: 'internal:/fd2/main#soil'
   weight: 100
 farm.fd2_transplanting:
   title: 'Transplanting'

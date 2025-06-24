@@ -12,11 +12,6 @@ describe('Test the %COMPONENT_NAME% component events', () => {
   });
 
   it('Emits "valid" when component has been created', () => {
-    /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
-     */
-
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -34,4 +29,12 @@ describe('Test the %COMPONENT_NAME% component events', () => {
         cy.get('@validSpy').should('have.been.calledWith', false);
       });
   });
+
+  /*
+    * Add additional tests as necessary to fully test the component's events.
+    * 
+    * See the Components Guide (`docs/contributing/components.md` for more 
+    * information about component testing. Also, see other components in 
+    * the `components/` directory for examples.
+    */
 });

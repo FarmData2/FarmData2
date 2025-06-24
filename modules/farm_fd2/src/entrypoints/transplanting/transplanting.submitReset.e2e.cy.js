@@ -291,13 +291,20 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
       .find('[data-cy="selector-input"]')
       .should('have.value', '1');
 
+    cy.get('[data-cy="multi-equipment-selector"]').should('not.be.visible');
+    cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
+
+    cy.get(
+      '[data-cy="transplanting-soil-disturbance-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="multi-equipment-selector"]').should('be.visible');
+
     cy.get('[data-cy="multi-equipment-selector"]')
       .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-    cy.get('[data-cy="soil-disturbance-depth"]').should('not.exist');
-    cy.get('[data-cy="soil-disturbance-speed"]').should('not.exist');
-    cy.get('[data-cy="soil-disturbance-area"]').should('not.exist');
 
     cy.get('[data-cy="multi-equipment-selector"]')
       .find('[data-cy="selector-1"]')
@@ -306,9 +313,11 @@ describe('Transplanting: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
+      .should('be.visible')
       .should('have.value', '0.0');
     cy.get('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
+      .should('be.visible')
       .should('have.value', '0.0');
   });
 });
