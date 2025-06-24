@@ -1,7 +1,7 @@
 import { lib } from './lib.js';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
-describe('Submission scenarios for cover crop lib', () => {
+describe('Submissions with optional content omitted', () => {
   let equipmentMap;
 
   before(() => {

@@ -1,5 +1,4 @@
 import { lib } from './lib.js';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 
 describe('Submission with multiple passes', () => {
   const form = {
@@ -24,22 +23,9 @@ describe('Submission with multiple passes', () => {
 
   before(() => {
     const timeout = { timeout: 30000 };
-    cy.wrap(farmosUtil.getBedNameToAssetMap(), timeout)
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getLogCategoryToTermMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getCropNameToTermMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getEquipmentNameToAssetMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getFieldNameToAssetMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(farmosUtil.getUnitToTermMap(), timeout))
-      .then(() => {})
-      .then(() => cy.wrap(lib.submitForm(form), timeout))
-      .then((res) => {
-        results = res;
-      });
+    cy.wrap(lib.submitForm(form), timeout).then((res) => {
+      results = res;
+    });
   });
 
   Cypress._.times(form.seedApplicationPasses, (i) => {
@@ -61,13 +47,11 @@ describe('Submission with multiple passes', () => {
     const logIds = [
       results.seedApplicationActivityLog0.id,
       results.seedApplicationActivityLog1.id,
-      results.seedApplicationActivityLog2.id,
     ];
 
     const quantityIds = [
       results.seedApplicationDepthQuantity0.id,
       results.seedApplicationDepthQuantity1.id,
-      results.seedApplicationDepthQuantity2.id,
     ];
 
     const logIdSet = new Set(logIds);
