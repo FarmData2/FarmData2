@@ -37,22 +37,19 @@ describe('Error when submitting using the cover_crop lib.', () => {
   });
 
   it('Check error messages when cannot clean up', { retries: 4 }, () => {
-    // Let all POST requests succeed first, then fail on a PATCH to force cleanup
-    let allPostsSucceeded = false;
-    let postCount = 0;
+    // Counter to track the number of POST requests
+    let postRequestCount = 0;
 
-    cy.intercept('POST', '**', (req) => {
-      postCount++;
-      req.continue();
-    });
-
-    // After all operations are created, fail the first PATCH to trigger cleanup
-    cy.intercept('PATCH', '**', (req) => {
-      if (postCount >= 12) {
-        // Adjust this number based on expected POST count
-        allPostsSucceeded = true;
-        req.reply({ statusCode: 401 });
+    // Intercept POST requests to the endpoint
+    cy.intercept('POST', '**/api/log/activity', (req) => {
+      postRequestCount += 1;
+      if (postRequestCount === 3) {
+        // On the third request, modify the response to have a status code of 401
+        req.reply({
+          statusCode: 401,
+        });
       } else {
+        // Continue with the request normally for other requests
         req.continue();
       }
     });
@@ -96,10 +93,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           throw new Error('The submission should have failed.');
         })
         .catch((error) => {
-          console.log('Actual error message:', error.message);
-          console.log('POST count:', postCount);
-          console.log('All posts succeeded:', allPostsSucceeded);
-
           expect(error.message).to.contain(
             'Error creating cover crop seeding records.'
           );
