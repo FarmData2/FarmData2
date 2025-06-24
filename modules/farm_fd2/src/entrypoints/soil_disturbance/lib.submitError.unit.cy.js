@@ -76,11 +76,6 @@ function runTest(activePlantAsset) {
     }
 
     function cleanupLogsAndAssets(movementLogs, plantAssets) {
-      // Clear all intercepts
-      // cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
-      //   req.continue();
-      // })
-
       // Delete movement logs
       cy.then(() => {
         return Cypress.Promise.mapSeries(movementLogs, (log) => {
@@ -172,171 +167,175 @@ function runTest(activePlantAsset) {
       cleanupLogsAndAssets(movementLogs, plantAssets);
     });
 
-    it('Soil Disturbance: records are deleted if there is a submission error', () => {
-      //{ retries: 4 },
-      if (activePlantAsset) {
-        // Counter to track the number of activity logs
-        let postRequestCount = 0;
+    it(
+      'Soil Disturbance: records are deleted if there is a submission error',
+      { retries: 4 },
+      () => {
+        //,
+        if (activePlantAsset) {
+          // Counter to track the number of activity logs
+          let postRequestCount = 0;
 
-        cy.intercept('POST', '**/api/log/activity', (req) => {
-          postRequestCount += 1;
-          if (postRequestCount === 3) {
+          cy.intercept('POST', '**/api/log/activity', (req) => {
+            postRequestCount += 1;
+            if (postRequestCount === 3) {
+              req.reply({
+                statusCode: 401,
+              });
+            } else {
+              // Continue with the request normally for other requests
+              req.continue();
+            }
+          });
+
+          let standardQuantityDeletes = 0;
+          cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+            standardQuantityDeletes++;
             req.reply({
               statusCode: 401,
             });
-          } else {
-            // Continue with the request normally for other requests
-            req.continue();
-          }
-        });
-
-        let standardQuantityDeletes = 0;
-        cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
-          standardQuantityDeletes++;
-          req.reply({
-            statusCode: 401,
           });
-        });
 
-        let activityLogDeletes = 0;
-        cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
-          activityLogDeletes++;
-          req.continue();
-        });
-        /* We allow this delete intercept to continue instead of failing it with a 401,
-         * because failing it would prevent the cleanupLogsAndAssets function from deleting the movement logs.
-         * That, in turn, leads to a 403 Forbidden error when trying to delete the plant asset.
-         * By letting the intercept proceed, we avoid the 403.
-         * Instead, we verify that the resulting error message does not contain certain specific strings.
-         */
+          let activityLogDeletes = 0;
+          cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
+            activityLogDeletes++;
+            req.continue();
+          });
+          /* We allow this delete intercept to continue instead of failing it with a 401,
+           * because failing it would prevent the cleanupLogsAndAssets function from deleting the movement logs.
+           * That, in turn, leads to a 403 Forbidden error when trying to delete the plant asset.
+           * By letting the intercept proceed, we avoid the 403.
+           * Instead, we verify that the resulting error message does not contain certain specific strings.
+           */
 
-        cy.wrap(
-          lib
-            .submitForm(form)
-            .then(() => {
-              // Shouldn't run because submitForm throws an error.
-              throw new Error('The submission should have failed.');
-            })
-            .catch((error) => {
-              expect(error.message).to.contain(
-                'Error creating Soil Disturbance records.'
-              );
-              expect(error.message).to.not.contain(
-                'Result of operation terminationLog0 could not be cleaned up.'
-              );
-              expect(error.message).to.not.contain(
-                'Result of operation depthQuantity0 0 could not be cleaned up.'
-              );
-              expect(error.message).to.not.contain(
-                'Result of operation speedQuantity0 0 could not be cleaned up.'
-              );
-              expect(error.message).to.not.contain(
-                'Result of operation areaQuantity0 0 could not be cleaned up.'
-              );
-              expect(error.message).to.not.contain(
-                'Result of operation activityLog0 0 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation depthQuantity0 1 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation speedQuantity0 1 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation areaQuantity0 1 could not be cleaned up.'
-              );
+          cy.wrap(
+            lib
+              .submitForm(form)
+              .then(() => {
+                // Shouldn't run because submitForm throws an error.
+                throw new Error('The submission should have failed.');
+              })
+              .catch((error) => {
+                expect(error.message).to.contain(
+                  'Error creating Soil Disturbance records.'
+                );
+                expect(error.message).to.not.contain(
+                  'Result of operation terminationLog0 could not be cleaned up.'
+                );
+                expect(error.message).to.not.contain(
+                  'Result of operation depthQuantity0 0 could not be cleaned up.'
+                );
+                expect(error.message).to.not.contain(
+                  'Result of operation speedQuantity0 0 could not be cleaned up.'
+                );
+                expect(error.message).to.not.contain(
+                  'Result of operation areaQuantity0 0 could not be cleaned up.'
+                );
+                expect(error.message).to.not.contain(
+                  'Result of operation activityLog0 0 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation depthQuantity0 1 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation speedQuantity0 1 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation areaQuantity0 1 could not be cleaned up.'
+                );
 
-              expect(standardQuantityDeletes).to.equal(3);
+                expect(standardQuantityDeletes).to.equal(3);
 
-              /* The last log-activity POST request cannot be undone because it fails
-               * before completing, meaning no record is created that requires deletion.
-               * Cleanup only applies to successfully created records.
-               * As a result, activityLogDeletes does not include the last request
-               * in the count since it was never successfully created and thus not deleted.
-               */
-              expect(activityLogDeletes).to.equal(2);
-            }),
-          { timeout: 10000 }
-        );
-      } else {
-        // Counter to track the number of activity logs
-        let postRequestCount = 0;
+                /* The last log-activity POST request cannot be undone because it fails
+                 * before completing, meaning no record is created that requires deletion.
+                 * Cleanup only applies to successfully created records.
+                 * As a result, activityLogDeletes does not include the last request
+                 * in the count since it was never successfully created and thus not deleted.
+                 */
+                expect(activityLogDeletes).to.equal(2);
+              }),
+            { timeout: 10000 }
+          );
+        } else {
+          // Counter to track the number of activity logs
+          let postRequestCount = 0;
 
-        cy.intercept('POST', '**/api/log/activity', (req) => {
-          postRequestCount += 1;
-          if (postRequestCount === 2) {
+          cy.intercept('POST', '**/api/log/activity', (req) => {
+            postRequestCount += 1;
+            if (postRequestCount === 2) {
+              req.reply({
+                statusCode: 401,
+              });
+            } else {
+              // Continue with the request normally for other requests
+              req.continue();
+            }
+          });
+
+          let standardQuantityDeletes = 0;
+          cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+            standardQuantityDeletes++;
             req.reply({
               statusCode: 401,
             });
-          } else {
-            // Continue with the request normally for other requests
-            req.continue();
-          }
-        });
-
-        let standardQuantityDeletes = 0;
-        cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
-          standardQuantityDeletes++;
-          req.reply({
-            statusCode: 401,
           });
-        });
 
-        let activityLogDeletes = 0;
-        cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
-          activityLogDeletes++;
-          req.reply({
-            statusCode: 401,
+          let activityLogDeletes = 0;
+          cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
+            activityLogDeletes++;
+            req.reply({
+              statusCode: 401,
+            });
           });
-        });
 
-        cy.wrap(
-          lib
-            .submitForm(form)
-            .then(() => {
-              // Shouldn't run because submitForm throws an error.
-              throw new Error('The submission should have failed.');
-            })
-            .catch((error) => {
-              expect(error.message).to.contain(
-                'Error creating Soil Disturbance records.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation depthQuantity0 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation speedQuantity0 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation areaQuantity0 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation activityLog0 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation depthQuantity1 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation speedQuantity1 could not be cleaned up.'
-              );
-              expect(error.message).to.contain(
-                'Result of operation areaQuantity1 could not be cleaned up.'
-              );
+          cy.wrap(
+            lib
+              .submitForm(form)
+              .then(() => {
+                // Shouldn't run because submitForm throws an error.
+                throw new Error('The submission should have failed.');
+              })
+              .catch((error) => {
+                expect(error.message).to.contain(
+                  'Error creating Soil Disturbance records.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation depthQuantity0 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation speedQuantity0 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation areaQuantity0 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation activityLog0 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation depthQuantity1 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation speedQuantity1 could not be cleaned up.'
+                );
+                expect(error.message).to.contain(
+                  'Result of operation areaQuantity1 could not be cleaned up.'
+                );
 
-              expect(standardQuantityDeletes).to.equal(6);
+                expect(standardQuantityDeletes).to.equal(6);
 
-              /* The last log-activity POST request cannot be undone because it fails
-               * before completing, meaning no record is created that requires deletion.
-               * Cleanup only applies to successfully created records.
-               * As a result, activityLogDeletes does not include the last request
-               * in the count since it was never successfully created and thus not deleted.
-               */
-              expect(activityLogDeletes).to.equal(1);
-            }),
-          { timeout: 10000 }
-        );
+                /* The last log-activity POST request cannot be undone because it fails
+                 * before completing, meaning no record is created that requires deletion.
+                 * Cleanup only applies to successfully created records.
+                 * As a result, activityLogDeletes does not include the last request
+                 * in the count since it was never successfully created and thus not deleted.
+                 */
+                expect(activityLogDeletes).to.equal(1);
+              }),
+            { timeout: 10000 }
+          );
+        }
       }
-    });
+    );
   });
 }
 
