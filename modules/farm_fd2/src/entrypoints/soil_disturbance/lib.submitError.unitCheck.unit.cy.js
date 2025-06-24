@@ -1,6 +1,6 @@
 import { lib } from './lib';
 
-describe(`Test the Soil Disturbance lib submission `, () => {
+describe(`Test the Soil Disturbance lib submission error and ensuring the correct number of deletes are made `, () => {
   let form = {
     date: '1950-01-02',
     location: 'ALF',
@@ -26,7 +26,7 @@ describe(`Test the Soil Disturbance lib submission `, () => {
     cy.saveSessionStorage();
   });
 
-  it('Soil disturbance submission error', { retries: 4 }, () => {
+  it('Checking deletes and error messages ', { retries: 4 }, () => {
     let postRequestCount = 0;
 
     cy.intercept('POST', '**/api/log/activity', (req) => {

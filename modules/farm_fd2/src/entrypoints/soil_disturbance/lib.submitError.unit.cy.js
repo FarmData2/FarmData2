@@ -77,21 +77,21 @@ function runTest(activePlantAsset) {
 
     function cleanupLogsAndAssets(movementLogs, plantAssets) {
       // Clear all intercepts
-      cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
-        req.continue();
-      })
+      // cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
+      //   req.continue();
+      // })
 
-        // Delete movement logs
-        .then(() => {
-          return Cypress.Promise.mapSeries(movementLogs, (log) => {
-            return farmosUtil
-              .getFarmOSInstance()
-              .then((farm) => farm.log.delete('activity', log.id))
-              .then((result) => {
-                expect(result.status).to.equal(204); // Successful deletion
-              });
-          });
-        })
+      // Delete movement logs
+      cy.then(() => {
+        return Cypress.Promise.mapSeries(movementLogs, (log) => {
+          return farmosUtil
+            .getFarmOSInstance()
+            .then((farm) => farm.log.delete('activity', log.id))
+            .then((result) => {
+              expect(result.status).to.equal(204); // Successful deletion
+            });
+        });
+      })
         // Delete plant assets
         .then(() => {
           return Cypress.Promise.mapSeries(plantAssets, (asset) => {
@@ -203,6 +203,12 @@ function runTest(activePlantAsset) {
           activityLogDeletes++;
           req.continue();
         });
+        /* We allow this delete intercept to continue instead of failing it with a 401,
+         * because failing it would prevent the cleanupLogsAndAssets function from deleting the movement logs.
+         * That, in turn, leads to a 403 Forbidden error when trying to delete the plant asset.
+         * By letting the intercept proceed, we avoid the 403.
+         * Instead, we verify that the resulting error message does not contain certain specific strings.
+         */
 
         cy.wrap(
           lib
