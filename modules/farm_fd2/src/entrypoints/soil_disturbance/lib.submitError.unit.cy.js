@@ -9,7 +9,7 @@ function runTest(activePlantAsset) {
       date: '1950-01-02',
       location: 'ALF',
       beds: [],
-      termination: false,
+      termination: true,
       picked: new Map(),
       affectedPlants: [],
       equipment: ['Tractor', 'Rake'],
@@ -26,7 +26,6 @@ function runTest(activePlantAsset) {
         .as(alias)
         .then((plantAsset) => {
           plantAssets.push(plantAsset); // storing for deletion later
-          console.log('Creating plant: ', plantAsset.id);
           return plantAsset;
         });
     }
@@ -67,7 +66,6 @@ function runTest(activePlantAsset) {
           cy.wrap(activityLog).as(alias);
 
           cy.get(`@${alias}`).then((activityLog) => {
-            console.log('creating activityLog: ', activityLog.id);
             movementLogs.push(activityLog); // storing log for deletion later
             expect(activityLog.attributes.name).to.contain('activity_log');
             expect(activityLog.attributes.status).to.equal('done');
@@ -86,7 +84,6 @@ function runTest(activePlantAsset) {
         // Delete movement logs
         .then(() => {
           return Cypress.Promise.mapSeries(movementLogs, (log) => {
-            console.log('Deleting log: ', log.id);
             return farmosUtil
               .getFarmOSInstance()
               .then((farm) => farm.log.delete('activity', log.id))
@@ -98,7 +95,6 @@ function runTest(activePlantAsset) {
         // Delete plant assets
         .then(() => {
           return Cypress.Promise.mapSeries(plantAssets, (asset) => {
-            console.log('Deleting plant: ', asset.id);
             return farmosUtil.deletePlantAsset(asset.id).then((result) => {
               expect(result.status).to.equal(204); // Successful deletion
             });
@@ -176,12 +172,13 @@ function runTest(activePlantAsset) {
       cleanupLogsAndAssets(movementLogs, plantAssets);
     });
 
-    it('Soil Disturbance: records are deleted if there is a submission error', () => { //{ retries: 4 },
+    it('Soil Disturbance: records are deleted if there is a submission error', () => {
+      //{ retries: 4 },
       if (activePlantAsset) {
         // Counter to track the number of activity logs
         let postRequestCount = 0;
 
-        cy.intercept('POST', '**/api/log/activity/*', (req) => {
+        cy.intercept('POST', '**/api/log/activity', (req) => {
           postRequestCount += 1;
           if (postRequestCount === 3) {
             req.reply({
@@ -204,10 +201,6 @@ function runTest(activePlantAsset) {
         let activityLogDeletes = 0;
         cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
           activityLogDeletes++;
-          // if (activityLogDeletes >= 2) {
-          //   // Continue with the request normally for other requests
-          //   req.continue();
-          // }
           req.continue();
         });
 
@@ -219,23 +212,22 @@ function runTest(activePlantAsset) {
               throw new Error('The submission should have failed.');
             })
             .catch((error) => {
-              // console.error(error.message);
               expect(error.message).to.contain(
                 'Error creating Soil Disturbance records.'
               );
-              expect(error.message).to.contain(
+              expect(error.message).to.not.contain(
                 'Result of operation terminationLog0 could not be cleaned up.'
               );
-              expect(error.message).to.contain(
+              expect(error.message).to.not.contain(
                 'Result of operation depthQuantity0 0 could not be cleaned up.'
               );
-              expect(error.message).to.contain(
+              expect(error.message).to.not.contain(
                 'Result of operation speedQuantity0 0 could not be cleaned up.'
               );
-              expect(error.message).to.contain(
+              expect(error.message).to.not.contain(
                 'Result of operation areaQuantity0 0 could not be cleaned up.'
               );
-              expect(error.message).to.contain(
+              expect(error.message).to.not.contain(
                 'Result of operation activityLog0 0 could not be cleaned up.'
               );
               expect(error.message).to.contain(
@@ -248,7 +240,7 @@ function runTest(activePlantAsset) {
                 'Result of operation areaQuantity0 1 could not be cleaned up.'
               );
 
-              expect(standardQuantityDeletes).to.equal(6);
+              expect(standardQuantityDeletes).to.equal(3);
 
               /* The last log-activity POST request cannot be undone because it fails
                * before completing, meaning no record is created that requires deletion.
@@ -342,5 +334,5 @@ function runTest(activePlantAsset) {
   });
 }
 
-//runTest(false);
+runTest(false);
 runTest(true);
