@@ -136,4 +136,144 @@ describe('Error when submitting using the cover_crop lib.', () => {
       { timeout: 10000 }
     );
   });
+
+  it(
+    'Verify 3 quantities are deleted when seedIncorporationActivityLog is deleted (401 on the third post request)',
+    { retries: 4 },
+    () => {
+      let postRequestCount = 0;
+
+      cy.intercept('POST', '**/api/log/activity', (req) => {
+        postRequestCount += 1;
+        if (postRequestCount === 3) {
+          req.reply({
+            statusCode: 401,
+          });
+        } else {
+          req.continue();
+        }
+      });
+
+      let quantityDeleteAttempts = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        quantityDeleteAttempts++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain(
+              'Error creating cover crop seeding records.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationDepthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationSpeedQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationAreaQuantity could not be cleaned up.'
+            );
+
+            expect(quantityDeleteAttempts).to.equal(3);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
+
+  it(
+    'Verify 3 quantities are deleted when seedApplicationActivityLog is deleted (401 on the second post request)',
+    { retries: 4 },
+    () => {
+      let postRequestCount = 0;
+
+      cy.intercept('POST', '**/api/log/activity', (req) => {
+        postRequestCount += 1;
+        if (postRequestCount === 2) {
+          req.reply({
+            statusCode: 401,
+          });
+        } else {
+          req.continue();
+        }
+      });
+
+      let quantityDeleteAttempts = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        quantityDeleteAttempts++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain(
+              'Error creating cover crop seeding records.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationDepthQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationSpeedQuantity could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationAreaQuantity could not be cleaned up.'
+            );
+            expect(quantityDeleteAttempts).to.equal(3);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
+
+  it(
+    'Verify 1 quantity is deleted when seedingLog is deleted with a (401 on the first post request)',
+    { retries: 4 },
+    () => {
+      cy.intercept('POST', '**/api/log/activity', {
+        statusCode: 401,
+      });
+
+      let quantityDeleteAttempts = 0;
+      cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
+        quantityDeleteAttempts++;
+        req.reply({
+          statusCode: 401,
+        });
+      });
+
+      cy.wrap(
+        lib
+          .submitForm(form)
+          .then(() => {
+            throw new Error('The submission should have failed.');
+          })
+          .catch((error) => {
+            expect(error.message).to.contain(
+              'Error creating cover crop seeding records.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation areaSeededQuantity could not be cleaned up.'
+            );
+
+            expect(quantityDeleteAttempts).to.equal(1);
+          }),
+        { timeout: 10000 }
+      );
+    }
+  );
 });

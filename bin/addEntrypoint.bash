@@ -37,24 +37,24 @@ eval set -- "$FLAGS"
 
 while true; do
   case $1 in
-  -d | --dev)
-    DEV_FLAG=1
-    shift 2
-    ;;
-  -h | --help)
-    usage
-    ;;
-  -m | --min)
-    MIN_FLAG=1
-    shift 2
-    ;;
-  --)
-    shift
-    break
-    ;;
-  *)
-    usage
-    ;;
+    -d | --dev)
+      DEV_FLAG=1
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      ;;
+    -m | --min)
+      MIN_FLAG=1
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      ;;
   esac
 done
 
@@ -208,6 +208,8 @@ while [[ "$Y_N" != "Y" && "$Y_N" != "y" ]]; do
   fi
 done
 
+echo "Creating new entrypoint..."
+
 if [ -z "$DEV_FLAG" ]; then
   # Create a new feature branch for the entrypoint from the development branch
   echo "  Updating development branch..."
@@ -234,93 +236,131 @@ error_check "Failed to switch to feature branch $FEATURE_BRANCH_NAME."
 echo "  Switched."
 
 # Make the directory for the entrypoint and populate it with the template files.
+echo "  Creating entry point directory '$ENTRY_POINT_SRC_DIR'..."
 mkdir "$ENTRY_POINT_SRC_DIR"
 error_check "Failed to create directory $ENTRY_POINT_SRC_DIR."
-echo "Created entry point directory '$ENTRY_POINT_SRC_DIR"
+echo "  Created."
 
 if [ -z "$MIN_FLAG" ]; then
   # Creating a full entry point.
+  echo "  Creating $ENTRY_POINT_SRC_DIR/App.vue from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/App.vue" "$ENTRY_POINT_SRC_DIR"
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sleep 1 # Sleep to prevent sed permission issue bug in mounted file system.
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
-  echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.date.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.date.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.comment.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.comment.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submitReset.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submitReset.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.submission.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.submission.e2e.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/index.html from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
-  echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
+  echo "  Created."
 
+  echo "  Copying $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
   cp "$ENTRY_POINT_SRC_DIR/index.html" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html"
-  echo "  Copied $ENTRY_POINT_SRC_DIR/index.html as $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.html."
+  echo "  Copied."
 
+  echo "  Copying $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
+  echo "  Copied."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.js" "$ENTRY_POINT_SRC_DIR/lib.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/lib.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submit.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submit.unit.cy.js from templates."
+  echo "  Created."
 
+  echo "  Creating $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
   cp "$ENTRY_POINT_TEMPLATE_DIR/lib.submitError.unit.cy.js" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js"
-  echo "  Added $ENTRY_POINT_SRC_DIR/lib.submitError.unit.cy.js from templates."
+  echo "  Created."
 else
   # Creating a minimum entry point.
   cp "$ENTRY_POINT_TEMPLATE_DIR/App-min.vue" "$ENTRY_POINT_SRC_DIR/App.vue"
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/App.vue"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/App.vue"
   echo "  Added $ENTRY_POINT_SRC_DIR/App.vue from templates."
 
   cp "$ENTRY_POINT_TEMPLATE_DIR/entry_point.exists-min.e2e.cy.js" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
+  sleep 1
   sed -i "s/%ID_PREFIX%/$ID_PREFIX/g" "$ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js"
   echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.exists.e2e.cy.js from templates."
 
   cp "$ENTRY_POINT_TEMPLATE_DIR/index.html" "$ENTRY_POINT_SRC_DIR/index.html"
   sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ENTRY_POINT_SRC_DIR/index.html"
+  sleep 1
   sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$ENTRY_POINT_SRC_DIR/index.html"
   echo "  Added $ENTRY_POINT_SRC_DIR/index.html from templates."
 
@@ -331,29 +371,42 @@ else
   echo "  Added $ENTRY_POINT_SRC_DIR/$ENTRY_POINT.js from templates."
 fi
 
+echo "Created."
 echo ""
 
+echo "Adding new entrypoint to the $MODULE_NAME drupal Module..."
 # Add the new entry point to the drupal Module by adding to the
 # libraries, links.menu and routing  yml files.
+echo "  Updating $LIBRARIES_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/libraries.yml" >> "$LIBRARIES_YML_FILE"
 sed -i "s/%ENTRY_POINT%/$ENTRY_POINT/g" "$LIBRARIES_YML_FILE"
-echo "Updated $LIBRARIES_YML_FILE from templates."
+echo "  Updated."
 
+echo "  Updating $LINKS_YML_FILE from templates..."
 cat "$ENTRY_POINT_TEMPLATE_DIR/links.menu.yml" >> "$LINKS_YML_FILE"
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_DESCRIPTION%/$ENTRY_POINT_DESCRIPTION/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_PARENT%/$ENTRY_POINT_PARENT/g" "$LINKS_YML_FILE"
+sleep 1
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$LINKS_YML_FILE"
-echo "Updated $LINKS_YML_FILE from templates."
+echo "  Updated ."
 
+echo "Updating $ROUTING_YML_FILE from templates."
 cat "$ENTRY_POINT_TEMPLATE_DIR/routing.yml" >> "$ROUTING_YML_FILE"
 sed -i "s/%DRUPAL_ROUTE_NAME%/$DRUPAL_ROUTE_NAME/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%DRUPAL_ROUTE%/$DRUPAL_ROUTE/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%MODULE_NAME%/$MODULE_NAME/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_TITLE%/$ENTRY_POINT_TITLE/g" "$ROUTING_YML_FILE"
+sleep 1
 sed -i "s/%ENTRY_POINT_PERMISSIONS%/$ENTRY_POINT_PERMISSIONS/g" "$ROUTING_YML_FILE"
-echo "Updated $ROUTING_YML_FILE from templates."
-echo ""
+echo "  Updated."
+
+echo "Added."
 
 # Run the e2e exists tests to be sure dev and preview versions work.
 # Note: Do not need to run all tests here because they will be run
@@ -362,50 +415,26 @@ TEST_MODULE=${MODULE_NAME##*_}
 
 echo "Running e2e tests on $ENTRY_POINT in the $MODULE_NAME module..."
 TEST_FILE="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/$ENTRY_POINT.exists.e2e.cy.js"
-
-echo "  Testing on dev server..."
-DEV_TEST_OUT=$(test.bash --e2e --dev --"$TEST_MODULE" --glob="$TEST_FILE")
-DEV_EXIT_CODE=$?
-if [ ! "$DEV_EXIT_CODE" == "0" ]; then
-  echo "  Errors occurred when testing on the dev server. Output will be shown below"
-else
-  echo "  Success."
-fi
-
-echo "  Testing on preview server..."
-PREV_TEST_OUT=$(test.bash --e2e --prev --"$TEST_MODULE" --glob="$TEST_FILE")
-PREV_EXIT_CODE=$?
-if [ ! "$PREV_EXIT_CODE" == "0" ]; then
-  echo "  Errors occurred when testing on the preview server. Output will be shown below"
-else
-  echo "  Success."
-fi
-
-echo "E2E Tests complete."
+E2E_TEST_OUT=$(test.bash --e2e --live --"$TEST_MODULE" --glob="$TEST_FILE" 2> /dev/null)
+E2E_EXIT_CODE=$?
+echo "E2E tests complete."
 echo ""
 
-((TESTS_PASSED = DEV_EXIT_CODE || PREV_EXIT_CODE || LIVE_EXIT_CODE || UNIT_EXIT_CODE))
+echo "Running unit tests on lib.js in the $MODULE_NAME module..."
+TEST_FILES="modules/$MODULE_NAME/src/entrypoints/$ENTRY_POINT/*.unit.cy.js"
+UNIT_TEST_OUT=$(test.bash --unit --"$TEST_MODULE" --glob="$TEST_FILES" 2> /dev/null)
+UNIT_EXIT_CODE=$?
+echo "Unit tests complete."
+echo ""
+
+((TESTS_PASSED = E2E_EXIT_CODE || UNIT_EXIT_CODE))
 
 if [ ! "$TESTS_PASSED" == "0" ]; then
 
   if [ ! "$DEV_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from dev server."
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests on $ENTRY_POINT.vue."
     echo ""
-    echo -e "$DEV_TEST_OUT"
-    echo ""
-  fi
-
-  if [ ! "$PREV_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from preview server."
-    echo ""
-    echo -e "$PREV_TEST_OUT"
-    echo ""
-  fi
-
-  if [ ! "$LIVE_EXIT_CODE" == "0" ]; then
-    echo -e "${ON_RED}ERROR:${NO_COLOR} Failed e2e tests from farmOS server."
-    echo ""
-    echo -e "$LIVE_TEST_OUT"
+    echo -e "$E2E_TEST_OUT"
     echo ""
   fi
 
@@ -416,32 +445,32 @@ if [ ! "$TESTS_PASSED" == "0" ]; then
     echo ""
   fi
 
-  echo -e "${ON_RED}ERROR:${NO_COLOR} Check output of failed tests above."
-  echo "  Correct any errors and rerun tests using test.bash."
-  echo "  Or try again by:"
-  echo "    Commit changes to the feature branch: $FEATURE_BRANCH_NAME."
-  echo "    Switch to the development branch"
-  echo "    Delete the $FEATURE_BRANCH_NAME branch."
+  echo -e "${ON_RED}ERROR:${NO_COLOR} The new entrypoint failed e2e and/or unit tests."
+  echo "  Check the error messages above."
+  echo "  Try again by:"
+  echo "    git restore --staged ."
+  echo "    git restore ."
+  echo "    git switch development"
+  echo "    git branch -D $FEATURE_BRANCH_NAME"
   echo "    Run this script again."
+  exit "$TESTS_PASSED"
 else
-  # Print a message...
   echo -e "${ON_GREEN}SUCCESS:${NO_COLOR} New entry point $ENTRY_POINT created in module $MODULE_NAME."
-
-  # Commit the changes to the feature branch and print some info...
-  echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
-  git add .
-  git commit --quiet -m "Add starter code for entry point: $ENTRY_POINT"
-  error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
-  echo "Committed."
-  echo ""
-
-  echo "To complete your new entry point:"
-  echo "  Create the desired functionality in:"
-  echo "    - $MODULE_NAME/$ENTRY_POINT/App.vue"
-  echo "    - $MODULE_NAME/$ENTRY_POINT/lib.js"
-  echo "  Add additional *.cy.js files to test your new functionality."
-  echo "  Push the feature branch to your origin and create a pull request."
-  echo ""
 fi
 
-exit "$TESTS_PASSED"
+# Commit the changes to the feature branch and print some info...
+echo "Committing starter code to the new feature branch: $FEATURE_BRANCH_NAME."
+safe_cd "$REPO_ROOT_DIR"
+git add .
+git commit --quiet -m "adds starter code for entry point: $ENTRY_POINT"
+error_check "Failed to commit changes to $FEATURE_BRANCH_NAME."
+echo "Committed."
+echo ""
+
+echo "To complete your new entry point:"
+echo "  Create the desired functionality in:"
+echo "    - $MODULE_NAME/$ENTRY_POINT/App.vue"
+echo "    - $MODULE_NAME/$ENTRY_POINT/lib.js"
+echo "  Add additional *.cy.js files to test your new functionality."
+echo "  Push the feature branch to your origin and create a pull request."
+echo ""

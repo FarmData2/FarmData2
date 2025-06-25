@@ -61,7 +61,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 import dayjs from 'dayjs';
 
 /**
- * A Transplanting Picklist allows the user to select a crop from a list
+ * A TransplantingPicklist allows the user to select a crop from a list
  * of all crops that currently have tray seedings (i.e. can be transplanted).
  *
  * ## Live Example

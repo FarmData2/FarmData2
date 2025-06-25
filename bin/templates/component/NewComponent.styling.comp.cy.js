@@ -11,10 +11,14 @@ describe('Test the %COMPONENT_NAME% component styling', () => {
     cy.saveSessionStorage();
   });
 
-  it('Add tests for styling here', () => {
+  it('Test the default component styling', () => {
     /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
+     * Replace or remove this test and add other tests as necessary to fully
+     * test the component's styling.
+     * 
+     * See the Components Guide (`docs/contributing/components.md` for more 
+     * information about component testing. Also, see other components in 
+     * the `components/` directory for examples.
      */
     const readySpy = cy.spy().as('readySpy');
 

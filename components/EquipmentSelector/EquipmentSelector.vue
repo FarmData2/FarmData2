@@ -21,8 +21,8 @@ import MultiSelectorBase from '@comps/MultiSelectorBase/MultiSelectorBase.vue';
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 /**
- * A component for selecting equipment that was used for an activity
- * (e.g. a direct seeding). The user can select multiple pieces of
+ * The EquipmentSelector is a component for selecting equipment that was used for an activity.
+ * The user can select multiple pieces of
  * equipment as necessary.  It initially displays a single
  * dropdown for selecting a piece of equipment.  When a piece of equipment
  * is selected another dropdown appears to allow the user to select

@@ -36,6 +36,8 @@ services:
   fd2dev:
     image: farmdata2/fd2dev:fd2.13
     container_name: fd2_dev
+    profiles:
+      - dev
     init: true
     volumes:
       # Mount the FarmData2 repo into the fd2dev user's home directory.

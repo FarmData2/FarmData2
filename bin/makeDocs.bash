@@ -94,18 +94,84 @@ safe_cd "$REPO_ROOT_DIR"
 for LIB in $LIBS; do                      # Names of the libraries with a trailing /
   if [ "$LIB" != "cypress/" ]; then       # skip the cypress directory
     LIB_NAME=$(echo "$LIB" | cut -d/ -f1) # Only the name of the library
-    LIB_JS_PATH="library/$LIB_NAME/$LIB_NAME.js"
+    LIB_JS_PATH="library/$LIB_NAME"
+    LIB_JS_MAIN_FILE="library/$LIB_NAME/$LIB_NAME.js"
     LIB_MD_FILE="$LIB_NAME.md"
     LIB_MD_PATH="docs/library/$LIB_MD_FILE"
-    DOCS_DIR="docs"
 
-    echo "      Generating docs for $LIB_NAME..."
-    echo "        Creating docs for $LIB_NAME..."
-    npx jsdoc2md "$LIB_JS_PATH" > "$LIB_MD_PATH"
-    echo "        Created."
+    echo "    Generating docs for $LIB_NAME..."
+    echo "      Creating docs for $LIB_NAME..."
+
+    # Generate docs for the main library file which may be a barrel file
+    # Docs for additional .js files (e.g. those exported from the barrel)
+    # will be added to this page.
+    echo "        Adding docs for main library file: $LIB_JS_MAIN_FILE..."
+    npx jsdoc2md "$LIB_JS_MAIN_FILE" > "$LIB_MD_PATH"
+    sed -i "s/^## $LIB_NAME/# $LIB_NAME/g" "$LIB_MD_PATH"
+
+    # Loop over and document any additional .js files
+    LS_CMD="ls $LIB_JS_PATH/*.js"
+    JS_FILES=$($LS_CMD)
+    HEAD_LINKS_FILE="/var/tmp/headLinks.md"
+    {
+      echo "## Sections"
+      echo ""
+      echo "| Name | Description |"
+      echo "|------|-------------|"
+    } > "$HEAD_LINKS_FILE"
+    FUNC_LINKS_FILE="/var/tmp/funcLinks.md"
+    echo "## Functions" > "$FUNC_LINKS_FILE"
+    FUNC_DESC_FILE="/var/tmp/funcDesc.md"
+    echo "## Function Details" > "$FUNC_DESC_FILE"
+
+    IS_BARREL=0
+    for JS_FILE_PATH in $JS_FILES; do
+      JS_FILE_NAME=$(basename "$JS_FILE_PATH")
+      if [ "$JS_FILE_NAME" != "$LIB_NAME.js" ] && [[ "$JS_FILE_NAME" != *".unit.cy.js" ]]; then
+        IS_BARREL=1
+
+        echo "        Adding docs for $JS_FILE_NAME..."
+        # Add section link and description to the table.
+        SECT_DESC=$(head -n 2 "$JS_FILE_PATH" | tail -1 | cut -d' ' -f3-)
+        SECT_NAME=$(echo "$JS_FILE_NAME" | cut -d'.' -f2)
+        echo "[$SECT_NAME](#$JS_FILE_NAME) | $SECT_DESC" >> "$HEAD_LINKS_FILE"
+
+        # List and link to the details of each function in the file.
+        echo "<a name=\"$JS_FILE_NAME\"></a>" >> "$FUNC_LINKS_FILE"
+        echo "* [$SECT_NAME](#$SECT_NAME-details) \
+          [[$JS_FILE_NAME]](../../library/$LIB_NAME/$JS_FILE_NAME) - $SECT_DESC" >> "$FUNC_LINKS_FILE"
+        NPX_CMD="npx jsdoc2md $JS_FILE_PATH"
+        NUM_HEAD_LINES=$($NPX_CMD | tail -n+3 | grep -n '^<a name' | head -1 | cut -d: -f1)
+        if [ "$NUM_HEAD_LINES" == "" ]; then
+          NUM_HEAD_LINES=$($NPX_CMD | tail -n+3 | grep -n '^$' | head -1 | cut -d: -f1)
+        fi
+        HEAD_LINES=$($NPX_CMD | head -n "$NUM_HEAD_LINES" | grep "<dt><a" \
+          | cut -d'>' -f2- | sed 's/.....$//' | sed 's/^/  * /')
+        echo "$HEAD_LINES" >> "$FUNC_LINKS_FILE"
+
+        # Give all of the function details
+        FUNC_DETAILS=$($NPX_CMD | tail -n +"$NUM_HEAD_LINES" | sed 's/^##/###/g')
+        {
+          echo "<a name=\"$SECT_NAME-details\"></a>"
+          echo "## $(echo "$JS_FILE_NAME" | cut -d'.' -f2)"
+          echo "$FUNC_DETAILS"
+        } >> "$FUNC_DESC_FILE"
+      fi
+    done
+
+    # Add these if this library is a barrel file...
+    if [ $IS_BARREL -eq 1 ]; then
+      {
+        cat "$HEAD_LINKS_FILE"
+        cat "$FUNC_LINKS_FILE"
+        cat "$FUNC_DESC_FILE"
+      } >> "$LIB_MD_PATH"
+    fi
+
+    echo "      Created."
 
     echo "      Adding link for $LIB_MD_FILE to $INDEX_FILE..."
-    DESC_TEXT=$(grep "@description" "$LIB_JS_PATH" | cut -d' ' -f4-)
+    DESC_TEXT=$(grep "@description" "$LIB_JS_MAIN_FILE" | cut -d' ' -f4-)
     LIB_MD_LINK="library/$LIB_MD_FILE" # Link is relative to docs.
     echo "| [$LIB_NAME]($LIB_MD_LINK) | $DESC_TEXT |" >> "$INDEX_PATH"
     echo "      Added."

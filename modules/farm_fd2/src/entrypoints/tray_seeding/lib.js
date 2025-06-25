@@ -48,7 +48,9 @@ async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['traysQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(results['traysQuantity'].id);
+        }
       },
     };
 
@@ -63,7 +65,11 @@ async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['traySizeQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(
+            results['traySizeQuantity'].id
+          );
+        }
       },
     };
 
@@ -78,7 +84,9 @@ async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteStandardQuantity(results['seedsQuantity'].id);
+        if (results['seedingLog'] != 'undone') {
+          await farmosUtil.deleteStandardQuantity(results['seedsQuantity'].id);
+        }
       },
     };
 
@@ -119,7 +127,7 @@ async function submitForm(formData) {
     let errorMsg = 'Error creating tray seeding.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (

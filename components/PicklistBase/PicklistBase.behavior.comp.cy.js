@@ -400,4 +400,57 @@ describe('Test the PicklistBase component behavior', () => {
       .find('span')
       .should('contain', '✅ All');
   });
+
+  it('checks that row highlights when row is selected', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item 1', quantity: 5, location: 'GHANA' },
+          { name: 'Item 2', quantity: 3, location: 'KENYA' },
+        ],
+        columns: ['name', 'quantity'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+        picked: new Map(),
+        showInfoIcons: true,
+      },
+    });
+
+    cy.get('[data-cy="picklist-row-0"]').should(
+      'not.have.class',
+      'selected-row'
+    );
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should('have.class', 'selected-row');
+
+    cy.get('[data-cy="picklist-row-1"]').should(
+      'not.have.class',
+      'selected-row'
+    );
+    cy.get('[data-cy="picklist-checkbox-1"]').click();
+    cy.get('[data-cy="picklist-row-1"]').should('have.class', 'selected-row');
+  });
+
+  it('highlighting is cleared when row is deselected', () => {
+    cy.mount(PicklistBase, {
+      props: {
+        rows: [
+          { name: 'Item 1', quantity: 5, location: 'GHANA' },
+          { name: 'Item 2', quantity: 3, location: 'KENYA' },
+        ],
+        columns: ['name', 'quantity'],
+        labels: { name: 'Name', quantity: 'Quantity', location: 'Location' },
+        picked: new Map(),
+        showInfoIcons: true,
+      },
+    });
+
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should('have.class', 'selected-row');
+
+    cy.get('[data-cy="picklist-checkbox-0"]').click();
+    cy.get('[data-cy="picklist-row-0"]').should(
+      'not.have.class',
+      'selected-row'
+    );
+  });
 });

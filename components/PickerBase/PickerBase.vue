@@ -64,7 +64,7 @@
 
 <script>
 /**
- * A base component that allows the user to pick multiple items using checkboxes.
+ * The PickerBase is a base component that allows the user to pick multiple items using checkboxes.
  * This will typically be used as a base for building special purpose
  * "picker" components (e.g. `BedPicker`).
  *

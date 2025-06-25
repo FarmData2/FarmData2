@@ -120,7 +120,7 @@ describe('Error when submitting using the transplanting lib.', () => {
             expect(error.message).to.contain(
               'Result of operation transplantingBedWidthQuantity could not be cleaned up.'
             );
-            expect(error.message).to.contain(
+            expect(error.message).to.not.contain(
               'Result of operation parents could not be cleaned up'
             );
 
@@ -138,7 +138,7 @@ describe('Error when submitting using the transplanting lib.', () => {
     () => {
       /*
        * Create a error on submission of the activity log which is the
-       * final step.  At that point all other records should have been
+       * final step. At that point all other records should have been
        * created and thus should also all be deleted.
        */
       // Counter to track the number of POST requests
@@ -156,7 +156,7 @@ describe('Error when submitting using the transplanting lib.', () => {
           // Continue with the request normally for other requests
           req.continue();
         }
-      }).as('postRequest');
+      });
 
       /*
        * Now create an intercept with a spy for each of the other endpoints

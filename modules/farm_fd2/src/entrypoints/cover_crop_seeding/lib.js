@@ -120,9 +120,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationDepthQuantity'].id
-          );
+          if (results['seedApplicationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationDepthQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedApplicationDepthQuantity);
@@ -138,9 +140,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationSpeedQuantity'].id
-          );
+          if (results['seedApplicationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationSpeedQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedApplicationSpeedQuantity);
@@ -156,9 +160,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedApplicationAreaQuantity'].id
-          );
+          if (results['seedApplicationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedApplicationAreaQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedApplicationAreaQuantity);
@@ -205,9 +211,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationDepthQuantity'].id
-          );
+          if (results['seedIncorporationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationDepthQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedIncorporationDepthQuantity);
@@ -223,9 +231,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationSpeedQuantity'].id
-          );
+          if (results['seedIncorporationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationSpeedQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedIncorporationSpeedQuantity);
@@ -241,9 +251,11 @@ async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          await farmosUtil.deleteStandardQuantity(
-            results['seedIncorporationAreaQuantity'].id
-          );
+          if (results['seedIncorporationActivityLog'] != 'undone') {
+            await farmosUtil.deleteStandardQuantity(
+              results['seedIncorporationAreaQuantity'].id
+            );
+          }
         },
       };
       ops.push(seedIncorporationAreaQuantity);

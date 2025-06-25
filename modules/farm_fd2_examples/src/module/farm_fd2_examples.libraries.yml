@@ -217,4 +217,13 @@ active_plant_asset_picklist:
   css:
     component:
       style/style.css: {}
-    
+
+tray_size_selector:
+  js:
+    tray_size_selector/tray_size_selector.js:
+      preprocess: false
+      minified: true
+      attributes: { type: 'module' }
+  css:
+    component:
+      style/style.css: {}

@@ -11,10 +11,15 @@ describe('Test the %COMPONENT_NAME% component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Add tests for behavior here', () => {
+
+  it('Test the component behavior', () => {
     /*
-     * See `components/README.md` for information about component testing.
-     * See other components in the `components/` directory for examples.
+     * Replace or remove this test and add other tests as necessary to fully
+     * test the component's behavior.
+     * 
+     * See the Components Guide (`docs/contributing/components.md` for more 
+     * information about component testing. Also, see other components in 
+     * the `components/` directory for examples.
      */
     const readySpy = cy.spy().as('readySpy');
 
@@ -27,10 +32,10 @@ describe('Test the %COMPONENT_NAME% component behavior', () => {
     cy.get('@readySpy')
     .should('have.been.calledOnce')
     .then(() => {
-      cy.get('[data-cy="new-comp-group"]').should('exist');
+      cy.get('[data-cy="component-group"]').should('exist');
       cy.get('[data-cy="placeholder"]').should(
-        'have.text',
-        'Component content goes here.'
+        'contain.text',
+        'Replace this `p` element with your component content.'
       );
     });
   });

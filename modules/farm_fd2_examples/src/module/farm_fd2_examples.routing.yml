@@ -153,3 +153,10 @@ farm.fd2_examples_active_plant_asset_picklist.content:
     _title: 'ActivePlantAssetPicklist'
   requirements:
     _permission: 'access content'
+farm.fd2_examples_tray_size_selector.content:
+  path: '/fd2_examples/tray_size_selector'
+  defaults:
+    _controller: '\Drupal\farm_fd2_examples\Controller\FD2_Controller::content'
+    _title: 'TraySizeSelector Example'
+  requirements:
+    _permission: 'access content'
