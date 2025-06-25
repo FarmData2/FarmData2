@@ -29,11 +29,6 @@
  *
  * @category Utilities
  * 
- * Executes a transaction with the provided operations.
- *
- * @param {Array<Object>} operations the operations to execute as a transaction.
- * Each operation must have the following structure:
- *
  * ```
  * {
  * name: string,
@@ -52,6 +47,7 @@
  *         '2023-10-01', // Example date
  *         'ZUCCHINI',   // Example crop name
  *         'Planting zucchini in the greenhouse' // Example comment
+ *         [] // Example parents (empty array)
  *       );
  *     },
  *     undo: async (results) => {
@@ -63,13 +59,17 @@
  *     do: async () => {
  *       return await farmosUtil.createStandardQuantity(
  *         'count',
- *         50, // Example quantity value
+ *          50, // Example quantity value
  *         'Harvested Zucchini', // Example description
  *         'KG' // Example unit
+ *          results.createPlantAsset, // Related asset
+ *         'increment' // Inventory adjustment type  
  *       );
  *     },
  *     undo: async (results) => {
- *       await farmosUtil.deleteStandardQuantity(results['createQuantity'].id);
+ *     if (results['createLog'] !== 'undone') { 
+ *        await farmosUtil.deleteStandardQuantity(results['createQuantity'].id);
+ *     }     
  *     },
  *   },
  *   {
@@ -77,7 +77,7 @@
  *     do: async (results) => {
  *       return await farmosUtil.createSeedingLog(
  *         '2023-10-01', // Example date
- *         'Greenhouse A', // Example location
+ *         'CHUAU', // Example location
  *         [], // Example attachments
  *         ['seeding'], // Example tags
  *         results.createPlantAsset, // Link to plant asset
