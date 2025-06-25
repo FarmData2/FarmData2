@@ -79,9 +79,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['depthQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteStandardQuantity(
+                results['depthQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(depthQuantity);
@@ -97,9 +99,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['speedQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteStandardQuantity(
+                results['speedQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(speedQuantity);
@@ -115,9 +119,11 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            await farmosUtil.deleteStandardQuantity(
-              results['areaQuantity' + i].id
-            );
+            if (results['activityLog' + i] != 'undone') {
+              await farmosUtil.deleteStandardQuantity(
+                results['areaQuantity' + i].id
+              );
+            }
           },
         };
         ops.push(areaQuantity);
@@ -197,9 +203,11 @@ async function submitForm(formData) {
               );
             },
             undo: async (results) => {
-              await farmosUtil.deleteStandardQuantity(
-                results['depthQuantity' + i + ' ' + j].id
-              );
+              if (results['activityLog' + i + ' ' + j] != 'undone') {
+                await farmosUtil.deleteStandardQuantity(
+                  results['depthQuantity' + i + ' ' + j].id
+                );
+              }
             },
           };
           ops.push(depthQuantity);
@@ -215,9 +223,11 @@ async function submitForm(formData) {
               );
             },
             undo: async (results) => {
-              await farmosUtil.deleteStandardQuantity(
-                results['speedQuantity' + i + ' ' + j].id
-              );
+              if (results['activityLog' + i + ' ' + j] != 'undone') {
+                await farmosUtil.deleteStandardQuantity(
+                  results['speedQuantity' + i + ' ' + j].id
+                );
+              }
             },
           };
           ops.push(speedQuantity);
@@ -233,9 +243,11 @@ async function submitForm(formData) {
               );
             },
             undo: async (results) => {
-              await farmosUtil.deleteStandardQuantity(
-                results['areaQuantity' + i + ' ' + j].id
-              );
+              if (results['activityLog' + i + ' ' + j] != 'undone') {
+                await farmosUtil.deleteStandardQuantity(
+                  results['areaQuantity' + i + ' ' + j].id
+                );
+              }
             },
           };
           ops.push(areaQuantity);
@@ -285,7 +297,7 @@ async function submitForm(formData) {
     let errorMsg = 'Error creating Soil Disturbance records.';
 
     for (const key of Object.keys(error.results)) {
-      if (error.results[key]) {
+      if (error.results[key] && error.results[key] != 'undone') {
         errorMsg +=
           '\n  Result of operation ' + key + ' could not be cleaned up.';
         if (

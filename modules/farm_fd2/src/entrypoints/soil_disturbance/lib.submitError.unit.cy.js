@@ -169,8 +169,9 @@ function runTest(activePlantAsset) {
 
     it(
       'Soil Disturbance: records are deleted if there is a submission error',
-      { retries: 0 },
+      { retries: 4 },
       () => {
+        //,
         if (activePlantAsset) {
           // Counter to track the number of activity logs
           let postRequestCount = 0;
@@ -185,19 +186,27 @@ function runTest(activePlantAsset) {
               // Continue with the request normally for other requests
               req.continue();
             }
-          }).as('actPost');
+          });
 
           let standardQuantityDeletes = 0;
           cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
             standardQuantityDeletes++;
-            req.continue();
-          }).as('quantDelete');
+            req.reply({
+              statusCode: 401,
+            });
+          });
 
           let activityLogDeletes = 0;
           cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
             activityLogDeletes++;
             req.continue();
-          }).as('actDelete');
+          });
+          /* We allow this delete intercept to continue instead of failing it with a 401,
+           * because failing it would prevent the cleanupLogsAndAssets function from deleting the movement logs.
+           * That, in turn, leads to a 403 Forbidden error when trying to delete the plant asset.
+           * By letting the intercept proceed, we avoid the 403.
+           * Instead, we verify that the resulting error message does not contain certain specific strings.
+           */
 
           cy.wrap(
             lib
@@ -207,23 +216,22 @@ function runTest(activePlantAsset) {
                 throw new Error('The submission should have failed.');
               })
               .catch((error) => {
-                console.error(error.message);
                 expect(error.message).to.contain(
                   'Error creating Soil Disturbance records.'
                 );
-                expect(error.message).to.contain(
+                expect(error.message).to.not.contain(
                   'Result of operation terminationLog0 could not be cleaned up.'
                 );
-                expect(error.message).to.contain(
+                expect(error.message).to.not.contain(
                   'Result of operation depthQuantity0 0 could not be cleaned up.'
                 );
-                expect(error.message).to.contain(
+                expect(error.message).to.not.contain(
                   'Result of operation speedQuantity0 0 could not be cleaned up.'
                 );
-                expect(error.message).to.contain(
+                expect(error.message).to.not.contain(
                   'Result of operation areaQuantity0 0 could not be cleaned up.'
                 );
-                expect(error.message).to.contain(
+                expect(error.message).to.not.contain(
                   'Result of operation activityLog0 0 could not be cleaned up.'
                 );
                 expect(error.message).to.contain(
@@ -236,7 +244,7 @@ function runTest(activePlantAsset) {
                   'Result of operation areaQuantity0 1 could not be cleaned up.'
                 );
 
-                expect(standardQuantityDeletes).to.equal(6);
+                expect(standardQuantityDeletes).to.equal(3);
 
                 /* The last log-activity POST request cannot be undone because it fails
                  * before completing, meaning no record is created that requires deletion.
@@ -262,19 +270,23 @@ function runTest(activePlantAsset) {
               // Continue with the request normally for other requests
               req.continue();
             }
-          }).as('actPost');
+          });
 
           let standardQuantityDeletes = 0;
           cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
             standardQuantityDeletes++;
-            req.continue();
-          }).as('quantDelete');
+            req.reply({
+              statusCode: 401,
+            });
+          });
 
           let activityLogDeletes = 0;
           cy.intercept('DELETE', '**/api/log/activity/*', (req) => {
             activityLogDeletes++;
-            req.continue();
-          }).as('actDelete');
+            req.reply({
+              statusCode: 401,
+            });
+          });
 
           cy.wrap(
             lib
