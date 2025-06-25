@@ -152,6 +152,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       expect(formData.seedApplicationEquipment[0]).to.equal('Tractor');
       expect(formData.seedApplicationDepth).to.equal(1);
       expect(formData.seedApplicationSpeed).to.equal(2);
+      expect(formData.seedApplicationPasses).to.equal(1);
 
       expect(formData.seedIncorporationEquipment).to.have.length(1);
       expect(formData.seedIncorporationEquipment[0]).to.equal(
@@ -159,6 +160,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       );
       expect(formData.seedIncorporationDepth).to.equal(3);
       expect(formData.seedIncorporationSpeed).to.equal(4);
+      expect(formData.seedIncorporationPasses).to.equal(1);
 
       expect(formData.comment).to.equal('test comment');
     });
