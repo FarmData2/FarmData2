@@ -79,32 +79,17 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');
-    cy.get('[data-cy="picker-options"]').should('exist');
-    cy.get('[data-cy="picker-all-button"]').should('exist');
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('exist');
-      });
-
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]')
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-all-button"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
       .find('input')
       .each(($el) => {
         cy.wrap($el).should('be.visible');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.enabled');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.checked');
       });
   });
 
@@ -202,32 +187,17 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');
-    cy.get('[data-cy="picker-options"]').should('exist');
-    cy.get('[data-cy="picker-all-button"]').should('exist');
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('exist');
-      });
-
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]')
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-all-button"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
       .find('input')
       .each(($el) => {
         cy.wrap($el).should('be.visible');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.enabled');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.checked');
       });
 
     //valid
@@ -281,32 +251,17 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');
-    cy.get('[data-cy="picker-options"]').should('exist');
-    cy.get('[data-cy="picker-all-button"]').should('exist');
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('exist');
-      });
-
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]').should('be.visible');
-    cy.get('[data-cy="picker-options"]')
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-all-button"]')
+      .should('be.visible');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="picker-options"]')
       .find('input')
       .each(($el) => {
         cy.wrap($el).should('be.visible');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.enabled');
-      });
-
-    cy.get('[data-cy="picker-options"]')
-      .find('input')
-      .each(($el) => {
-        cy.wrap($el).should('be.checked');
       });
   });
 });

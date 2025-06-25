@@ -25,6 +25,9 @@ describe('Soil Disturbance: Submission tests', () => {
       cy.get('[data-cy="soil-disturbance-location"]')
         .find('[data-cy="selector-input"]')
         .select('H');
+      cy.get('[data-cy="location-bed-picker"]')
+        .find('[data-cy="picker-all-button"]')
+        .click();
     } else {
       cy.get('[data-cy="soil-disturbance-location"]')
         .find('[data-cy="selector-input"]')
