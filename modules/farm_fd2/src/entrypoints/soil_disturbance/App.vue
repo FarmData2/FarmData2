@@ -133,14 +133,34 @@
             v-bind:depth="form.depth"
             v-bind:speed="form.speed"
             v-bind:area="form.area"
-            v-bind:passes="form.passes"
+            v-bind:passes="form.seedApplicationPasses"
             v-bind:includePasses="true"
             v-on:valid="validity.soilDisturbance = $event"
             v-on:update:equipment="form.equipment = $event"
             v-on:update:depth="form.depth = $event"
             v-on:update:speed="form.speed = $event"
             v-on:update:area="form.area = $event"
-            v-on:update:passes="form.passes = $event"
+            v-on:update:passes="form.seedApplicationPasses = $event"
+            v-on:error="(msg) => showErrorToast('Network Error', msg)"
+            v-on:ready="createdCount++"
+          />
+          <SoilDisturbance
+            id="soil-disturbance-equipment-form-incorporation"
+            data-cy="soil-disturbance-equipment-form-incorporation"
+            required
+            v-bind:showValidityStyling="validity.show"
+            v-bind:equipment="form.equipment"
+            v-bind:depth="form.depth"
+            v-bind:speed="form.speed"
+            v-bind:area="form.area"
+            v-bind:passes="form.seedIncorporationPasses"
+            v-bind:includePasses="true"
+            v-on:valid="validity.soilDisturbance = $event"
+            v-on:update:equipment="form.equipment = $event"
+            v-on:update:depth="form.depth = $event"
+            v-on:update:speed="form.speed = $event"
+            v-on:update:area="form.area = $event"
+            v-on:update:passes="form.seedIncorporationPasses = $event"
             v-on:error="(msg) => showErrorToast('Network Error', msg)"
             v-on:ready="createdCount++"
           />
@@ -216,6 +236,8 @@ export default {
         passes: 1,
         area: 100,
         comment: '',
+        seedApplicationPasses: 1,
+        seedIncorporationPasses: 1,
       },
       validity: {
         show: false,
@@ -324,6 +346,8 @@ export default {
         this.form.speed = 0;
         this.form.passes = 1;
         this.form.comment = null;
+        this.form.seedApplicationPasses = 1;
+        this.form.seedIncorporationPasses = 1;
       }
 
       this.form.location = null;

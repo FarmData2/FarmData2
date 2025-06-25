@@ -156,6 +156,7 @@
               v-bind:speed="form.seedApplicationSpeed"
               v-bind:includeArea="false"
               v-bind:includePasses="true"
+              v-bind:passes="form.seedApplicationPasses"
               v-on:valid="
                 (valid) => {
                   validity.seedApplication = valid;
@@ -220,6 +221,7 @@
               v-bind:speed="form.seedIncorporationSpeed"
               v-bind:includeArea="false"
               v-bind:includePasses="true"
+              v-bind:passes="form.seedIncorporationPasses"
               v-on:valid="
                 (valid) => {
                   validity.seedIncorporation = valid;

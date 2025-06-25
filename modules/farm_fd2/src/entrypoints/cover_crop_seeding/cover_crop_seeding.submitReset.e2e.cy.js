@@ -419,7 +419,7 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
-    //Seed Application Accordion
+    //Seed Application
     cy.get(
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
@@ -460,7 +460,7 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       .should('be.visible')
       .should('have.value', '1');
 
-    //Seed Incorporation Accordion
+    //Seed Incorporation
     cy.get(
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
     ).click();
