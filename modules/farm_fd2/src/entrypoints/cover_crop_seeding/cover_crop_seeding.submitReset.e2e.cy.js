@@ -345,7 +345,7 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
 
     cy.get('[data-cy="comment-input"]').should('have.value', '');
 
-    // Check that equipment selectors are reset when accordions are opened
+    //Seed Application Accordion
     cy.get(
       '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
     ).click();
@@ -355,25 +355,38 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .should('not.exist');
+    // Select equipment and check fields
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .should('be.visible')
       .should('have.value', '0.0');
-
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('be.visible')
       .should('have.value', '0.0');
-
     cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-passes"]')
       .find('[data-cy="numeric-input"]')
       .should('be.visible')
       .should('have.value', '1');
 
+    //Seed Incorporation Accordion
     cy.get(
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
     ).click();
@@ -383,19 +396,31 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       .find('[data-cy="selector-1"]')
       .find('[data-cy="selector-input"]')
       .should('have.value', null);
-
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .should('not.exist');
+    // Select equipment and check fields
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Portable Broadcaster');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-depth"]')
       .find('[data-cy="numeric-input"]')
       .should('be.visible')
       .should('have.value', '0.0');
-
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('be.visible')
       .should('have.value', '0.0');
-
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-passes"]')
       .find('[data-cy="numeric-input"]')
