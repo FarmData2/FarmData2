@@ -140,14 +140,14 @@ describe('Error when submitting using the cover_crop lib.', () => {
   });
 
   it(
-    'Verify 3 quantities are deleted when seedIncorporationActivityLog is deleted (401 on the fifth post request)',
+    'Verify 3 quantities are deleted when seedIncorporationActivityLog is deleted (401 on the twelfth post request)',
     { retries: 4 },
     () => {
+      form.seedIncorporationPasses = 2;
       let postRequestCount = 0;
-
-      cy.intercept('POST', '**/api/log/activity', (req) => {
+      cy.intercept('POST', '**/api/**', (req) => {
         postRequestCount += 1;
-        if (postRequestCount === 5) {
+        if (postRequestCount === 12) {
           req.reply({
             statusCode: 401,
           });
@@ -155,7 +155,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           req.continue();
         }
       });
-
       let quantityDeleteAttempts = 0;
       cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
         quantityDeleteAttempts++;
@@ -163,7 +162,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           statusCode: 401,
         });
       });
-
       cy.wrap(
         lib
           .submitForm(form)
@@ -174,15 +172,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
             expect(error.message).to.contain(
               'Error creating cover crop seeding records.'
             );
-            expect(error.message).to.not.contain(
-              'Result of operation seedIncorporationDepthQuantity0 could not be cleaned up.'
-            );
-            expect(error.message).to.not.contain(
-              'Result of operation seedIncorporationSpeedQuantity0 could not be cleaned up.'
-            );
-            expect(error.message).to.not.contain(
-              'Result of operation seedIncorporationAreaQuantity0 could not be cleaned up.'
-            );
             expect(error.message).to.contain(
               'Result of operation seedIncorporationDepthQuantity0 could not be cleaned up.'
             );
@@ -192,8 +181,16 @@ describe('Error when submitting using the cover_crop lib.', () => {
             expect(error.message).to.contain(
               'Result of operation seedIncorporationAreaQuantity0 could not be cleaned up.'
             );
-
-            expect(quantityDeleteAttempts).to.equal(3);
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationDepthQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationSpeedQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedIncorporationAreaQuantity1 could not be cleaned up.'
+            );
+            expect(quantityDeleteAttempts).to.equal(5);
           }),
         { timeout: 10000 }
       );
@@ -201,14 +198,14 @@ describe('Error when submitting using the cover_crop lib.', () => {
   );
 
   it(
-    'Verify 3 quantities are deleted when seedApplicationActivityLog is deleted (401 on the fourth post request)',
+    'Verify 3 quantities are deleted when seedApplicationActivityLog is deleted (401 on the eighth post request)',
     { retries: 4 },
     () => {
+      form.seedApplicationPasses = 2;
       let postRequestCount = 0;
-
-      cy.intercept('POST', '**/api/log/activity', (req) => {
+      cy.intercept('POST', '**/api/**', (req) => {
         postRequestCount += 1;
-        if (postRequestCount === 4) {
+        if (postRequestCount === 8) {
           req.reply({
             statusCode: 401,
           });
@@ -216,7 +213,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           req.continue();
         }
       });
-
       let quantityDeleteAttempts = 0;
       cy.intercept('DELETE', '**/api/quantity/standard/*', (req) => {
         quantityDeleteAttempts++;
@@ -224,7 +220,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
           statusCode: 401,
         });
       });
-
       cy.wrap(
         lib
           .submitForm(form)
@@ -235,15 +230,6 @@ describe('Error when submitting using the cover_crop lib.', () => {
             expect(error.message).to.contain(
               'Error creating cover crop seeding records.'
             );
-            expect(error.message).to.not.contain(
-              'Result of operation seedApplicationDepthQuantity0 could not be cleaned up.'
-            );
-            expect(error.message).to.not.contain(
-              'Result of operation seedApplicationSpeedQuantity0 could not be cleaned up.'
-            );
-            expect(error.message).to.not.contain(
-              'Result of operation seedApplicationAreaQuantity0 could not be cleaned up.'
-            );
             expect(error.message).to.contain(
               'Result of operation seedApplicationDepthQuantity0 could not be cleaned up.'
             );
@@ -252,6 +238,15 @@ describe('Error when submitting using the cover_crop lib.', () => {
             );
             expect(error.message).to.contain(
               'Result of operation seedApplicationAreaQuantity0 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationDepthQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationSpeedQuantity1 could not be cleaned up.'
+            );
+            expect(error.message).to.contain(
+              'Result of operation seedApplicationAreaQuantity1 could not be cleaned up.'
             );
             expect(quantityDeleteAttempts).to.equal(3);
           }),

@@ -123,7 +123,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedApplicationActivityLog'] != 'undone') {
+            if (results['seedApplicationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedApplicationDepthQuantity' + i].id
               );
@@ -143,7 +143,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedApplicationActivityLog'] != 'undone') {
+            if (results['seedApplicationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedApplicationSpeedQuantity' + i].id
               );
@@ -163,7 +163,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedApplicationActivityLog'] != 'undone') {
+            if (results['seedApplicationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedApplicationAreaQuantity' + i].id
               );
@@ -224,7 +224,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedIncorporationActivityLog'] != 'undone') {
+            if (results['seedIncorporationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedIncorporationDepthQuantity' + i].id
               );
@@ -244,7 +244,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedIncorporationActivityLog'] != 'undone') {
+            if (results['seedIncorporationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedIncorporationSpeedQuantity' + i].id
               );
@@ -264,7 +264,7 @@ async function submitForm(formData) {
             );
           },
           undo: async (results) => {
-            if (results['seedIncorporationActivityLog'] != 'undone') {
+            if (results['seedIncorporationActivityLog' + i] != 'undone') {
               await farmosUtil.deleteStandardQuantity(
                 results['seedIncorporationAreaQuantity' + i].id
               );
