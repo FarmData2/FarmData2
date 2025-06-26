@@ -28,68 +28,64 @@
  * If an operation was never attempted (and thus also not undone) the attribute for that operation will be `undefined`.
  *
  * @category Utilities
- * 
- * ```
- * {
- * name: string,
- * do: (Object) => async function performs an action and returns a result (e.g. creates a log, asset or quantity.) The argument has the same format as the return value. It contains the result of all prior operations, allowing them to be used by future operations.
- * undo: (Object) => async function that undoes the action performed by `do` (e.g. deletes a log, asset or quantity). The argument has the same format as the return value and contains the result of all successfully completed operations.
- * }
- * ```
- *
+ *  *
  * @example
  * // Create a transaction with a plant asset, a quantity, and a log
- * const operations = [
- *   {
- *     name: 'createPlantAsset',
- *     do: async () => {
- *       return await farmosUtil.createPlantAsset(
- *         '2023-10-01', // Example date
- *         'ZUCCHINI',   // Example crop name
- *         'Planting zucchini in the greenhouse' // Example comment
- *         [] // Example parents (empty array)
- *       );
- *     },
- *     undo: async (results) => {
- *       await farmosUtil.deletePlantAsset(results['createPlantAsset'].id);
- *     },
+ * let operations = [];
+ *
+ * const createPlantAsset = {
+ *   name: 'plantAsset',
+ *   do: async () => {
+ *     return await farmosUtil.createPlantAsset(
+ *       '2023-10-01', // Example date
+ *       'ZUCCHINI',   // Example crop name
+ *       'Planting zucchini in the greenhouse' // Example comment
+ *     );
  *   },
- *   {
- *     name: 'createQuantity',
- *     do: async () => {
- *       return await farmosUtil.createStandardQuantity(
- *         'count',
- *          50, // Example quantity value
- *         'Harvested Zucchini', // Example description
- *         'KG' // Example unit
- *          results.createPlantAsset, // Related asset
- *         'increment' // Inventory adjustment type  
- *       );
- *     },
- *     undo: async (results) => {
- *     if (results['createLog'] !== 'undone') { 
- *        await farmosUtil.deleteStandardQuantity(results['createQuantity'].id);
- *     }     
- *     },
+ *   undo: async (results) => {
+ *     await farmosUtil.deletePlantAsset(results['createPlantAsset'].id);
  *   },
- *   {
- *     name: 'createLog',
- *     do: async (results) => {
- *       return await farmosUtil.createSeedingLog(
- *         '2023-10-01', // Example date
- *         'CHUAU', // Example location
- *         [], // Example attachments
- *         ['seeding'], // Example tags
- *         results.createPlantAsset, // Link to plant asset
- *         [results.createQuantity] // Link to quantities
- *       );
- *     },
- *     undo: async (results) => {
- *       await farmosUtil.deleteSeedingLog(results['createLog'].id);
- *     },
+ * }
+ * operations.push(createPlantAsset);
+ *
+ * const createQuantity = {
+ *   name: 'plantedQuantity',
+ *   do: async () => {
+ *     return await farmosUtil.createStandardQuantity(
+ *       'count',
+ *        50,
+ *       'Row Feet',
+ *       'FEET'
+ *        results.plantAsset,
+ *       'increment'
+ *     );
+ *   },
+ *   undo: async (results) => {
+ *     if (results['seedingLog'] !== 'undone') {
+ *        await farmosUtil.deleteStandardQuantity(results['plantedQuantity'].id);
+ *     }
  *   }
- * ];
- * 
+ * }
+ * operations.push(createQuantity);
+ *
+ * const createLog = {
+ *   name: 'seedingLog',
+ *   do: async (results) => {
+ *     return await farmosUtil.createSeedingLog(
+ *       '2023-10-01',
+ *       'CHUAU',
+ *       [],
+ *       ['seeding'],
+ *       results.plantAsset,
+ *       [results.plantedQuantity]
+ *     );
+ *   },
+ *   undo: async (results) => {
+ *     await farmosUtil.deleteSeedingLog(results['createLog'].id);
+ *   },
+ * }
+ * operations.push(createLog);
+ *
  * runTransaction(operations)
  *   .then((results) => console.log('Transaction completed successfully:', results))
  *   .catch((error) => console.error('Transaction failed:', error));
