@@ -1,7 +1,7 @@
 <template>
   <div class="active-plant-asset-picklist-container">
     <BedPicker
-      v-if="location && showBedPicker"
+      v-if="location"
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
       v-bind:required="required"
@@ -153,7 +153,6 @@ export default {
       bedsValid: false,
       picklistValid: false,
       updateInProgress: false, // flag to ensure one update cycle
-      showBedPicker: true, // New property to control BedPicker visibility
     };
   },
   computed: {
@@ -166,7 +165,7 @@ export default {
     },
 
     isValid() {
-      return this.picklistValid && (this.showBedPicker ? this.bedsValid : true);
+      return this.picklistValid && this.bedsValid;
     },
   },
 
@@ -417,7 +416,6 @@ export default {
               crop: 'Crop',
               timestamp: 'Planted Date',
             };
-            this.showBedPicker = false;
           } else {
             this.picklistColumns = ['crop', 'bed', 'timestamp'];
             this.picklistLabels = {
@@ -425,7 +423,6 @@ export default {
               bed: 'Bed',
               timestamp: 'Planted Date',
             };
-            this.showBedPicker = true;
           }
 
           if (this.pickedRow.size > 0) {
@@ -460,7 +457,6 @@ export default {
         }
       } else {
         this.affectedPlants = [];
-        this.showBedPicker = false; // Hide  BedPicker when no location
       }
     },
 
