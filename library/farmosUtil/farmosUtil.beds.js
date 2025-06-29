@@ -8,12 +8,6 @@ import {
   getFarmOSInstance,
 } from './farmosUtil.core.js';
 
-
-import {
-  getFieldNameToAssetMap,
-  getGreenhouseNameToAssetMap,
-  getBeds
-} from './farmos'
 /**
  * Clear the cached results from prior calls to the `getBeds` function.
  * This is useful when an action may change the beds that exist in the
