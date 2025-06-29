@@ -8,6 +8,12 @@ import {
   getFarmOSInstance,
 } from './farmosUtil.core.js';
 
+
+import {
+  getFieldNameToAssetMap,
+  getGreenhouseNameToAssetMap,
+  getBeds
+} from './farmos'
 /**
  * Clear the cached results from prior calls to the `getBeds` function.
  * This is useful when an action may change the beds that exist in the
@@ -95,4 +101,45 @@ export async function getBedIdToAssetMap() {
   const beds = await getBeds();
   const map = new Map(beds.map((bed) => [bed.id, bed]));
   return map;
+}
+
+export async function getBedsInLocation(locationName) {
+  try {
+    const [fieldMap, greenhouseMap, beds] = await Promise.all([
+      getFieldNameToAssetMap(),
+      getGreenhouseNameToAssetMap(),
+      getBeds(),
+    ]);
+
+    let field = fieldMap.get(locationName);
+    let greenhouse = greenhouseMap.get(locationName);
+    letlocationId = null;
+
+    if (field) {
+      locationId = field.id;
+    } else if (greenhouse) {
+      locationId = greenhouse.id;
+    } else {
+      console.warn(
+        `getBedsInLocation: Unable to find location: ${locationName}`
+      );
+      return [];
+    }
+
+    if (!locationId) {
+      return [];
+    }
+
+    const bedsInLocation = beds.filter((bed) => {
+      return bed.relationships.parent[0].id === locationId;
+    });
+
+    return bedsInLocation;
+  } catch (error) {
+    console.error(
+      'getBedsInLocation: Unable to get beds in location: ' + locationName,
+      error
+    );
+    return [];
+  }
 }
