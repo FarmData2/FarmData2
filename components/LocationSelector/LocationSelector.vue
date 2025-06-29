@@ -19,7 +19,7 @@
       flush
       id="location-beds-accordion"
       data-cy="location-beds-accordion"
-      v-if="showBedSelection"
+      v-if="!forceHideBedSelector && showBedSelection"
     >
       <BAccordionItem
         id="location-beds-accordion-item"
@@ -186,6 +186,13 @@ export default {
      * Whether validity styling should appear on the location dropdown.
      */
     showValidityStyling: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * If true, always hide the BedSelector UI (accordion), even if beds exist.
+     */
+    forceHideBedSelector: {
       type: Boolean,
       default: false,
     },
