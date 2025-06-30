@@ -44,7 +44,6 @@
 
         <!-- Location Selection -->
         <LocationSelector
-          v-bind:key="form.location + '-' + forceHideBedSelector"
           id="soil-disturbance-location"
           data-cy="soil-disturbance-location"
           required
@@ -53,7 +52,6 @@
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
           v-bind:allowBedSelection="true"
-          v-bind:forceHideBedSelector="forceHideBedSelector"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
@@ -194,7 +192,6 @@ import SubmitResetButtons from '@comps/SubmitResetButtons/SubmitResetButtons.vue
 import ActivePlantAssetPicklist from '@comps/ActivePlantAssetPicklist/ActivePlantAssetPicklist.vue';
 import * as uiUtil from '@libs/uiUtil/uiUtil.js';
 import { lib } from './lib.js';
-import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
 
 export default {
   components: {
@@ -239,7 +236,6 @@ export default {
         timestamp: 'Planted Date',
       },
       picklistValid: false,
-      bedsAtLocation: false,
     };
   },
   computed: {
@@ -259,9 +255,6 @@ export default {
       return Object.entries(this.validity)
         .filter(([key]) => key !== 'show')
         .every((item) => item[1] === true);
-    },
-    forceHideBedSelector() {
-      return this.bedsAtLocation && this.plantsAtLocation;
     },
   },
   methods: {
@@ -352,25 +345,6 @@ export default {
     },
     pickedValidity(newVal) {
       this.validity.picked = newVal;
-    },
-    'form.location': {
-      handler: async function (newLocation) {
-        if (!newLocation) {
-          this.bedsAtLocation = false;
-          return;
-        }
-        const beds = await farmosUtil.getBeds();
-        let hasBeds = false;
-        for (const bed of beds) {
-          const parentName = bed.attributes.name.split('-')[0];
-          if (parentName === newLocation) {
-            hasBeds = true;
-            break;
-          }
-        }
-        this.bedsAtLocation = hasBeds;
-      },
-      immediate: true,
     },
   },
   created() {
