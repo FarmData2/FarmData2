@@ -43,7 +43,6 @@
         />
 
         <!-- Location Selection -->
-
         <LocationSelector
           id="soil-disturbance-location"
           data-cy="soil-disturbance-location"
@@ -147,7 +146,6 @@
           />
         </div>
         <hr />
-
         <!-- Comment Box -->
         <CommentBox
           id="soil-disturbance-comment"
@@ -299,7 +297,7 @@ export default {
           .catch(() => {
             if (!this.errorShown) {
               uiUtil.hideToast();
-              this.errorShown = true;
+              this.errorShowing = true;
               uiUtil
                 .showToast(
                   'Error creating Soil Disturbance records.',
