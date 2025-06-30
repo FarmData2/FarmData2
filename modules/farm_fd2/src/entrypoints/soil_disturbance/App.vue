@@ -51,9 +51,7 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="true"
-          v-bind:requireBedSelection="showLocationBedSelector"
-          v-bind:forceHideBedSelector="forceHideBedSelector"
+          v-bind:allowBedSelection="allowBedSelection"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
@@ -246,12 +244,6 @@ export default {
     showLocationBedSelector() {
       return this.bedsAtLocation && !this.plantsAtLocation;
     },
-    forceHideBedSelector() {
-      return this.bedsAtLocation && this.plantsAtLocation;
-    },
-    pickedValidity() {
-      return !this.plantsAtLocation || this.picklistValid;
-    },
     pageDoneLoading() {
       return this.createdCount === 7;
     },
@@ -265,6 +257,10 @@ export default {
       return Object.entries(this.validity)
         .filter(([key]) => key !== 'show')
         .every((item) => item[1] === true);
+    },
+    allowBedSelection() {
+      // If there are active plant assets, do not show BedSelector
+      return !this.plantsAtLocation;
     },
   },
   methods: {
