@@ -27,7 +27,6 @@
         id="soil-disturbance-form"
         data-cy="soil-disturbance-form"
       >
-        <!-- Date -->
         <DateSelector
           id="soil-disturbance-date"
           data-cy="soil-disturbance-date"
@@ -42,7 +41,6 @@
           v-on:ready="createdCount++"
         />
 
-        <!-- Location Selection -->
         <LocationSelector
           id="soil-disturbance-location"
           data-cy="soil-disturbance-location"
@@ -51,19 +49,17 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="allowBedSelection"
+          v-bind:allowBedSelection="!plantsAtLocation"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
             (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
           "
           v-on:update:selected="form.location = $event"
-          v-on:hasBeds="bedsAtLocation = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
 
-        <!-- Termination Event -->
         <div
           id="termination-event-group"
           data-cy="termination-event-group"
@@ -112,7 +108,6 @@
         </div>
         <hr />
 
-        <!-- Equipment -->
         <div
           id="soil-disturbance-equipment-main"
           data-cy="soil-disturbance-equipment-main"
@@ -124,7 +119,6 @@
             <span> Equipment </span>
           </div>
 
-          <!-- Soil Disturbance -->
           <SoilDisturbance
             id="soil-disturbance-equipment-form"
             data-cy="soil-disturbance-equipment-form"
@@ -147,7 +141,6 @@
           />
         </div>
         <hr />
-        <!-- Comment Box -->
         <CommentBox
           id="soil-disturbance-comment"
           data-cy="soil-disturbance-comment"
@@ -160,7 +153,6 @@
           v-on:ready="createdCount++"
         />
 
-        <!-- Submit and Reset Buttons -->
         <SubmitResetButtons
           id="soil-disturbance-submit-reset"
           data-cy="soil-disturbance-submit-reset"
@@ -226,7 +218,6 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
-      bedsAtLocation: false,
       plantsAtLocation: false,
       submitting: false,
       errorShowing: false,
@@ -241,8 +232,8 @@ export default {
     };
   },
   computed: {
-    showLocationBedSelector() {
-      return this.bedsAtLocation && !this.plantsAtLocation;
+    pickedValidity() {
+      return !this.plantsAtLocation || this.picklistValid;
     },
     pageDoneLoading() {
       return this.createdCount === 7;
@@ -258,20 +249,14 @@ export default {
         .filter(([key]) => key !== 'show')
         .every((item) => item[1] === true);
     },
-    allowBedSelection() {
-      // If there are active plant assets, do not show BedSelector
-      return !this.plantsAtLocation;
-    },
   },
   methods: {
     handleBedsUpdate(checkedBeds, totalBeds) {
-      if (this.showLocationBedSelector) {
-        this.form.beds = checkedBeds;
-        this.form.area =
-          totalBeds > 0
-            ? Math.round((checkedBeds.length / totalBeds) * 100)
-            : 100; // default to 100% if there are no beds
-      }
+      this.form.beds = checkedBeds;
+      this.form.area =
+        totalBeds > 0
+          ? Math.round((checkedBeds.length / totalBeds) * 100)
+          : 100; // default to 100% if there are no beds
     },
     submit() {
       this.submitting = true;
@@ -303,7 +288,7 @@ export default {
               });
           })
           .catch(() => {
-            if (!this.errorShown) {
+            if (!this.errorShowing) {
               uiUtil.hideToast();
               this.errorShowing = true;
               uiUtil
