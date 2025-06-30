@@ -8,15 +8,15 @@ use Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget
 
 /**
  * @FieldWidget(
- *   id = "entity_reference_quantity_autocomplete",
+ *   id = "fd2_unit_conversion_widget",
  *   label = @Translation("Autocomplete"),
  *   description = @Translation("An autocomplete text field with associated data."),
  *   field_types = {
- *     "entity_reference_quantity"
+ *     "fd2_unit_conversion"
  *   }
  * )
  */
-class EntityReferenceQuantityAutocomplete extends EntityReferenceAutocompleteWidget {
+class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
 
   /**
    * {@inheritdoc}

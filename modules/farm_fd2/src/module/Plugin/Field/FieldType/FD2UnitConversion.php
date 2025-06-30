@@ -8,18 +8,18 @@ use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'entity_reference_quantity' field type.
+ * Plugin implementation of the 'fd2_unit_conversion' field type.
  *
  * @FieldType(
- *   id = "entity_reference_quantity",
+ *   id = "fd2_unit_conversion",
  *   label = @Translation("Entity reference w/quantity"),
  *   description = @Translation("Entity reference with associated quantity"),
  *   category = "reference",
- *   default_widget = "entity_reference_quantity_autocomplete",
- *   default_formatter = "entity_reference_quantity_label",
+ *   default_widget = "fd2_unit_conversion_widget",
+ *   default_formatter = "fd2_unit_conversion_formatter",
  *   list_class = "\Drupal\Core\Field\EntityReferenceFieldItemList" * )
  */
-class EntityReferenceQuantity extends EntityReferenceItem {
+class FD2UnitConversion extends EntityReferenceItem {
 
   /**
    * {@inheritdoc}

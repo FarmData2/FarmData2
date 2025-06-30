@@ -7,18 +7,18 @@ use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatter;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'entity_reference_quantity_label' formatter.
+ * Plugin implementation of the 'fd2_unit_conversion_formatter' formatter.
  *
  * @FieldFormatter(
- *   id = "entity_reference_quantity_label",
+ *   id = "fd2_unit_conversion_formatter",
  *   label = @Translation("Label with quantity"),
  *   description = @Translation("Display the label of the referenced entities with quantity."),
  *   field_types = {
- *     "entity_reference_quantity"
+ *     "fd2_unit_conversion"
  *   }
  * )
  */
-class EntityReferenceQuantityLabelFormatter extends EntityReferenceLabelFormatter {
+class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
 
   /**
    * {@inheritdoc}
