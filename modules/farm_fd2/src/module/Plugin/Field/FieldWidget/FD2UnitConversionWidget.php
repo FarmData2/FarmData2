@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This field adapted from: https://www.drupal.org/project/entity_reference_quantity/releases/3.1.0
+ */
+
 namespace Drupal\farm_fd2\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Form\FormStateInterface;
