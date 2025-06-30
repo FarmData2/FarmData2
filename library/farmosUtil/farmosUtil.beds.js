@@ -99,7 +99,24 @@ export async function getBedIdToAssetMap() {
   const map = new Map(beds.map((bed) => [bed.id, bed]));
   return map;
 }
-
+/**
+ * Retrieves all beds associated with a specific location.
+ *
+ *
+ * NOTE: This function makes a call to
+ * [`getBeds`]{@link #module_farmosUtil.getBeds}
+ * and builds the `Map` using the returned `Array<Object>`.
+ *
+ * This function queries the farm management system to find all beds
+ * that belong to the specified location. The returned bed identifiers
+ * can be used for filtering plant assets, validation, or display purposes.
+ * @throws {Error} if unable to fetch the beds.
+ *
+ *
+ *
+ * @category Beds
+ * }
+ */
 export async function getBedsInLocation(locationName) {
   try {
     const [fieldMap, greenhouseMap, beds] = await Promise.all([

@@ -13,6 +13,7 @@
     />
 
     <PicklistBase
+      v-if="location && plantsAtLocation"
       id="active-plant-asset-picklist"
       data-cy="active-plant-asset-picklist"
       class="w-100"

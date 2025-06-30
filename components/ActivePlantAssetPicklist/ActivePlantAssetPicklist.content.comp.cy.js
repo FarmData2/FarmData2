@@ -23,15 +23,15 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
         cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
 
-        cy.get('[data-cy="picklist-table"]').should('exist');
+        cy.get('[data-cy="picklist-table"]').should('not.exist');
         cy.get('[data-cy="picklist-all-button"]').should('not.exist');
         cy.get('[data-cy="picklist-units-button"]').should('not.exist');
-        cy.get('[data-cy="picklist-header-crop"]').should('be.visible');
-        cy.get('[data-cy="picklist-header-bed"]').should('be.visible');
-        cy.get('[data-cy="picklist-header-planted-date"]').should('be.visible');
+        cy.get('[data-cy="picklist-header-crop"]').should('not.exist');
+        cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+        cy.get('[data-cy="picklist-header-planted-date"]').should('not.exist');
 
         cy.get('[data-cy="picklist-row-0"]').should('not.exist');
       });

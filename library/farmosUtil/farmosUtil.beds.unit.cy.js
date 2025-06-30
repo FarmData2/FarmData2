@@ -102,18 +102,15 @@ describe('Test the bed utility functions', () => {
   it('should return beds for ALF location (field with beds)', async () => {
     const beds = await farmosUtil.getBedsInLocation('ALF');
 
-    console.log(beds);
-    console.log(beds[0]);
-
     // Should have beds
     expect(beds).to.be.an('array');
-    expect(beds.length).to.be.greaterThan(0);
+    expect(beds.length).to.equal(4);
+    expect(beds[0].attributes.name).to.equal('ALF-1');
+
+    expect(beds[3].attributes.name).to.equal('ALF-4');
 
     // Each bed should be a proper bed object
     beds.forEach((bed) => {
-      expect(bed).to.have.property('attributes');
-      expect(bed).to.have.property('relationships');
-      expect(bed.attributes).to.have.property('name');
       expect(bed.attributes.name).to.include('ALF');
     });
 
@@ -135,7 +132,11 @@ describe('Test the bed utility functions', () => {
 
     // Should have beds
     expect(beds).to.be.an('array');
-    expect(beds.length).to.be.greaterThan(0);
+    expect(beds.length).to.equal(5);
+
+    expect(beds[0].attributes.name).to.equal('CHUAU-1');
+
+    expect(beds[4].attributes.name).to.equal('CHUAU-5');
 
     // Each bed should belong to CHUAU
     beds.forEach((bed) => {
