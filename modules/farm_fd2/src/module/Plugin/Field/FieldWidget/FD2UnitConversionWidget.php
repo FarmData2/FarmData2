@@ -33,7 +33,9 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
     $widget['target_id'] = parent::formElement($items, $delta, $element, $form, $form_state);
     $widget['quantity'] = [
       '#type' => 'number',
-      '#size' => '4',
+      '#size' => '6',
+      '#precision' => '2',
+      '#step' => '0.01',
       '#default_value' => isset($items[$delta]) ? $items[$delta]->quantity : 1,
       '#weight' => 10,
     ];
