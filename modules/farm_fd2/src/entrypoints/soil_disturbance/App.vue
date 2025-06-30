@@ -52,12 +52,15 @@
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
           v-bind:allowBedSelection="true"
+          v-bind:requireBedSelection="showLocationBedSelector"
+          v-bind:forceHideBedSelector="forceHideBedSelector"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
             (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
           "
           v-on:update:selected="form.location = $event"
+          v-on:hasBeds="bedsAtLocation = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
         />
@@ -225,6 +228,7 @@ export default {
         soilDisturbance: false,
         comment: false,
       },
+      bedsAtLocation: false,
       plantsAtLocation: false,
       submitting: false,
       errorShowing: false,
@@ -239,6 +243,12 @@ export default {
     };
   },
   computed: {
+    showLocationBedSelector() {
+      return this.bedsAtLocation && !this.plantsAtLocation;
+    },
+    forceHideBedSelector() {
+      return this.bedsAtLocation && this.plantsAtLocation;
+    },
     pickedValidity() {
       return !this.plantsAtLocation || this.picklistValid;
     },
@@ -259,7 +269,7 @@ export default {
   },
   methods: {
     handleBedsUpdate(checkedBeds, totalBeds) {
-      if (!this.plantsAtLocation) {
+      if (this.showLocationBedSelector) {
         this.form.beds = checkedBeds;
         this.form.area =
           totalBeds > 0

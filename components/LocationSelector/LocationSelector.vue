@@ -101,7 +101,14 @@ import { BAccordion } from 'bootstrap-vue-next';
 export default {
   name: 'LocationSelector',
   components: { SelectorBase, BedPicker, BAccordion },
-  emits: ['error', 'ready', 'update:selected', 'update:beds', 'valid'],
+  emits: [
+    'error',
+    'ready',
+    'update:selected',
+    'update:beds',
+    'valid',
+    'hasBeds',
+  ],
   props: {
     /**
      * Whether to include all fields in the list of locations.
@@ -279,7 +286,6 @@ export default {
 
       let locationNames = [...fieldNames, ...greenhouseNames];
       locationNames.sort();
-
       return locationNames;
     },
     beds() {
@@ -311,7 +317,7 @@ export default {
           })
           .map((bed) => bed.attributes.name);
 
-        bedNames.sort();
+        this.$emit('hasBeds', bedNames.length > 0);
         return bedNames;
       }
     },
@@ -345,6 +351,7 @@ export default {
        * @property {string} event the name of the new selected location.
        */
       this.$emit('update:selected', event);
+      this.$emit('hasBeds', this.beds.length > 0);
     },
     handleLocationValid(event) {
       this.locationValid = event;
@@ -397,9 +404,12 @@ export default {
           greenhouseMap = await farmosUtil.getGreenhouseIdToAssetMap();
         }
 
-        let beds = null;
+        let beds = [];
         if (this.allowBedSelection) {
-          beds = await farmosUtil.getBeds();
+          const fetchedBeds = await farmosUtil.getBeds();
+          if (fetchedBeds) {
+            beds = fetchedBeds;
+          }
         }
 
         // Update asset list
@@ -440,51 +450,29 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
+    beds() {
+      this.$emit('hasBeds', this.beds.length > 0);
+    },
   },
   created() {
-    let canCreateLand = false;
-    let fieldMap = null;
-    if (this.includeFields) {
-      canCreateLand = farmosUtil.checkPermission('create-land-asset');
-      fieldMap = farmosUtil.getFieldIdToAssetMap();
-    }
-
-    let canCreateStructure = false;
-    let greenhouseMap = null;
-    if (this.includeGreenhouses || this.includeGreenhousesWithBeds) {
-      canCreateStructure = farmosUtil.checkPermission('create-structure-asset');
-      greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
-    }
-
-    let beds = null;
-    if (this.allowBedSelection) {
-      beds = farmosUtil.getBeds();
-    }
-
-    Promise.all([
-      fieldMap,
-      greenhouseMap,
-      beds,
-      canCreateLand,
-      canCreateStructure,
-    ])
-      .then(([fieldMap, greenhouseMap, beds, createLand, createStructure]) => {
-        this.fieldMap = fieldMap;
-        this.greenhouseMap = greenhouseMap;
-        this.bedObjs = beds;
-        this.canCreateLand = createLand;
-        this.canCreateStructure = createStructure;
-
+    this.populateLocationList()
+      .then(() => {
+        this.canCreateLand = farmosUtil.checkPermission('create-land-asset');
+        this.canCreateStructure = farmosUtil.checkPermission(
+          'create-structure-asset'
+        );
         /**
          * The select has been populated with the list of locations and the component is ready to be used.
          */
         this.$emit('ready');
       })
       .catch((error) => {
-        console.error('LocationSelector: Error fetching locations.');
-        console.error(error);
+        console.error('LocationSelector: Error fetching locations.', error);
         this.$emit('error', 'Unable to fetch locations.');
       });
+
+    // Emit the initial valid state of the component's value.
+    this.$emit('valid', this.isValid);
   },
 };
 </script>
