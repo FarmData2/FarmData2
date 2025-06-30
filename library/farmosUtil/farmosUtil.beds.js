@@ -8,6 +8,9 @@ import {
   getFarmOSInstance,
 } from './farmosUtil.core.js';
 
+import { getFieldNameToAssetMap } from './farmosUtil.fields.js';
+import { getGreenhouseNameToAssetMap } from './farmosUtil.greenhouses.js';
+
 /**
  * Clear the cached results from prior calls to the `getBeds` function.
  * This is useful when an action may change the beds that exist in the
@@ -107,7 +110,7 @@ export async function getBedsInLocation(locationName) {
 
     let field = fieldMap.get(locationName);
     let greenhouse = greenhouseMap.get(locationName);
-    letlocationId = null;
+    let locationId = null;
 
     if (field) {
       locationId = field.id;

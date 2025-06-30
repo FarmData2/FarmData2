@@ -103,6 +103,7 @@ describe('Test the bed utility functions', () => {
     const beds = await farmosUtil.getBedsInLocation('ALF');
 
     console.log(beds);
+    console.log(beds[0]);
 
     // Should have beds
     expect(beds).to.be.an('array');
