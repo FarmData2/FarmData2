@@ -18,7 +18,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   id = "fd2_unit_conversion",
  *   label = @Translation("Entity reference w/quantity"),
  *   description = @Translation("Entity reference with associated quantity"),
- *   category = "reference",
+ *   category = "Reference",
  *   default_widget = "fd2_unit_conversion_widget",
  *   default_formatter = "fd2_unit_conversion_formatter",
  *   list_class = "\Drupal\Core\Field\EntityReferenceFieldItemList" * )
