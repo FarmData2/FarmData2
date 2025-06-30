@@ -174,4 +174,95 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
           .should('have.value', 'CHUAU-5');
       });
   });
+
+  it('Checks active plant assets are fetched and run component tests on them', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'A',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(5);
+          });
+
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('be.visible');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
+      });
+  });
+
+  it('Checks active plant assets are fetched and run component tests on them', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'ALF',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(3);
+          });
+
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+        cy.get('[data-cy="picklist-crop-0"]').should(
+          'have.text',
+          'PEPPERS-BELL'
+        );
+        cy.get('[data-cy="picklist-crop-2"]').should(
+          'have.text',
+          'LETTUCE-ICEBERG'
+        );
+
+        cy.get('[data-cy="picklist-bed-0"]').should('exist');
+        cy.get('[data-cy="picklist-bed-0"]').should('have.text', 'ALF-1');
+        cy.get('[data-cy="picklist-bed-2"]').should('exist');
+        cy.get('[data-cy="picklist-bed-2"]').should('have.text', 'ALF-2');
+      });
+  });
+
+  it('Checks active plant assets are fetched and run component tests on them', () => {
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'H',
+      },
+    });
+
+    cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+    cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+    cy.get('[data-cy="picker-options"]').should('exist');
+
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 2)
+      .first()
+      .should('have.value', 'H-1');
+
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 2)
+      .last()
+      .should('have.value', 'H-2');
+  });
 });

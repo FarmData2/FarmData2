@@ -94,4 +94,142 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
         });
     });
   });
+
+  it('Should show Picklist and BedPicker component when the location changes from CHUAU to ALF', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'CHUAU',
+        isInGround: true,
+        isInTrays: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="active-plant-asset-picklist"]').should(
+            'be.visible'
+          );
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'be.visible'
+          );
+        })
+        .then(() => {
+          wrapper.setProps({
+            location: 'ALF',
+          });
+
+          cy.get('[data-cy="active-plant-asset-picklist"]').should(
+            'be.visible'
+          );
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'be.visible'
+          );
+        });
+    });
+  });
+
+  it('Should hide Picklist and show BedPicker component when the location changes from ALF to H', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        isInGround: true,
+        isInTrays: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="active-plant-asset-picklist"]').should(
+            'be.visible'
+          );
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'be.visible'
+          );
+        })
+        .then(() => {
+          wrapper.setProps({
+            location: 'H',
+          });
+
+          cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'be.visible'
+          );
+        });
+    });
+  });
+
+  it('Should show Picklist and hide BedPicker component when the location changes from H to A', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'H',
+        isInGround: true,
+        isInTrays: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'be.visible'
+          );
+        })
+        .then(() => {
+          wrapper.setProps({
+            location: 'A',
+          });
+
+          cy.get('[data-cy="active-plant-asset-picklist"]').should(
+            'be.visible'
+          );
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'not.exist'
+          );
+        });
+    });
+  });
+
+  it('Should hide Picklist and BedPicker component when the location changes from A to J', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'A',
+        isInGround: true,
+        isInTrays: true,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="active-plant-asset-picklist"]').should(
+            'be.visible'
+          );
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'not.exist'
+          );
+        })
+        .then(() => {
+          wrapper.setProps({
+            location: 'J',
+          });
+
+          cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+          cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
+            'not.exist'
+          );
+        });
+    });
+  });
 });
