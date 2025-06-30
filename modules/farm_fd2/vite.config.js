@@ -32,6 +32,10 @@ let viteConfig = {
           dest: 'src/',
         },
         {
+          src: '../module/Plugin',
+          dest: 'src/',
+        },
+        {
           src: '../module/config',
           dest: '.',
         },
