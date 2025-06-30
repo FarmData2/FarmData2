@@ -27,6 +27,7 @@
         id="soil-disturbance-form"
         data-cy="soil-disturbance-form"
       >
+        <!-- Date -->
         <DateSelector
           id="soil-disturbance-date"
           data-cy="soil-disturbance-date"
@@ -40,6 +41,8 @@
           "
           v-on:ready="createdCount++"
         />
+
+        <!-- Location Selection -->
 
         <LocationSelector
           id="soil-disturbance-location"
@@ -60,6 +63,7 @@
           v-on:ready="createdCount++"
         />
 
+        <!-- Termination Event -->
         <div
           id="termination-event-group"
           data-cy="termination-event-group"
@@ -108,6 +112,7 @@
         </div>
         <hr />
 
+        <!-- Equipment -->
         <div
           id="soil-disturbance-equipment-main"
           data-cy="soil-disturbance-equipment-main"
@@ -119,6 +124,7 @@
             <span> Equipment </span>
           </div>
 
+          <!-- Soil Disturbance -->
           <SoilDisturbance
             id="soil-disturbance-equipment-form"
             data-cy="soil-disturbance-equipment-form"
@@ -141,6 +147,8 @@
           />
         </div>
         <hr />
+
+        <!-- Comment Box -->
         <CommentBox
           id="soil-disturbance-comment"
           data-cy="soil-disturbance-comment"
@@ -153,6 +161,7 @@
           v-on:ready="createdCount++"
         />
 
+        <!-- Submit and Reset Buttons -->
         <SubmitResetButtons
           id="soil-disturbance-submit-reset"
           data-cy="soil-disturbance-submit-reset"
@@ -288,9 +297,9 @@ export default {
               });
           })
           .catch(() => {
-            if (!this.errorShowing) {
+            if (!this.errorShown) {
               uiUtil.hideToast();
-              this.errorShowing = true;
+              this.errorShown = true;
               uiUtil
                 .showToast(
                   'Error creating Soil Disturbance records.',
