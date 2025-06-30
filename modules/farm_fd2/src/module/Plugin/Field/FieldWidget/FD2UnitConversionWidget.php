@@ -41,10 +41,10 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
     ];
 
     if ($this->fieldDefinition->getFieldStorageDefinition()->isMultiple()) {
-      $widget['quantity']['#placeholder'] = $this->fieldDefinition->getSetting('qty_label');
+      $widget['quantity']['#placeholder'] = 'Quantity'; //$this->fieldDefinition->getSetting('qty_label');
     }
     else {
-      $widget['quantity']['#title'] = $this->fieldDefinition->getSetting('qty_label');
+      $widget['quantity']['#title'] = 'Quantity'; //$this->fieldDefinition->getSetting('qty_label');
     }
 
     return $widget;

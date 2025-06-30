@@ -51,48 +51,44 @@ class FD2UnitConversion extends EntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public static function defaultFieldSettings() {
-    return [
-      'qty_label' => t('Quantity'),
-      'qty_min' => 0,
-      'qty_max' => 999,
-    ] + parent::defaultFieldSettings();
-  }
+  // public static function defaultFieldSettings() {
+  //   return [
+  //     'qty_label' => t('Quantity'),
+  //     'qty_min' => 0,
+  //     'qty_max' => 999,
+  //   ] + parent::defaultFieldSettings();
+  // }
 
   /**
    * {@inheritdoc}
    */
-  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
-    $elements = parent::fieldSettingsForm($form, $form_state);
+  // public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
+  //   $elements = parent::fieldSettingsForm($form, $form_state);
 
-    $elements['qty_min'] = [
-      '#type' => 'number',
-      '#title' => t('Minimum'),
-      '#default_value' => $this->getSetting('qty_min'),
-    ];
-    $elements['qty_max'] = [
-      '#type' => 'number',
-      '#title' => t('Maximum'),
-      '#default_value' => $this->getSetting('qty_max'),
-    ];
-    $elements['qty_label'] = [
-      '#type' => 'textfield',
-      '#title' => t('Quantity Label'),
-      '#default_value' => $this->getSetting('qty_label'),
-      '#description' => $this->t('Also used as a placeholder in multi-value instances.'),
-    ];
+  //   $elements['qty_min'] = [
+  //     '#type' => 'number',
+  //     '#title' => t('Minimum'),
+  //     '#default_value' => $this->getSetting('qty_min'),
+  //   ];
+  //   $elements['qty_max'] = [
+  //     '#type' => 'number',
+  //     '#title' => t('Maximum'),
+  //     '#default_value' => $this->getSetting('qty_max'),
+  //   ];
+  //   $elements['qty_label'] = [
+  //     '#type' => 'textfield',
+  //     '#title' => t('Quantity Label'),
+  //     '#default_value' => $this->getSetting('qty_label'),
+  //     '#description' => $this->t('Also used as a placeholder in multi-value instances.'),
+  //   ];
 
-    return $elements;
-  }
+  //   return $elements;
+  // }
 
   /**
    * {@inheritdoc}
    */
   public static function getPreconfiguredOptions() {
-    // In the base EntityReference class, this is used to populate the
-    // list of field-types with options for each destination entity type.
-    // Too much work, we'll just make people fill that out later.
-    // Also, keeps the field type dropdown from getting too cluttered.
     return [];
   }
 
