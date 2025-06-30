@@ -164,8 +164,31 @@ export default {
       return this.required || this.requiredRow;
     },
 
+    hasSelectedPlantAssets() {
+      return this.pickedRow && this.pickedRow.size > 0;
+    },
+
+    hasSelectedBeds() {
+      return this.checkedBeds && this.checkedBeds.length > 0;
+    },
+
     isValid() {
-      return this.picklistValid && this.bedsValid;
+      if (!picklistValid) {
+        return false;
+      }
+
+      if (this.locationHasBeds && !this.bedsValid) {
+        return false;
+      }
+
+      if (this.requredRow) {
+        return this.hasSelectedPlantAssets;
+      } else if (this.required) {
+        //check plantAssets || check hasSelectedBed
+        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
+      }
+
+      return true;
     },
   },
 
