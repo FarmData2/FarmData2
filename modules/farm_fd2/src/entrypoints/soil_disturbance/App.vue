@@ -51,7 +51,7 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="true"
+          v-bind:allowBedSelection="!plantsAtLocation"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
@@ -259,13 +259,11 @@ export default {
   },
   methods: {
     handleBedsUpdate(checkedBeds, totalBeds) {
-      if (!this.plantsAtLocation) {
-        this.form.beds = checkedBeds;
-        this.form.area =
-          totalBeds > 0
-            ? Math.round((checkedBeds.length / totalBeds) * 100)
-            : 100; // default to 100% if there are no beds
-      }
+      this.form.beds = checkedBeds;
+      this.form.area =
+        totalBeds > 0
+          ? Math.round((checkedBeds.length / totalBeds) * 100)
+          : 100; // default to 100% if there are no beds
     },
     submit() {
       this.submitting = true;
