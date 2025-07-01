@@ -15,8 +15,9 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @FieldFormatter(
  *   id = "fd2_unit_conversion_formatter",
- *   label = @Translation("Label with quantity"),
- *   description = @Translation("Display the label of the referenced entities with quantity."),
+ *   label = @Translation("Unit and conversion factor"),
+ *   module = "farm_fd2",
+ *   description = @Translation("Display the unit and the conversion factor."),
  *   field_types = {
  *     "fd2_unit_conversion"
  *   }

@@ -11,10 +11,13 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget;
 
 /**
+ * Plugin implementation of the 'fd2_unit_conversion_widget' widget.
+ * 
  * @FieldWidget(
  *   id = "fd2_unit_conversion_widget",
- *   label = @Translation("Autocomplete"),
- *   description = @Translation("An autocomplete text field with associated data."),
+ *   label = @Translation("Unit conversion widget"),
+ *   module = "farm_fd2",
+ *   description = @Translation("An autocomplete for unit reference and a number for the conversion factor."),
  *   field_types = {
  *     "fd2_unit_conversion"
  *   }
