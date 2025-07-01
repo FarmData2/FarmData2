@@ -33,22 +33,28 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
       '#attributes' => ['class' => ['form--inline', 'clearfix']],
       '#theme_wrappers' => ['container'],
     ];
+
     $widget['target_id'] = parent::formElement($items, $delta, $element, $form, $form_state);
+
     $widget['quantity'] = [
+      '#placeholder' => 'Factor',
       '#type' => 'number',
-      '#size' => '6',
+      '#size' => '10',
       '#precision' => '2',
       '#step' => '0.01',
       '#default_value' => isset($items[$delta]) ? $items[$delta]->quantity : 1,
       '#weight' => 10,
     ];
 
-    if ($this->fieldDefinition->getFieldStorageDefinition()->isMultiple()) {
-      $widget['quantity']['#placeholder'] = 'Quantity'; //$this->fieldDefinition->getSetting('qty_label');
-    }
-    else {
-      $widget['quantity']['#title'] = 'Quantity'; //$this->fieldDefinition->getSetting('qty_label');
-    }
+    //if ($this->fieldDefinition->getFieldStorageDefinition()->isMultiple()) {
+    //  $widget['quantity']['#placeholder'] = 'Quantity'; //$this->fieldDefinition->getSetting('qty_label');
+    //}
+    //else {
+      //$widget['target_id']['element']['#title'] = 'Unit';
+      //$widget['target_id']->__set
+
+      //$widget['quantity']['#title'] = 'Conversion factor'; //$this->fieldDefinition->getSetting('qty_label');
+    //}
 
     return $widget;
   }
