@@ -11,11 +11,20 @@ function farm_fd2_page_attachments(&$variables) {
 }
 
 /**
- * Adds the fd2_harvest_units field to form and plant_type taxonomy terms.
+ * Update the form and displays for the entities and bundles that FD2 extends.
  */
 function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
   if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
     $form_display->setComponent('fd2_harvest_units', [
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term'
+      ],
+      'region' => 'content',
+      'weight' => 2,
+    ]);
+
+    $form_display->setComponent('fd2_unit_conversion', [
       'type' => 'entity_reference',
       'settings' => [
         'target_type' => 'taxonomy_term'
@@ -36,6 +45,16 @@ function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $d
       ],
       'region' => 'content',
       'weight' => 25,
+    ]);
+
+    $display->setComponent('fd2_unit_conversion', [
+      'type' => 'entity_reference',
+      'label' => 'inline',
+      'settings' => [
+        'target_type' => 'taxonomy_term'
+      ],
+      'region' => 'content',
+      'weight' => 26,
     ]);
   }
 }

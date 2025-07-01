@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.fd2_unit_conversion
+    - taxonomy.vocabulary.plant_type
+    - taxonomy.vocabulary.unit
+  module:
+    - farm_fd2
+id: taxonomy_term.plant_type.fd2_unit_conversion
+field_name: fd2_unit_conversion
+entity_type: taxonomy_term
+bundle: plant_type
+label: 'Harvest unit conversions'
+description: 'Add additional harvest units for this plant type with a conversion factor.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      unit: unit
+    sort:
+      field: name
+      direction: asc
+    auto_create: 0
+    auto_create_bundle: ''
+field_type: fd2_unit_conversion

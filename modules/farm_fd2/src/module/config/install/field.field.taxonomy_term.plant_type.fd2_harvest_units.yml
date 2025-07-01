@@ -17,7 +17,7 @@ field_name: fd2_harvest_units
 entity_type: taxonomy_term
 bundle: plant_type
 label: 'Harvest units'
-description: ''
+description: 'Default unit for harvests of this plant type.'
 required: true
 translatable: false
 default_value: {  }
