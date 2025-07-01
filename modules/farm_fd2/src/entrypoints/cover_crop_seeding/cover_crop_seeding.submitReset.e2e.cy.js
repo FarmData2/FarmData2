@@ -75,6 +75,14 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('2');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
 
     cy.get(
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
@@ -100,6 +108,14 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('4');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -226,6 +242,35 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
+  it('Invalid seed application passes disables submit', () => {
+    populateForm();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
   it('Invalid seed application speed disables submit', () => {
     populateForm();
 
@@ -284,6 +329,35 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
+  it('Invalid seed incorporation passes disables submit', () => {
+    populateForm();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').click();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .blur();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
   it('Invalid seed incorporation speed disables submit', () => {
     populateForm();
 
@@ -304,7 +378,7 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
-      .type('2');
+      .type('4');
     cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
@@ -344,6 +418,88 @@ describe('Cover Crop Seeding: Submit/Reset Buttons component', () => {
     ).should('not.be.visible');
 
     cy.get('[data-cy="comment-input"]').should('have.value', '');
+
+    //Seed Application
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-application-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .should('be.visible')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .should('not.exist');
+    // Select equipment and check fields
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '1');
+
+    //Seed Incorporation
+    cy.get(
+      '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
+    ).click();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .should('be.visible')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .should('have.value', null);
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .should('not.exist');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .should('not.exist');
+    // Select equipment and check fields
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-1"]')
+      .find('[data-cy="selector-input"]')
+      .select('Portable Broadcaster');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-depth"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-speed"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '0.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('be.visible')
+      .should('have.value', '1');
 
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
