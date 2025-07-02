@@ -7,6 +7,12 @@ dependencies:
     - taxonomy.vocabulary.unit
   module:
     - farm_fd2
+    - entity_reference_validators
+third_party_settings:
+  entity_reference_validators:
+    circular_reference: false
+    circular_reference_deep: false
+    duplicate_reference: true
 id: taxonomy_term.plant_type.fd2_unit_conversion
 field_name: fd2_unit_conversion
 entity_type: taxonomy_term

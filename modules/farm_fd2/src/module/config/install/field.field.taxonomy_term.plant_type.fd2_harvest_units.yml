@@ -7,6 +7,7 @@ dependencies:
     - taxonomy.vocabulary.unit
   module:
     - entity_reference_validators
+    - farm_fd2
 third_party_settings:
   entity_reference_validators:
     circular_reference: false
