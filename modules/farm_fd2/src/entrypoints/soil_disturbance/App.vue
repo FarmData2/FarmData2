@@ -55,7 +55,8 @@
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
-            (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
+            (checkedBeds, totalBeds, allBeds) =>
+              handleBedsUpdate(checkedBeds, totalBeds, allBeds)
           "
           v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
@@ -236,6 +237,7 @@ export default {
         timestamp: 'Planted Date',
       },
       picklistValid: false,
+      allBedsForLocation: [],
     };
   },
   computed: {
@@ -258,7 +260,8 @@ export default {
     },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
+    handleBedsUpdate(checkedBeds, totalBeds, allBeds) {
+      this.allBedsForLocation = allBeds || [];
       if (!this.plantsAtLocation) {
         this.form.beds = checkedBeds;
         this.form.area =
@@ -341,6 +344,9 @@ export default {
     plantsAtLocation(newVal) {
       if (!newVal) {
         this.form.termination = false;
+        if (this.form.location && this.allBedsForLocation.length > 0) {
+          this.form.beds = [...this.allBedsForLocation];
+        }
       }
     },
     pickedValidity(newVal) {

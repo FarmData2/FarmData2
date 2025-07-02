@@ -418,8 +418,14 @@ export default {
          * The selected beds have changed.
          * @property {Array<string>} checkedBeds an array containing the names of the selected beds.
          * @property {number} totalBeds the total number of beds in the selected location.
+         * @property {Array<string>} allBeds the full list of beds for the selected location.
          */
-        this.$emit('update:beds', this.checkedBeds, this.beds.length);
+        this.$emit(
+          'update:beds',
+          this.checkedBeds,
+          this.beds.length,
+          this.beds
+        );
       },
       deep: true,
     },
