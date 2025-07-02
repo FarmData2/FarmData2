@@ -105,14 +105,9 @@ export async function getBedIdToAssetMap() {
  *
  * NOTE: This function makes a call to
  * [`getBeds`]{@link #module_farmosUtil.getBeds}
- * and builds the `Map` using the returned `Array<Object>`.
  *
  * This function queries the farm management system to find all beds
- * that belong to the specified location. The returned bed identifiers
- * can be used for filtering plant assets, validation, or display purposes.
- * @throws {Error} if unable to fetch the beds.
- *
- *
+ * that belong to the specified location.
  *
  * @category Beds
  * }

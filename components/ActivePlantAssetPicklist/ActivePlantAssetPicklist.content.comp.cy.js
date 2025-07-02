@@ -175,7 +175,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       });
   });
 
-  it('Checks active plant assets are fetched and run component tests on them', () => {
+  it('Shows Picklist but not BedPicker for "A"', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -201,7 +201,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       });
   });
 
-  it('Checks active plant assets are fetched and run component tests on them', () => {
+  it('Shows Picklist and BedPicker for "ALF', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -241,7 +241,7 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       });
   });
 
-  it('Checks active plant assets are fetched and run component tests on them', () => {
+  it('Shows BedPicker but no Picklist for "H', () => {
     cy.mount(ActivePlantAssetPicklist, {
       props: {
         isInGround: true,

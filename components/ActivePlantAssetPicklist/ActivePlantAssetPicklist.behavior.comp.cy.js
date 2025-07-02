@@ -95,12 +95,12 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should show Picklist and BedPicker component when the location changes from CHUAU to ALF', () => {
+  it('Shows Picklist and BedPicker when switching from "A" to "ALF"', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
-        location: 'CHUAU',
+        location: 'A',
         isInGround: true,
         isInTrays: true,
         onReady: readySpy,
@@ -113,7 +113,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
             'be.visible'
           );
           cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
-            'be.visible'
+            'not.exist'
           );
         })
         .then(() => {
@@ -131,7 +131,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should hide Picklist and show BedPicker component when the location changes from ALF to H', () => {
+  it('Hide Picklist and show BedPicker when switching from ALF to H', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -165,7 +165,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should show Picklist and hide BedPicker component when the location changes from H to A', () => {
+  it('Show Picklist and hide BedPicker when switching from H to A', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -199,7 +199,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should hide Picklist and BedPicker component when the location changes from A to J', () => {
+  it('Hide Picklist and BedPicker when switching from A to J', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
