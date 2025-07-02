@@ -32,7 +32,7 @@ class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
   public static function defaultSettings() {
     return [
       'location' => 'suffix',
-      'template' => ' ({{ quantity }} = 1 {{base_unit}})',
+      'template' => ' ({{ factor }} = 1 {{base_unit}})',
     ] + parent::defaultSettings();
   }
 
@@ -49,13 +49,13 @@ class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
     $base_unit_name = \Drupal\taxonomy\Entity\Term::load($base_unit_id)->get('name')->value;
 
     foreach ($elements as $delta => $entity) {
-      if (!empty($values[$delta]['quantity'])) {
+      if (!empty($values[$delta]['factor'])) {
         /** @var \Drupal\Core\Template\TwigEnvironment $environment */
         $environment = \Drupal::service('twig');
 
         $output = $environment->renderInline(
           $this->getSetting('template'), [
-            'quantity' => $values[$delta]['quantity'],
+            'factor' => $values[$delta]['factor'],
             'base_unit' => $base_unit_name
           ]
         );

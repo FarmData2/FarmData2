@@ -32,8 +32,8 @@ class FD2UnitConversion extends EntityReferenceItem {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
     $quantity_definition = DataDefinition::create('float')
-      ->setLabel(t('Quantity'));
-    $properties['quantity'] = $quantity_definition;
+      ->setLabel(t('Factor'));
+    $properties['factor'] = $quantity_definition;
     return $properties;
   }
 
@@ -42,7 +42,7 @@ class FD2UnitConversion extends EntityReferenceItem {
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
-    $schema['columns']['quantity'] = [
+    $schema['columns']['factor'] = [
       'type' => 'float',
     ];
 

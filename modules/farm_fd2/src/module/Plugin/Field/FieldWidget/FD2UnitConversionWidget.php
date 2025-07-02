@@ -36,14 +36,29 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
 
     $widget['target_id'] = parent::formElement($items, $delta, $element, $form, $form_state);
 
-    $widget['quantity'] = [
+
+    //foreach ($widget['target_id'] as $key => $value) {
+
+    //   if ($value["#type"] === "entity_autocomplete") {
+    //     //$value["#required"] = FALSE;
+
+    //     var_dump($key);
+    //     //var_dump($value["#required"]);
+    //     //$value["#required"] = TRUE;
+    //   }
+    // }
+    // //var_dump($widget['target_id']);
+
+
+
+    $widget['factor'] = [
       '#placeholder' => 'Factor',
       '#type' => 'number',
       '#size' => '10',
       '#precision' => '2',
       '#step' => '0.01',
       '#min' => '0',
-      '#default_value' => isset($items[$delta]) ? $items[$delta]->quantity : 1,
+      '#default_value' => isset($items[$delta]) ? $items[$delta]->factor : 1,
       '#weight' => 10,
     ];
 
@@ -56,8 +71,8 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     $values = parent::massageFormValues($values, $form, $form_state);
     foreach ($values as $delta => $data) {
-      if (empty($data['quantity'])) {
-        unset($values[$delta]['quantity']);
+      if (empty($data['factor'])) {
+        unset($values[$delta]['factor']);
       }
     }
     return $values;
