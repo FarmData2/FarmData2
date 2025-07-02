@@ -36,21 +36,6 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
 
     $widget['target_id'] = parent::formElement($items, $delta, $element, $form, $form_state);
 
-
-    //foreach ($widget['target_id'] as $key => $value) {
-
-    //   if ($value["#type"] === "entity_autocomplete") {
-    //     //$value["#required"] = FALSE;
-
-    //     var_dump($key);
-    //     //var_dump($value["#required"]);
-    //     //$value["#required"] = TRUE;
-    //   }
-    // }
-    // //var_dump($widget['target_id']);
-
-
-
     $widget['factor'] = [
       '#placeholder' => 'Factor',
       '#type' => 'number',
@@ -77,5 +62,4 @@ class FD2UnitConversionWidget extends EntityReferenceAutocompleteWidget {
     }
     return $values;
   }
-
 }
