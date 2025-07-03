@@ -31,8 +31,13 @@ echo "Running FarmData2 post-checkout hook..."
 
 NEW_DB_VERSION=$(head -1 ".fd2dev/db.conf")
 NEW_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
-OLD_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" | head -1)
-OLD_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" | tail -1)
+
+OLD_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
+OLD_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+if [ -z "$OLD_DB_VERSION" ]; then
+  echo "new branch predates db versioning"
+  exit 0
+fi
 
 NEW_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
