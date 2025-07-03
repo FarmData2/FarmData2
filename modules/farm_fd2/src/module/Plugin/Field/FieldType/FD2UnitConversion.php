@@ -15,7 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Plugin implementation of the 'fd2_unit_conversion' field type.
  *
  * @FieldType(
- *   id = "fd2_unit_conversion",
+ *   id = "fd2_unit_conversions",
  *   module = "farm_fd2",
  *   label = @Translation("Unit conversion"),
  *   description = @Translation("A unit reference and a conversion factor."),
@@ -24,15 +24,18 @@ use Drupal\Core\Form\FormStateInterface;
  *   default_formatter = "fd2_unit_conversion_formatter",
  *   list_class = "\Drupal\Core\Field\EntityReferenceFieldItemList" * )
  */
-class FD2UnitConversion extends EntityReferenceItem {
-
+class FD2UnitConversion extends EntityReferenceItem
+{
   /**
    * {@inheritdoc}
    */
-  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+  public static function propertyDefinitions(
+    FieldStorageDefinitionInterface $field_definition
+  ) {
     $properties = parent::propertyDefinitions($field_definition);
-    $quantity_definition = DataDefinition::create('float')
-      ->setLabel(t('Factor'));
+    $quantity_definition = DataDefinition::create('float')->setLabel(
+      t('Factor')
+    );
     $properties['factor'] = $quantity_definition;
     return $properties;
   }
@@ -40,7 +43,9 @@ class FD2UnitConversion extends EntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldStorageDefinitionInterface $field_definition) {
+  public static function schema(
+    FieldStorageDefinitionInterface $field_definition
+  ) {
     $schema = parent::schema($field_definition);
     $schema['columns']['factor'] = [
       'type' => 'float',
@@ -52,7 +57,8 @@ class FD2UnitConversion extends EntityReferenceItem {
   /**
    * {@inheritdoc}
    */
-  public static function getPreconfiguredOptions() {
+  public static function getPreconfiguredOptions()
+  {
     return [];
   }
 }

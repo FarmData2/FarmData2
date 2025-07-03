@@ -15,7 +15,7 @@ function farm_fd2_page_attachments(&$variables) {
  */
 function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
   if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
-    $form_display->setComponent('fd2_harvest_units', [
+    $form_display->setComponent('fd2_harvest_unit', [
       'type' => 'entity_reference',
       'settings' => [
         'target_type' => 'taxonomy_term'
@@ -24,7 +24,7 @@ function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $f
       'weight' => 2,
     ]);
 
-    $form_display->setComponent('fd2_unit_conversion', [
+    $form_display->setComponent('fd2_unit_conversions', [
       'type' => 'entity_reference',
       'settings' => [
         'target_type' => 'taxonomy_term'
@@ -37,7 +37,7 @@ function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $f
 
 function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
   if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
-    $display->setComponent('fd2_harvest_units', [
+    $display->setComponent('fd2_harvest_unit', [
       'type' => 'entity_reference',
       'label' => 'inline',
       'settings' => [
@@ -47,7 +47,7 @@ function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $d
       'weight' => 25,
     ]);
 
-    $display->setComponent('fd2_unit_conversion', [
+    $display->setComponent('fd2_unit_conversions', [
       'type' => 'entity_reference',
       'label' => 'inline',
       'settings' => [

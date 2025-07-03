@@ -37,6 +37,7 @@ githubcli
 isready
 jsdoc
 jsdocrc
+langcode
 linkcheck
 lintstagedrc
 localstorage
@@ -57,6 +58,7 @@ Picklist
 pietmichal
 Pietraszko
 pinia
+Preconfigured
 preprocess
 printlog
 proselint

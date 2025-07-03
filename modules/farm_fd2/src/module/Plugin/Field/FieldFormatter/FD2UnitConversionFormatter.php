@@ -24,12 +24,13 @@ use Drupal\taxonomy\Entity\Term;
  *   }
  * )
  */
-class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
-
+class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter
+{
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings()
+  {
     return [
       'location' => 'suffix',
       'template' => ' ({{ factor }} = 1 {{base_unit}})',
@@ -39,26 +40,28 @@ class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-
+  public function viewElements(FieldItemListInterface $items, $langcode)
+  {
     $elements = parent::viewElements($items, $langcode);
     $values = $items->getValue();
 
     $parentEntity = $items->getParent()->getEntity();
-    $base_unit_id = $parentEntity->get('fd2_harvest_units')->getValue()[0]["target_id"];
-    $base_unit_name = \Drupal\taxonomy\Entity\Term::load($base_unit_id)->get('name')->value;
+    $base_unit_id = $parentEntity->get('fd2_harvest_unit')->getValue()[0][
+      'target_id'
+    ];
+    $base_unit_name = \Drupal\taxonomy\Entity\Term::load($base_unit_id)->get(
+      'name'
+    )->value;
 
     foreach ($elements as $delta => $entity) {
       if (!empty($values[$delta]['factor'])) {
         /** @var \Drupal\Core\Template\TwigEnvironment $environment */
         $environment = \Drupal::service('twig');
 
-        $output = $environment->renderInline(
-          $this->getSetting('template'), [
-            'factor' => $values[$delta]['factor'],
-            'base_unit' => $base_unit_name
-          ]
-        );
+        $output = $environment->renderInline($this->getSetting('template'), [
+          'factor' => $values[$delta]['factor'],
+          'base_unit' => $base_unit_name,
+        ]);
 
         $elements[$delta]['#suffix'] = $output;
       }
@@ -66,5 +69,4 @@ class FD2UnitConversionFormatter extends EntityReferenceLabelFormatter {
 
     return $elements;
   }
-
 }
