@@ -27,15 +27,14 @@ if [ ! "$IS_FILE" ]; then
   exit 0
 fi
 
-# Check if the db.conf information has been modified since the last commit.
-# GIT_STATUS=$(git status --porcelain | grep "M  .fd2dev/db.conf")
-# if [ "$GIT_STATUS" ]; then
-#   # If the file is modified, get the new version and asset from the commit.
-
-# fi
-
 NEW_BRANCH_DB_VERSION=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
 NEW_BRANCH_DB_ASSET=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+# Don't run this if the new branch does not have db information
+# This will happen when switching to a branch made before this script was merged
+# into development.
+if [ ! "$NEW_BRANCH_DB_VERSION" ]; then
+  exit 0
+fi
 
 WORKING_FILES_DB_VERSION=$(head -1 ".fd2dev/db.conf")
 WORKING_FILES_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
@@ -59,7 +58,10 @@ if
   [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
     || [ "$NEW_BRANCH_DB_ASSET" != "$WORKING_FILES_DB_ASSET" ]
 then
-  echo "Database version has been changed but not committed."
+  echo "A new database version was installed by installDB.bash."
+  echo "But .fd2dev/db.conf has not been committed."
+  echo "Thus the currently installed database may not be compatible with the $NEW_BRANCH branch."
+  echo "Be sure to commit the changes to .fd2dev/db.conf to your feature branch."
 fi
 
 #if [ "$NEW_DB_VERSION" != "$OLD_DB_VERSION" ] || [ "$NEW_DB_ASSET" != "$OLD_DB_ASSET" ]; then
