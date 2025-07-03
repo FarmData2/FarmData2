@@ -10,7 +10,7 @@ FROM_BRANCH=$1
 TO_BRANCH=$2
 
 # Don't run this when a repo is cloned.
-if (! "$FROM_BRANCH"); then
+if [ -z "$FROM_BRANCH" ]; then
   exit 0
 fi
 
