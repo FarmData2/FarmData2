@@ -8,6 +8,7 @@ source "$REPO_ROOT_DIR/bin/lib.bash"
 
 FROM_REF=$1
 TO_REF=$2
+IS_FILE=$3
 
 # Don't run this when a repo is cloned.
 if [ -z "$FROM_REF" ]; then
@@ -19,7 +20,10 @@ if [ "$FROM_REF" = "$TO_REF" ]; then
   exit 0
 fi
 
-# Don't run this unless we are in the FarmData2 repo.
+# Don't run this if this is a file checkout.
+if [ ! "$IS_FILE" ]; then
+  exit 0
+fi
 
 echo "Running FarmData2 post-checkout hook..."
 
