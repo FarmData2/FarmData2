@@ -238,6 +238,7 @@ export default {
       },
       picklistValid: false,
       allBedsForLocation: [],
+      autoSelectAttemptedForLocation: null,
     };
   },
   computed: {
@@ -261,6 +262,11 @@ export default {
   },
   methods: {
     handleBedsUpdate(checkedBeds, totalBeds, allBeds) {
+      console.log('[handleBedsUpdate] update:beds event:');
+      console.log('  Picked beds:', checkedBeds);
+      console.log('  Total beds:', totalBeds);
+      console.log('  All beds:', allBeds);
+      console.log('  plantsAtLocation:', this.plantsAtLocation);
       this.allBedsForLocation = allBeds || [];
       if (!this.plantsAtLocation) {
         this.form.beds = checkedBeds;
@@ -338,6 +344,29 @@ export default {
       this.form.termination = false;
       this.form.picked = new Map();
       this.form.area = 100;
+      this.allBedsForLocation = [];
+      this.autoSelectAttemptedForLocation = null;
+      this.plantsAtLocation = false;
+    },
+    tryAutoSelectBeds() {
+      console.log('[tryAutoSelectBeds] called');
+      console.log('  allBedsForLocation:', this.allBedsForLocation);
+      console.log('  plantsAtLocation:', this.plantsAtLocation);
+      console.log('  form.beds before:', this.form.beds);
+      if (
+        !this.showActivePlantAssetUI &&
+        this.showLocationBedPickerUI &&
+        this.form.beds.length !== this.allBedsForLocation.length &&
+        this.autoSelectAttemptedForLocation !== this.form.location
+      ) {
+        this.form.beds = [...this.allBedsForLocation];
+        this.autoSelectAttemptedForLocation = this.form.location;
+        console.log(
+          '[tryAutoSelectBeds] AUTO-SELECT ALL BEDS for',
+          this.form.location
+        );
+        console.log('  form.beds after:', this.form.beds);
+      }
     },
   },
   watch: {
@@ -351,6 +380,12 @@ export default {
     },
     pickedValidity(newVal) {
       this.validity.picked = newVal;
+    },
+    'form.location'() {
+      this.allBedsForLocation = [];
+      this.autoSelectAttemptedForLocation = null;
+      this.form.beds = [];
+      this.plantsAtLocation = false;
     },
   },
   created() {

@@ -21,7 +21,7 @@
     v-bind:selectAllBedsByDefault="selectAllBedsByDefault"
     v-model:selected="this.form.selected"
     v-model:pickedBeds="this.form.pickedBeds"
-    v-on:update:beds="(beds) => (this.form.pickedBeds = beds)"
+    v-on:update:beds="handleBedsUpdate"
     v-on:valid="(valid) => (validity.selected = valid)"
     v-on:ready="createdCount++"
   />
@@ -247,7 +247,11 @@
       </tr>
       <tr>
         <td>update:beds</td>
-        <td>{{ form.pickedBeds }}</td>
+        <td>
+          Picked: {{ bedsInfo.picked }}<br />
+          Total beds: {{ bedsInfo.total }}<br />
+          All beds: {{ bedsInfo.all }}
+        </td>
       </tr>
       <tr>
         <td>valid</td>
@@ -290,11 +294,20 @@ export default {
         selected: false,
       },
       createdCount: 0,
+      bedsInfo: {
+        picked: [],
+        total: 0,
+        all: [],
+      },
     };
   },
   methods: {
     handleAddClicked() {
       this.addClicked = 'empty payload';
+    },
+    handleBedsUpdate(picked, total, all) {
+      this.form.pickedBeds = picked;
+      this.bedsInfo = { picked, total, all };
     },
   },
   watch: {

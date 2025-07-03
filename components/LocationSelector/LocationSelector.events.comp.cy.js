@@ -411,4 +411,25 @@ describe('Test the LocationSelector component events', () => {
         .should('have.been.calledWith', 'Unable to fetch locations.');
     });
   });
+
+  it('emits update:beds with full bed list as third argument', () => {
+    const updateBedsSpy = cy.spy().as('updateBedsSpy');
+    cy.mount(LocationSelector, {
+      props: {
+        includeFields: true,
+        onUpdate: { beds: updateBedsSpy },
+      },
+    });
+
+    // Select a location with beds (e.g., "H")
+    cy.get('[data-cy="selector-input"]').select('H');
+    cy.get('@updateBedsSpy').should('have.been.called');
+
+    cy.get('@updateBedsSpy').then((spy) => {
+      const args = spy.lastCall.args;
+      expect(Array.isArray(args[2])).to.be.true; // third arg is array
+      expect(args[2].length).to.be.greaterThan(0); // should have beds
+      expect(args[2]).to.include('H-1'); // example bed
+    });
+  });
 });
