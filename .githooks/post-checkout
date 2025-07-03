@@ -57,7 +57,7 @@ echo "NEW_BRANCH: $NEW_BRANCH"
 
 if
   [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
-    || [ "$NEW_BRANCH_DB_ASSET" != "$OLD_BRANCH_DB_ASSET" ]
+    || [ "$NEW_BRANCH_DB_ASSET" != "$WORKING_FILES_DB_ASSET" ]
 then
   echo "Database version has been changed but not committed."
 fi
