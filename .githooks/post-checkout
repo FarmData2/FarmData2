@@ -27,11 +27,30 @@ if [ ! "$IS_FILE" ]; then
   exit 0
 fi
 
-NEW_DB_VERSION=$(head -1 ".fd2dev/db.conf")
-NEW_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
+# Check if the db.conf information has been modified since the last commit.
+# GIT_STATUS=$(git status --porcelain | grep "M  .fd2dev/db.conf")
+# if [ "$GIT_STATUS" ]; then
+#   # If the file is modified, get the new version and asset from the commit.
+
+# fi
+
+NEW_DB_COMMITTED_VERSION=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
+NEW_DB_COMMITTED_ASSET=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+
+DB_WORKING_VERSION=$(head -1 ".fd2dev/db.conf")
+DB_WORKING_ASSET=$(tail -1 ".fd2dev/db.conf")
 
 OLD_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
 OLD_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+
+echo "NEW_DB_COMMITTED_VERSION: $NEW_DB_COMMITTED_VERSION"
+echo "NEW_DB_COMMITTED_ASSET: $NEW_DB_COMMITTED_ASSET"
+
+echo "DB_WORKING_VERSION: $DB_WORKING_VERSION"
+echo "DB_WORKING_ASSET: $DB_WORKING_ASSET"
+
+echo "OLD_DB_VERSION: $OLD_DB_VERSION"
+echo "OLD_DB_ASSET: $OLD_DB_ASSET"
 
 NEW_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
