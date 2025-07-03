@@ -58,13 +58,11 @@ if
   [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
     || [ "$NEW_BRANCH_DB_ASSET" != "$WORKING_FILES_DB_ASSET" ]
 then
-  echo "A new database version was installed by installDB.bash."
-  echo "But .fd2dev/db.conf has not been committed."
-  echo "Thus the currently installed database may not be compatible with the $NEW_BRANCH branch."
-  echo "Be sure to commit the changes to .fd2dev/db.conf to your feature branch."
+  echo -e "${ORANGE}WARNING: The installed database may not be compatible with the $NEW_BRANCH branch.${NO_COLOR}"
+  echo "  A new database version was installed by installDB.bash but .fd2dev/db.conf was not been committed."
+  echo "  You should commit the changes to .fd2dev/db.conf to your feature branch."
+elif [ "$NEW_BRANCH_DB_VERSION" != "$OLD_BRANCH_DB_VERSION" ] \
+  || [ "$NEW_BRANCH_DB_ASSET" != "$OLD_BRANCH_DB_ASSET" ]; then
+  echo "Branch $NEW_BRANCH requires $NEW_BRANCH_DB_ASSET from $NEW_BRANCH_DB_VERSION."
+  installDB.bash --release="$NEW_DB_VERSION" --asset="$NEW_DB_ASSET"
 fi
-
-#if [ "$NEW_DB_VERSION" != "$OLD_DB_VERSION" ] || [ "$NEW_DB_ASSET" != "$OLD_DB_ASSET" ]; then
-#  echo "Branch $NEW_BRANCH requires $NEW_DB_ASSET from $NEW_DB_VERSION."
-#  installDB.bash --release="$NEW_DB_VERSION" --asset="$NEW_DB_ASSET"
-#fi
