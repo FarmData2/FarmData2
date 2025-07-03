@@ -189,13 +189,13 @@ else
 fi
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $HOME/.fd2/...${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $REPO_DIR/.fd2/...${NO_COLOR}"
 else
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from release $DB_RELEASE...${NO_COLOR}"
 
-  if [ -f "$HOME/.fd2/$DB_ASSET" ]; then
+  if [ -f "$REPO_DIR/.fd2/$DB_ASSET" ]; then
     echo "Deleting existing database archives..."
-    rm "$HOME/.fd2/$DB_ASSET"
+    rm "$REPO_DIR/.fd2/$DB_ASSET"
     error_check "Unable to delete existing database archives."
     echo "  Deleted."
   fi
@@ -203,7 +203,7 @@ else
   echo "Downloading database \"$DB_ASSET\" from release $DB_RELEASE..."
   gh release download "$DB_RELEASE" \
     --repo FarmData2/FD2-SampleDBs \
-    --dir "$HOME/.fd2/" \
+    --dir "$REPO_DIR/.fd2/" \
     --pattern "$DB_ASSET" \
     --clobber
   error_check "Unable to download the database."
@@ -237,7 +237,7 @@ error_check "Unable to delete the current database."
 echo "  Deleted."
 
 echo "Extracting $DB_ASSET..."
-echo "fd2dev" | sudo -Sk -p "" tar -xzf "$HOME/.fd2/$DB_ASSET" > /dev/null
+echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "  Extracted."
 
@@ -270,9 +270,9 @@ echo "  Drupal cache cleared."
 echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $HOME/.fd2/.${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $REPO_DIR/.fd2/.${NO_COLOR}"
 else
-  echo "$DB_RELEASE" > "$HOME/.fd2/db.version.txt"
-  echo "$DB_ASSET" >> "$HOME/.fd2/db.version.txt"
+  echo "$DB_RELEASE" > "$REPO_DIR/.fd2dev/db.conf"
+  echo "$DB_ASSET" >> "$REPO_DIR/.fd2dev/db.conf"
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from release $DB_RELEASE.${NO_COLOR}"
 fi

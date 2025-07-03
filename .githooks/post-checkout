@@ -27,8 +27,8 @@ fi
 
 echo "Running FarmData2 post-checkout hook..."
 
-DB_VERSION=$(head -1 "$REPO_ROOT_DIR"/.fd2/db.version)
-DB_ASSET=$(tail -1 "$REPO_ROOT_DIR"/.fd2/db.asset)
+DB_VERSION=$(head -1 "$REPO_ROOT_DIR"/.fd2dev/db.conf)
+DB_ASSET=$(tail -1 "$REPO_ROOT_DIR"/.fd2dev/db.conf)
 
 echo "$FROM_REF"
 echo "$TO_REF"
