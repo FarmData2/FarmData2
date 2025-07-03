@@ -51,7 +51,7 @@
           includeGreenhousesWithBeds
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="true"
+          v-bind:allowBedSelection="!plantsAtLocation"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:beds="
@@ -261,20 +261,12 @@ export default {
     },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds, allBeds) {
-      console.log('[handleBedsUpdate] update:beds event:');
-      console.log('  Picked beds:', checkedBeds);
-      console.log('  Total beds:', totalBeds);
-      console.log('  All beds:', allBeds);
-      console.log('  plantsAtLocation:', this.plantsAtLocation);
-      this.allBedsForLocation = allBeds || [];
-      if (!this.plantsAtLocation) {
-        this.form.beds = checkedBeds;
-        this.form.area =
-          totalBeds > 0
-            ? Math.round((checkedBeds.length / totalBeds) * 100)
-            : 100; // default to 100% if there are no beds
-      }
+    handleBedsUpdate(checkedBeds, totalBeds) {
+      this.form.beds = checkedBeds;
+      this.form.area =
+        totalBeds > 0
+          ? Math.round((checkedBeds.length / totalBeds) * 100)
+          : 100; // default to 100% if there are no beds
     },
     submit() {
       this.submitting = true;
@@ -337,6 +329,8 @@ export default {
         this.form.speed = 0;
         this.form.passes = 1;
         this.form.comment = null;
+        this.form.seedApplicationPasses = 1;
+        this.form.seedIncorporationPasses = 1;
       }
 
       this.form.location = null;
