@@ -23,15 +23,15 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
         cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
 
-        cy.get('[data-cy="picklist-table"]').should('exist');
+        cy.get('[data-cy="picklist-table"]').should('not.exist');
         cy.get('[data-cy="picklist-all-button"]').should('not.exist');
         cy.get('[data-cy="picklist-units-button"]').should('not.exist');
-        cy.get('[data-cy="picklist-header-crop"]').should('be.visible');
-        cy.get('[data-cy="picklist-header-bed"]').should('be.visible');
-        cy.get('[data-cy="picklist-header-planted-date"]').should('be.visible');
+        cy.get('[data-cy="picklist-header-crop"]').should('not.exist');
+        cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+        cy.get('[data-cy="picklist-header-planted-date"]').should('not.exist');
 
         cy.get('[data-cy="picklist-row-0"]').should('not.exist');
       });
@@ -173,5 +173,96 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
           .last()
           .should('have.value', 'CHUAU-5');
       });
+  });
+
+  it('Shows Picklist but not BedPicker for "A"', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'A',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(5);
+          });
+
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('be.visible');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
+      });
+  });
+
+  it('Shows Picklist and BedPicker for "ALF', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'ALF',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(3);
+          });
+
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+        cy.get('[data-cy="picklist-crop-0"]').should(
+          'have.text',
+          'PEPPERS-BELL'
+        );
+        cy.get('[data-cy="picklist-crop-2"]').should(
+          'have.text',
+          'LETTUCE-ICEBERG'
+        );
+
+        cy.get('[data-cy="picklist-bed-0"]').should('exist');
+        cy.get('[data-cy="picklist-bed-0"]').should('have.text', 'ALF-1');
+        cy.get('[data-cy="picklist-bed-2"]').should('exist');
+        cy.get('[data-cy="picklist-bed-2"]').should('have.text', 'ALF-2');
+      });
+  });
+
+  it('Shows BedPicker but no Picklist for "H', () => {
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'H',
+      },
+    });
+
+    cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+    cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+    cy.get('[data-cy="picker-options"]').should('exist');
+
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 2)
+      .first()
+      .should('have.value', 'H-1');
+
+    cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+      .should('have.length', 2)
+      .last()
+      .should('have.value', 'H-2');
   });
 });
