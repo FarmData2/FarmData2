@@ -29,30 +29,12 @@ fi
 
 NEW_BRANCH_DB_VERSION=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
 NEW_BRANCH_DB_ASSET=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
-# Don't run this if the new branch does not have db information
-# This will happen when switching to a branch made before this script was merged
-# into development.
-if [ ! "$NEW_BRANCH_DB_VERSION" ]; then
-  exit 0
-fi
 
 WORKING_FILES_DB_VERSION=$(head -1 ".fd2dev/db.conf")
 WORKING_FILES_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
 
 OLD_BRANCH_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
 OLD_BRANCH_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
-
-echo "NEW_BRANCH_DB_VERSION: $NEW_BRANCH_DB_VERSION"
-echo "NEW_BRANCH_DB_ASSET: $NEW_BRANCH_DB_ASSET"
-
-echo "WORKING_FILES_DB_VERSION: $WORKING_FILES_DB_VERSION"
-echo "WORKING_FILES_DB_ASSET: $WORKING_FILES_DB_ASSET"
-
-echo "OLD_BRANCH_DB_VERSION: $OLD_BRANCH_DB_VERSION"
-echo "OLD_BRANCH_DB_ASSET: $OLD_BRANCH_DB_ASSET"
-
-NEW_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-echo "NEW_BRANCH: $NEW_BRANCH"
 
 if
   [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
