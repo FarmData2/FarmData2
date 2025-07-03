@@ -6,11 +6,16 @@
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_ROOT_DIR/bin/lib.bash"
 
-FROM_BRANCH=$1
-TO_BRANCH=$2
+FROM_REF=$1
+TO_REF=$2
 
 # Don't run this when a repo is cloned.
-if [ -z "$FROM_BRANCH" ]; then
+if [ -z "$FROM_REF" ]; then
+  exit 0
+fi
+
+# Don't run this if there are no changes (e.g. switching to a new branch).
+if [ "$FROM_REF" = "$TO_REF" ]; then
   exit 0
 fi
 
@@ -18,7 +23,7 @@ fi
 
 echo "Running FarmData2 post-checkout hook..."
 
-echo "$FROM_BRANCH"
-echo "$TO_BRANCH"
+echo "$FROM_REF"
+echo "$TO_REF"
 
 echo "Done."
