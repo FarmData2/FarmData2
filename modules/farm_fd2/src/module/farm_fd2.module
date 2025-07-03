@@ -1,60 +1,8 @@
 <?php
 
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-
 /**
- * Makes the FD2 icon available for the menus.
+ * Implements hook_page_attachments_alter().
  */
 function farm_fd2_page_attachments(&$variables) {
   $variables['#attached']['library'][] = 'farm_fd2/fd2_icon';
-}
-
-/**
- * Update the form and displays for the entities and bundles that FD2 extends.
- */
-function farm_plant_type_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
-  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
-    $form_display->setComponent('fd2_harvest_unit', [
-      'type' => 'entity_reference',
-      'settings' => [
-        'target_type' => 'taxonomy_term'
-      ],
-      'region' => 'content',
-      'weight' => 2,
-    ]);
-
-    $form_display->setComponent('fd2_unit_conversions', [
-      'type' => 'entity_reference',
-      'settings' => [
-        'target_type' => 'taxonomy_term'
-      ],
-      'region' => 'content',
-      'weight' => 2,
-    ]);
-  }
-}
-
-function farm_plant_type_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
-  if ($context['entity_type'] == 'taxonomy_term' && $context['bundle'] == 'plant_type') {
-    $display->setComponent('fd2_harvest_unit', [
-      'type' => 'entity_reference',
-      'label' => 'inline',
-      'settings' => [
-        'target_type' => 'taxonomy_term'
-      ],
-      'region' => 'content',
-      'weight' => 25,
-    ]);
-
-    $display->setComponent('fd2_unit_conversions', [
-      'type' => 'entity_reference',
-      'label' => 'inline',
-      'settings' => [
-        'target_type' => 'taxonomy_term'
-      ],
-      'region' => 'content',
-      'weight' => 26,
-    ]);
-  }
 }

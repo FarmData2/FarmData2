@@ -35,7 +35,6 @@
   - [Entry Point Guide](contributing/entry-points.md) - a guide to creating, documenting and testing entry points.
   - [Library Guide](contributing/libraries.md) - a guide to creating, documenting and testing library code.
   - [Infrastructure Guide](contributing/infrastructure.md) - a guide to creating, documenting and testing infrastructure.
-  - [Fields Guide](contributing/fields.md) - a guide to adding new fields to farmOS entities.
   - [Views Guide](contributing/views.md) - a guide to creating custom API endpoints in farmOS using Views.
 - [Testing Tips](contributing/testingTips.md) - general tips for testing in FarmData2.
 
