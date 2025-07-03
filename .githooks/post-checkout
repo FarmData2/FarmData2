@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# This post-checkout hook ensures the version of the sampleDB
+# that is installed is compatible with the code in the branch.
+
+# shellcheck disable=SC1091  # Make sources okay.
+source lib.bash
+
+FROM_BRANCH=$1
+TO_BRANCH=$2
+
+echo "$FROM_BRANCH"
+echo "$TO_BRANCH"
