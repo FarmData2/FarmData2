@@ -12,11 +12,6 @@ FROM_REF=$1
 TO_REF=$2
 IS_FILE=$3
 
-echo "FROM_REF: $FROM_REF"
-echo "TO_REF: $TO_REF"
-echo "IS_FILE: $IS_FILE"
-echo ""
-
 # Don't run this when a repo is cloned.
 if [ -z "$FROM_REF" ]; then
   exit 0
@@ -36,13 +31,14 @@ echo "Running FarmData2 post-checkout hook..."
 
 NEW_DB_VERSION=$(head -1 ".fd2dev/db.conf")
 NEW_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
-
 OLD_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" | head -1)
 OLD_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" | tail -1)
 
-echo "New branch DB version: $NEW_DB_VERSION"
-echo "  New branch DB asset: $NEW_DB_ASSET"
-echo "Old branch DB version: $OLD_DB_VERSION"
-echo "  Old branch DB asset: $OLD_DB_ASSET"
+NEW_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$NEW_DB_VERSION" != "$OLD_DB_VERSION" ] || [ "$NEW_DB_ASSET" != "$OLD_DB_ASSET" ]; then
+  echo "Branch $NEW_BRANCH requires $NEW_DB_ASSET from $NEW_DB_VERSION."
+  installDB.bash --release="$NEW_DB_VERSION" --asset="$NEW_DB_ASSET"
+fi
 
 echo "Done."
