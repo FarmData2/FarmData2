@@ -3,11 +3,22 @@
 # This post-checkout hook ensures the version of the sampleDB
 # that is installed is compatible with the code in the branch.
 
-# shellcheck disable=SC1091  # Make sources okay.
-source lib.bash
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT_DIR/bin/lib.bash"
 
 FROM_BRANCH=$1
 TO_BRANCH=$2
 
+# Don't run this when a repo is cloned.
+if (! "$FROM_BRANCH"); then
+  exit 0
+fi
+
+# Don't run this unless we are in the FarmData2 repo.
+
+echo "Running FarmData2 post-checkout hook..."
+
 echo "$FROM_BRANCH"
 echo "$TO_BRANCH"
+
+echo "Done."
