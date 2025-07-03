@@ -39,5 +39,6 @@ scratch
 spikes
 .vale
 .fd2
+!.fd2dev/*
 .devcontainer/fd2_welcome.md
 bin/vale
