@@ -30,8 +30,8 @@ echo "Running FarmData2 post-checkout hook..."
 NEW_DB_VERSION=$(head -1 "$REPO_ROOT_DIR"/.fd2dev/db.conf)
 NEW_DB_ASSET=$(tail -1 "$REPO_ROOT_DIR"/.fd2dev/db.conf)
 
-OLD_DB_VERSION=$(git show "$FROM_REF:$REPO_ROOT_DIR/.fd2/db.conf" | head -1)
-OLD_DB_ASSET=$(git show "$FROM_REF:$REPO_ROOT_DIR/.fd2/db.conf" | tail -1)
+OLD_DB_VERSION=$(git show "$FROM_REF:$REPO_ROOT_DIR/.fd2dev/db.conf" | head -1)
+OLD_DB_ASSET=$(git show "$FROM_REF:$REPO_ROOT_DIR/.fd2dev/db.conf" | tail -1)
 
 echo "New branch DB version: $NEW_DB_VERSION"
 echo "  New branch DB asset: $NEW_DB_ASSET"
