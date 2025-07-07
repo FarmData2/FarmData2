@@ -36,6 +36,8 @@ WORKING_FILES_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
 OLD_BRANCH_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
 OLD_BRANCH_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
 
+NEW_BRANCH=$(git branch --show-current)
+
 if
   [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
     || [ "$NEW_BRANCH_DB_ASSET" != "$WORKING_FILES_DB_ASSET" ]
