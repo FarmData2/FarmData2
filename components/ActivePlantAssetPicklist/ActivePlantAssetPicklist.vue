@@ -173,20 +173,21 @@ export default {
     },
 
     isValid() {
-      if (!this.picklistValid) {
-        return false;
-      }
+      // if (!this.picklistValid) {
+      //   return false;
+      // }
       
-      if (this.required) {
-        //check plantAssets || check hasSelectedBed
-        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
-      }
+      // if (this.required) {
+      //   //check plantAssets || check hasSelectedBed
+      //   return this.hasSelectedBeds || this.hasSelectedPlantAssets;
+      // }
 
-      if (this.requiredRow) {
-        return this.hasSelectedPlantAssets;
-      }
+      // if (this.requiredRow) {
+      //   return this.hasSelectedPlantAssets;
+      // }
 
-      return true;
+      // return true;
+      return this.picklistValid && this.bedsValid;
     },
   },
 
