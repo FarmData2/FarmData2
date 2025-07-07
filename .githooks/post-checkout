@@ -46,5 +46,5 @@ then
 elif [ "$NEW_BRANCH_DB_VERSION" != "$OLD_BRANCH_DB_VERSION" ] \
   || [ "$NEW_BRANCH_DB_ASSET" != "$OLD_BRANCH_DB_ASSET" ]; then
   echo "Branch $NEW_BRANCH requires $NEW_BRANCH_DB_ASSET from $NEW_BRANCH_DB_VERSION."
-  installDB.bash --release="$NEW_DB_VERSION" --asset="$NEW_DB_ASSET"
+  installDB.bash --release="$NEW_BRANCH_DB_VERSION" --asset="$NEW_BRANCH_DB_ASSET"
 fi
