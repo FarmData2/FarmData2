@@ -53,25 +53,26 @@ describe('Soil Disturbance: Location Component', () => {
       .should('have.class', 'is-invalid');
   });
 
-  it('selects all beds by default for location with beds but no active plant assets (H)', () => {
+  it('selects all beds by default for H', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .select('H');
     cy.get('[data-cy="location-bed-picker"]')
       .find('input[type="checkbox"]')
-      .each(($el) => {
-        cy.wrap($el).should('be.checked');
+      .each((checkbox) => {
+        cy.wrap(checkbox).should('be.checked');
       });
   });
 
-  it('does not select all beds by default for location with beds and active plant assets (ALF)', () => {
+  it('does not select all beds by default for ALF', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .select('ALF');
     cy.get('[data-cy="location-bed-picker"]')
       .find('input[type="checkbox"]')
-      .each(($el) => {
-        cy.wrap($el).should('not.be.checked');
+      .should('have.length.greaterThan', 0)
+      .each((checkbox) => {
+        cy.wrap(checkbox).should('not.be.checked');
       });
   });
 });
