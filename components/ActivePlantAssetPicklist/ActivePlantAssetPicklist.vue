@@ -173,7 +173,7 @@ export default {
     },
 
     isValid() {
-      if (!picklistValid) {
+      if (!this.picklistValid) {
         return false;
       }
 
@@ -181,7 +181,7 @@ export default {
         return false;
       }
 
-      if (this.requredRow) {
+      if (this.requiredRow) {
         return this.hasSelectedPlantAssets;
       } else if (this.required) {
         //check plantAssets || check hasSelectedBed
