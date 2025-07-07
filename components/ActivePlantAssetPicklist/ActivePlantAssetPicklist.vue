@@ -176,7 +176,7 @@ export default {
       if (!this.picklistValid) {
         return false;
       }
-
+      
       if (this.required) {
         //check plantAssets || check hasSelectedBed
         return this.hasSelectedBeds || this.hasSelectedPlantAssets;
@@ -552,7 +552,7 @@ export default {
   },
 };
 </script>
-zw
+
 <style scoped>
 #active-plant-asset-bed-picker {
   display: flex;
