@@ -532,16 +532,14 @@ export default {
       },
     },
 
-    isValid: {
-      handler() {
-        this.$emit('valid', this.isValid);
-      },
-      /**
-       * The validity of the bedPicker or PicklistBase has changed.
-       * @property {boolean} event whether the selections are valid or not.
-       */
-      immediate: true,
+    isValid() {
+      this.$emit('valid', this.isValid);
     },
+    /**
+     * The validity of the bedPicker or PicklistBase has changed.
+     * @property {boolean} event whether the selections are valid or not.
+     */
+    immediate: true,
   },
 
   created() {
