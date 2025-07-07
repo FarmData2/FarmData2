@@ -177,15 +177,13 @@ export default {
         return false;
       }
 
-      if (this.locationHasBeds && !this.bedsValid) {
-        return false;
+      if (this.required) {
+        //check plantAssets || check hasSelectedBed
+        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
       }
 
       if (this.requiredRow) {
         return this.hasSelectedPlantAssets;
-      } else if (this.required) {
-        //check plantAssets || check hasSelectedBed
-        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
       }
 
       return true;
@@ -552,6 +550,7 @@ export default {
      */
     this.$emit('ready');
     this.$emit('update:area', 0);
+    this.$emit('valid', this.isValid);
   },
 };
 </script>
