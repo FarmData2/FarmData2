@@ -534,12 +534,15 @@ export default {
       },
     },
 
-    isValid() {
+    isValid: {
+      handler() {
+        this.$emit('valid', this.isValid);
+      },
       /**
        * The validity of the bedPicker or PicklistBase has changed.
        * @property {boolean} event whether the selections are valid or not.
        */
-      this.$emit('valid', this.isValid);
+      immediate: true,
     },
   },
 
@@ -549,11 +552,10 @@ export default {
      */
     this.$emit('ready');
     this.$emit('update:area', 0);
-    this.$emit('valid', this.isValid);
   },
 };
 </script>
-
+zw
 <style scoped>
 #active-plant-asset-bed-picker {
   display: flex;
