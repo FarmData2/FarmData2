@@ -173,20 +173,27 @@ export default {
     },
 
     isValid() {
-      // if (!this.picklistValid) {
-      //   return false;
-      // }
-      
-      // if (this.required) {
-      //   //check plantAssets || check hasSelectedBed
-      //   return this.hasSelectedBeds || this.hasSelectedPlantAssets;
-      // }
+      if (!this.picklistValid) {
+        return false;
+      }
 
-      // if (this.requiredRow) {
-      //   return this.hasSelectedPlantAssets;
-      // }
+      if (this.required) {
+        console.log(
+          'Testing required: ',
+          this.hasSelectedBeds,
+          this.hasSelectedPlantAssets
+        );
+        //check plantAssets || check hasSelectedBed
+        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
+      }
 
-      // return true;
+      if (this.requiredRow) {
+        console.log('Testing requiredRow: ', this.hasSelectedPlantAssets);
+        return this.hasSelectedPlantAssets;
+      }
+
+      console.log('Testing: ', this.picklistValid, this.bedsValid);
+
       return this.picklistValid && this.bedsValid;
     },
   },
