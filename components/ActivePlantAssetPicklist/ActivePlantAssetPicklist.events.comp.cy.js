@@ -102,7 +102,53 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('3) with requiredRow=false and a non-picklist bed picked should emit valid=true', () => {
+
+  it('3) with required=true and a valid bed picked should emit valid=true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
+        requiredRow: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    }).then(() => {
+      // pick the first row
+
+      cy.get('[data-cy="picker-options"] input[value="ALF-2"]').click();
+      
+
+      cy.get('@validSpy').should('have.been.calledWith', true);
+    });
+  });
+
+
+  it('4) with required=true and an invalid bed picked should emit valid=false', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
+        requiredRow: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    }).then(() => {
+      // pick the first row
+
+      cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
+      
+
+      cy.get('@validSpy').should('have.been.calledWith', false);
+    });
+  });
+
+  it('5) with requiredRow=false and a non-picklist bed picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -122,7 +168,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('4) with requiredRow=true and no selections should emit valid=false', () => {
+  it('6) with requiredRow=true and no selections should emit valid=false', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -142,6 +188,31 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
         cy.get('@validSpy').should('have.been.calledOnceWith', false);
       });
   });
+
+  it('7) with requiredRow=true and 1 selections should emit valid=true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'CHUAU',
+        required: false,
+        requiredRow: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    }).then(() => {
+      cy.get('[data-cy="picklist-checkbox-1"]').click();
+
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@validSpy').should('have.been.calledWith', true);
+        });
+    });
+  });
+
+
 
   //------------------------ update:picked and update:checkedBeds testing -----------------------------------//
 

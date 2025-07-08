@@ -177,22 +177,16 @@ export default {
         return false;
       }
 
-      if (this.required) {
-        console.log(
-          'Testing required: ',
-          this.hasSelectedBeds,
-          this.hasSelectedPlantAssets
-        );
-        //check plantAssets || check hasSelectedBed
-        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
-      }
-
       if (this.requiredRow) {
-        console.log('Testing requiredRow: ', this.hasSelectedPlantAssets);
+        if (!this.hasSelectedPlantAssets) {
+          return false;
+        }
         return this.hasSelectedPlantAssets;
       }
 
-      console.log('Testing: ', this.picklistValid, this.bedsValid);
+      if (this.required) {
+        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
+      }
 
       return this.picklistValid && this.bedsValid;
     },
