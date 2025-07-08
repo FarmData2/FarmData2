@@ -155,7 +155,8 @@
               v-bind:depth="form.seedApplicationDepth"
               v-bind:speed="form.seedApplicationSpeed"
               v-bind:includeArea="false"
-              v-bind:includePasses="false"
+              v-bind:includePasses="true"
+              v-bind:passes="form.seedApplicationPasses"
               v-on:valid="
                 (valid) => {
                   validity.seedApplication = valid;
@@ -174,6 +175,11 @@
               v-on:update:speed="
                 (speed) => {
                   form.seedApplicationSpeed = speed;
+                }
+              "
+              v-on:update:passes="
+                (passes) => {
+                  form.seedApplicationPasses = passes;
                 }
               "
               v-on:error="
@@ -214,7 +220,8 @@
               v-bind:depth="form.seedIncorporationDepth"
               v-bind:speed="form.seedIncorporationSpeed"
               v-bind:includeArea="false"
-              v-bind:includePasses="false"
+              v-bind:includePasses="true"
+              v-bind:passes="form.seedIncorporationPasses"
               v-on:valid="
                 (valid) => {
                   validity.seedIncorporation = valid;
@@ -233,6 +240,11 @@
               v-on:update:speed="
                 (speed) => {
                   form.seedIncorporationSpeed = speed;
+                }
+              "
+              v-on:update:passes="
+                (passes) => {
+                  form.seedIncorporationPasses = passes;
                 }
               "
               v-on:error="
@@ -318,9 +330,11 @@ export default {
         seedApplicationEquipment: [],
         seedApplicationDepth: 0,
         seedApplicationSpeed: 0,
+        seedApplicationPasses: 1,
         seedIncorporationEquipment: [],
         seedIncorporationDepth: 0,
         seedIncorporationSpeed: 0,
+        seedIncorporationPasses: 1,
         comment: null,
       },
       validity: {
@@ -432,10 +446,12 @@ export default {
         this.form.seedApplicationEquipment = [];
         this.form.seedApplicationDepth = 0;
         this.form.seedApplicationSpeed = 0;
+        this.form.seedApplicationPasses = 1;
         this.seedIncorporationAccordionOpen = false;
         this.form.seedIncorporationEquipment = [];
         this.form.seedIncorporationDepth = 0;
         this.form.seedIncorporationSpeed = 0;
+        this.form.seedIncorporationPasses = 1;
         this.form.comment = '';
       }
 
