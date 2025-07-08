@@ -52,9 +52,10 @@
           v-model:selected="form.location"
           v-bind:pickedBeds="form.beds"
           v-bind:allowBedSelection="!plantsAtLocation"
+          v-bind:selectAllBedsByDefault="!plantsAtLocation"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:update:beds="onBedsUpdate"
+          v-on:update:beds="handleBedsUpdate"
           v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
@@ -234,10 +235,6 @@ export default {
         timestamp: 'Planted Date',
       },
       picklistValid: false,
-      allBedsForLocation: [],
-      autoSelectAttemptedForLocation: null,
-      plantAssetStatusKnown: false,
-      pendingBedsUpdate: null,
     };
   },
   computed: {
@@ -260,31 +257,11 @@ export default {
     },
   },
   methods: {
-    onBedsUpdate(checkedBeds, totalBeds, allBeds) {
-      this.pendingBedsUpdate = { checkedBeds, totalBeds, allBeds };
-      this.tryHandleBedsUpdate();
-    },
-    tryHandleBedsUpdate() {
-      if (this.plantAssetStatusKnown && this.pendingBedsUpdate) {
-        const { checkedBeds, totalBeds, allBeds } = this.pendingBedsUpdate;
-        this.handleBedsUpdate(checkedBeds, totalBeds, allBeds);
-        this.pendingBedsUpdate = null;
-      }
-    },
-    handleBedsUpdate(checkedBeds, totalBeds, allBeds) {
-      this.allBedsForLocation = allBeds || [];
-      if (
-        this.allBedsForLocation.length > 0 &&
-        !this.plantsAtLocation &&
-        this.form.beds.length !== this.allBedsForLocation.length
-      ) {
-        this.form.beds = [...this.allBedsForLocation];
-      } else {
-        this.form.beds = checkedBeds;
-      }
+    handleBedsUpdate(checkedBeds, totalBeds) {
+      this.form.beds = checkedBeds;
       this.form.area =
         totalBeds > 0
-          ? Math.round((this.form.beds.length / totalBeds) * 100)
+          ? Math.round((checkedBeds.length / totalBeds) * 100)
           : 100;
     },
     submit() {
@@ -357,28 +334,16 @@ export default {
       this.form.termination = false;
       this.form.picked = new Map();
       this.form.area = 100;
-      this.allBedsForLocation = [];
-      this.autoSelectAttemptedForLocation = null;
-      this.plantsAtLocation = false;
-      this.plantAssetStatusKnown = false;
-      this.pendingBedsUpdate = null;
     },
   },
   watch: {
+    plantsAtLocation(newVal) {
+      if (!newVal) {
+        this.form.termination = false;
+      }
+    },
     pickedValidity(newVal) {
       this.validity.picked = newVal;
-    },
-    plantsAtLocation: {
-      handler() {
-        this.$emit('hasPlants', this.plantsAtLocation);
-        this.plantAssetStatusKnown = true;
-        this.tryHandleBedsUpdate();
-      },
-      immediate: false,
-    },
-    'form.location'() {
-      this.plantAssetStatusKnown = false;
-      this.pendingBedsUpdate = null;
     },
   },
   created() {

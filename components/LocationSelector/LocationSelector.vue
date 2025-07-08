@@ -418,14 +418,8 @@ export default {
          * The selected beds have changed.
          * @property {Array<string>} checkedBeds an array containing the names of the selected beds.
          * @property {number} totalBeds the total number of beds in the selected location.
-         * @property {Array<string>} allBeds the full list of beds for the selected location.
          */
-        this.$emit(
-          'update:beds',
-          this.checkedBeds,
-          this.beds.length,
-          this.beds
-        );
+        this.$emit('update:beds', this.checkedBeds, this.beds.length);
       },
       deep: true,
     },
@@ -438,6 +432,22 @@ export default {
        * @property {boolean} event whether the selections are valid or not.
        */
       this.$emit('valid', this.isValid);
+    },
+    selectAllBedsByDefault: {
+      handler(newVal) {
+        if (newVal && this.beds.length > 0) {
+          this.checkedBeds = [...this.beds];
+        }
+      },
+      immediate: true,
+    },
+    beds: {
+      handler(newBeds) {
+        if (this.selectAllBedsByDefault && newBeds.length > 0) {
+          this.checkedBeds = [...newBeds];
+        }
+      },
+      immediate: true,
     },
   },
   created() {
