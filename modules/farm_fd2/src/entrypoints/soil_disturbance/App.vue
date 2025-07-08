@@ -54,10 +54,7 @@
           v-bind:allowBedSelection="!plantsAtLocation"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:update:beds="
-            (checkedBeds, totalBeds, allBeds) =>
-              handleBedsUpdate(checkedBeds, totalBeds, allBeds)
-          "
+          v-on:update:beds="onBedsUpdate"
           v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
@@ -239,6 +236,8 @@ export default {
       picklistValid: false,
       allBedsForLocation: [],
       autoSelectAttemptedForLocation: null,
+      plantAssetStatusKnown: false,
+      pendingBedsUpdate: null,
     };
   },
   computed: {
@@ -261,7 +260,35 @@ export default {
     },
   },
   methods: {
+    onBedsUpdate(checkedBeds, totalBeds, allBeds) {
+      console.log('[onBedsUpdate] called with:', {
+        checkedBeds,
+        totalBeds,
+        allBeds,
+      });
+      this.pendingBedsUpdate = { checkedBeds, totalBeds, allBeds };
+      this.tryHandleBedsUpdate();
+    },
+    tryHandleBedsUpdate() {
+      console.log(
+        '[tryHandleBedsUpdate] plantAssetStatusKnown:',
+        this.plantAssetStatusKnown,
+        'pendingBedsUpdate:',
+        this.pendingBedsUpdate
+      );
+      if (this.plantAssetStatusKnown && this.pendingBedsUpdate) {
+        const { checkedBeds, totalBeds, allBeds } = this.pendingBedsUpdate;
+        this.handleBedsUpdate(checkedBeds, totalBeds, allBeds);
+        this.pendingBedsUpdate = null;
+      }
+    },
     handleBedsUpdate(checkedBeds, totalBeds, allBeds) {
+      console.log('[handleBedsUpdate] called with:', {
+        checkedBeds,
+        totalBeds,
+        allBeds,
+        plantsAtLocation: this.plantsAtLocation,
+      });
       this.allBedsForLocation = allBeds || [];
       if (
         this.allBedsForLocation.length > 0 &&
@@ -269,13 +296,19 @@ export default {
         this.form.beds.length !== this.allBedsForLocation.length
       ) {
         this.form.beds = [...this.allBedsForLocation];
+        console.log(
+          '[handleBedsUpdate] auto-selecting all beds:',
+          this.form.beds
+        );
       } else {
         this.form.beds = checkedBeds;
+        console.log('[handleBedsUpdate] using checkedBeds:', this.form.beds);
       }
       this.form.area =
         totalBeds > 0
           ? Math.round((this.form.beds.length / totalBeds) * 100)
           : 100;
+      console.log('[handleBedsUpdate] form.area set to:', this.form.area);
     },
     submit() {
       this.submitting = true;
@@ -350,6 +383,8 @@ export default {
       this.allBedsForLocation = [];
       this.autoSelectAttemptedForLocation = null;
       this.plantsAtLocation = false;
+      this.plantAssetStatusKnown = false;
+      this.pendingBedsUpdate = null;
     },
   },
   watch: {
@@ -358,10 +393,19 @@ export default {
     },
     plantsAtLocation: {
       handler(newValue) {
+        console.log('[plantsAtLocation watcher] newValue:', newValue);
         this.$emit('hasPlants', newValue);
         this.plantAssetStatusKnown = true;
+        this.tryHandleBedsUpdate();
       },
       immediate: false,
+    },
+    'form.location'() {
+      console.log(
+        '[form.location watcher] resetting plantAssetStatusKnown and pendingBedsUpdate'
+      );
+      this.plantAssetStatusKnown = false;
+      this.pendingBedsUpdate = null;
     },
   },
   created() {
