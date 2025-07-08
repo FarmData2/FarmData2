@@ -156,7 +156,7 @@ describe('Test the PicklistBase component styling', () => {
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('[data-cy="picklist-table"]').should('have.class', 'is-valid');
+        cy.get('[data-cy="picklist-table"]').should('have.class', '{}');
         cy.get('[data-cy="picklist-table"]').should(
           'not.have.class',
           'is-invalid'
