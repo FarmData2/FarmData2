@@ -12,6 +12,16 @@ import {
 
 /**
  * Create a new activity log (`log--activity`) for a winter kill.
+ *
+ * @param {string} winterKillDate - The date of the winter kill.
+ * @param {string} locationName - The name of the location where the winter kill occurred.
+ * @param {Array<string>} bedNames - The names of the bed(s) where the winter kill occurred.
+ * @param {Object} plantAsset - The plant asset created by the winter kill.
+ *
+ * @returns {Object} The new activity log.
+ * @throws {Error} if unable to create the activity log.
+ *
+ * @category Winter Kill
  */
 export async function createWinterKillActivityLog(
   winterKillDate,
@@ -61,6 +71,12 @@ export async function createWinterKillActivityLog(
 
 /**
  * Get the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the activity log with the specified id.
+ * @throws {Error} if unable to get the activity log.
+ *
+ * @category Winter Kill
  */
 export async function getWinterKillActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
@@ -72,6 +88,12 @@ export async function getWinterKillActivityLog(activityLogId) {
 
 /**
  * Delete the winter kill activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the deleted activity log.
+ * @throws {Error} if unable to delete the activity log.
+ *
+ * @category Winter Kill
  */
 export async function deleteWinterKillActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();

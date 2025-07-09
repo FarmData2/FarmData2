@@ -81,6 +81,12 @@ export async function createSeedingLog(
 
 /**
  * Get the seeding log with the specified id.
+ *
+ * @param {string} seedingLogId the id of the seeding log.
+ * @returns {Object} the seeding log with the specified id.
+ * @throws {Error} if unable to get the seeding log.
+ *
+ * @category Seeding
  */
 export async function getSeedingLog(seedingLogId) {
   const farm = await getFarmOSInstance();
@@ -92,6 +98,12 @@ export async function getSeedingLog(seedingLogId) {
 
 /**
  * Delete the seeding log with the specified id.
+ *
+ * @param {string} seedingLogId the id of the seeding log.
+ * @returns {Object} the deleted seeding log.
+ * @throws {Error} if unable to delete the seeding log.
+ *
+ * @category Seeding
  */
 export async function deleteSeedingLog(seedingLogId) {
   const farm = await getFarmOSInstance();
