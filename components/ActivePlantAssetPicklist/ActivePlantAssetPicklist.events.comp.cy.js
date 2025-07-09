@@ -102,7 +102,6 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-
   it('3) with required=true and a valid bed picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
@@ -119,12 +118,10 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       // pick the first row
 
       cy.get('[data-cy="picker-options"] input[value="ALF-2"]').click();
-      
 
       cy.get('@validSpy').should('have.been.calledWith', true);
     });
   });
-
 
   it('4) with required=true and an invalid bed picked should emit valid=false', () => {
     const readySpy = cy.spy().as('readySpy');
@@ -142,7 +139,6 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       // pick the first row
 
       cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
-      
 
       cy.get('@validSpy').should('have.been.calledWith', false);
     });
@@ -211,8 +207,6 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
         });
     });
   });
-
-
 
   //------------------------ update:picked and update:checkedBeds testing -----------------------------------//
 

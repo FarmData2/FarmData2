@@ -178,9 +178,6 @@ export default {
       }
 
       if (this.requiredRow) {
-        if (!this.hasSelectedPlantAssets) {
-          return false;
-        }
         return this.hasSelectedPlantAssets;
       }
 
@@ -535,12 +532,13 @@ export default {
     },
 
     isValid() {
+      /**
+       * The validity of the bedPicker or PicklistBase has changed.
+       * @property {boolean} event whether the selections are valid or not.
+       */
       this.$emit('valid', this.isValid);
     },
-    /**
-     * The validity of the bedPicker or PicklistBase has changed.
-     * @property {boolean} event whether the selections are valid or not.
-     */
+
     immediate: true,
   },
 
