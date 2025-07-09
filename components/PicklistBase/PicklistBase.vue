@@ -404,7 +404,7 @@ export default {
     },
     validityStyling() {
       if (this.showValidityStyling) {
-        if (!this.required && this.picked.length === 0) {
+        if (!this.required && this.picked.size == 0) {
           return null;
         } else {
           return this.isValid;
