@@ -19,9 +19,7 @@ import {
  * @param {Array<string>} bedNames - The names of the bed(s) where the transplanting occurred.
  * @param {Object} plantAsset - The plant asset created by the transplanting.
  * @param {Array<Object>} [quantities] - An array of quantity objects.
- *
- *
- *
+ * @returns {Object} The new activity log.
  * @throws {Error} if unable to create the activity log.
  *
  * @category transplanting

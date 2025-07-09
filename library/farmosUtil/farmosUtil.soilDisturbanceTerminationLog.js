@@ -20,11 +20,8 @@ import {
  * @param {string} locationName - The name of the location where the soil disturbance occurred.
  * @param {Array<string>} bedNames - The names of the bed(s) where the soil disturbance occurred.
  * @param {Object} plantAsset - The plant asset created by the soil disturbance.
- *
- *
- * @throws {Error} if unable to create the activity log.
- *
  * @returns {Object} The new activity log.
+ * @throws {Error} if unable to create the activity log.
  *
  * @category Soil disturbance Termination
  */

@@ -89,8 +89,6 @@ export async function createSoilDisturbanceActivityLog(
  *
  * @param {string} activityLogId the id of the activity log.
  * @returns {Object} the activity log with the specified id.
- *
- *
  * @throws {Error} if unable to get the activity log.
  *
  * @category Soil disturbance
@@ -108,8 +106,6 @@ export async function getSoilDisturbanceActivityLog(activityLogId) {
  *
  * @param {string} activityLogId the id of the activity log.
  * @returns {Object} the deleted activity log.
- *
- *
  * @throws {Error} if unable to delete the activity log.
  *
  * @category Soil disturbance
