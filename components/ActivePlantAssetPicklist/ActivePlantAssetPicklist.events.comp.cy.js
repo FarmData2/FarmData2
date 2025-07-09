@@ -115,9 +115,9 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
         onValid: validSpy,
       },
     }).then(() => {
-      // pick the first row
+      // pick the first bed
 
-      cy.get('[data-cy="picker-options"] input[value="ALF-2"]').click();
+      cy.contains('[data-cy="picker-options"] label', 'ALF-1').click();
 
       cy.get('@validSpy').should('have.been.calledWith', true);
     });
