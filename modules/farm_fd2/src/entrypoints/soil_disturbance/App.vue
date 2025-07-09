@@ -324,6 +324,8 @@ export default {
         this.form.speed = 0;
         this.form.passes = 1;
         this.form.comment = null;
+        this.form.seedApplicationPasses = 1;
+        this.form.seedIncorporationPasses = 1;
       }
 
       this.form.location = null;
