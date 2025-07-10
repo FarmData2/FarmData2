@@ -56,9 +56,17 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
+  /**
+   * required false requiredRow false --> test is valid
+   * required true requiredRow false --> test is valid if bed or plant is selected | test is invalid if else
+   * required true requiredRow true --> test is valid if a bed or plant asset is selected | test is invalid if else
+   *
+   *
+   */
+
   //---------------------- Valid‐state tests  --------------------------//
 
-  it('1) with required=false should emit valid=true immediately', () => {
+  it('1) required=false and requiredRow=false should emit valid=true immediately', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -82,7 +90,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       });
   });
 
-  it('2) with required=true and a row picked should emit valid=true', () => {
+  it('2) required=true and requiredRow=false with a plant picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
@@ -94,118 +102,146 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
         onReady: readySpy,
         onValid: validSpy,
       },
-    }).then(() => {
-      // pick the first row
-      cy.get('[data-cy="picklist-checkbox-0"]').click();
-
-      cy.get('@validSpy').should('have.been.calledWith', true);
     });
-  });
-
-  it('3) with required=true and a valid bed picked should emit valid=true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        required: true,
-        requiredRow: false,
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    }).then(() => {
-      // pick the first bed
-
-      cy.contains('[data-cy="picker-options"] label', 'ALF-1').click();
-
-      cy.get('@validSpy').should('have.been.calledWith', true);
-    });
-  });
-
-  it('4) with required=true and an invalid bed picked should emit valid=false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        required: true,
-        requiredRow: false,
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    }).then(() => {
-      // pick the first row
-
-      cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
-
-      cy.get('@validSpy').should('have.been.calledWith', false);
-    });
-  });
-
-  it('5) with requiredRow=false and a non-picklist bed picked should emit valid=true', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        required: false,
-        requiredRow: false,
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    }).then(() => {
-      // pick ALF-4, which isn’t in the picklist rows
-      cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
-
-      cy.get('@validSpy').should('have.been.calledWith', true);
-    });
-  });
-
-  it('6) with requiredRow=true and no selections should emit valid=false', () => {
-    const readySpy = cy.spy().as('readySpy');
-    const validSpy = cy.spy().as('validSpy');
-
-    cy.mount(ActivePlantAssetPicklist, {
-      props: {
-        location: 'ALF',
-        required: false,
-        requiredRow: true,
-        onReady: readySpy,
-        onValid: validSpy,
-      },
-    });
-
     cy.get('@readySpy')
       .should('have.been.calledOnce')
       .then(() => {
-        cy.get('@validSpy').should('have.been.calledOnceWith', false);
+        cy.get('[data-cy="picklist-checkbox-0"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledTwice')
+          .its('secondCall.args.0')
+          .should('equal', true);
       });
   });
 
-  it('7) with requiredRow=true and 1 selections should emit valid=true', () => {
+  it('3) required=true and requiredRow=false with a bed picked should emit valid=true', () => {
     const readySpy = cy.spy().as('readySpy');
     const validSpy = cy.spy().as('validSpy');
 
     cy.mount(ActivePlantAssetPicklist, {
       props: {
         location: 'CHUAU',
-        required: false,
+        required: true,
+        requiredRow: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-options"] input[value="CHUAU-1"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledTwice')
+          .its('secondCall.args.0')
+          .should('equal', true);
+      });
+  });
+
+  it('4) required=true and requiredRow=false with a plant and a bed picked should emit valid=true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
+        requiredRow: false,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picklist-checkbox-0"]').click();
+
+        cy.get('[data-cy="picker-options"] input[value="ALF-1"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledThrice')
+          .its('secondCall.args.0')
+          .should('equal', true);
+      });
+  });
+
+  it('5) required=true and requiredRow=true with a plant picked should emit valid=true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
         requiredRow: true,
         onReady: readySpy,
         onValid: validSpy,
       },
-    }).then(() => {
-      cy.get('[data-cy="picklist-checkbox-1"]').click();
-
-      cy.get('@readySpy')
-        .should('have.been.calledOnce')
-        .then(() => {
-          cy.get('@validSpy').should('have.been.calledWith', true);
-        });
     });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picklist-checkbox-0"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledTwice')
+          .its('secondCall.args.0')
+          .should('equal', true);
+      });
+  });
+
+  it('6) required=true and requiredRow=true with a bed and plant picked should emit valid=true', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
+        requiredRow: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picklist-checkbox-0"]').click();
+
+        cy.get('[data-cy="picker-options"] input[value="ALF-1"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledThrice')
+          .its('secondCall.args.0')
+          .should('equal', true);
+      });
+  });
+
+  it('7) required=true and requiredRow=true with only a bed picked should emit valid=false', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const validSpy = cy.spy().as('validSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        required: true,
+        requiredRow: true,
+        onReady: readySpy,
+        onValid: validSpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picker-options"] input[value="ALF-4"]').click();
+
+        cy.get('@validSpy')
+          .should('have.been.calledOnce')
+          .its('firstCall.args.0')
+          .should('equal', false);
+      });
   });
 
   //------------------------ update:picked and update:checkedBeds testing -----------------------------------//

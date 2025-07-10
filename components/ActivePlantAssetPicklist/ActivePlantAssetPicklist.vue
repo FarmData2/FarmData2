@@ -177,6 +177,10 @@ export default {
         return false;
       }
 
+      if (this.requiredRow && this.required) {
+        return this.hasSelectedPlantAssets;
+      }
+
       if (this.requiredRow) {
         return this.hasSelectedPlantAssets;
       }
