@@ -173,12 +173,8 @@ export default {
     },
 
     isValid() {
-      if (!this.picklistValid) {
-        return false;
-      }
-
-      if (this.requiredRow && this.required) {
-        return this.hasSelectedPlantAssets;
+      if (!this.required) {
+        return true;
       }
 
       if (this.requiredRow) {
@@ -189,7 +185,7 @@ export default {
         return this.hasSelectedBeds || this.hasSelectedPlantAssets;
       }
 
-      return this.picklistValid && this.bedsValid;
+      return false;
     },
   },
 
