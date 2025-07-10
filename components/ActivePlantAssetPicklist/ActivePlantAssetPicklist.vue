@@ -172,26 +172,24 @@ export default {
     locationHasBeds() {
       return this.filteredBedNames.length > 0;
     },
-    filteredBedsInLocation() {
+    filteredBedNames() {
+      // Extract bed names from bedsInLocation once
+      const allBedNames = this.bedsInLocation.map((bed) =>
+        bed.attributes ? bed.attributes.name : bed
+      );
+
       if (this.includeEmptyBeds) {
-        return this.bedsInLocation;
+        // Return all bed names
+        return allBedNames;
       } else {
-        // Only beds that have active plant assets
+        // Only return bed names that have active plant assets
         const bedsWithPlants = new Set(
           this.affectedPlants
             .map((plant) => plant.bed)
             .filter((bed) => bed && bed !== 'N/A')
         );
-        return this.bedsInLocation.filter((bed) => {
-          const bedName = bed.attributes ? bed.attributes.name : bed;
-          return bedsWithPlants.has(bedName);
-        });
+        return Array.from(bedsWithPlants);
       }
-    },
-    filteredBedNames() {
-      return this.filteredBedsInLocation.map((bed) =>
-        bed.attributes ? bed.attributes.name : bed
-      );
     },
 
     picklistRequired() {
@@ -297,11 +295,6 @@ export default {
     },
 
     handleBedPickerUpdate(newBeds) {
-      // If we're already processing an update, don't trigger another update cycle
-      if (this.updateInProgress) return;
-
-      this.updateInProgress = true; // Start update cycle
-
       // Track the previous state to detect changes
       const previousBeds = [...this.checkedBeds];
       this.checkedBeds = newBeds;
@@ -322,9 +315,6 @@ export default {
       if (added.length > 0 || removed.length > 0) {
         this.updatePickedFromCheckedBeds(added, removed);
       }
-
-      // End update cycle
-      this.updateInProgress = false;
     },
 
     updatePickedFromCheckedBeds(added = [], removed = []) {
