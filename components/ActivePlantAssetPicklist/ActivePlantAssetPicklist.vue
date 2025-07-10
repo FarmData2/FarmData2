@@ -1,15 +1,16 @@
 <template>
   <div class="active-plant-asset-picklist-container">
-    <BedPicker
+    <PickerBase
       v-if="location && locationHasBeds"
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
+      label="Beds"
+      invalid-feedback-text="At least one bed is required"
       v-bind:required="required"
-      v-bind:location="location"
-      v-bind:picked="checkedBeds"
-      v-on:update:picked="handleBedPickerUpdate($event)"
       v-bind:showValidityStyling="showValidityStyling"
-      v-on:valid="handleBedsValid($event)"
+      v-bind:options="filteredBedNames"
+      v-model:picked="checkedBeds"
+      v-on:valid="handleBedsValid"
     />
 
     <PicklistBase
@@ -34,7 +35,7 @@
 <script>
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
-import BedPicker from '@comps/BedPicker/BedPicker.vue';
+import PickerBase from '@comps/PickerBase/PickerBase.vue';
 
 /**
  * The ActivePlantAssetPicklist allows the user to pick crops from a location.
@@ -76,7 +77,7 @@ import BedPicker from '@comps/BedPicker/BedPicker.vue';
  */
 export default {
   name: 'ActivePlantAssetPicklist',
-  components: { PicklistBase, BedPicker },
+  components: { PicklistBase, PickerBase },
   emits: [
     'ready',
     'valid',
@@ -138,6 +139,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Whether to include beds that do not have active plant assets.
+     */
+    includeEmptyBeds: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -162,7 +170,28 @@ export default {
       return this.affectedPlants.length > 0;
     },
     locationHasBeds() {
-      return this.bedsInLocation.length > 0;
+      return this.filteredBedNames.length > 0;
+    },
+    filteredBedsInLocation() {
+      if (this.includeEmptyBeds) {
+        return this.bedsInLocation;
+      } else {
+        // Only beds that have active plant assets
+        const bedsWithPlants = new Set(
+          this.affectedPlants
+            .map((plant) => plant.bed)
+            .filter((bed) => bed && bed !== 'N/A')
+        );
+        return this.bedsInLocation.filter((bed) => {
+          const bedName = bed.attributes ? bed.attributes.name : bed;
+          return bedsWithPlants.has(bedName);
+        });
+      }
+    },
+    filteredBedNames() {
+      return this.filteredBedsInLocation.map((bed) =>
+        bed.attributes ? bed.attributes.name : bed
+      );
     },
 
     picklistRequired() {
@@ -257,6 +286,14 @@ export default {
       ) {
         this.checkedBeds = merged;
       }
+    },
+
+    handleBedsValid(event) {
+      this.bedsValid = event;
+    },
+
+    handlePicklistValid(valid) {
+      this.picklistValid = valid;
     },
 
     handleBedPickerUpdate(newBeds) {
@@ -368,14 +405,6 @@ export default {
       const areaPercentage = Math.round((weightedSum / totalUniqueBeds) * 100);
 
       return areaPercentage;
-    },
-
-    handleBedsValid(event) {
-      this.bedsValid = event;
-    },
-
-    handlePicklistValid(valid) {
-      this.picklistValid = valid;
     },
 
     async checkPlantsAtLocation() {
@@ -517,6 +546,12 @@ export default {
     isInGround: {
       handler() {
         this.checkPlantsAtLocation();
+      },
+    },
+
+    checkedBeds: {
+      handler(newBeds) {
+        this.handleBedPickerUpdate(newBeds);
       },
     },
 

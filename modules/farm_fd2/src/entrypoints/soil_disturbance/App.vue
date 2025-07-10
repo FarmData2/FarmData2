@@ -99,6 +99,7 @@
             v-bind:location="form.location"
             v-bind:showValidityStyling="validity.show"
             v-bind:picked="form.picked"
+            v-bind:includeEmptyBeds="true"
             v-on:update:picked="form.picked = $event"
             v-on:hasPlants="plantsAtLocation = $event"
             v-on:update:area="form.area = $event"
