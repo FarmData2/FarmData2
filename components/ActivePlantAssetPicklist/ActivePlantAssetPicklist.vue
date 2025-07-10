@@ -338,6 +338,8 @@ export default {
         return acc;
       }, {});
 
+      console.log('Fej Test 1', bedTotals);
+
       // Map "Bed -> # of picked plants in that bed"
       const bedPicks = [...picked.values()].reduce((acc, row) => {
         if (row.row.bed !== 'N/A') {
@@ -346,11 +348,15 @@ export default {
         return acc;
       }, {});
 
+      console.log('Fej Test 2', bedPicks);
+
       // Get total number of unique beds
       const totalUniqueBeds = Object.keys(bedTotals).length;
       if (totalUniqueBeds === 0) {
         return 0; // Avoid division by zero
       }
+
+      console.log('Fej Test 3', totalUniqueBeds);
 
       // Area = [ ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds ] * 100
       let weightedSum = 0;
@@ -361,6 +367,8 @@ export default {
       }
 
       const areaPercentage = Math.round((weightedSum / totalUniqueBeds) * 100);
+
+      console.log('Fej Test 4', areaPercentage);
 
       return areaPercentage;
     },
