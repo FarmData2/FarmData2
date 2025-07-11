@@ -245,8 +245,10 @@ export default {
       this.$emit('update:area', area);
       this.updateCheckedBedsFromPicked(this.pickedRow);
 
-      // End update cycle
-      this.updateInProgress = false;
+      // End the update cycle AFTER Vue has processed watcher updates.
+      this.$nextTick(() => {
+        this.updateInProgress = false;
+      });
     },
 
     updateCheckedBedsFromPicked(newPicked) {
@@ -294,24 +296,17 @@ export default {
       this.picklistValid = valid;
     },
 
-    handleBedPickerUpdate(newBeds) {
-      // Track the previous state to detect changes
-      const previousBeds = [...this.checkedBeds];
-      this.checkedBeds = newBeds;
+    handleBedPickerUpdate(newBeds, oldBeds) {
+      // Emit the change event.
+      this.$emit('update:checkedBeds', newBeds);
 
-      /**
-       * Emitted when the set of selected beds changes.
-       *
-       * @event update:checkedBeds
-       * @property {string[]} checkedBeds - An array of bed identifiers that are currently selected in the BedPicker.
-       */
-      this.$emit('update:checkedBeds', this.checkedBeds);
+      // If an update cycle is already in progress, exit to prevent a loop.
+      if (this.updateInProgress) return;
 
-      // Find which beds were added and which were removed
-      const added = newBeds.filter((bed) => !previousBeds.includes(bed));
-      const removed = previousBeds.filter((bed) => !newBeds.includes(bed));
+      // Find which beds were added and which were removed...
+      const added = newBeds.filter((bed) => !oldBeds.includes(bed));
+      const removed = oldBeds.filter((bed) => !newBeds.includes(bed));
 
-      // If beds were added/removed, update the picklist
       if (added.length > 0 || removed.length > 0) {
         this.updatePickedFromCheckedBeds(added, removed);
       }
@@ -540,8 +535,8 @@ export default {
     },
 
     checkedBeds: {
-      handler(newBeds) {
-        this.handleBedPickerUpdate(newBeds);
+      handler(newBeds, oldBeds) {
+        this.handleBedPickerUpdate(newBeds, oldBeds);
       },
     },
 
