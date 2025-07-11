@@ -1,7 +1,7 @@
 <template>
   <div class="active-plant-asset-picklist-container">
     <BedPicker
-      v-if="location"
+      v-if="location && locationHasBeds"
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
       v-bind:required="required"
@@ -13,6 +13,7 @@
     />
 
     <PicklistBase
+      v-if="location && plantsAtLocation"
       id="active-plant-asset-picklist"
       data-cy="active-plant-asset-picklist"
       class="w-100"
@@ -150,6 +151,7 @@ export default {
         timestamp: 'Planted Date',
       },
       bedsValid: false,
+      bedsInLocation: [],
       picklistValid: false,
       updateInProgress: false, // flag to ensure one update cycle
     };
@@ -157,6 +159,9 @@ export default {
   computed: {
     plantsAtLocation() {
       return this.affectedPlants.length > 0;
+    },
+    locationHasBeds() {
+      return this.bedsInLocation.length > 0;
     },
 
     picklistRequired() {
@@ -496,12 +501,28 @@ export default {
       }
       return true;
     },
+
+    async checkBedsInLocation() {
+      if (this.location) {
+        try {
+          this.bedsInLocation = await farmosUtil.getBedsInLocation(
+            this.location
+          );
+        } catch (error) {
+          console.error('Error fetching beds for location:', error);
+          this.bedsInLocation = [];
+        }
+      } else {
+        this.bedsInLocation = [];
+      }
+    },
   },
 
   watch: {
     location: {
       handler() {
         this.checkPlantsAtLocation();
+        this.checkBedsInLocation();
       },
       immediate: true,
     },

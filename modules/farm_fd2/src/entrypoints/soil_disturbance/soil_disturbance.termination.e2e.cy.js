@@ -75,7 +75,7 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy="termination-event-label"]').should('not.be.visible');
     cy.get('[data-cy="termination-event-picklist"]').should('not.be.visible');
     cy.get('[data-cy="picklist-all-button"]').should('not.exist');
-    cy.get('[data-cy="sort-order-button"]').should('not.be.visible');
+    cy.get('[data-cy="sort-order-button"]').should('not.exist');
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');
@@ -183,7 +183,7 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy="termination-event-label"]').should('not.be.visible');
     cy.get('[data-cy="termination-event-picklist"]').should('not.be.visible');
     cy.get('[data-cy="picklist-all-button"]').should('not.exist');
-    cy.get('[data-cy="sort-order-button"]').should('not.be.visible');
+    cy.get('[data-cy="sort-order-button"]').should('not.exist');
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');
@@ -247,7 +247,7 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy="termination-event-label"]').should('not.be.visible');
     cy.get('[data-cy="termination-event-picklist"]').should('not.be.visible');
     cy.get('[data-cy="picklist-all-button"]').should('not.exist');
-    cy.get('[data-cy="sort-order-button"]').should('not.be.visible');
+    cy.get('[data-cy="sort-order-button"]').should('not.exist');
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
     cy.get('[data-cy="location-beds-accordion"]').should('exist');

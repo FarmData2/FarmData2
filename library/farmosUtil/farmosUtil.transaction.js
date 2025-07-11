@@ -28,6 +28,67 @@
  * If an operation was never attempted (and thus also not undone) the attribute for that operation will be `undefined`.
  *
  * @category Utilities
+ *  *
+ * @example
+ * // Create a transaction with a plant asset, a quantity, and a log
+ * let operations = [];
+ *
+ * const createPlantAsset = {
+ *   name: 'plantAsset',
+ *   do: async () => {
+ *     return await farmosUtil.createPlantAsset(
+ *       '2023-10-01', // Example date
+ *       'ZUCCHINI',   // Example crop name
+ *       'Planting zucchini in the greenhouse' // Example comment
+ *     );
+ *   },
+ *   undo: async (results) => {
+ *     await farmosUtil.deletePlantAsset(results['createPlantAsset'].id);
+ *   },
+ * }
+ * operations.push(createPlantAsset);
+ *
+ * const createQuantity = {
+ *   name: 'plantedQuantity',
+ *   do: async () => {
+ *     return await farmosUtil.createStandardQuantity(
+ *       'count',
+ *        50,
+ *       'Row Feet',
+ *       'FEET'
+ *        results.plantAsset,
+ *       'increment'
+ *     );
+ *   },
+ *   undo: async (results) => {
+ *     if (results['seedingLog'] !== 'undone') {
+ *        await farmosUtil.deleteStandardQuantity(results['plantedQuantity'].id);
+ *     }
+ *   }
+ * }
+ * operations.push(createQuantity);
+ *
+ * const createLog = {
+ *   name: 'seedingLog',
+ *   do: async (results) => {
+ *     return await farmosUtil.createSeedingLog(
+ *       '2023-10-01',
+ *       'CHUAU',
+ *       [],
+ *       ['seeding'],
+ *       results.plantAsset,
+ *       [results.plantedQuantity]
+ *     );
+ *   },
+ *   undo: async (results) => {
+ *     await farmosUtil.deleteSeedingLog(results['createLog'].id);
+ *   },
+ * }
+ * operations.push(createLog);
+ *
+ * runTransaction(operations)
+ *   .then((results) => console.log('Transaction completed successfully:', results))
+ *   .catch((error) => console.error('Transaction failed:', error));
  */
 export async function runTransaction(operations) {
   const done = {};
