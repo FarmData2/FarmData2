@@ -117,14 +117,13 @@ export default {
     },
     /**
      * If true, enforce at least one row in the PicklistBase.
-     * Ignored if `required` is true.
      */
     requiredRow: {
       type: Boolean,
       default: false,
     },
     /**
-     * Whether at least one crop must be picked or not.
+     * Whether at least a crop or bed must be picked or not.
      */
     required: {
       type: Boolean,
