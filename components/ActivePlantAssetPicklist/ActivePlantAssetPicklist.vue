@@ -124,7 +124,7 @@ export default {
       default: false,
     },
     /**
-     * Whether at least a crop or bed must be picked or not.
+     * Whether at least one crop or bed must be picked.
      */
     required: {
       type: Boolean,
