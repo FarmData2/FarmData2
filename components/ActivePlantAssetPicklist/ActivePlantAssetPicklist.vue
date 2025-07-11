@@ -169,8 +169,28 @@ export default {
       return this.required || this.requiredRow;
     },
 
+    hasSelectedPlantAssets() {
+      return this.pickedRow && this.pickedRow.size > 0;
+    },
+
+    hasSelectedBeds() {
+      return this.checkedBeds && this.checkedBeds.length > 0;
+    },
+
     isValid() {
-      return this.picklistValid && this.bedsValid;
+      if (!this.required) {
+        return true;
+      }
+
+      if (this.requiredRow) {
+        return this.hasSelectedPlantAssets;
+      }
+
+      if (this.required) {
+        return this.hasSelectedBeds || this.hasSelectedPlantAssets;
+      }
+
+      return false;
     },
   },
 
@@ -539,6 +559,8 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
+
+    immediate: true,
   },
 
   created() {
