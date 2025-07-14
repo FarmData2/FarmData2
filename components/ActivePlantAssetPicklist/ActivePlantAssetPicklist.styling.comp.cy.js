@@ -37,7 +37,7 @@ describe('ActivePlantAssetPicklist styling', () => {
 
     // PicklistBase should be valid
     cy.get('[data-cy="picklist-table"]')
-      .should('have.class', 'is-valid')
+      .should('not.have.class', 'is-valid')
       .and('not.have.class', 'is-invalid');
     cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
   });
@@ -111,7 +111,7 @@ describe('ActivePlantAssetPicklist styling', () => {
 
     // PicklistBase should be valid
     cy.get('[data-cy="picklist-table"]')
-      .should('have.class', 'is-valid')
+      .should('not.have.class', 'is-valid')
       .and('not.have.class', 'is-invalid');
     cy.get('[data-cy="picklist-invalid-feedback"]').should('not.exist');
   });

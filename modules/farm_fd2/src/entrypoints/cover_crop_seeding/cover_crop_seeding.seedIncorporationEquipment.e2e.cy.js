@@ -75,6 +75,6 @@ describe('Cover Crop Seeding: Seed Incorporation Equipment Component', () => {
     ).should('not.exist');
     cy.get(
       '[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"] [data-cy="soil-disturbance-passes"]'
-    ).should('not.exist');
+    ).should('exist');
   });
 });

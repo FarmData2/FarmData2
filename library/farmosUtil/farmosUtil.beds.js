@@ -8,6 +8,9 @@ import {
   getFarmOSInstance,
 } from './farmosUtil.core.js';
 
+import { getFieldNameToAssetMap } from './farmosUtil.fields.js';
+import { getGreenhouseNameToAssetMap } from './farmosUtil.greenhouses.js';
+
 /**
  * Clear the cached results from prior calls to the `getBeds` function.
  * This is useful when an action may change the beds that exist in the
@@ -95,4 +98,57 @@ export async function getBedIdToAssetMap() {
   const beds = await getBeds();
   const map = new Map(beds.map((bed) => [bed.id, bed]));
   return map;
+}
+/**
+ * Retrieves all beds associated with a specific location.
+ *
+ *
+ * NOTE: This function makes a call to
+ * [`getBeds`]{@link #module_farmosUtil.getBeds}
+ *
+ * This function queries the farm management system to find all beds
+ * that belong to the specified location.
+ *
+ * @category Beds
+ * }
+ */
+export async function getBedsInLocation(locationName) {
+  try {
+    const [fieldMap, greenhouseMap, beds] = await Promise.all([
+      getFieldNameToAssetMap(),
+      getGreenhouseNameToAssetMap(),
+      getBeds(),
+    ]);
+
+    let field = fieldMap.get(locationName);
+    let greenhouse = greenhouseMap.get(locationName);
+    let locationId = null;
+
+    if (field) {
+      locationId = field.id;
+    } else if (greenhouse) {
+      locationId = greenhouse.id;
+    } else {
+      console.warn(
+        `getBedsInLocation: Unable to find location: ${locationName}`
+      );
+      return [];
+    }
+
+    if (!locationId) {
+      return [];
+    }
+
+    const bedsInLocation = beds.filter((bed) => {
+      return bed.relationships.parent[0].id === locationId;
+    });
+
+    return bedsInLocation;
+  } catch (error) {
+    console.error(
+      'getBedsInLocation: Unable to get beds in location: ' + locationName,
+      error
+    );
+    return [];
+  }
 }

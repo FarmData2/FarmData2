@@ -98,4 +98,73 @@ describe('Test the bed utility functions', () => {
       }
     );
   });
+
+  it('should return beds for ALF location (field with beds)', async () => {
+    const beds = await farmosUtil.getBedsInLocation('ALF');
+
+    // Should have beds
+    expect(beds).to.be.an('array');
+    expect(beds.length).to.equal(4);
+    expect(beds[0].attributes.name).to.equal('ALF-1');
+
+    expect(beds[3].attributes.name).to.equal('ALF-4');
+
+    // Each bed should be a proper bed object
+    beds.forEach((bed) => {
+      expect(bed.attributes.name).to.include('ALF');
+    });
+
+    // Verify structure matches what we expect
+    const firstBed = beds[0];
+    expect(firstBed.relationships).to.have.property('parent');
+    expect(firstBed.relationships.parent).to.be.an('array');
+  });
+
+  it('should return empty array for A location (field without beds)', async () => {
+    const beds = await farmosUtil.getBedsInLocation('A');
+
+    expect(beds).to.be.an('array');
+    expect(beds).to.have.length(0);
+  });
+
+  it('should return beds for CHUAU location (greenhouse with beds)', async () => {
+    const beds = await farmosUtil.getBedsInLocation('CHUAU');
+
+    // Should have beds
+    expect(beds).to.be.an('array');
+    expect(beds.length).to.equal(5);
+
+    expect(beds[0].attributes.name).to.equal('CHUAU-1');
+
+    expect(beds[4].attributes.name).to.equal('CHUAU-5');
+
+    // Each bed should belong to CHUAU
+    beds.forEach((bed) => {
+      expect(bed.attributes.name).to.include('CHUAU');
+    });
+  });
+
+  it('should return empty array for JASMINE location (greenhouse without beds)', async () => {
+    const beds = await farmosUtil.getBedsInLocation('JASMINE');
+
+    expect(beds).to.be.an('array');
+    expect(beds).to.have.length(0);
+  });
+
+  it('should return empty array for non-existent location', async () => {
+    const beds = await farmosUtil.getBedsInLocation('NONEXISTENT');
+
+    expect(beds).to.be.an('array');
+    expect(beds).to.have.length(0);
+  });
+
+  it('should handle null/undefined location gracefully', async () => {
+    const bedsNull = await farmosUtil.getBedsInLocation(null);
+    const bedsUndefined = await farmosUtil.getBedsInLocation(undefined);
+
+    expect(bedsNull).to.be.an('array');
+    expect(bedsNull).to.have.length(0);
+    expect(bedsUndefined).to.be.an('array');
+    expect(bedsUndefined).to.have.length(0);
+  });
 });

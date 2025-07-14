@@ -59,6 +59,14 @@ describe('Cover Crop Seeding: Submission tests', () => {
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('2');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('3');
 
     cy.get(
       '[data-cy="cover-crop-seeding-seed-incorporation-accordion-title"]'
@@ -84,6 +92,14 @@ describe('Cover Crop Seeding: Submission tests', () => {
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .type('4');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .clear();
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .type('2');
 
     cy.get('[data-cy="comment-input"]').type('test comment');
     cy.get('[data-cy="comment-input"]').blur();
@@ -152,6 +168,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       expect(formData.seedApplicationEquipment[0]).to.equal('Tractor');
       expect(formData.seedApplicationDepth).to.equal(1);
       expect(formData.seedApplicationSpeed).to.equal(2);
+      expect(formData.seedApplicationPasses).to.equal(3);
 
       expect(formData.seedIncorporationEquipment).to.have.length(1);
       expect(formData.seedIncorporationEquipment[0]).to.equal(
@@ -159,6 +176,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
       );
       expect(formData.seedIncorporationDepth).to.equal(3);
       expect(formData.seedIncorporationSpeed).to.equal(4);
+      expect(formData.seedIncorporationPasses).to.equal(2);
 
       expect(formData.comment).to.equal('test comment');
     });
@@ -203,6 +221,14 @@ describe('Cover Crop Seeding: Submission tests', () => {
       .find('[data-cy="soil-disturbance-speed"]')
       .find('[data-cy="numeric-input"]')
       .should('have.value', '4.0');
+    cy.get('[data-cy="cover-crop-seeding-seed-application-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '3');
+    cy.get('[data-cy="cover-crop-seeding-seed-incorporation-soil-disturbance"]')
+      .find('[data-cy="soil-disturbance-passes"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', '2');
     cy.get('[data-cy="comment-input"]').should('have.value', 'test comment');
 
     // Check that the other parts of the form are reset.

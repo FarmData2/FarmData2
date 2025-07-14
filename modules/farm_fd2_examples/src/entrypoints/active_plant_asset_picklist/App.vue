@@ -54,6 +54,7 @@
             data-cy="required-checkbox"
             switch
             v-model="required"
+            v-bind:disabled="requiredRow"
           />
         </td>
       </tr>
@@ -65,7 +66,6 @@
             data-cy="requiredRow-checkbox"
             switch
             v-model="requiredRow"
-            v-bind:disabled="required"
           />
         </td>
       </tr>
@@ -178,6 +178,13 @@ export default {
   computed: {
     pageDoneLoading() {
       return this.createdCount === 3;
+    },
+  },
+  watch: {
+    requiredRow(newValue) {
+      if (newValue) {
+        this.required = true;
+      }
     },
   },
   methods: {
