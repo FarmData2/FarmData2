@@ -27,6 +27,7 @@
     v-bind:picked="form.picked"
     v-bind:isInTrays="isInTrays"
     v-bind:isInGround="isInGround"
+    v-bind:includeEmptyBeds="includeEmptyBeds"
     v-on:hasPlants="form.hasPlants = $event"
     v-on:update:picked="form.picked = $event"
     v-on:update:area="form.area = $event"
@@ -102,6 +103,17 @@
           />
         </td>
       </tr>
+      <tr>
+        <td>includeEmptyBeds</td>
+        <td>
+          <BFormCheckbox
+            id="includeEmptyBeds-checkbox"
+            data-cy="includeEmptyBeds-checkbox"
+            switch
+            v-model="includeEmptyBeds"
+          />
+        </td>
+      </tr>
     </tbody>
   </table>
 
@@ -172,6 +184,7 @@ export default {
       requiredRow: false,
       isInTrays: false,
       isInGround: true,
+      includeEmptyBeds: true,
       createdCount: 0,
     };
   },
