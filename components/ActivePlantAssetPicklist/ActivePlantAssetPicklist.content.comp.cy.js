@@ -265,4 +265,129 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
       .last()
       .should('have.value', 'H-2');
   });
+
+  it('Shows all beds when includeEmptyBeds is true (default) for ALF', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'ALF',
+        includeEmptyBeds: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show picklist with active plant assets
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+        // Should show all beds (ALF-1, ALF-2, ALF-3, ALF-4) even though only ALF-1 and ALF-2 have plants
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 4)
+          .first()
+          .should('have.value', 'ALF-1');
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .last()
+          .should('have.value', 'ALF-4');
+      });
+  });
+
+  it('Shows only beds with active plant assets when includeEmptyBeds is false for ALF', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'ALF',
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show picklist with active plant assets
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('exist');
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+        // Should show only beds with active plant assets (ALF-1, ALF-2)
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 2)
+          .first()
+          .should('have.value', 'ALF-1');
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .last()
+          .should('have.value', 'ALF-2');
+
+        // Should NOT show ALF-3 and ALF-4 (beds without active plant assets)
+        cy.get(
+          '[data-cy="picker-options"] input[name="picker-options"][value="ALF-3"]'
+        ).should('not.exist');
+        cy.get(
+          '[data-cy="picker-options"] input[name="picker-options"][value="ALF-4"]'
+        ).should('not.exist');
+      });
+  });
+
+  it('Shows all beds when includeEmptyBeds is true for H', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'H',
+        includeEmptyBeds: true,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show no picklist (no active plants)
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+        // Should show bed picker with all beds
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+        // Should show all beds (H-1, H-2)
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .should('have.length', 2)
+          .first()
+          .should('have.value', 'H-1');
+        cy.get('[data-cy="picker-options"] input[name="picker-options"]')
+          .last()
+          .should('have.value', 'H-2');
+      });
+  });
+
+  it('Shows no beds when includeEmptyBeds is false for H', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'H',
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show no picklist
+        cy.get('[data-cy="active-plant-asset-picklist"]').should('not.exist');
+        // Should show no bed picker
+        cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
+      });
+  });
 });
