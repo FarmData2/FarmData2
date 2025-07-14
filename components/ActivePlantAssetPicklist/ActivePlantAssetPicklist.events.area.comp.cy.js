@@ -134,6 +134,80 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
     });
   });
 
+  it('should correctly calculate and emit `update:area` when selecting and deselecting crops in a location with beds', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'CHUAU',
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          // Once on creation and then on location prop update
+          cy.get('@areaSpy').should('have.been.calledTwice');
+
+          // Select PEPPERS-BELL in ALF-1
+          cy.get('[data-cy="picklist-checkbox-0"]').check();
+          cy.get('@areaSpy')
+            .should('have.been.calledThrice')
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(25);
+            });
+
+          // Select LETTUCE-ICEBERG in ALF-1
+          cy.get('[data-cy="picklist-checkbox-1"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 4)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(50);
+            });
+
+          // Select LETTUCE-ICEBERG in ALF-2
+          cy.get('[data-cy="picklist-checkbox-2"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 5)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(100);
+            });
+
+          // Unselect LETTUCE-ICEBERG in ALF-1
+          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 6)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(75);
+            });
+
+          // Unselect PEPPERS-BELL in ALF-1
+          cy.get('[data-cy="picklist-checkbox-0"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 7)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(50);
+            });
+
+          // Unselect LETTUCE-ICEBERG in ALF-2
+          cy.get('[data-cy="picklist-checkbox-2"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 8)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+        });
+    });
+  });
+
   it('should correctly calculate and emit `update:area` for a location with active plant assets but no beds', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
