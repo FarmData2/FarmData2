@@ -284,9 +284,13 @@ export default {
 
       this.updateInProgress = true; // Start update cycle
 
+      console.log('CHECKED BEDS!', this.checkedBeds);
+
       // Track the previous state to detect changes
       const previousBeds = [...this.checkedBeds];
       this.checkedBeds = newBeds;
+
+      console.log('CHECK BEDS AFTER', this.checkedBeds);
 
       /**
        * Emitted when the set of selected beds changes.
@@ -338,25 +342,36 @@ export default {
         this.$emit('update:picked', this.pickedRow);
 
         // Update area calculation too
-        const area = this.calculatePickedArea(this.pickedRow);
-        this.$emit('update:area', area);
       }
+      const area = this.calculatePickedArea(this.pickedRow);
+      this.$emit('update:area', area);
     },
 
     calculatePickedArea(picked) {
       // If no plants are picked, return 0%
       if (picked.size === 0) {
-        return 0;
+        console.log('NO PLANTS PICKED');
+        console.log('SIZE == 0', this.checkedBeds);
+        return (1 / this.bedsInLocation.length) * 100;
       }
+
+      console.log('PICKED', picked);
+      console.log('PICKED SIZE', picked.size);
+      console.log('AFFECTED PLANTS', this.affectedPlants);
+      console.log('AFFECTED PLANTS SIZE', this.affectedPlants.length);
+      console.log('Total Beds', this.bedsInLocation.length);
 
       if (!this.picklistColumns.includes('bed')) {
         return 100;
       }
 
-      // If no beds are in the dataset, default to 100%
-      if (!this.picklistColumns.includes('bed')) {
-        return Math.round((picked.size / this.affectedPlants.length) * 100);
-      }
+      // // If no beds are in the dataset, default to 100%
+      // if (!this.picklistColumns.includes('bed')) {
+      //   return Math.round((picked.size / this.bedsInLocation.length) * 100);
+      // }
+
+      const target = (picked.size / this.bedsInLocation.length) * 100;
+      console.log('target', target);
 
       // Map "Bed -> Total # of plants in that bed"
       const bedTotals = this.affectedPlants.reduce((acc, row) => {
@@ -380,16 +395,25 @@ export default {
         return 0; // Avoid division by zero
       }
 
+      console.log('totalUniqueBeds', totalUniqueBeds);
+
       // Area = [ ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds ] * 100
       let weightedSum = 0;
 
+      // console.log('bedTotals', bedTotals);
+      // console.log('bedPicks', bedPicks);
+
       for (const [bed, totalForBed] of Object.entries(bedTotals)) {
         const pickedForBed = bedPicks[bed] || 0;
-
+        console.log(bed);
+        console.log('pickedForBed', pickedForBed);
+        console.log('totalForBed', totalForBed);
         weightedSum += pickedForBed / totalForBed;
       }
 
-      const areaPercentage = Math.round((weightedSum / totalUniqueBeds) * 100);
+      const areaPercentage = Math.round(
+        (weightedSum / this.bedsInLocation.length) * 100
+      );
 
       return areaPercentage;
     },
