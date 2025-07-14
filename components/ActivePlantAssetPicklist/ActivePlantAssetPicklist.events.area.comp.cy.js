@@ -756,4 +756,50 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
         });
     });
   });
+
+  it('Should reset area when switching from ALF to CHUAU with includeEmptyBeds false', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+    const bedPickedSpy = cy.spy().as('bedPickedSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'ALF',
+        includeEmptyBeds: false,
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+        'onUpdate:checkedBeds': bedPickedSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@areaSpy').should('have.been.calledTwice');
+          cy.get('@bedPickedSpy').should('not.have.been.called');
+
+          // Select a bed in ALF that has active plant assets
+          cy.get(
+            '[data-cy="picker-options"] input[name="picker-options"][value="ALF-2"]'
+          ).check();
+
+          cy.get('@areaSpy')
+            .should('have.been.calledThrice')
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.be.greaterThan(0);
+            });
+        })
+        .then(() => {
+          // Switch to CHUAU
+          wrapper.setProps({ location: 'CHUAU' });
+          // Area should reset (likely to 0)
+          cy.get('@areaSpy')
+            .should('have.callCount', 4)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+        });
+    });
+  });
 });
