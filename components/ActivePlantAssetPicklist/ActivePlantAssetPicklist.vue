@@ -325,6 +325,10 @@ export default {
         return 0;
       }
 
+      if (!this.picklistColumns.includes('bed')) {
+        return 100;
+      }
+
       // If no beds are in the dataset, default to 100%
       if (!this.picklistColumns.includes('bed')) {
         return Math.round((picked.size / this.affectedPlants.length) * 100);

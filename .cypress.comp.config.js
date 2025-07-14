@@ -1,5 +1,5 @@
-import { defineConfig } from 'cypress';
-import { execSync } from 'child_process';
+import { defineConfig } from "cypress";
+import { execSync } from "child_process";
 
 export default defineConfig({
   screenshotOnRunFailure: false,
@@ -7,16 +7,17 @@ export default defineConfig({
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
   defaultCommandTimeout: 10000,
+
   component: {
-    supportFile: '../cypress/support/component.js',
-    indexHtmlFile: '../cypress/support/component-index.html',
-    specPattern: '**/*.comp.cy.js',
+    supportFile: "../cypress/support/component.js",
+    indexHtmlFile: "../cypress/support/component-index.html",
+    specPattern: "**/*.comp.cy.js",
     devServer: {
-      framework: 'vue',
-      bundler: 'vite',
+      framework: "vue",
+      bundler: "vite",
     },
     setupNodeEvents(on) {
-      on('task', {
+      on("task", {
         log(message) {
           console.log(message);
           return null;
@@ -26,14 +27,20 @@ export default defineConfig({
           return null;
         },
         initDB() {
-          execSync('installDB.bash --current', { stdio: 'inherit' });
+          execSync("installDB.bash --current", { stdio: "inherit" });
           return null;
         },
       }),
-        on('before:run', () => {
-          execSync('installDB.bash --current', { stdio: 'inherit' });
+        on("before:run", () => {
+          execSync("installDB.bash --current", { stdio: "inherit" });
           return null;
         });
+    },
+  },
+
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
     },
   },
 });

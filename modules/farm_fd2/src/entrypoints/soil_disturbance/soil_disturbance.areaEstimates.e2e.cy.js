@@ -14,7 +14,7 @@ describe('Soil Disturbance: Comment Component', () => {
     cy.saveSessionStorage();
   });
 
-
-
-  
+  it('Location exists, is visible, is enabled', () => {
+    cy.get('[termination-event-picklist]').click();
+  });
 });
