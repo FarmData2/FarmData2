@@ -196,8 +196,12 @@ export default {
       const beds = this.checkedBeds || [];
       const rows = this.pickedRow || [];
 
-      if (beds.length === 0 && rows.size === 0) {
+      if (beds.length === 0 && rows.size > 0) {
         return 100;
+      }
+
+      if (beds.length === 0 && rows.size === 0) {
+        return 0;
       }
 
       if (beds.length > 0 && rows.size === 0) {
