@@ -196,29 +196,46 @@ export default {
       const beds = this.checkedBeds || [];
       const rows = this.pickedRow || [];
 
-      console.log('CHECKED BEDS', beds); // should be an array
-      console.log('PICKED ROWS', rows); // should be an empty array
-      console.log('BED LENGTH:', beds.length);
-      console.log('ROW LENGTH:', rows.size);
-
       if (beds.length === 0 && rows.size === 0) {
-        console.log('→ Case 1 hit');
         return 100;
       }
 
-      console.log(this.bedsInLocation.length);
-      console.log(beds.length);
-      console.log(beds.length / this.bedsInLocation.length);
-
       if (beds.length > 0 && rows.size === 0) {
-        console.log('→ Case 2 hit');
         return (beds.length / this.bedsInLocation.length) * 100;
       }
 
-      console.log('→ Case 3 fallback');
-      let finalArea = 0;
+      const bedPicks = {};
+      const bedTotals = this.affectedPlants.reduce((acc, row) => {
+        if (row.bed !== 'N/A') {
+          acc[row.bed] = (acc[row.bed] || 0) + 1;
+        }
+        return acc;
+      }, {});
 
-      return 0; // fallback in case neither case is hit
+      for (const { row } of rows.values()) {
+        const bed = row.bed || 'N/A';
+        if (!bedPicks[bed]) bedPicks[bed] = 0;
+        bedPicks[bed]++;
+      }
+
+      let weightedSum = 0;
+
+      for (const bed of beds) {
+        const picked = bedPicks[bed] || 0;
+        const total = bedTotals[bed] || 0;
+
+        if (total === 0) {
+          // No plant assets in this bed — treat as fully affected
+          weightedSum += 1;
+        } else {
+          weightedSum += picked / total;
+        }
+      }
+      const areaPercentage = Math.round(
+        (weightedSum / this.bedsInLocation.length) * 100
+      );
+
+      return areaPercentage; // fallback in case neither case is hit
     },
   },
 
@@ -311,13 +328,9 @@ export default {
 
       this.updateInProgress = true; // Start update cycle
 
-      console.log('CHECKED BEDS!', this.checkedBeds);
-
       // Track the previous state to detect changes
       const previousBeds = [...this.checkedBeds];
       this.checkedBeds = newBeds;
-
-      console.log('CHECK BEDS AFTER', this.checkedBeds);
 
       /**
        * Emitted when the set of selected beds changes.
@@ -330,9 +343,6 @@ export default {
       // Find which beds were added and which were removed
       const added = newBeds.filter((bed) => !previousBeds.includes(bed));
       const removed = previousBeds.filter((bed) => !newBeds.includes(bed));
-
-      console.log('ADDED BEDS', added);
-      console.log('REMOVED BEDS', removed);
 
       // If beds were added/removed, update the picklist
       if (added.length > 0 || removed.length > 0) {
