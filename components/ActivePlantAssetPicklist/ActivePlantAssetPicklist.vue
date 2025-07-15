@@ -191,6 +191,35 @@ export default {
 
       return false;
     },
+
+    affectedAreaPercentage() {
+      const beds = this.checkedBeds || [];
+      const rows = this.pickedRow || [];
+
+      console.log('CHECKED BEDS', beds); // should be an array
+      console.log('PICKED ROWS', rows); // should be an empty array
+      console.log('BED LENGTH:', beds.length);
+      console.log('ROW LENGTH:', rows.size);
+
+      if (beds.length === 0 && rows.size === 0) {
+        console.log('→ Case 1 hit');
+        return 100;
+      }
+
+      console.log(this.bedsInLocation.length);
+      console.log(beds.length);
+      console.log(beds.length / this.bedsInLocation.length);
+
+      if (beds.length > 0 && rows.size === 0) {
+        console.log('→ Case 2 hit');
+        return (beds.length / this.bedsInLocation.length) * 100;
+      }
+
+      console.log('→ Case 3 fallback');
+      let finalArea = 0;
+
+      return 0; // fallback in case neither case is hit
+    },
   },
 
   methods: {
@@ -205,7 +234,6 @@ export default {
       this.pickedRow = event;
 
       // Calculate the area based on picked crop
-      const area = this.calculatePickedArea(event);
 
       /**
        * Emitted when the picked crops have changed.
@@ -234,7 +262,6 @@ export default {
        * @property {number} area - The selected area percentage, ranging from 0 to 100.
        *
        */
-      this.$emit('update:area', area);
       this.updateCheckedBedsFromPicked(this.pickedRow);
 
       // End update cycle
@@ -304,6 +331,9 @@ export default {
       const added = newBeds.filter((bed) => !previousBeds.includes(bed));
       const removed = previousBeds.filter((bed) => !newBeds.includes(bed));
 
+      console.log('ADDED BEDS', added);
+      console.log('REMOVED BEDS', removed);
+
       // If beds were added/removed, update the picklist
       if (added.length > 0 || removed.length > 0) {
         this.updatePickedFromCheckedBeds(added, removed);
@@ -336,6 +366,8 @@ export default {
         });
       }
 
+      /// COME BACK AND CHECK HERE
+
       // Only update pickedRow if there is an actual change
       if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
         this.pickedRow = new Map(newPicked);
@@ -343,79 +375,6 @@ export default {
 
         // Update area calculation too
       }
-      const area = this.calculatePickedArea(this.pickedRow);
-      this.$emit('update:area', area);
-    },
-
-    calculatePickedArea(picked) {
-      // If no plants are picked, return 0%
-      if (picked.size === 0) {
-        console.log('NO PLANTS PICKED');
-        console.log('SIZE == 0', this.checkedBeds);
-        return (1 / this.bedsInLocation.length) * 100;
-      }
-
-      console.log('PICKED', picked);
-      console.log('PICKED SIZE', picked.size);
-      console.log('AFFECTED PLANTS', this.affectedPlants);
-      console.log('AFFECTED PLANTS SIZE', this.affectedPlants.length);
-      console.log('Total Beds', this.bedsInLocation.length);
-
-      if (!this.picklistColumns.includes('bed')) {
-        return 100;
-      }
-
-      // // If no beds are in the dataset, default to 100%
-      // if (!this.picklistColumns.includes('bed')) {
-      //   return Math.round((picked.size / this.bedsInLocation.length) * 100);
-      // }
-
-      const target = (picked.size / this.bedsInLocation.length) * 100;
-      console.log('target', target);
-
-      // Map "Bed -> Total # of plants in that bed"
-      const bedTotals = this.affectedPlants.reduce((acc, row) => {
-        if (row.bed !== 'N/A') {
-          acc[row.bed] = (acc[row.bed] || 0) + 1;
-        }
-        return acc;
-      }, {});
-
-      // Map "Bed -> # of picked plants in that bed"
-      const bedPicks = [...picked.values()].reduce((acc, row) => {
-        if (row.row.bed !== 'N/A') {
-          acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
-        }
-        return acc;
-      }, {});
-
-      // Get total number of unique beds
-      const totalUniqueBeds = Object.keys(bedTotals).length;
-      if (totalUniqueBeds === 0) {
-        return 0; // Avoid division by zero
-      }
-
-      console.log('totalUniqueBeds', totalUniqueBeds);
-
-      // Area = [ ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds ] * 100
-      let weightedSum = 0;
-
-      // console.log('bedTotals', bedTotals);
-      // console.log('bedPicks', bedPicks);
-
-      for (const [bed, totalForBed] of Object.entries(bedTotals)) {
-        const pickedForBed = bedPicks[bed] || 0;
-        console.log(bed);
-        console.log('pickedForBed', pickedForBed);
-        console.log('totalForBed', totalForBed);
-        weightedSum += pickedForBed / totalForBed;
-      }
-
-      const areaPercentage = Math.round(
-        (weightedSum / this.bedsInLocation.length) * 100
-      );
-
-      return areaPercentage;
     },
 
     handleBedsValid(event) {
@@ -484,11 +443,11 @@ export default {
           }
 
           // Emit area reset logic when switching between locations with beds vs no beds
-          if (this.affectedPlants.length === 0) {
-            this.$emit('update:area', 100); // No active plants, default to 100%
-          } else {
-            this.$emit('update:area', 0); // Active plants present, reset to 0
-          }
+          // if (this.affectedPlants.length === 0) {
+          //   this.$emit('update:area', 100); // No active plants, default to 100%
+          // } else {
+          //   this.$emit('update:area', 0); // Active plants present, reset to 0
+          // }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
           this.affectedPlants = [];
@@ -506,7 +465,6 @@ export default {
           });
 
           // if no plants available due to error, then default area to 100%
-          this.$emit('update:area', 100);
         }
       } else {
         this.affectedPlants = [];
@@ -588,7 +546,11 @@ export default {
       this.$emit('valid', this.isValid);
     },
 
-    immediate: true,
+    affectedAreaPercentage: {
+      handler(newArea) {
+        this.$emit('update:area', newArea);
+      },
+    },
   },
 
   created() {
