@@ -579,7 +579,25 @@ export default {
       this.$emit('valid', this.isValid);
     },
 
-    immediate: true,
+    // When there are no active plant assets, auto-select all beds
+    affectedPlants: {
+      handler() {
+        if (
+          this.affectedPlants.length === 0 &&
+          this.bedsInLocation.length > 0
+        ) {
+          const allBedNames = this.bedsInLocation.map((bed) =>
+            bed.attributes ? bed.attributes.name : bed
+          );
+          if (
+            JSON.stringify(this.checkedBeds) !== JSON.stringify(allBedNames)
+          ) {
+            this.checkedBeds = allBedNames;
+          }
+        }
+      },
+      immediate: false,
+    },
   },
 
   created() {

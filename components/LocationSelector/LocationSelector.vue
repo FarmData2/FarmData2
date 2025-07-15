@@ -153,13 +153,6 @@ export default {
       default: false,
     },
     /**
-     * Whether to select all beds within a location by default.
-     */
-    selectAllBedsByDefault: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * Whether a location selection is required or not.
      */
     required: {
@@ -320,18 +313,15 @@ export default {
       return this.locationValid && bv;
     },
     showBedSelection() {
-      return this.allowBedSelection && this.beds.length > 0;
+      // Hide BedPicker UI, always return false
+      return false;
     },
   },
   methods: {
     handleUpdateSelected(event) {
       this.selectedLocation = event;
 
-      if (this.selectAllBedsByDefault) {
-        this.checkedBeds = this.beds;
-      } else {
-        this.checkedBeds = [];
-      }
+      // No default bed selection logic needed
 
       /**
        * The selected location has changed.
@@ -406,11 +396,7 @@ export default {
   },
   watch: {
     allowBedSelection() {
-      if (this.selectAllBedsByDefault) {
-        this.checkedBeds = this.beds;
-      } else {
-        this.checkedBeds = [];
-      }
+      // No default bed selection logic needed
     },
     checkedBeds: {
       handler() {
