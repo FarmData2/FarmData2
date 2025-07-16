@@ -59,8 +59,8 @@
 
         <!-- Unified Bed & Plant Asset Selection -->
         <ActivePlantAssetPicklist
-          id="termination-event-picklist"
-          data-cy="termination-event-picklist"
+          id="unified-bed-plant-picklist"
+          data-cy="unified-bed-plant-picklist"
           v-bind:required="form.termination"
           v-bind:location="form.location"
           v-bind:showValidityStyling="validity.show"
@@ -74,6 +74,38 @@
           v-on:error="(error) => showErrorToast('Network Error', error.message)"
           v-on:ready="createdCount++"
         />
+
+        <!-- Termination Event -->
+        <div
+          id="termination-event-group"
+          data-cy="termination-event-group"
+          class="flex-column align-items-center"
+          v-show="plantsAtLocation"
+        >
+          <BFormGroup
+            id="termination-event-group-checkbox"
+            data-cy="termination-event-group-checkbox"
+            class="w-100"
+            label-for="termination-event-checkbox"
+            label-cols="auto"
+            label-align="end"
+          >
+            <template v-slot:label>
+              <span
+                id="termination-event-label"
+                data-cy="termination-event-label"
+                >Termination Event:</span
+              >
+            </template>
+
+            <BFormCheckbox
+              id="termination-event-checkbox"
+              data-cy="termination-event-checkbox"
+              v-model="form.termination"
+              size="lg"
+            />
+          </BFormGroup>
+        </div>
         <hr />
 
         <!-- Equipment -->
