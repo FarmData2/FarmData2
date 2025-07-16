@@ -196,32 +196,45 @@ export default {
       const beds = this.checkedBeds || [];
       const rows = this.pickedRow || [];
 
+      // Case 1: No beds selected, but rows are picked
       if (beds.length === 0 && rows.size > 0) {
+        return (rows.size / this.affectedPlants.length) * 100;
+      }
+
+      // Case 2: Nothing selected at all
+      if (beds.length === 0 && rows.size === 0) {
         return 100;
       }
 
-      if (beds.length === 0 && rows.size === 0) {
-        return 0;
-      }
-
+      // Case 3: Beds selected, but no plant assets picked
       if (beds.length > 0 && rows.size === 0) {
         return (beds.length / this.bedsInLocation.length) * 100;
       }
 
-      const bedPicks = {};
-      const bedTotals = this.affectedPlants.reduce((acc, row) => {
-        if (row.bed !== 'N/A') {
-          acc[row.bed] = (acc[row.bed] || 0) + 1;
-        }
-        return acc;
-      }, {});
+      // Case 4: Beds and plant rows are selected — calculate weighted impact
 
+      const bedTotals = {}; // Total plant assets per bed
+
+      for (const plant of this.affectedPlants) {
+        const bed = plant.bed;
+        if (bed && bed !== 'N/A') {
+          bedTotals[bed] = (bedTotals[bed] || 0) + 1;
+        }
+      }
+
+      const bedPicks = {}; // Number of picked plant assets per bed
+
+      // Count picked rows per bed
       for (const { row } of rows.values()) {
         const bed = row.bed || 'N/A';
-        if (!bedPicks[bed]) bedPicks[bed] = 0;
+        if (!bedPicks[bed]) {
+          bedPicks[bed] = 0;
+        }
+
         bedPicks[bed]++;
       }
 
+      // Calculate weighted sum of affected beds
       let weightedSum = 0;
 
       for (const bed of beds) {
@@ -239,7 +252,7 @@ export default {
         (weightedSum / this.bedsInLocation.length) * 100
       );
 
-      return areaPercentage; // fallback in case neither case is hit
+      return areaPercentage;
     },
   },
 
