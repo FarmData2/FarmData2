@@ -50,6 +50,7 @@
           includeFields
           includeGreenhousesWithBeds
           v-model:selected="form.location"
+          v-bind:allowBedSelection="false"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
           v-on:update:selected="form.location = $event"
