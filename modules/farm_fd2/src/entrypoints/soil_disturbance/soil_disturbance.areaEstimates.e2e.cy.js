@@ -18,10 +18,21 @@ describe('Soil Disturbance: Comment Component', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .select('ALF');
-    cy.get('[data-cy="location-beds-accordion"]').should('be.visible');
+    cy.get('[data-cy="location-beds-accordion"]').should('exist');
+    cy.get('[data-cy="picklist-checkbox-0"]').check();
+    cy.get('[data-cy="picklist-checkbox-1"]').check();
+    cy.get('[data-cy="picklist-checkbox-2"]').check();
 
     cy.get('[data-cy="termination-event-group"]').should('exist');
     cy.get('[data-cy="termination-event-picklist"]').should('exist');
     cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
+
+    cy.get('[data-cy="multi-equipment-selector"]')
+      .find('[data-cy="selector-input"]')
+      .select('Tractor');
+
+    cy.get('[data-cy="soil-disturbance-area"]')
+      .find('[data-cy="numeric-input"]')
+      .should('have.value', 50);
   });
 });
