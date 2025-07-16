@@ -60,7 +60,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
   //-------------------------------Verify `update:area` payload calculations-----------------------------------//
 
-  it.only('should correctly calculate and emit `update:area` when selecting and deselecting crops in a location with beds', () => {
+  it('should correctly calculate and emit `update:area` when selecting and deselecting crops in a location with beds', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
 
@@ -75,12 +75,12 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
         .should('have.been.calledOnce')
         .then(() => {
           // Once on creation and then on location prop update
-          cy.get('@areaSpy').should('have.been.calledOnce');
+          cy.get('@areaSpy').should('have.been.calledTwice');
 
           // Select PEPPERS-BELL in ALF-1
           cy.get('[data-cy="picklist-checkbox-0"]').check();
           cy.get('@areaSpy')
-            .should('have.been.calledTwice')
+            .should('have.been.calledThrice')
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(13);
@@ -89,7 +89,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
           // Select LETTUCE-ICEBERG in ALF-1
           cy.get('[data-cy="picklist-checkbox-1"]').check();
           cy.get('@areaSpy')
-            .should('have.callCount', 3)
+            .should('have.callCount', 4)
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(25);
@@ -98,7 +98,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
           // Select LETTUCE-ICEBERG in ALF-2
           cy.get('[data-cy="picklist-checkbox-2"]').check();
           cy.get('@areaSpy')
-            .should('have.callCount', 4)
+            .should('have.callCount', 5)
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(50);
@@ -107,7 +107,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
           // Unselect LETTUCE-ICEBERG in ALF-1
           cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
           cy.get('@areaSpy')
-            .should('have.callCount', 5)
+            .should('have.callCount', 6)
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(38);
@@ -116,7 +116,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
           // Unselect PEPPERS-BELL in ALF-1
           cy.get('[data-cy="picklist-checkbox-0"]').uncheck();
           cy.get('@areaSpy')
-            .should('have.callCount', 6)
+            .should('have.callCount', 7)
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(25);
@@ -125,7 +125,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
           // Unselect LETTUCE-ICEBERG in ALF-2
           cy.get('[data-cy="picklist-checkbox-2"]').uncheck();
           cy.get('@areaSpy')
-            .should('have.callCount', 7)
+            .should('have.callCount', 8)
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(0);
@@ -134,7 +134,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
     });
   });
 
-  it.only('should correctly calculate and emit `update:area` for a location with active plant assets but no beds', () => {
+  it('should correctly calculate and emit `update:area` for a location with active plant assets but no beds', () => {
     const readySpy = cy.spy().as('readySpy');
     const areaSpy = cy.spy().as('areaSpy');
 
@@ -158,7 +158,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
           cy.get('[data-cy="picklist-checkbox-0"]').check();
           cy.get('@areaSpy')
-            .should('have.been.calledTwice')
+            .should('have.been.calledThrice')
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(50);
@@ -311,7 +311,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.been.calledThrice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(50);
+              expect(areaValue).to.equal(25);
             });
         })
         .then(() => {
@@ -390,10 +390,10 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
           // Area should reset
           cy.get('@areaSpy')
-            .should('have.been.calledThrice')
+            .should('have.been.calledTwice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100);
+              expect(areaValue).to.equal(0);
             });
         });
     });
@@ -417,7 +417,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.been.calledTwice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100); // default for location with no beds
+              expect(areaValue).to.equal(0); // default for location with no beds
             });
         })
         .then(() => {
@@ -425,7 +425,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
           // Area should reset
           cy.get('@areaSpy')
-            .should('have.been.calledThrice')
+            .should('have.been.calledTwice')
             .its('lastCall.args.0')
             .should((areaValue) => {
               expect(areaValue).to.equal(0);
@@ -452,7 +452,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.been.calledTwice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100);
+              expect(areaValue).to.equal(0);
             });
         })
         .then(() => {
@@ -495,10 +495,10 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
 
           // Area should reset
           cy.get('@areaSpy')
-            .should('have.been.calledThrice')
+            .should('have.been.calledTwice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100);
+              expect(areaValue).to.equal(0);
             });
         });
     });
@@ -528,7 +528,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.been.calledThrice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(50);
+              expect(areaValue).to.equal(25);
             });
         })
         .then(() => {
@@ -539,7 +539,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.callCount', 4)
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100);
+              expect(areaValue).to.equal(0);
             });
         });
     });
@@ -573,12 +573,12 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
         .then(() => {
           wrapper.setProps({ location: 'H' });
 
-          // Area should default to a 100
+          // Area should default to a 0
           cy.get('@areaSpy')
             .should('have.callCount', 4)
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(100);
+              expect(areaValue).to.equal(0);
             });
         });
     });
@@ -606,7 +606,7 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
             .should('have.been.calledThrice')
             .its('lastCall.args.0')
             .should((areaValue) => {
-              expect(areaValue).to.equal(50);
+              expect(areaValue).to.equal(25);
             });
         })
         .then(() => {

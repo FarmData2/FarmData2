@@ -201,9 +201,16 @@ export default {
         return (rows.size / this.affectedPlants.length) * 100;
       }
 
-      // Case 2: Nothing selected at all
-      if (beds.length === 0 && rows.size === 0) {
+      // Case 2: No beds and no plantAssets
+      if (
+        this.bedsInLocation.length === 0 &&
+        this.affectedPlants.length === 0
+      ) {
         return 100;
+      }
+
+      if (beds.length === 0 && rows.size === 0) {
+        return 0;
       }
 
       // Case 3: Beds selected, but no plant assets picked
