@@ -78,7 +78,7 @@ describe('Direct Seeding: Termination event group', () => {
     cy.get('[data-cy="sort-order-button"]').should('not.exist');
     cy.get('[data-cy^="picklist-checkbox-"]').should('not.exist');
 
-    cy.get('[data-cy="location-beds-accordion"]').should('exist');
+    cy.get('[data-cy="active-plant-asset-bed-picker"]').should('exist');
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="picker-options"]')
       .should('be.visible');

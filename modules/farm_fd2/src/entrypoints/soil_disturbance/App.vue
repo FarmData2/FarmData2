@@ -57,24 +57,6 @@
           v-on:ready="createdCount++"
         />
 
-        <!-- Unified Bed & Plant Asset Selection -->
-        <ActivePlantAssetPicklist
-          id="unified-bed-plant-picklist"
-          data-cy="unified-bed-plant-picklist"
-          v-bind:required="form.termination"
-          v-bind:location="form.location"
-          v-bind:showValidityStyling="validity.show"
-          v-bind:picked="form.picked"
-          v-bind:includeEmptyBeds="true"
-          v-on:update:picked="form.picked = $event"
-          v-on:update:checkedBeds="form.beds = $event"
-          v-on:hasPlants="plantsAtLocation = $event"
-          v-on:update:area="form.area = $event"
-          v-on:valid="(valid) => (picklistValid = valid)"
-          v-on:error="(error) => showErrorToast('Network Error', error.message)"
-          v-on:ready="createdCount++"
-        />
-
         <!-- Termination Event -->
         <div
           id="termination-event-group"
@@ -106,6 +88,24 @@
             />
           </BFormGroup>
         </div>
+
+        <!-- Unified Bed & Plant Asset Selection -->
+        <ActivePlantAssetPicklist
+          id="unified-bed-plant-picklist"
+          data-cy="termination-event-picklist"
+          v-bind:required="form.termination"
+          v-bind:location="form.location"
+          v-bind:showValidityStyling="validity.show"
+          v-bind:picked="form.picked"
+          v-bind:includeEmptyBeds="true"
+          v-on:update:picked="form.picked = $event"
+          v-on:update:checkedBeds="form.beds = $event"
+          v-on:hasPlants="plantsAtLocation = $event"
+          v-on:update:area="form.area = $event"
+          v-on:valid="(valid) => (picklistValid = valid)"
+          v-on:error="(error) => showErrorToast('Network Error', error.message)"
+          v-on:ready="createdCount++"
+        />
         <hr />
 
         <!-- Equipment -->
