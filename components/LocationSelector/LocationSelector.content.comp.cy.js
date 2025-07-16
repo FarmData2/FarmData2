@@ -259,9 +259,11 @@ describe('Test the default LocationSelector content', () => {
     cy.mount(LocationSelector, {
       props: {
         required: true,
-        showValidityStyling: true,
+        includeFields: true,
+        includeGreenhousesWithBeds: true,
+        selected: null,
+        showValidityStyling: false,
         allowBedSelection: false,
-        includeGreenhouses: true,
         onReady: readySpy,
       },
     });

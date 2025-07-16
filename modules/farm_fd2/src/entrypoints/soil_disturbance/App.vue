@@ -91,7 +91,7 @@
         </div>
 
         <ActivePlantAssetPicklist
-          id="termination-event--picklist"
+          id="termination-event-picklist"
           data-cy="termination-event-picklist"
           v-bind:required="form.termination"
           v-bind:location="form.location"
