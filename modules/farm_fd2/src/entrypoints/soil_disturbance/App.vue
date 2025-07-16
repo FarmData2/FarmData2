@@ -90,9 +90,8 @@
           </BFormGroup>
         </div>
 
-        <!-- Unified Bed & Plant Asset Selection -->
         <ActivePlantAssetPicklist
-          id="unified-bed-plant-picklist"
+          id="termination-event--picklist"
           data-cy="termination-event-picklist"
           v-bind:required="form.termination"
           v-bind:location="form.location"
