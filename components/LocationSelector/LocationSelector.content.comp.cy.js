@@ -253,6 +253,29 @@ describe('Test the default LocationSelector content', () => {
       });
   });
 
+  it('renders location dropdown and ignores pickedBeds when allowBedSelection is false', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(LocationSelector, {
+      props: {
+        required: true,
+        includeFields: true,
+        includeGreenhousesWithBeds: true,
+        selected: null,
+        showValidityStyling: false,
+        allowBedSelection: false,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="selector-input"]').should('exist').and('be.visible');
+        cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
+      });
+  });
+
   it('Verifies the add button is available for fields', () => {
     const readySpy = cy.spy().as('readySpy');
 
