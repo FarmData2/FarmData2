@@ -390,8 +390,8 @@ export default {
           greenhouseMap = await farmosUtil.getGreenhouseIdToAssetMap();
         }
 
-        let beds = null;
-        if (this.allowBedSelection) {
+        let beds = [];
+        if (this.allowBedSelection || this.includeGreenhousesWithBeds) {
           beds = await farmosUtil.getBeds();
         }
 
@@ -449,8 +449,8 @@ export default {
       greenhouseMap = farmosUtil.getGreenhouseIdToAssetMap();
     }
 
-    let beds = null;
-    if (this.allowBedSelection) {
+    let beds = [];
+    if (this.allowBedSelection || this.includeGreenhousesWithBeds) {
       beds = farmosUtil.getBeds();
     }
 

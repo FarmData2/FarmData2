@@ -1,15 +1,16 @@
 <template>
   <div class="active-plant-asset-picklist-container">
-    <BedPicker
+    <PickerBase
       v-if="location && locationHasBeds"
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
+      label="Beds"
+      invalid-feedback-text="At least one bed is required"
       v-bind:required="required"
-      v-bind:location="location"
-      v-bind:picked="checkedBeds"
-      v-on:update:picked="handleBedPickerUpdate($event)"
       v-bind:showValidityStyling="showValidityStyling"
-      v-on:valid="handleBedsValid($event)"
+      v-bind:options="filteredBedNames"
+      v-model:picked="checkedBeds"
+      v-on:valid="handleBedsValid"
     />
 
     <PicklistBase
@@ -34,7 +35,7 @@
 <script>
 import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
 import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
-import BedPicker from '@comps/BedPicker/BedPicker.vue';
+import PickerBase from '@comps/PickerBase/PickerBase.vue';
 
 /**
  * The ActivePlantAssetPicklist allows the user to pick crops from a location.
@@ -76,7 +77,7 @@ import BedPicker from '@comps/BedPicker/BedPicker.vue';
  */
 export default {
   name: 'ActivePlantAssetPicklist',
-  components: { PicklistBase, BedPicker },
+  components: { PicklistBase, PickerBase },
   emits: [
     'ready',
     'valid',
@@ -137,6 +138,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Whether to include beds that do not have active plant assets.
+     */
+    includeEmptyBeds: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -161,7 +169,26 @@ export default {
       return this.affectedPlants.length > 0;
     },
     locationHasBeds() {
-      return this.bedsInLocation.length > 0;
+      return this.filteredBedNames.length > 0;
+    },
+    filteredBedNames() {
+      // Extract bed names from bedsInLocation once
+      const allBedNames = this.bedsInLocation.map((bed) =>
+        bed.attributes ? bed.attributes.name : bed
+      );
+
+      if (this.includeEmptyBeds) {
+        // Return all bed names
+        return allBedNames;
+      } else {
+        // Only return bed names that have active plant assets
+        const bedsWithPlants = new Set(
+          this.affectedPlants
+            .map((plant) => plant.bed)
+            .filter((bed) => bed && bed !== 'N/A')
+        );
+        return Array.from(bedsWithPlants);
+      }
     },
 
     picklistRequired() {
@@ -305,8 +332,10 @@ export default {
        */
       this.updateCheckedBedsFromPicked(this.pickedRow);
 
-      // End update cycle
-      this.updateInProgress = false;
+      // End the update cycle AFTER Vue has processed watcher updates.
+      this.$nextTick(() => {
+        this.updateInProgress = false;
+      });
     },
 
     updateCheckedBedsFromPicked(newPicked) {
@@ -346,35 +375,28 @@ export default {
       }
     },
 
-    handleBedPickerUpdate(newBeds) {
-      // If we're already processing an update, don't trigger another update cycle
+    handleBedsValid(event) {
+      this.bedsValid = event;
+    },
+
+    handlePicklistValid(valid) {
+      this.picklistValid = valid;
+    },
+
+    handleBedPickerUpdate(newBeds, oldBeds) {
+      // Emit the change event.
+      this.$emit('update:checkedBeds', newBeds);
+
+      // If an update cycle is already in progress, exit to prevent a loop.
       if (this.updateInProgress) return;
 
-      this.updateInProgress = true; // Start update cycle
+      // Find which beds were added and which were removed...
+      const added = newBeds.filter((bed) => !oldBeds.includes(bed));
+      const removed = oldBeds.filter((bed) => !newBeds.includes(bed));
 
-      // Track the previous state to detect changes
-      const previousBeds = [...this.checkedBeds];
-      this.checkedBeds = newBeds;
-
-      /**
-       * Emitted when the set of selected beds changes.
-       *
-       * @event update:checkedBeds
-       * @property {string[]} checkedBeds - An array of bed identifiers that are currently selected in the BedPicker.
-       */
-      this.$emit('update:checkedBeds', this.checkedBeds);
-
-      // Find which beds were added and which were removed
-      const added = newBeds.filter((bed) => !previousBeds.includes(bed));
-      const removed = previousBeds.filter((bed) => !newBeds.includes(bed));
-
-      // If beds were added/removed, update the picklist
       if (added.length > 0 || removed.length > 0) {
         this.updatePickedFromCheckedBeds(added, removed);
       }
-
-      // End update cycle
-      this.updateInProgress = false;
     },
 
     updatePickedFromCheckedBeds(added = [], removed = []) {
@@ -409,14 +431,6 @@ export default {
 
         // Update area calculation too
       }
-    },
-
-    handleBedsValid(event) {
-      this.bedsValid = event;
-    },
-
-    handlePicklistValid(valid) {
-      this.picklistValid = valid;
     },
 
     async checkPlantsAtLocation() {
@@ -560,6 +574,12 @@ export default {
       },
     },
 
+    checkedBeds: {
+      handler(newBeds, oldBeds) {
+        this.handleBedPickerUpdate(newBeds, oldBeds);
+      },
+    },
+
     plantsAtLocation: {
       handler(newValue) {
         /**
@@ -584,6 +604,25 @@ export default {
       handler(newArea) {
         this.$emit('update:area', newArea);
       },
+    },
+    // When there are no active plant assets, auto-select all beds
+    affectedPlants: {
+      handler() {
+        if (
+          this.affectedPlants.length === 0 &&
+          this.bedsInLocation.length > 0
+        ) {
+          const allBedNames = this.bedsInLocation.map((bed) =>
+            bed.attributes ? bed.attributes.name : bed
+          );
+          if (
+            JSON.stringify(this.checkedBeds) !== JSON.stringify(allBedNames)
+          ) {
+            this.checkedBeds = allBedNames;
+          }
+        }
+      },
+      immediate: false,
     },
   },
 

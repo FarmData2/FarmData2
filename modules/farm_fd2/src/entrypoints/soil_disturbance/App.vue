@@ -50,13 +50,9 @@
           includeFields
           includeGreenhousesWithBeds
           v-model:selected="form.location"
-          v-bind:pickedBeds="form.beds"
-          v-bind:allowBedSelection="!plantsAtLocation"
+          v-bind:allowBedSelection="false"
           v-bind:showValidityStyling="validity.show"
           v-on:valid="validity.location = $event"
-          v-on:update:beds="
-            (checkedBeds, totalBeds) => handleBedsUpdate(checkedBeds, totalBeds)
-          "
           v-on:update:selected="form.location = $event"
           v-on:error="(msg) => showErrorToast('Network Error', msg)"
           v-on:ready="createdCount++"
@@ -92,23 +88,24 @@
               size="lg"
             />
           </BFormGroup>
-          <ActivePlantAssetPicklist
-            id="termination-event-picklist"
-            data-cy="termination-event-picklist"
-            v-bind:required="form.termination"
-            v-bind:location="form.location"
-            v-bind:showValidityStyling="validity.show"
-            v-bind:picked="form.picked"
-            v-on:update:picked="form.picked = $event"
-            v-on:hasPlants="plantsAtLocation = $event"
-            v-on:update:area="form.area = $event"
-            v-on:valid="(valid) => (picklistValid = valid)"
-            v-on:error="
-              (error) => showErrorToast('Network Error', error.message)
-            "
-            v-on:ready="createdCount++"
-          />
         </div>
+
+        <ActivePlantAssetPicklist
+          id="termination-event-picklist"
+          data-cy="termination-event-picklist"
+          v-bind:required="form.termination"
+          v-bind:location="form.location"
+          v-bind:showValidityStyling="validity.show"
+          v-bind:picked="form.picked"
+          v-bind:includeEmptyBeds="true"
+          v-on:update:picked="form.picked = $event"
+          v-on:update:checkedBeds="form.beds = $event"
+          v-on:hasPlants="plantsAtLocation = $event"
+          v-on:update:area="form.area = $event"
+          v-on:valid="(valid) => (picklistValid = valid)"
+          v-on:error="(error) => showErrorToast('Network Error', error.message)"
+          v-on:ready="createdCount++"
+        />
         <hr />
 
         <!-- Equipment -->
