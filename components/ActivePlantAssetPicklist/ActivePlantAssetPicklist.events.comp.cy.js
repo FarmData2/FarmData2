@@ -209,7 +209,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
 
   //------------------------ update:picked and update:checkedBeds testing -----------------------------------//
 
-  it('Should emit `update:picked` when crops are selected and then `update:checkedBeds`', () => {
+  it('Emit `update:picked` and `update:checkedBeds`when crops are selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -228,7 +228,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
           cy.get('@rowPickedSpy').should('not.have.been.called');
           cy.get('@bedPickedSpy').should('not.have.been.called');
 
-          // pick row
+          // pick 2nd row which also picks ALF-1
           cy.get('[data-cy="picklist-checkbox-1"]').check();
 
           // check if map has the correct values
@@ -277,7 +277,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('Should emit `update:picked` when crops with no beds are selected and should not emit`update:checkedBeds`', () => {
+  it('Emit `update:picked` when crops with no beds are selected and should not emit`update:checkedBeds`', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -334,7 +334,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('Should emit `update:checkedBeds` when beds are selected and then `update:picked` if rows corresponding to that bed exist', () => {
+  it('Emit `update:checkedBeds` when beds are selected and then `update:picked` if rows corresponding to that bed exist', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -398,7 +398,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('Should emit `update:checkedBeds` when beds are selected and should not emit `update:picked` if rows corresponding to that bed do not exist', () => {
+  it('Emit `update:checkedBeds` when beds are selected and should not emit `update:picked` if rows corresponding to that bed do not exist', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -452,7 +452,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('should not emit `update:picked` and `update:checkedBeds` when the `location` prop changes and no beds and rows are selected', () => {
+  it('Does not emit `update:picked` and `update:checkedBeds` when the `location` prop changes and no beds and rows are selected', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -479,7 +479,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('Should emit `update:picked` and `update:checkedBeds` to reset selections  when the `location` prop updates', () => {
+  it('Emit `update:picked` and `update:checkedBeds` to reset selections  when the `location` prop updates', () => {
     const readySpy = cy.spy().as('readySpy');
     const rowPickedSpy = cy.spy().as('rowPickedSpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
@@ -545,9 +545,41 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
+  it.only('Emit `update:checkedBeds` to clear beds when changing to location with no beds', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const bedPickedSpy = cy.spy().as('bedPickedSpy');
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'H',
+        onReady: readySpy,
+        'onUpdate:checkedBeds': bedPickedSpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('@bedPickedSpy')
+            .should('have.been.calledOnce')
+            .its('lastCall.args.0')
+            .should((beds) => {
+              expect(beds).to.deep.equal(['H-1', 'H-2']);
+            });
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'A' });
+          cy.get('@bedPickedSpy')
+            .should('have.been.calledTwice')
+            .its('lastCall.args.0')
+            .should((beds) => {
+              expect(beds).to.deep.equal([]);
+            });
+        });
+    });
+  });
+
   //------------------------ other event testing -----------------------------------//
 
-  it('Should correctly emit `hasPlants` based on the location', () => {
+  it('Emit `hasPlants` based on the location', () => {
     const readySpy = cy.spy().as('readySpy');
     const hasPlantsSpy = cy.spy().as('hasPlantsSpy');
 
@@ -583,7 +615,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it('Should emit `error` if unable to fetch plant assets', () => {
+  it('Emit `error` if unable to fetch plant assets', () => {
     const readySpy = cy.spy().as('readySpy');
     const errorSpy = cy.spy().as('errorSpy');
 
@@ -599,13 +631,13 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
       },
     });
 
-    cy.wait('@farmOSRequest');
-
-    cy.get('@errorSpy')
-      .should('have.been.calledOnce')
-      .and('have.been.calledWithMatch', {
-        message: 'Unable to fetch plant assets.',
-        error: Cypress.sinon.match.instanceOf(Error),
-      });
+    cy.wait('@farmOSRequest').then(() => {
+      cy.get('@errorSpy')
+        .should('have.been.calledTwice')
+        .and('have.been.calledWithMatch', {
+          message: 'Unable to fetch plant assets.',
+          error: Cypress.sinon.match.instanceOf(Error),
+        });
+    });
   });
 });

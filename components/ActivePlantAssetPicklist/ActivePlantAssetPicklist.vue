@@ -5,29 +5,27 @@
       id="active-plant-asset-bed-picker"
       data-cy="active-plant-asset-bed-picker"
       label="Beds"
-      invalid-feedback-text="At least one bed is required"
+      invalid-feedback-text="At least one bed is required."
       v-bind:required="required"
       v-bind:showValidityStyling="showValidityStyling"
       v-bind:options="filteredBedNames"
       v-model:picked="checkedBeds"
-      v-on:valid="handleBedsValid"
     />
 
     <PicklistBase
-      v-if="location && plantsAtLocation"
+      v-if="location && locationHasPlants"
       id="active-plant-asset-picklist"
       data-cy="active-plant-asset-picklist"
       class="w-100"
-      v-bind:required="picklistRequired"
+      v-bind:required="requiredRow"
       invalidFeedbackText="At least one row must be selected."
       v-bind:showValidityStyling="showValidityStyling"
       v-bind:columns="picklistColumns"
       v-bind:labels="picklistLabels"
-      v-bind:rows="affectedPlants"
+      v-bind:rows="plantsInLocation"
       v-bind:showInfoIcons="false"
-      v-bind:picked="pickedRow"
-      v-on:update:picked="handleUpdatePicked($event)"
-      v-on:valid="handlePicklistValid($event)"
+      v-bind:picked="pickedRows"
+      v-on:update:picked="handleUpdatePickedRows($event)"
     />
   </div>
 </template>
@@ -149,60 +147,48 @@ export default {
 
   data() {
     return {
-      pickedRow: new Map(),
+      pickedRows: new Map(),
       checkedBeds: [],
-      affectedPlants: [],
+      plantsInLocation: [],
+      bedsInLocation: [],
       picklistColumns: ['crop', 'bed', 'timestamp'],
       picklistLabels: {
         crop: 'Crop',
         bed: 'Bed',
         timestamp: 'Planted Date',
       },
-      bedsValid: false,
-      bedsInLocation: [],
-      picklistValid: false,
       updateInProgress: false, // flag to ensure one update cycle
     };
   },
   computed: {
-    plantsAtLocation() {
-      return this.affectedPlants.length > 0;
+    locationHasPlants() {
+      return this.plantsInLocation.length > 0;
     },
     locationHasBeds() {
       return this.filteredBedNames.length > 0;
     },
     filteredBedNames() {
-      // Extract bed names from bedsInLocation once
-      const allBedNames = this.bedsInLocation.map((bed) =>
-        bed.attributes ? bed.attributes.name : bed
-      );
-
       if (this.includeEmptyBeds) {
-        // Return all bed names
+        const allBedNames = this.bedsInLocation.map(
+          (bed) => bed.attributes.name
+        );
         return allBedNames;
       } else {
         // Only return bed names that have active plant assets
         const bedsWithPlants = new Set(
-          this.affectedPlants
+          this.plantsInLocation
             .map((plant) => plant.bed)
-            .filter((bed) => bed && bed !== 'N/A')
+            .filter((bed) => bed !== 'N/A')
         );
         return Array.from(bedsWithPlants);
       }
     },
-
-    picklistRequired() {
-      return this.required || this.requiredRow;
-    },
-
     hasSelectedPlantAssets() {
-      return this.pickedRow && this.pickedRow.size > 0;
+      return this.pickedRows && this.pickedRows.size > 0;
     },
-
     hasSelectedBeds() {
       return this.checkedBeds && this.checkedBeds.length > 0;
     },
-
     isValid() {
       if (!this.required) {
         return true;
@@ -218,20 +204,19 @@ export default {
 
       return false;
     },
-
     affectedAreaPercentage() {
-      const beds = this.checkedBeds || [];
-      const rows = this.pickedRow || [];
+      const beds = this.checkedBeds;
+      const rows = this.pickedRows;
 
       // Case 1: No beds selected, but rows are picked
       if (beds.length === 0 && rows.size > 0) {
-        return (rows.size / this.affectedPlants.length) * 100;
+        return (rows.size / this.plantsInLocation.length) * 100;
       }
 
       // Case 2: No beds and no plantAssets
       if (
         this.bedsInLocation.length === 0 &&
-        this.affectedPlants.length === 0
+        this.plantsInLocation.length === 0
       ) {
         return 100;
       }
@@ -246,10 +231,8 @@ export default {
       }
 
       // Case 4: Beds and plant rows are selected — calculate weighted impact
-
       const bedTotals = {}; // Total plant assets per bed
-
-      for (const plant of this.affectedPlants) {
+      for (const plant of this.plantsInLocation) {
         const bed = plant.bed;
         if (bed && bed !== 'N/A') {
           bedTotals[bed] = (bedTotals[bed] || 0) + 1;
@@ -289,60 +272,29 @@ export default {
       return areaPercentage;
     },
   },
-
   methods: {
-    handleUpdatePicked(event) {
+    handleUpdatePickedRows(event) {
       // If we're already processing an update, don't trigger another update cycle
       // or if nothing changed
-      if (this.updateInProgress || this.mapsAreEqual(event, this.pickedRow))
+      if (this.updateInProgress || this.mapsAreEqual(event, this.pickedRows))
         return;
 
       this.updateInProgress = true; // Start update cycle
 
-      this.pickedRow = event;
+      this.pickedRows = event;
 
-      // Calculate the area based on picked crop
-
-      /**
-       * Emitted when the picked crops have changed.
-       *
-       * @event update:picked
-       * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
-       *
-       */
-      this.$emit('update:picked', this.pickedRow);
-
-      /**
-       * Emitted when the calculated area percentage changes based on selected crops.
-       *
-       * **Calculation**:
-       *
-       *  - **Locations with beds:** The area is calculated based on the proportion of selected crops in each bed,
-       *   using the summation formula:
-       *   `[ ( SUM (picked crops in bed_i / total crops in bed_i) )  / total unique beds ] * 100`.
-       *
-       * - **Locations with active plant assets but no beds:** The area is evenly distributed across all available plant assets.
-       *  If half of the plants are picked, the area is 50%. If all are picked, the area is 100%.
-       *
-       * - **Locations with no active plant assets:** The area defaults to 100% since there are no crops to pick.
-       *
-       * @event update:area
-       * @property {number} area - The selected area percentage, ranging from 0 to 100.
-       *
-       */
-      this.updateCheckedBedsFromPicked(this.pickedRow);
+      this.updateCheckedBedsFromPickedRows(this.pickedRows);
 
       // End the update cycle AFTER Vue has processed watcher updates.
       this.$nextTick(() => {
         this.updateInProgress = false;
       });
     },
-
-    updateCheckedBedsFromPicked(newPicked) {
+    updateCheckedBedsFromPickedRows(newPicked) {
       if (!this.picklistColumns.includes('bed')) return;
 
-      // Create a map of counts for each bed in affectedPlants
-      const bedTotals = this.affectedPlants.reduce((acc, row) => {
+      // Create a map of counts for each bed in plantsInLocation
+      const bedTotals = this.plantsInLocation.reduce((acc, row) => {
         if (row.bed !== 'N/A') {
           acc[row.bed] = (acc[row.bed] || 0) + 1;
         }
@@ -366,7 +318,7 @@ export default {
       // New checked beds
       const merged = Array.from(new Set([...manualOnly, ...AutoBeds]));
 
-      // Emit only if it really changed
+      // Update only if it really changed
       if (
         JSON.stringify(merged.sort()) !==
         JSON.stringify(this.checkedBeds.sort())
@@ -374,19 +326,7 @@ export default {
         this.checkedBeds = merged;
       }
     },
-
-    handleBedsValid(event) {
-      this.bedsValid = event;
-    },
-
-    handlePicklistValid(valid) {
-      this.picklistValid = valid;
-    },
-
-    handleBedPickerUpdate(newBeds, oldBeds) {
-      // Emit the change event.
-      this.$emit('update:checkedBeds', newBeds);
-
+    handleUpdateCheckedBeds(newBeds, oldBeds) {
       // If an update cycle is already in progress, exit to prevent a loop.
       if (this.updateInProgress) return;
 
@@ -395,45 +335,39 @@ export default {
       const removed = oldBeds.filter((bed) => !newBeds.includes(bed));
 
       if (added.length > 0 || removed.length > 0) {
-        this.updatePickedFromCheckedBeds(added, removed);
+        this.updatePickedRowsFromCheckedBeds(added, removed);
       }
     },
-
-    updatePickedFromCheckedBeds(added = [], removed = []) {
+    updatePickedRowsFromCheckedBeds(added = [], removed = []) {
       if (!this.picklistColumns.includes('bed')) return;
 
-      const newPicked = new Map(this.pickedRow);
+      const newPicked = new Map(this.pickedRows);
 
-      // If beds were unchecked, remove those rows from pickedRow
+      // If beds were unchecked, remove those rows from pickedRows
       if (removed.length > 0) {
-        this.affectedPlants.forEach((row, idx) => {
+        this.plantsInLocation.forEach((row, idx) => {
           if (removed.includes(row.bed) && row.bed !== 'N/A') {
             newPicked.delete(idx);
           }
         });
       }
 
-      // If beds were checked, add all rows for those beds to pickedRow
+      // If beds were checked, add all rows for those beds to pickedRows
       if (added.length > 0) {
-        this.affectedPlants.forEach((row, idx) => {
+        this.plantsInLocation.forEach((row, idx) => {
           if (added.includes(row.bed) && row.bed !== 'N/A') {
             newPicked.set(idx, { row: row, picked: 1 });
           }
         });
       }
 
-      /// COME BACK AND CHECK HERE
-
-      // Only update pickedRow if there is an actual change
-      if (!this.mapsAreEqual(newPicked, this.pickedRow)) {
-        this.pickedRow = new Map(newPicked);
-        this.$emit('update:picked', this.pickedRow);
-
-        // Update area calculation too
+      // Only update pickedRows if there is an actual change
+      if (!this.mapsAreEqual(newPicked, this.pickedRows)) {
+        this.pickedRows = new Map(newPicked);
       }
     },
-
-    async checkPlantsAtLocation() {
+    async getPlantsInLocation() {
+      console.log('getting plants in location');
       if (this.location) {
         try {
           const results = await farmosUtil.getPlantAssets(
@@ -443,7 +377,7 @@ export default {
             this.isInGround
           );
           // Map results to rows for PicklistBase
-          this.affectedPlants = results.flatMap((plant) =>
+          this.plantsInLocation = results.flatMap((plant) =>
             plant.beds.length > 0
               ? plant.beds.map((bed) => ({
                   crop: plant.crop.join(', '),
@@ -466,7 +400,7 @@ export default {
           );
 
           // Check if all plants have 'N/A' beds and adjust columns accordingly
-          const allBedsNA = this.affectedPlants.every(
+          const allBedsNA = this.plantsInLocation.every(
             (plant) => plant.bed === 'N/A'
           );
 
@@ -485,23 +419,20 @@ export default {
             };
           }
 
-          if (this.pickedRow.size > 0) {
-            this.pickedRow = new Map();
-            this.$emit('update:picked', this.pickedRow);
+          if (this.pickedRows.size > 0) {
+            this.pickedRows = new Map();
           }
-
-          // Emit area reset logic when switching between locations with beds vs no beds
-          // if (this.affectedPlants.length === 0) {
-          //   this.$emit('update:area', 100); // No active plants, default to 100%
-          // } else {
-          //   this.$emit('update:area', 0); // Active plants present, reset to 0
-          // }
         } catch (error) {
           console.error('Error fetching plant assets:', error);
-          this.affectedPlants = [];
+          if (this.plantsInLocation.length > 0) {
+            this.plantsInLocation = [];
+          }
+          if (this.pickedRows.size > 0) {
+            this.pickedRows = new Map();
+          }
 
           /**
-           * Emitted when there is an error fetching plant assets.
+           * There was an error fetching plant assets.
            *
            * @event error
            * @property {string} message - A description of the error that occurred.
@@ -511,14 +442,16 @@ export default {
             message: 'Unable to fetch plant assets.',
             error,
           });
-
-          // if no plants available due to error, then default area to 100%
         }
       } else {
-        this.affectedPlants = [];
+        if (this.plantsInLocation.length > 0) {
+          this.plantsInLocation = [];
+        }
+        if (this.pickedRows.size > 0) {
+          this.pickedRows = new Map();
+        }
       }
     },
-
     mapsAreEqual(mapA, mapB) {
       if (mapA.size !== mapB.size) {
         return false;
@@ -536,8 +469,7 @@ export default {
       }
       return true;
     },
-
-    async checkBedsInLocation() {
+    async getBedsInLocation() {
       if (this.location) {
         try {
           this.bedsInLocation = await farmosUtil.getBedsInLocation(
@@ -545,53 +477,65 @@ export default {
           );
         } catch (error) {
           console.error('Error fetching beds for location:', error);
-          this.bedsInLocation = [];
+          if (this.bedsInLocation.length > 0) {
+            this.bedsInLocation = [];
+          }
         }
       } else {
-        this.bedsInLocation = [];
+        if (this.bedsInLocation.length > 0) {
+          this.bedsInLocation = [];
+        }
+      }
+
+      if (this.checkedBeds.length > 0) {
+        this.checkedBeds = [];
       }
     },
   },
-
   watch: {
     location: {
       handler() {
-        this.checkPlantsAtLocation();
-        this.checkBedsInLocation();
+        this.getPlantsInLocation();
+        this.getBedsInLocation();
       },
       immediate: true,
     },
-
-    isInTrays: {
-      handler() {
-        this.checkPlantsAtLocation();
-      },
+    isInTrays() {
+      this.getPlantsInLocation();
     },
-
-    isInGround: {
-      handler() {
-        this.checkPlantsAtLocation();
-      },
+    isInGround() {
+      this.getPlantsInLocation();
+      this.getBedsInLocation();
     },
+    checkedBeds(newBeds, oldBeds) {
+      this.handleUpdateCheckedBeds(newBeds, oldBeds);
 
-    checkedBeds: {
-      handler(newBeds, oldBeds) {
-        this.handleBedPickerUpdate(newBeds, oldBeds);
-      },
+      /**
+       * The selected beds have changed.
+       * @event update:checkedBeds
+       * @property {Array<string>} newBeds an array containing the names of the selected beds.
+       */
+      this.$emit('update:checkedBeds', newBeds);
     },
-
-    plantsAtLocation: {
-      handler(newValue) {
-        /**
-         * Emitted when the presence of active plant assets at the location changes.
-         *
-         * @event hasPlants
-         * @property {Boolean} newValue - `true` if there are active plant assets at the location, `false` otherwise.
-         */
-        this.$emit('hasPlants', newValue);
-      },
+    pickedRows() {
+      /**
+       * The picked crops have changed.
+       *
+       * @event update:picked
+       * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+       *
+       */
+      this.$emit('update:picked', this.pickedRows);
     },
-
+    locationHasPlants(newValue) {
+      /**
+       * Emitted when the presence of active plant assets at the location changes.
+       *
+       * @event hasPlants
+       * @property {Boolean} newValue - `true` if there are active plant assets at the location, `false` otherwise.
+       */
+      this.$emit('hasPlants', newValue);
+    },
     isValid() {
       /**
        * The validity of the bedPicker or PicklistBase has changed.
@@ -599,40 +543,37 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
-
-    affectedAreaPercentage: {
-      handler(newArea) {
-        this.$emit('update:area', newArea);
-      },
+    affectedAreaPercentage(newArea) {
+      /**
+       * The estimate of the percentage of the location affected by the soil disturbance has changed.
+       * @param newArea the estimate of the area affected.
+       */
+      this.$emit('update:area', newArea);
     },
-    // When there are no active plant assets, auto-select all beds
-    affectedPlants: {
-      handler() {
-        if (
-          this.affectedPlants.length === 0 &&
-          this.bedsInLocation.length > 0
-        ) {
-          const allBedNames = this.bedsInLocation.map((bed) =>
-            bed.attributes ? bed.attributes.name : bed
-          );
-          if (
-            JSON.stringify(this.checkedBeds) !== JSON.stringify(allBedNames)
-          ) {
-            this.checkedBeds = allBedNames;
-          }
+    plantsInLocation() {
+      // When there are no active plant assets, auto-select all beds
+      if (
+        this.plantsInLocation.length === 0 &&
+        this.bedsInLocation.length > 0
+      ) {
+        const allBedNames = this.bedsInLocation.map(
+          (bed) => bed.attributes.name
+        );
+        if (JSON.stringify(this.checkedBeds) !== JSON.stringify(allBedNames)) {
+          this.checkedBeds = allBedNames;
         }
-      },
-      immediate: false,
+      }
     },
   },
-
   created() {
+    //this.getPlantsInLocation().then(() => {
     /**
      * The component is ready for use.
      */
     this.$emit('ready');
-    this.$emit('update:area', 0);
+    //this.$emit('update:area', 0);
     this.$emit('valid', this.isValid);
+    //});
   },
 };
 </script>
