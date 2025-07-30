@@ -69,7 +69,7 @@ import PickerBase from '@comps/PickerBase/PickerBase.vue';
  *
  * Attribute Name                  | Description
  * --------------------------------| ---------------------------------------
- * `active-plant-bed-picker`       | The `BedPicker` element shows the beds that can be picked.
+ * `active-plant-bed-picker`       | The `PickerBase` element shows the beds that can be picked.
  * `active-plant-asset-picklist`   | The `PicklistBase` element shows the crops that can be picked.
  */
 export default {
@@ -204,15 +204,12 @@ export default {
       return false;
     },
     affectedAreaPercentage() {
-      const beds = this.checkedBeds;
-      const rows = this.pickedRows;
-
-      // Case 1: No beds selected, but rows are picked
-      if (beds.length === 0 && rows.size > 0) {
-        return (rows.size / this.plantsInLocation.length) * 100;
+      // Case 1: No location
+      if (!this.location) {
+        return 0;
       }
 
-      // Case 2: No beds and no plantAssets
+      // Case 2: Location with no beds, and no active plant assets.
       if (
         this.bedsInLocation.length === 0 &&
         this.plantsInLocation.length === 0
@@ -220,16 +217,23 @@ export default {
         return 100;
       }
 
-      if (beds.length === 0 && rows.size === 0) {
-        return 0;
+      // Case 3: Location with beds but not active plant assets
+      if (
+        this.bedsInLocation.length > 0 &&
+        this.plantsInLocation.length === 0
+      ) {
+        return (this.checkedBeds.length / this.bedsInLocation.length) * 100;
       }
 
-      // Case 3: Beds selected, but no plant assets picked
-      if (beds.length > 0 && rows.size === 0) {
-        return (beds.length / this.bedsInLocation.length) * 100;
+      // Case 4: Location with no beds but active plant assets
+      if (
+        this.bedsInLocation.length === 0 &&
+        this.plantsInLocation.length > 0
+      ) {
+        return (this.pickedRows.size / this.plantsInLocation.length) * 100;
       }
 
-      // Case 4: Beds and plant rows are selected — calculate weighted impact
+      // Case 5: Location with beds and active plant assets
       const bedTotals = {}; // Total plant assets per bed
       for (const plant of this.plantsInLocation) {
         const bed = plant.bed;
@@ -241,7 +245,7 @@ export default {
       const bedPicks = {}; // Number of picked plant assets per bed
 
       // Count picked rows per bed
-      for (const { row } of rows.values()) {
+      for (const { row } of this.pickedRows.values()) {
         const bed = row.bed || 'N/A';
         if (!bedPicks[bed]) {
           bedPicks[bed] = 0;
@@ -253,7 +257,7 @@ export default {
       // Calculate weighted sum of affected beds
       let weightedSum = 0;
 
-      for (const bed of beds) {
+      for (const bed of this.checkedBeds) {
         const picked = bedPicks[bed] || 0;
         const total = bedTotals[bed] || 0;
 
@@ -499,14 +503,12 @@ export default {
     },
   },
   watch: {
-    location: {
-      handler() {
-        // Note... the order here matters because changing the
-        // plants is what triggers the selection of beds if there
-        // are not plants in the location.
-        this.getBedsInLocation();
-        this.getPlantsInLocation();
-      },
+    location() {
+      // Note... the order here matters because changing the
+      // plants is what triggers the selection of beds if there
+      // are not plants in the location.
+      this.getBedsInLocation();
+      this.getPlantsInLocation();
     },
     isInTrays() {
       this.getPlantsInLocation();
@@ -560,12 +562,15 @@ export default {
        */
       this.$emit('valid', this.isValid);
     },
-    affectedAreaPercentage(newArea) {
-      /**
-       * The estimate of the percentage of the location affected by the soil disturbance has changed.
-       * @param newArea the estimate of the area affected.
-       */
-      this.$emit('update:area', newArea);
+    affectedAreaPercentage: {
+      handler(newArea) {
+        /**
+         * The estimate of the percentage of the location affected by the soil disturbance has changed.
+         * @param newArea the estimate of the area affected.
+         */
+        this.$emit('update:area', newArea);
+      },
+      immediate: true,
     },
     plantsInLocation() {
       // When there are no active plant assets, auto-select all beds
@@ -589,7 +594,6 @@ export default {
          * The component is ready for use.
          */
         this.$emit('ready');
-        //this.$emit('update:area', 0);
         this.$emit('valid', this.isValid);
       });
     });

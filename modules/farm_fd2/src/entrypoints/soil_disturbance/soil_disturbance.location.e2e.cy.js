@@ -75,4 +75,23 @@ describe('Soil Disturbance: Location Component', () => {
         cy.wrap(checkbox).should('not.be.checked');
       });
   });
+
+  it('Location Bed picker never appears', () => {
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('A'); // no beds
+    cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('ALF'); // beds and plants
+    cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('H'); // only beds
+    cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
+    cy.get('[data-cy="soil-disturbance-location"]')
+      .find('[data-cy="selector-input"]')
+      .select('J'); // no beds, no plants
+    cy.get('[data-cy="location-beds-accordion"]').should('not.exist');
+  });
 });

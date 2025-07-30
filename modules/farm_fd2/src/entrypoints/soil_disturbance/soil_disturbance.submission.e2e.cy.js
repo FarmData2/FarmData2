@@ -165,7 +165,7 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
-      .should('have.value', 100); // non-sticky (related to location)
+      .should('have.value', 1); // non-sticky (related to location)
 
     // Check that the success toast is hidden.
     cy.get('.toast').should('not.exist');

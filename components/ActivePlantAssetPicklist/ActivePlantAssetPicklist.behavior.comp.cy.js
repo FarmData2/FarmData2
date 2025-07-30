@@ -419,4 +419,34 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
         });
     });
   });
+
+  it('Shows and hides bed column when switching locations', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'A',
+        isInGround: true,
+        isInTrays: true,
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'ALF' });
+          cy.get('[data-cy="picklist-header-bed"]')
+            .should('exist')
+            .should('be.visible');
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'B' });
+          cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+        });
+    });
+  });
 });
