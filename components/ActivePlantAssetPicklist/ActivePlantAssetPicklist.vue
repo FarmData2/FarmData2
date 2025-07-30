@@ -24,8 +24,7 @@
       v-bind:labels="picklistLabels"
       v-bind:rows="plantsInLocation"
       v-bind:showInfoIcons="false"
-      v-bind:picked="pickedRows"
-      v-on:update:picked="handleUpdatePickedRows($event)"
+      v-model:picked="pickedRows"
     />
   </div>
 </template>
@@ -273,15 +272,68 @@ export default {
     },
   },
   methods: {
-    handleUpdatePickedRows(event) {
-      // If we're already processing an update, don't trigger another update cycle
-      // or if nothing changed
-      if (this.updateInProgress || this.mapsAreEqual(event, this.pickedRows))
-        return;
+    /*
+     * NOTE: The bed picker and the active plant picklist are synchronized by the code
+     * below. When a bed is picked, all of the active plants in that row are also picked.
+     * Conversely, when a plant is picked, the bed that it contains is picked.  However,
+     * when a bed is picked because a plant in it was picked, we do not want all of the
+     * active plants in that bed to then be picked.  The `updateInProgress` flag below
+     * is used to prevent the cycle of updates that would cause this problem.
+     */
+
+    handleUpdateCheckedBeds(newBeds, oldBeds) {
+      // If an update cycle is already in progress, exit to prevent a loop.
+      if (this.updateInProgress) return;
 
       this.updateInProgress = true; // Start update cycle
 
-      this.pickedRows = event;
+      // Find which beds were added and which were removed...
+      const added = newBeds.filter((bed) => !oldBeds.includes(bed));
+      const removed = oldBeds.filter((bed) => !newBeds.includes(bed));
+
+      if (added.length > 0 || removed.length > 0) {
+        this.updatePickedRowsFromCheckedBeds(added, removed);
+      }
+
+      // End the update cycle AFTER Vue has processed watcher updates.
+      this.$nextTick(() => {
+        this.updateInProgress = false;
+      });
+    },
+    updatePickedRowsFromCheckedBeds(added = [], removed = []) {
+      // Bail out if none of the plants are in beds.
+      if (!this.picklistColumns.includes('bed')) return;
+
+      const newPicked = new Map(this.pickedRows);
+
+      // If beds were unchecked, remove those rows from pickedRows
+      if (removed.length > 0) {
+        this.plantsInLocation.forEach((row, idx) => {
+          if (removed.includes(row.bed) && row.bed !== 'N/A') {
+            newPicked.delete(idx);
+          }
+        });
+      }
+
+      // If beds were checked, add all rows for those beds to pickedRows
+      if (added.length > 0) {
+        this.plantsInLocation.forEach((row, idx) => {
+          if (added.includes(row.bed) && row.bed !== 'N/A') {
+            newPicked.set(idx, { row: row, picked: 1 });
+          }
+        });
+      }
+
+      // Only update pickedRows if there is an actual change
+      if (!this.mapsAreEqual(newPicked, this.pickedRows)) {
+        this.pickedRows = new Map(newPicked);
+      }
+    },
+    handleUpdatePickedRows() {
+      // If we're already processing an update, don't trigger another update cycle
+      if (this.updateInProgress) return;
+
+      this.updateInProgress = true; // Start update cycle
 
       this.updateCheckedBedsFromPickedRows(this.pickedRows);
 
@@ -291,6 +343,7 @@ export default {
       });
     },
     updateCheckedBedsFromPickedRows(newPicked) {
+      // Bail out if none of the plants are in beds.
       if (!this.picklistColumns.includes('bed')) return;
 
       // Create a map of counts for each bed in plantsInLocation
@@ -326,48 +379,7 @@ export default {
         this.checkedBeds = merged;
       }
     },
-    handleUpdateCheckedBeds(newBeds, oldBeds) {
-      // If an update cycle is already in progress, exit to prevent a loop.
-      if (this.updateInProgress) return;
-
-      // Find which beds were added and which were removed...
-      const added = newBeds.filter((bed) => !oldBeds.includes(bed));
-      const removed = oldBeds.filter((bed) => !newBeds.includes(bed));
-
-      if (added.length > 0 || removed.length > 0) {
-        this.updatePickedRowsFromCheckedBeds(added, removed);
-      }
-    },
-    updatePickedRowsFromCheckedBeds(added = [], removed = []) {
-      if (!this.picklistColumns.includes('bed')) return;
-
-      const newPicked = new Map(this.pickedRows);
-
-      // If beds were unchecked, remove those rows from pickedRows
-      if (removed.length > 0) {
-        this.plantsInLocation.forEach((row, idx) => {
-          if (removed.includes(row.bed) && row.bed !== 'N/A') {
-            newPicked.delete(idx);
-          }
-        });
-      }
-
-      // If beds were checked, add all rows for those beds to pickedRows
-      if (added.length > 0) {
-        this.plantsInLocation.forEach((row, idx) => {
-          if (added.includes(row.bed) && row.bed !== 'N/A') {
-            newPicked.set(idx, { row: row, picked: 1 });
-          }
-        });
-      }
-
-      // Only update pickedRows if there is an actual change
-      if (!this.mapsAreEqual(newPicked, this.pickedRows)) {
-        this.pickedRows = new Map(newPicked);
-      }
-    },
     async getPlantsInLocation() {
-      console.log('getting plants in location');
       if (this.location) {
         try {
           const results = await farmosUtil.getPlantAssets(
@@ -444,12 +456,8 @@ export default {
           });
         }
       } else {
-        if (this.plantsInLocation.length > 0) {
-          this.plantsInLocation = [];
-        }
-        if (this.pickedRows.size > 0) {
-          this.pickedRows = new Map();
-        }
+        this.plantsInLocation = [];
+        this.pickedRows = new Map();
       }
     },
     mapsAreEqual(mapA, mapB) {
@@ -482,9 +490,7 @@ export default {
           }
         }
       } else {
-        if (this.bedsInLocation.length > 0) {
-          this.bedsInLocation = [];
-        }
+        this.bedsInLocation = [];
       }
 
       if (this.checkedBeds.length > 0) {
@@ -495,37 +501,48 @@ export default {
   watch: {
     location: {
       handler() {
-        this.getPlantsInLocation();
+        // Note... the order here matters because changing the
+        // plants is what triggers the selection of beds if there
+        // are not plants in the location.
         this.getBedsInLocation();
+        this.getPlantsInLocation();
       },
-      immediate: true,
     },
     isInTrays() {
       this.getPlantsInLocation();
     },
     isInGround() {
-      this.getPlantsInLocation();
       this.getBedsInLocation();
+      this.getPlantsInLocation();
     },
     checkedBeds(newBeds, oldBeds) {
-      this.handleUpdateCheckedBeds(newBeds, oldBeds);
+      if (JSON.stringify(newBeds.sort()) != JSON.stringify(oldBeds.sort())) {
+        this.handleUpdateCheckedBeds(newBeds, oldBeds);
 
-      /**
-       * The selected beds have changed.
-       * @event update:checkedBeds
-       * @property {Array<string>} newBeds an array containing the names of the selected beds.
-       */
-      this.$emit('update:checkedBeds', newBeds);
+        /**
+         * The selected beds have changed.
+         * @event update:checkedBeds
+         * @property {Array<string>} newBeds an array containing the names of the selected beds.
+         */
+        this.$emit('update:checkedBeds', newBeds);
+      }
     },
-    pickedRows() {
-      /**
-       * The picked crops have changed.
-       *
-       * @event update:picked
-       * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
-       *
-       */
-      this.$emit('update:picked', this.pickedRows);
+    pickedRows: {
+      handler(oldRows, newRows) {
+        if (!this.mapsAreEqual(oldRows, newRows)) {
+          this.handleUpdatePickedRows();
+
+          /**
+           * The picked crops have changed.
+           *
+           * @event update:picked
+           * @property {Map (number, Object)} picked - A Map where the keys are the indices of the picked rows in the `rows` prop of picklistBase, and the values are objects representing the picked rows and their data.
+           *
+           */
+          this.$emit('update:picked', this.pickedRows);
+        }
+      },
+      deep: true,
     },
     locationHasPlants(newValue) {
       /**
@@ -566,14 +583,16 @@ export default {
     },
   },
   created() {
-    //this.getPlantsInLocation().then(() => {
-    /**
-     * The component is ready for use.
-     */
-    this.$emit('ready');
-    //this.$emit('update:area', 0);
-    this.$emit('valid', this.isValid);
-    //});
+    this.getBedsInLocation().then(() => {
+      this.getPlantsInLocation().then(() => {
+        /**
+         * The component is ready for use.
+         */
+        this.$emit('ready');
+        //this.$emit('update:area', 0);
+        this.$emit('valid', this.isValid);
+      });
+    });
   },
 };
 </script>

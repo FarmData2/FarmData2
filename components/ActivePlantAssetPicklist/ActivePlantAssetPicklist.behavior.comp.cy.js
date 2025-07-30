@@ -383,7 +383,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Mintain correct bed filtering when changing location with includeEmptyBeds: false', () => {
+  it('Maintain correct bed filtering when changing location with includeEmptyBeds: false', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {

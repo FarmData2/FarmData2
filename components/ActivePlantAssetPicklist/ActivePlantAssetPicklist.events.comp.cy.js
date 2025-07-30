@@ -545,7 +545,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     });
   });
 
-  it.only('Emit `update:checkedBeds` to clear beds when changing to location with no beds', () => {
+  it('Emit `update:checkedBeds` to clear beds when changing to location with no beds', () => {
     const readySpy = cy.spy().as('readySpy');
     const bedPickedSpy = cy.spy().as('bedPickedSpy');
     cy.mount(ActivePlantAssetPicklist, {
@@ -633,7 +633,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
 
     cy.wait('@farmOSRequest').then(() => {
       cy.get('@errorSpy')
-        .should('have.been.calledTwice')
+        .should('have.been.calledOnce')
         .and('have.been.calledWithMatch', {
           message: 'Unable to fetch plant assets.',
           error: Cypress.sinon.match.instanceOf(Error),
