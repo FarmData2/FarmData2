@@ -9,6 +9,6 @@
   // codeActionsOnSave that sends a heartbeat signal to
   // the codespace that keeps it from timing out due to inactivity.
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000,
+  "files.autoSaveDelay": 30000,
   "vale.valeCLI.path": "${workspaceFolder}/node_modules/@vvago/vale/bin/vale"
 }

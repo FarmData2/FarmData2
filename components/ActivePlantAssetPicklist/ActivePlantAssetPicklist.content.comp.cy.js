@@ -390,4 +390,46 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
         cy.get('[data-cy="active-plant-asset-bed-picker"]').should('not.exist');
       });
   });
+
+  it('Shows bed column in location with plants in beds', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'ALF',
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picklist-header-bed"]')
+          .should('exist')
+          .should('be.visible');
+      });
+  });
+
+  it('Hides bed column in location with no plants in beds', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: true,
+        location: 'A',
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+      });
+  });
 });

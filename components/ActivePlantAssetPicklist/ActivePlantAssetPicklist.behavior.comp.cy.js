@@ -11,7 +11,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     cy.saveSessionStorage();
   });
 
-  it('Should fetch new plant assets when the `location` prop changes', () => {
+  it('Fetch new plant assets when the `location` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -39,7 +39,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should fetch new plant assets when the `isInGround` prop changes', () => {
+  it('Fetch new plant assets when the `isInGround` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -67,7 +67,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should fetch new plant assets when the `isInTrays` prop changes', () => {
+  it('Fetch new plant assets when the `isInTrays` prop changes', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -233,7 +233,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should filter beds when includeEmptyBeds changes from true to false for ALF', () => {
+  it('Filter beds when includeEmptyBeds changes from true to false for ALF', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -276,7 +276,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should show all beds when includeEmptyBeds changes from false to true for ALF', () => {
+  it('Show all beds when includeEmptyBeds changes from false to true for ALF', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -319,7 +319,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should hide bed picker when switching from H (includeEmptyBeds: true) to H (includeEmptyBeds: false)', () => {
+  it('Hide bed picker when switching from H (includeEmptyBeds: true) to H (includeEmptyBeds: false)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -351,7 +351,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should show bed picker when switching from H (includeEmptyBeds: false) to H (includeEmptyBeds: true)', () => {
+  it('Show bed picker when switching from H (includeEmptyBeds: false) to H (includeEmptyBeds: true)', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -383,7 +383,7 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
     });
   });
 
-  it('Should maintain correct bed filtering when changing location with includeEmptyBeds: false', () => {
+  it('Maintain correct bed filtering when changing location with includeEmptyBeds: false', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(ActivePlantAssetPicklist, {
@@ -416,6 +416,36 @@ describe('Test the ActivePlantAssetPicklist component behavior', () => {
           cy.get('[data-cy="active-plant-asset-bed-picker"]').should(
             'not.exist'
           );
+        });
+    });
+  });
+
+  it('Shows and hides bed column when switching locations', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'A',
+        isInGround: true,
+        isInTrays: true,
+        includeEmptyBeds: false,
+        onReady: readySpy,
+      },
+    }).then(({ wrapper }) => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'ALF' });
+          cy.get('[data-cy="picklist-header-bed"]')
+            .should('exist')
+            .should('be.visible');
+        })
+        .then(() => {
+          wrapper.setProps({ location: 'B' });
+          cy.get('[data-cy="picklist-header-bed"]').should('not.exist');
         });
     });
   });

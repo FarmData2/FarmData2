@@ -114,7 +114,7 @@ describe('Soil Disturbance: Submission tests', () => {
          */
         expect(formData.termination).to.equal(false);
 
-        expect(formData.area).to.equal(50);
+        expect(formData.area).to.equal(25);
       } else {
         expect(formData.location).to.equal('H');
         expect(formData.beds[0]).to.equal('H-1');
@@ -165,7 +165,7 @@ describe('Soil Disturbance: Submission tests', () => {
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
-      .should('have.value', 100); // non-sticky (related to location)
+      .should('have.value', 1); // non-sticky (related to location)
 
     // Check that the success toast is hidden.
     cy.get('.toast').should('not.exist');

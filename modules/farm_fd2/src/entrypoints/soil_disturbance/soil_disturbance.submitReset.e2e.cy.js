@@ -25,15 +25,21 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
       .should('be.enabled');
   });
 
-  function populateForm({ skipLocation = false, skipEquipment = false } = {}) {
+  function populateForm({
+    skipLocation = false,
+    skipPlants = false,
+    skipEquipment = false,
+  } = {}) {
     cy.get('[data-cy="date-input"]').clear();
     cy.get('[data-cy="date-input"]').type('1950-01-02');
     if (!skipLocation) {
       cy.get('[data-cy="soil-disturbance-location"]')
         .find('[data-cy="selector-input"]')
         .select('ALF');
-      cy.get('[data-cy="picklist-checkbox-0"]').check();
-      cy.get('[data-cy="picklist-checkbox-1"]').check();
+      if (!skipPlants) {
+        cy.get('[data-cy="picklist-checkbox-0"]').check();
+        cy.get('[data-cy="picklist-checkbox-1"]').check();
+      }
     }
     if (!skipEquipment) {
       cy.get('[data-cy="multi-equipment-selector"]')
@@ -84,6 +90,24 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-location"]')
       .find('[data-cy="selector-input"]')
       .select('ALF');
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+  });
+
+  it('Termination with no plant selected disables submit', () => {
+    populateForm({ skipPlants: true });
+    cy.get('[data-cy="termination-event-checkbox"]').check();
+
+    cy.get('[data-cy="submit-button"]').should('be.enabled');
+    cy.get('[data-cy="submit-button"]').click();
+
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get(
+      '[data-cy="picker-options"] input[name="picker-options"][value="ALF-4"]'
+    ).check();
+    cy.get('[data-cy="submit-button"]').should('be.disabled');
+
+    cy.get('[data-cy="picklist-checkbox-1"]').check();
     cy.get('[data-cy="submit-button"]').should('be.enabled');
   });
 
@@ -218,7 +242,7 @@ describe('Soil Disturbance: Submit/Reset Buttons component', () => {
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-area"]')
       .find('[data-cy="numeric-input"]')
-      .should('have.value', '100');
+      .should('have.value', '1');
     cy.get('[data-cy="soil-disturbance-equipment-form"]')
       .find('[data-cy="soil-disturbance-passes"]')
       .find('[data-cy="numeric-input"]')

@@ -94,6 +94,7 @@
           id="termination-event-picklist"
           data-cy="termination-event-picklist"
           v-bind:required="form.termination"
+          v-bind:requiredRow="form.termination"
           v-bind:location="form.location"
           v-bind:showValidityStyling="validity.show"
           v-bind:picked="form.picked"
@@ -211,7 +212,7 @@ export default {
         depth: 0,
         speed: 0,
         passes: 1,
-        area: 100,
+        area: 1,
         comment: '',
       },
       validity: {
@@ -226,12 +227,6 @@ export default {
       submitting: false,
       errorShowing: false,
       createdCount: 0,
-      picklistColumns: ['crop', 'bed', 'timestamp'],
-      picklistLabels: {
-        crop: 'Crop',
-        bed: 'Bed',
-        timestamp: 'Planted Date',
-      },
       picklistValid: false,
     };
   },
@@ -255,13 +250,6 @@ export default {
     },
   },
   methods: {
-    handleBedsUpdate(checkedBeds, totalBeds) {
-      this.form.beds = checkedBeds;
-      this.form.area =
-        totalBeds > 0
-          ? Math.round((checkedBeds.length / totalBeds) * 100)
-          : 100; // default to 100% if there are no beds
-    },
     submit() {
       this.submitting = true;
       this.validity.show = true;
@@ -331,7 +319,7 @@ export default {
       this.form.beds = [];
       this.form.termination = false;
       this.form.picked = new Map();
-      this.form.area = 100;
+      this.form.area = 1;
     },
   },
   watch: {
