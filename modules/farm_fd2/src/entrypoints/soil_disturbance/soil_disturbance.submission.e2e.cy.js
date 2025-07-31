@@ -44,6 +44,10 @@ describe('Soil Disturbance: Submission tests', () => {
 
       cy.get('[data-cy="picklist-checkbox-0"]').check();
       cy.get('[data-cy="picklist-checkbox-1"]').check();
+
+      cy.get(
+        '[data-cy="picker-options"] input[name="picker-options"][value="ALF-4"]'
+      ).check();
     }
 
     cy.get('[data-cy="multi-equipment-selector"]')
@@ -107,6 +111,9 @@ describe('Soil Disturbance: Submission tests', () => {
         expect(formData.picked.get(1).row.crop).to.equal('LETTUCE-ICEBERG');
         expect(formData.picked.get(1).row.bed).to.equal('ALF-1');
 
+        expect(formData.beds[0]).to.equal('ALF-1');
+        expect(formData.beds[1]).to.equal('ALF-4');
+
         /* The termination flag should remain false in this test to avoid
          * terminating crops. If termination is mistakenly set to true,
          * subsequent tests may fail as the database will reflect fewer
@@ -114,7 +121,7 @@ describe('Soil Disturbance: Submission tests', () => {
          */
         expect(formData.termination).to.equal(false);
 
-        expect(formData.area).to.equal(25);
+        expect(formData.area).to.equal(50);
       } else {
         expect(formData.location).to.equal('H');
         expect(formData.beds[0]).to.equal('H-1');

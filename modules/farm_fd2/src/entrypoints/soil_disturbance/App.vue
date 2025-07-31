@@ -374,6 +374,7 @@ export default {
 #termination-event-group {
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 #termination-event-group label {
