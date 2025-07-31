@@ -15,6 +15,9 @@ import {
 /**
  * Creates an activity log (`log--activity`) for a soil disturbance termination event.
  *
+ * The portion of the `plantAsset` affected by the termination event will be terminated.
+ * If the `plantAsset`'s `location` has associated beds, the beds listed in `bedNames` will be removed. The beds are removed by creating an `ActivityLog` which is a `movement`.
+ * If after removing the `bedNames` there are no remaining beds (or there were not any to start with) the `plantAsset` will be archived.
  *
  * @param {string} terminationDate - The date of the soil disturbance termination event.
  * @param {string} locationName - The name of the location where the soil disturbance occurred.
@@ -23,7 +26,7 @@ import {
  * @returns {Object} The new activity log.
  * @throws {Error} if unable to create the activity log.
  *
- * @category Soil disturbance Termination
+ * @category Soil
  */
 export async function createSoilDisturbanceTerminationLog(
   terminationDate,
@@ -113,7 +116,7 @@ export async function createSoilDisturbanceTerminationLog(
  * @returns {Object} the activity log with the specified id.
  * @throws {Error} if unable to get the activity log.
  *
- * @category Soil disturbance Termination
+ * @category Soil
  */
 export async function getSoilDisturbanceTerminationLog(activityLogId) {
   const farm = await getFarmOSInstance();
@@ -130,7 +133,7 @@ export async function getSoilDisturbanceTerminationLog(activityLogId) {
  * @returns {Object} the deleted activity log.
  * @throws {Error} if unable to delete the activity log.
  *
- * @category Soil disturbance Termination
+ * @category Soil
  */
 export async function deleteSoilDisturbanceTerminationLog(activityLogId) {
   const farm = await getFarmOSInstance();
