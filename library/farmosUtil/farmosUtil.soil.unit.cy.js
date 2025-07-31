@@ -282,6 +282,58 @@ describe('Test the soil disturbance activity log functions', () => {
     });
   });
 
+  it('Create a soil disturbance affecting multiple plant assets', () => {
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'asset 1')).as(
+      'plantAsset1'
+    );
+
+    cy.wrap(farmosUtil.createPlantAsset('1999-01-02', 'ARUGULA', 'asset 2')).as(
+      'plantAsset2'
+    );
+
+    cy.wrap(
+      farmosUtil.createStandardQuantity('length', 7, 'Depth', 'INCHES')
+    ).as('depthQuantity');
+
+    cy.wrap(farmosUtil.createStandardQuantity('rate', 5, 'Speed', 'MPH')).as(
+      'speedQuantity'
+    );
+
+    const equipmentArray = [equipmentMap.get('Seeding Drill')];
+
+    cy.getAll([
+      '@plantAsset1',
+      '@plantAsset2',
+      '@depthQuantity',
+      '@speedQuantity',
+    ]).then(([plantAsset1, plantAsset2, depthQuantity, speedQuantity]) => {
+      cy.wrap(
+        farmosUtil.createSoilDisturbanceActivityLog(
+          '1999-01-02',
+          'CHUAU',
+          ['CHUAU-1', 'CHUAU-2'],
+          ['tillage', 'seeding_direct'],
+          [plantAsset1, plantAsset2],
+          [depthQuantity, speedQuantity],
+          equipmentArray,
+          'a comment'
+        )
+      ).as('soilLog');
+    });
+
+    cy.getAll(['@plantAsset1', '@plantAsset2', '@soilLog']).then(
+      ([plantAsset1, plantAsset2, soilLog]) => {
+        cy.wrap(farmosUtil.getSoilDisturbanceActivityLog(soilLog.id)).then(
+          (result) => {
+            expect(result.relationships.asset.length).to.equal(2);
+            expect(result.relationships.asset[0].id).to.equal(plantAsset1.id);
+            expect(result.relationships.asset[1].id).to.equal(plantAsset2.id);
+          }
+        );
+      }
+    );
+  });
+
   it('Error creating soil disturbance activity log', { retries: 4 }, () => {
     cy.intercept('POST', '**/api/log/activity', {
       statusCode: 401,
