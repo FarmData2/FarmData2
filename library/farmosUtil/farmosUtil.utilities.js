@@ -73,7 +73,7 @@ export async function getPlantingLocationObjects(locationNames) {
  * id: log_category_id
  * }
  * ```
- * @Throws {Error} if unable to get the log category id for one or more of the listed categories.
+ * @throws {Error} if unable to get the log category id for one or more of the listed categories.
  *
  * @category Utilities
  */
@@ -102,6 +102,7 @@ export async function getLogCategoryObjects(logCategories) {
  * }
  * ```
  *
+ * @throws {Error} if unable to get the quantity id for one or more of the listed quantities.
  * @category Utilities
  */
 export function getQuantityObjects(quantities) {

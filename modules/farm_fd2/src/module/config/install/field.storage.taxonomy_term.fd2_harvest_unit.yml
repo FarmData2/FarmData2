@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+    - farm_fd2
+id: taxonomy_term.fd2_harvest_unit
+field_name: fd2_harvest_unit
+entity_type: taxonomy_term
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: farm_fd2
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

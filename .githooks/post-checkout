@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# This post-checkout hook ensures the version of the sampleDB
+# that is installed is compatible with the code in the branch.
+
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT_DIR/bin/lib.bash"
+
+safe_cd "$REPO_ROOT_DIR"
+
+FROM_REF=$1
+TO_REF=$2
+IS_FILE=$3
+
+# Don't run this when a repo is cloned.
+if [ -z "$FROM_REF" ]; then
+  exit 0
+fi
+
+# Don't run this if there are no changes (e.g. switching to a new branch).
+if [ "$FROM_REF" = "$TO_REF" ]; then
+  exit 0
+fi
+
+# Don't run this if this is a file checkout.
+if [ ! "$IS_FILE" ]; then
+  exit 0
+fi
+
+NEW_BRANCH_DB_VERSION=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
+NEW_BRANCH_DB_ASSET=$(git show "$TO_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+
+WORKING_FILES_DB_VERSION=$(head -1 ".fd2dev/db.conf")
+WORKING_FILES_DB_ASSET=$(tail -1 ".fd2dev/db.conf")
+
+OLD_BRANCH_DB_VERSION=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | head -1)
+OLD_BRANCH_DB_ASSET=$(git show "$FROM_REF:.fd2dev/db.conf" 2> /dev/null | tail -1)
+
+NEW_BRANCH=$(git branch --show-current)
+
+if
+  [ "$NEW_BRANCH_DB_VERSION" != "$WORKING_FILES_DB_VERSION" ] \
+    || [ "$NEW_BRANCH_DB_ASSET" != "$WORKING_FILES_DB_ASSET" ]
+then
+  echo -e "${ORANGE}WARNING: The installed database may not be compatible with the $NEW_BRANCH branch.${NO_COLOR}"
+  echo "  A new database version was installed by installDB.bash but .fd2dev/db.conf was not been committed."
+  echo "  You should commit the changes to .fd2dev/db.conf to your feature branch."
+elif [ "$NEW_BRANCH_DB_VERSION" != "$OLD_BRANCH_DB_VERSION" ] \
+  || [ "$NEW_BRANCH_DB_ASSET" != "$OLD_BRANCH_DB_ASSET" ]; then
+  echo "Branch $NEW_BRANCH requires $NEW_BRANCH_DB_ASSET from $NEW_BRANCH_DB_VERSION."
+  installDB.bash --release="$NEW_BRANCH_DB_VERSION" --asset="$NEW_BRANCH_DB_ASSET"
+fi

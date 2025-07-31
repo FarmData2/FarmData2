@@ -235,6 +235,21 @@ const getCompTestsCompCyJs = (files) => {
   return testCommands;
 };
 
+const getCompTestsE2ECyJs = (files) => {
+  const testCommands = files.map((file) => {
+    if (compsTested.get(path.basename(path.dirname(file)))) {
+      return 'skipping ' + file;
+    } else {
+      return (
+        'test.bash --e2e --fd2 --live --glob=' +
+        file.substring(file.indexOf('/components'))
+      );
+    }
+  });
+
+  return testCommands;
+};
+
 /*
  * Construct a test command for each library .js file that is staged.
  * The command will use a glob to run all unit.cy.js unit tests in the
@@ -310,6 +325,9 @@ module.exports = {
   },
   'components/**/*.comp.cy.js': (files) => {
     return getCompTestsCompCyJs(files);
+  },
+  'components/**/*.e2e.cy.js': (files) => {
+    return getCompTestsE2ECyJs(files);
   },
   'library/!(cypress)/!(*unit.cy).js': (files) => {
     return getLibTestsJs(files);

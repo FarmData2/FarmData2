@@ -14,6 +14,16 @@ import {
 
 /**
  * Creates an activity log (`log--activity`) for a soil disturbance termination event.
+ *
+ *
+ * @param {string} terminationDate - The date of the soil disturbance termination event.
+ * @param {string} locationName - The name of the location where the soil disturbance occurred.
+ * @param {Array<string>} bedNames - The names of the bed(s) where the soil disturbance occurred.
+ * @param {Object} plantAsset - The plant asset created by the soil disturbance.
+ * @returns {Object} The new activity log.
+ * @throws {Error} if unable to create the activity log.
+ *
+ * @category Soil disturbance Termination
  */
 export async function createSoilDisturbanceTerminationLog(
   terminationDate,
@@ -98,6 +108,12 @@ export async function createSoilDisturbanceTerminationLog(
 
 /**
  * Get the soil disturbance termination activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the activity log with the specified id.
+ * @throws {Error} if unable to get the activity log.
+ *
+ * @category Soil disturbance Termination
  */
 export async function getSoilDisturbanceTerminationLog(activityLogId) {
   const farm = await getFarmOSInstance();
@@ -109,6 +125,12 @@ export async function getSoilDisturbanceTerminationLog(activityLogId) {
 
 /**
  * Delete the soil disturbance termination activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the deleted activity log.
+ * @throws {Error} if unable to delete the activity log.
+ *
+ * @category Soil disturbance Termination
  */
 export async function deleteSoilDisturbanceTerminationLog(activityLogId) {
   const farm = await getFarmOSInstance();

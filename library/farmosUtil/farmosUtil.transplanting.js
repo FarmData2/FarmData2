@@ -13,6 +13,16 @@ import {
 
 /**
  * Create a new activity log (`log--activity`) for a transplanting.
+ *
+ * @param {string} transplantingDate - The date of the transplanting.
+ * @param {string} locationName - The name of the location where the transplanting occurred.
+ * @param {Array<string>} bedNames - The names of the bed(s) where the transplanting occurred.
+ * @param {Object} plantAsset - The plant asset created by the transplanting.
+ * @param {Array<Object>} [quantities] - An array of quantity objects.
+ * @returns {Object} The new activity log.
+ * @throws {Error} if unable to create the activity log.
+ *
+ * @category transplanting
  */
 export async function createTransplantingActivityLog(
   transplantingDate,
@@ -61,6 +71,12 @@ export async function createTransplantingActivityLog(
 
 /**
  * Get the transplanting activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the activity log with the specified id.
+ * @throws {Error} if unable to get the activity log.
+ *
+ * @category transplanting
  */
 export async function getTransplantingActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
@@ -72,6 +88,12 @@ export async function getTransplantingActivityLog(activityLogId) {
 
 /**
  * Delete the transplanting activity log with the specified id.
+ *
+ * @param {string} activityLogId the id of the activity log.
+ * @returns {Object} the deleted activity log.
+ * @throws {Error} if unable to delete the activity log.
+ *
+ * @category transplanting
  */
 export async function deleteTransplantingActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();

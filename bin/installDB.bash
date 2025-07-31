@@ -52,42 +52,42 @@ else
 
   while true; do
     case $1 in
-    -a | --asset)
-      if [ "$2" == "" ]; then
-        echo -e "${ON_RED}ERROR:${NO_COLOR} -a|--asset requires an argument."
-        echo "Use installDB.bash --help for usage information"
-        exit 255
-      fi
-      DB_ASSET=$2
-      shift 2
-      ;;
-    -c | --current)
-      CURRENT=1
-      shift 2
-      ;;
-    -h | --help)
-      usage
-      ;;
-    -p | --prompt)
-      PROMPT=1
-      shift 2
-      ;;
-    -r | --release)
-      if [ "$2" == "" ]; then
-        echo -e "${ON_RED}ERROR:${NO_COLOR} -r|--release requires an argument."
-        echo "Use installDB.bash --help for usage information"
-        exit 255
-      fi
-      DB_RELEASE=$2
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      usage
-      ;;
+      -a | --asset)
+        if [ "$2" == "" ]; then
+          echo -e "${ON_RED}ERROR:${NO_COLOR} -a|--asset requires an argument."
+          echo "Use installDB.bash --help for usage information"
+          exit 255
+        fi
+        DB_ASSET=$2
+        shift 2
+        ;;
+      -c | --current)
+        CURRENT=1
+        shift 2
+        ;;
+      -h | --help)
+        usage
+        ;;
+      -p | --prompt)
+        PROMPT=1
+        shift 2
+        ;;
+      -r | --release)
+        if [ "$2" == "" ]; then
+          echo -e "${ON_RED}ERROR:${NO_COLOR} -r|--release requires an argument."
+          echo "Use installDB.bash --help for usage information"
+          exit 255
+        fi
+        DB_RELEASE=$2
+        shift 2
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *)
+        usage
+        ;;
     esac
   done
 fi
@@ -130,8 +130,8 @@ elif [ -n "$DB_RELEASE" ] && [ -n "$DB_ASSET" ]; then
   # shellcheck disable=SC2207
   RELEASES=(
     $(gh release list \
-      --repo FarmData2/FD2-SampleDBs |
-      head -n5 | cut -f1)
+      --repo FarmData2/FD2-SampleDBs \
+      | head -n5 | cut -f1)
   )
   # shellcheck disable=SC2207
   REL_INFO=$(gh release view --repo FarmData2/FD2-SampleDBs "$DB_RELEASE")
@@ -145,8 +145,8 @@ else
       $(gh release list \
         --exclude-drafts \
         --exclude-pre-releases \
-        --repo FarmData2/FD2-SampleDBs |
-        cut -f1)
+        --repo FarmData2/FD2-SampleDBs \
+        | cut -f1)
     )
 
     DB_RELEASE="${RELEASES[0]}"
@@ -157,8 +157,8 @@ else
       $(gh release list \
         --exclude-drafts \
         --exclude-pre-releases \
-        --repo FarmData2/FD2-SampleDBs |
-        head -n5 | cut -f1)
+        --repo FarmData2/FD2-SampleDBs \
+        | head -n5 | cut -f1)
     )
 
     echo "The 5 most recent releases are shown."
@@ -189,13 +189,13 @@ else
 fi
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $HOME/.fd2/...${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $REPO_DIR/.fd2/...${NO_COLOR}"
 else
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from release $DB_RELEASE...${NO_COLOR}"
 
-  if [ -f "$HOME/.fd2/$DB_ASSET" ]; then
+  if [ -f "$REPO_DIR/.fd2/$DB_ASSET" ]; then
     echo "Deleting existing database archives..."
-    rm "$HOME/.fd2/$DB_ASSET"
+    rm "$REPO_DIR/.fd2/$DB_ASSET"
     error_check "Unable to delete existing database archives."
     echo "  Deleted."
   fi
@@ -203,7 +203,7 @@ else
   echo "Downloading database \"$DB_ASSET\" from release $DB_RELEASE..."
   gh release download "$DB_RELEASE" \
     --repo FarmData2/FD2-SampleDBs \
-    --dir "$HOME/.fd2/" \
+    --dir "$REPO_DIR/.fd2/" \
     --pattern "$DB_ASSET" \
     --clobber
   error_check "Unable to download the database."
@@ -237,7 +237,7 @@ error_check "Unable to delete the current database."
 echo "  Deleted."
 
 echo "Extracting $DB_ASSET..."
-echo "fd2dev" | sudo -Sk -p "" tar -xzf "$HOME/.fd2/$DB_ASSET" > /dev/null
+echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "  Extracted."
 
@@ -270,7 +270,9 @@ echo "  Drupal cache cleared."
 echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
 
 if [ -n "$CURRENT" ]; then
-  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $HOME/.fd2/.${NO_COLOR}"
+  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $REPO_DIR/.fd2/.${NO_COLOR}"
 else
+  echo "$DB_RELEASE" > "$REPO_DIR/.fd2dev/db.conf"
+  echo "$DB_ASSET" >> "$REPO_DIR/.fd2dev/db.conf"
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from release $DB_RELEASE.${NO_COLOR}"
 fi

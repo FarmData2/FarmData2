@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - farm_fd2
+    - taxonomy
+id: taxonomy_term.fd2_unit_conversions
+field_name: fd2_unit_conversions
+entity_type: taxonomy_term
+type: fd2_unit_conversions
+settings:
+  target_type: taxonomy_term
+module: farm_fd2
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
