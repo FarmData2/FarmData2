@@ -31,7 +31,7 @@ describe('MultiCropSelector popup test', () => {
       .type('NewCrop');
 
     cy.get('@iframeBody')
-      .find('[id="edit-fd2-harvest-units-0-target-id"]', { timeout: 10000 })
+      .find('[id="edit-fd2-harvest-unit-0-target-id"]', { timeout: 10000 })
       .should('be.visible') // Ensure the input field is visible
       .type('COUNT');
 
