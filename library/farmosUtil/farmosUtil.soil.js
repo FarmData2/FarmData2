@@ -17,14 +17,14 @@ import {
  * @param {string} locationName - The name of the location where the soil disturbance occurred.
  * @param {Array<string>} bedNames - The names of the bed(s) where the soil disturbance occurred.
  * @param {Array<string>} logCategories - The log categories associated with this log.
- * @param {Object} plantAsset - The plant asset created by the soil disturbance.
+ * @param {Object | Array<Object>} plantAsset - The plant asset(s) affected by the soil disturbance.
  * @param {Array<Object>} [quantities] - An array of quantity objects.
  * @param {Array<Object>} [equipment] - An array of equipment objects.
  * @param {string} [comment] - A comment on the soil disturbance.
  * @returns {Object} The new activity log.
  * @throws {Error} if unable to create the activity log.
  *
- * @category Soil disturbance
+ * @category Soil
  */
 export async function createSoilDisturbanceActivityLog(
   disturbanceDate,
@@ -91,7 +91,7 @@ export async function createSoilDisturbanceActivityLog(
  * @returns {Object} the activity log with the specified id.
  * @throws {Error} if unable to get the activity log.
  *
- * @category Soil disturbance
+ * @category Soil
  */
 export async function getSoilDisturbanceActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
@@ -108,7 +108,7 @@ export async function getSoilDisturbanceActivityLog(activityLogId) {
  * @returns {Object} the deleted activity log.
  * @throws {Error} if unable to delete the activity log.
  *
- * @category Soil disturbance
+ * @category Soil
  */
 export async function deleteSoilDisturbanceActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
