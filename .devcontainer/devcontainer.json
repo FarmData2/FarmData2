@@ -65,7 +65,7 @@
               "label": "Open FarmData Dev Environment",
               "dependsOrder": "sequence",
               "dependsOn": [
-                "Hide UI Elements",
+                //"Hide UI Elements",
                 "Open Loading Page",
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
@@ -80,14 +80,14 @@
                 "reveal": "never"
               }
             },
-            {
-              "label": "Hide UI Elements",
-              "type": "process",
-              "command": "${input:hideUIElements}",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
+            // {
+            //   "label": "Hide UI Elements",
+            //   "type": "process",
+            //   "command": "${input:hideUIElements}",
+            //   "presentation": {
+            //     "reveal": "never"
+            //   }
+            // },
             {
               "label": "Open Loading Page",
               "type": "shell",
