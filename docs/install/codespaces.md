@@ -18,7 +18,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 
 1. Log in to GitHub.
 
-1. [Create a (classic) Personal Access Token (PAT)] in GitHub with the `repo`, `workflow` and `codespace` scopes selected. Choose an expiration date that is appropraite for the work you plan to do. __Be sure to copy and paste your token somewhere safe.__ You'll need it later and you cannot retrieve again after you leave the creation page.
+1. [Create a (classic) Personal Access Token (PAT)] in GitHub with the `repo`, `workflow`, `read:org` and `codespace` scopes selected. Choose an expiration date that is appropraite for the work you plan to do. __Be sure to copy and paste your token somewhere safe.__ You'll need it later and you cannot retrieve again after you leave the creation page.
 
 1. Visit the [Codespace settings page](https://github.com/settings/codespaces). Scroll down and adjust the "Default Idle Timeout" setting. This is the amount of time the codespace will continue running if you are not interacting with the development environment. 15 minutes is a good balance that ensures the development environment is not shutdown too soon, but also does not waste your free usage.
 
