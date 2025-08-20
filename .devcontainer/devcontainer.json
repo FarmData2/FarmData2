@@ -25,7 +25,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "emeraldwalk.RunOnSave"
+        "emeraldwalk.RunOnSave",
+        "sirmspencer.vscode-autohide"
       ],
       "settings": {
         // Hide most of the VSCode UI via settings.
@@ -48,6 +49,7 @@
         "window.restoreWindows": "none",
         "terminal.integrated.hideOnStartup": "always",
         "github.codespaces.devcontainerChangedNotificationStyle": "none",
+        "autoHide.hideOnOpen": true,
         "emeraldwalk.runonsave": {
           "commands": [
             {
@@ -80,14 +82,6 @@
                 "reveal": "never"
               }
             },
-            // {
-            //   "label": "Hide UI Elements",
-            //   "type": "process",
-            //   "command": "${input:hideUIElements}",
-            //   "presentation": {
-            //     "reveal": "never"
-            //   }
-            // },
             {
               "label": "Open Loading Page",
               "type": "shell",
@@ -137,22 +131,6 @@
               }
             }
           ],
-          "inputs": [
-            {
-              // Hides some additional VSCode UI elements for which there
-              // are no settings available.
-              "id": "hideUIElements",
-              "type": "command",
-              "command": "runCommands",
-              "args": {
-                "commands": [
-                  "workbench.action.closeAllEditors",
-                  "workbench.action.closeSidebar",
-                  "workbench.action.closePanel"
-                ]
-              }
-            }
-          ]
         }
       }
     }
