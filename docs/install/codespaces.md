@@ -37,7 +37,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 1. Connect to the FarmData2 Development Environment in one of the following ways:
 
    1. **Open in your Browser:** This is the fastest and easiest way to connect, but has the limitation that you will not be able to copy and paste information directly between the FarmData2 Development Environment and your local machine.
-      - Click the link provided under the "Open in your Browser" heading.
+      - Click the link provided on the "The FarmData2 Development Environment" page in your browser under the "Open in your Browser" heading.
       - The FarmData2 Development Environment will open in a new browser tab.
    2. **Open on your Machine with VNC:** If you will want to copy and paste information between the FarmData2 Development Environment and your local machine frequently, this is the best way to connect.
       - Confirm that the following dependencies are installed on your machine:
@@ -46,7 +46,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
           - For Windows, download and run the `vncviewer64.1.13.0.exe` file.
           - For Mac, download and open the `TigerVNC.1.13.0.dmg` file and then copy the "TigerVNC Viewer" to your Applications folder.
           - Note: Newer versions of the Tiger VNC Viewer might work, but have not been tested.
-      - Follow the directions provided under the "Open on your Machine with VNC" heading.
+      - Follow the directions provided on the "The FarmData2 Development Environment" page in your browser under the "Open on your Machine with VNC" heading.
 
 1. Follow the directions to [Setup the FarmData2 Development Environment](setup.md).
 
