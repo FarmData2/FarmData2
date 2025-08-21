@@ -9,9 +9,8 @@
   the Loading screen will appear in a few moments.<br>
   <br>
   <br>
-  <small><small>
+  <small>
   If this screen appeared before you opened the Development Environment<br>
-  you can click <a href="fd2_weclome.md">here</a>
-  to return to the Welcome screen.
-  </small></small>
+  reload the browser window and wait for the Welcome screen. 
+  </small>
 </center>
