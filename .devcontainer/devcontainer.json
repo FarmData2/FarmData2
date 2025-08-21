@@ -133,7 +133,7 @@
             {
               "label": "Start Heartbeat Listener",
               "type": "shell",
-              "command": "ncat -lk 8888",
+              "command": "fuser -k 8888/tcp; ncat -lk 8888",
               "presentation": {
                 "reveal": "never"
               }
