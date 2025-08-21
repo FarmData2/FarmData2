@@ -11,6 +11,9 @@
   <br>
   <small>
   If this screen appeared before you opened the Development Environment<br>
-  reload the browser window and wait for the Welcome screen. 
+  reload the browser window and wait for this screen to reappear.<br>
+  It will then be replaced shortly after by the Loading Screen<br>
+  and then the Welcome screen,<br>
+  from which you can launch the Development Environment.
   </small>
 </center>
