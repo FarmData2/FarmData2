@@ -8,11 +8,11 @@ If you are already familiar with Codespaces, running the FarmData2 Development E
 
 ## Install Help
 
-If you run into problems during the install visit the dedicated [install stream](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
+If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
 
 ## Creating a FarmData2 Development Environment in Codespaces
 
-Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. [Restarting a development environment](#restarting-a-farmdata2-development-environment-in-codespaces) is much faster.
+Creating a new FarmData2 Development Environment in Codespaces will take about 10 minutes. When you restart an existing development environment it will be much faster.
 
 Use the following steps to create a new FarmData2 Development Environment in Codespaces:
 
