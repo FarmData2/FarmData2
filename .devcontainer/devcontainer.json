@@ -71,9 +71,9 @@
                 "Customize Welcome Page",
                 "Run fd2-up.bash Script",
                 "Open Welcome Page",
-                "Open Running Page",
                 "Start Heartbeat Server",
-                "Start Heartbeat Listener"
+                "Start Heartbeat Listener",
+                "Open Running Page"
               ],
               "runOptions": {
                 "runOn": "folderOpen"
@@ -115,14 +115,6 @@
               }
             },
             {
-              "label": "Open Running Page",
-              "type": "shell",
-              "command": "sleep 300; code -r .devcontainer/fd2_running.md",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
               "label": "Start Heartbeat Server",
               "type": "shell",
               "command": ".devcontainer/startHeartbeat.bash",
@@ -133,7 +125,15 @@
             {
               "label": "Start Heartbeat Listener",
               "type": "shell",
-              "command": "fuser -k 8888/tcp; ncat -lk 8888",
+              "command": "fuser -k 8888/tcp; ncat -lk 8888 &",
+              "presentation": {
+                "reveal": "never"
+              }
+            },
+            {
+              "label": "Open Running Page",
+              "type": "shell",
+              "command": "sleep 300; code -r .devcontainer/fd2_running.md",
               "presentation": {
                 "reveal": "never"
               }
