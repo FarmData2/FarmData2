@@ -125,7 +125,7 @@
             {
               "label": "Start Heartbeat Listener",
               "type": "shell",
-              "command": "fuser -k 8888/tcp; ncat -lk 8888 &",
+              "command": "fuser -k 8888/tcp; nohup bash -c 'ncat -lk 8888 &'> /dev/null 2>&1",
               "presentation": {
                 "reveal": "never"
               }
