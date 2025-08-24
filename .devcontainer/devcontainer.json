@@ -125,7 +125,7 @@
             {
               "label": "Open Running Page",
               "type": "shell",
-              "command": "sleep 10; code -r .devcontainer/fd2_running.md",
+              "command": "sleep 300; code -r .devcontainer/fd2_running.md",
               "presentation": {
                 "reveal": "never",
                 "panel": "new"
