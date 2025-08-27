@@ -24,10 +24,7 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": [
-        "emeraldwalk.RunOnSave",
-        "sirmspencer.vscode-autohide"
-      ],
+      "extensions": ["emeraldwalk.RunOnSave", "sirmspencer.vscode-autohide"],
       "settings": {
         // Hide most of the VSCode UI via settings.
         // Here instead of .vscode/settings.json so that
@@ -53,10 +50,10 @@
         "emeraldwalk.runonsave": {
           "commands": [
             {
-                "match": ".*",
-                "isAsync": true,
-                "autoShowOutputPanel": "never",
-                "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
+              "match": ".*",
+              "isAsync": true,
+              "autoShowOutputPanel": "never",
+              "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
             }
           ]
         },
@@ -136,10 +133,10 @@
               "type": "shell",
               "command": "fuser -k 8888/tcp; ncat -lk 8888",
               "presentation": {
-                "reveal": "never",
+                "reveal": "always",
                 "panel": "new"
               }
-            },
+            }
           ]
         }
       }
