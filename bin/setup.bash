@@ -16,9 +16,9 @@ safe_cd "$REPO_ROOT_DIR"
 echo "Setting up the FarmData2 Development Environment..."
 safe_cd "$REPO_ROOT_DIR"
 
-echo "  Installing npm dependencies..."
-npm ci > /dev/null
-echo "  Installed."
+# echo "  Installing npm dependencies..."
+# npm ci > /dev/null
+# echo "  Installed."
 
 echo ""
 
@@ -28,17 +28,17 @@ rm -rf hooks
 ln -s ../.githooks hooks
 safe_cd ..
 echo "  Set up."
-
 echo ""
 
-echo "  Installing VSCodium extensions..."
-# Based on: https://stackoverflow.com/a/74440032
-npx json5 .vscode/extensions.json \
-  | npx json-cli-tool --path=recommendations --output=newline \
-  | xargs -L 1 codium --force --install-extension
-echo "  Installed."
-
-echo ""
+if [ "$(which codium)" != "" ]; then
+  echo "  Installing VSCodium extensions..."
+  # Based on: https://stackoverflow.com/a/74440032
+  npx json5 .vscode/extensions.json \
+    | npx json-cli-tool --path=recommendations --output=newline \
+    | xargs -L 1 codium --force --install-extension
+  echo "  Installed."
+  echo ""
+fi
 
 echo "  Configuring vale linter..."
 if [ -f /usr/local/bin/vale ]; then
@@ -51,6 +51,7 @@ if [ ! -f "$REPO_ROOT_DIR"/bin/vale ]; then
 fi
 vale sync
 echo "  Configured."
+echo ""
 
 echo "  Configuring git information..."
 echo "    The following information will be associated with GitHub commits"
@@ -58,21 +59,28 @@ echo "    that you make from the FarmData2 development environment."
 echo ""
 
 CONFIRM="N"
-GIT_USER=$(git config --global --list | grep user.name | cut -d"=" -f2)
-GIT_EMAIL=$(git config --global --list | grep user.email | cut -d"=" -f2)
+if [ -f ~/.gitconfig ]; then
+  GIT_USER=$(git config --global --list | grep user.name | cut -d"=" -f2)
+  GIT_EMAIL=$(git config --global --list | grep user.email | cut -d"=" -f2)
+else
+  GIT_USER=""
+  GIT_EMAIL=""
+fi
+
 while [ "${CONFIRM,,}" != "y" ]; do
 
   if [ "$GIT_USER" = "" ]; then
     read -rp "    Name (user.name): " GIT_USER
+    echo ""
   fi
 
   if [ "$GIT_EMAIL" = "" ]; then
     read -rp "    Email (user.email): " GIT_EMAIL
+    echo ""
   fi
 
-  echo ""
-  echo "user.name=$GIT_USER"
-  echo "user.email=$GIT_EMAIL"
+  echo "      user.name=$GIT_USER"
+  echo "      user.email=$GIT_EMAIL"
   echo ""
   read -rp "    Is the above information correct? (Y/n) " CONFIRM
 
@@ -80,6 +88,7 @@ while [ "${CONFIRM,,}" != "y" ]; do
     GIT_USER=""
     GIT_EMAIL=""
   fi
+  echo ""
 done
 
 git config --global user.name "$GIT_USER"
@@ -94,7 +103,6 @@ if [ "$UPSTREAM" = "" ]; then
 fi
 
 echo "  Configured."
-
 echo ""
 
 echo "  Authenticating with GitHub..."
@@ -120,7 +128,6 @@ if ! gh api user &> /dev/null; then
   done
 fi
 echo "  Authenticated."
-
 echo ""
 
 # Redirect both stdout and stderr to /dev/null because
@@ -129,24 +136,30 @@ echo ""
 # once the sample database is installed.
 echo "  Building FarmData2 Drupal modules..."
 echo "    Building farm_fd2..."
+rm -rf "$REPO_ROOT_DIR/modules/farm_fd2/dist" &> /dev/null
+mkdir "$REPO_ROOT_DIR/modules/farm_fd2/dist" &> /dev/null
 npm run build:fd2 &> /dev/null
 echo "    Built."
 echo "    Building farm_fd2_examples..."
+rm -rf "$REPO_ROOT_DIR/modules/farm_fd2_examples/dist" &> /dev/null
+mkdir "$REPO_ROOT_DIR/modules/farm_fd2_examples/dist" &> /dev/null
 npm run build:examples &> /dev/null
 echo "    Built."
 echo "    Building farm_fd2_school..."
+rm -rf "$REPO_ROOT_DIR/modules/farm_fd2_school/dist" &> /dev/null
+mkdir "$REPO_ROOT_DIR/modules/farm_fd2_school/dist" &> /dev/null
 npm run build:school &> /dev/null
 echo "    Built."
 echo "  Built."
-
 echo ""
 
 echo "  Building documentation..."
 npm run docs:gen &> /dev/null
 echo "  Documentation built."
+echo ""
 
 echo "  Installing the sample database..."
 bin/installDB.bash > /dev/null
 echo "  Installed."
 
-echo "Done."
+echo "Setup."

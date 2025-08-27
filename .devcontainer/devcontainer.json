@@ -1,147 +1,59 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "password": "noPassword",
+      "webPort": "6901",
+      "vncPort": "5901"
+    }
   },
   "mounts": [
     "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+    //"type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
   ],
-  "onCreateCommand": ".devcontainer/setup.bash",
-  "forwardPorts": [80, 5901, 6901, 8888],
+  "onCreateCommand": ".devcontainer/onCreate.bash",
+  "postAttachCommand": "./bin/fd2-up.bash",
+  "forwardPorts": [80, 6901],
   "portsAttributes": {
     "80": {
-      "label": "farmOS Instance"
-    },
-    "5901": {
-      "label": "FarmData2 VNC"
+      "label": "farmOS",
+      "onAutoForward": "silent"
     },
     "6901": {
-      "label": "FarmData2 NoVNC"
-    },
-    "8888": {
-      "label": "FarmData2 Heartbeat"
+      "label": "NoVNC",
+      "onAutoForward": "silent"
     }
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "emeraldwalk.RunOnSave",
-        "sirmspencer.vscode-autohide"
+        "Vue.volar",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bierner.markdown-preview-github-styles",
+        "timonwong.shellcheck",
+        "chrischinchilla.vale-vscode"
       ],
       "settings": {
-        // Hide most of the VSCode UI via settings.
-        // Here instead of .vscode/settings.json so that
-        // they apply only in the dev container.
-        "workbench.startupEditor": "none",
-        "workbench.activityBar.location": "hidden",
-        "workbench.statusBar.visible": false,
-        "window.commandCenter": false,
-        "window.menuBarVisibility": "hidden",
-        "workbench.editor.restoreViewState": false,
-        "workbench.editor.editorActionsLocation": "hidden",
-        "workbench.editor.showTabs": "none",
-        "workbench.layoutControl.enabled": false,
-        "breadcrumbs.enabled": false,
-        "extensions.ignoreRecommendations": true,
-        "workbench.editorAssociations": {
-          "*.md": "vscode.markdown.preview.editor"
-        },
-        "window.restoreWindows": "none",
-        "terminal.integrated.hideOnStartup": "always",
-        "github.codespaces.devcontainerChangedNotificationStyle": "none",
-        "autoHide.hideOnOpen": true,
-        "emeraldwalk.runonsave": {
-          "commands": [
-            {
-                "match": ".*",
-                "isAsync": true,
-                "autoShowOutputPanel": "never",
-                "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
-            }
-          ]
-        },
-        "tasks": {
-          "version": "2.0.0",
-          "tasks": [
-            {
-              "label": "Open FarmData Dev Environment",
-              "dependsOrder": "sequence",
-              "dependsOn": [
-                "Open Loading Page",
-                "Customize Welcome Page",
-                "Run fd2-up.bash Script",
-                "Open Welcome Page",
-                "Start Heartbeat Server",
-                "Open Running Page",
-                "Start Heartbeat Listener"
-              ],
-              "runOptions": {
-                "runOn": "folderOpen"
-              },
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Open Loading Page",
-              "type": "shell",
-              "command": "code -r .devcontainer/fd2_loading.md",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Customize Welcome Page",
-              "type": "shell",
-              "command": "./.devcontainer/homepage.bash",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Run fd2-up.bash Script",
-              "type": "shell",
-              "command": "bin/fd2-up.bash",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Open Welcome Page",
-              "type": "shell",
-              "command": "code -r .devcontainer/fd2_welcome.md",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Start Heartbeat Server",
-              "type": "shell",
-              "command": ".devcontainer/startHeartbeat.bash",
-              "presentation": {
-                "reveal": "never"
-              }
-            },
-            {
-              "label": "Open Running Page",
-              "type": "shell",
-              "command": "sleep 300; code -r .devcontainer/fd2_running.md",
-              "presentation": {
-                "reveal": "never",
-                "panel": "new"
-              }
-            },
-            {
-              "label": "Start Heartbeat Listener",
-              "type": "shell",
-              "command": "fuser -k 8888/tcp; ncat -lk 8888",
-              "presentation": {
-                "reveal": "never",
-                "panel": "new"
-              }
-            },
-          ]
-        }
+      //   "tasks": {
+      //     "version": "2.0.0",
+      //     "tasks": [
+      //       {
+      //         "label": "Run fd2-up.bash Script",
+      //         "type": "shell",
+      //         "command": "bin/fd2-up.bash",
+      //         "runOptions": {
+      //           "runOn": "folderOpen"
+      //         },
+      //         "presentation": {
+      //           "reveal": "always",
+      //           "panel": "new"
+      //         }
+      //       }
+      //     ]
+      //   }
       }
     }
   }

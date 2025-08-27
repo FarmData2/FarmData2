@@ -207,39 +207,55 @@ else
     --pattern "$DB_ASSET" \
     --clobber
   error_check "Unable to download the database."
-  echo "  Database downloaded."
+  echo "Database downloaded."
 fi
 
 echo "Stopping farmOS..."
 docker stop fd2_farmos > /dev/null
 error_check "Error occurred stopping farmOS."
-echo "  Stopped."
+echo "Stopped."
 
 echo "Stopping Postgres..."
 docker stop fd2_postgres > /dev/null
 error_check "Error occurred stopping Postgres."
-echo "  Stopped."
+echo "Stopped."
 
 # Make sure that the FarmData2/docker/db directory has appropriate permissions.
 echo "Setting permissions on $REPO_DIR/docker/db..."
-echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
+if [ -d "/workspaces" ]; then
+  sudo chgrp node "$REPO_DIR/docker/db"
+else
+  echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
+fi
 error_check "Unable to change group."
-echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
+if [ -d "/workspaces" ]; then
+  sudo chmod g+rwx "$REPO_DIR/docker/db"
+else
+  echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
+fi
 error_check "Unable to set permissions."
 
-echo "  Set."
+echo "Set."
 
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
-echo "fd2dev" | sudo -Sk -p "" rm -rf ./*
+if [ -d "/workspaces" ]; then
+  sudo rm -rf ./*
+else
+  echo "fd2dev" | sudo -Sk -p "" rm -rf ./*
+fi
 error_check "Unable to delete the current database."
-echo "  Deleted."
+echo "Deleted."
 
 echo "Extracting $DB_ASSET..."
-echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+if [ -d "/workspaces" ]; then
+  sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+else
+  echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+fi
 error_check "Error extracting the database."
-echo "  Extracted."
+echo "Extracted."
 
 echo "Restarting Postgres..."
 docker start fd2_postgres > /dev/null
@@ -248,24 +264,24 @@ STATUS=$(docker exec fd2_postgres pg_isready)
 while [[ ! "$STATUS" == *"accepting connections"* ]]; do
   STATUS=$(docker exec fd2_postgres pg_isready)
 done
-echo "  Started."
+echo "Started."
 
 echo "Restarting farmOS..."
 docker start fd2_farmos > /dev/null
 error_check "Error starting farmOS."
-echo "  Started."
+echo "Started."
 
 echo "Reinstalling the FarmData2 module..."
 docker exec fd2_farmos drush pm-uninstall farm_fd2 -y
 error_check "Unable to uninstall the FarmData2 module."
 docker exec fd2_farmos drush pm-enable farm_fd2 -y
 error_check "Unable to enable the FarmData2 module."
-echo "  FarmData2 module reinstalled."
+echo "Reinstalled."
 
 echo "Clearing the Drupal cache..."
 docker exec fd2_farmos drush cr
 error_check "Unable to clear the cache."
-echo "  Drupal cache cleared."
+echo "Cleared."
 
 echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
 
