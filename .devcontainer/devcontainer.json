@@ -2,22 +2,25 @@
   "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/desktop-lite:1": {
-      "password": "noPassword",
-      "webPort": "6901",
-      "vncPort": "5901"
-    }
+    // "ghcr.io/devcontainers/features/desktop-lite:1": {
+    //   "password": "noPassword",
+    //   "webPort": "6901",
+    //   "vncPort": "5901"
+    // }
   },
   "mounts": [
-    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
-    //"type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
+    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+    "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
   ],
   "onCreateCommand": ".devcontainer/onCreate.bash",
-  "postAttachCommand": "./bin/fd2-up.bash",
-  "forwardPorts": [80, 6901],
+  "forwardPorts": [80, 5432, 6901],
   "portsAttributes": {
     "80": {
       "label": "farmOS",
+      "onAutoForward": "silent"
+    },
+    "5432": {
+      "label": "Postgres",
       "onAutoForward": "silent"
     },
     "6901": {
@@ -37,23 +40,23 @@
         "chrischinchilla.vale-vscode"
       ],
       "settings": {
-      //   "tasks": {
-      //     "version": "2.0.0",
-      //     "tasks": [
-      //       {
-      //         "label": "Run fd2-up.bash Script",
-      //         "type": "shell",
-      //         "command": "bin/fd2-up.bash",
-      //         "runOptions": {
-      //           "runOn": "folderOpen"
-      //         },
-      //         "presentation": {
-      //           "reveal": "always",
-      //           "panel": "new"
-      //         }
-      //       }
-      //     ]
-      //   }
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": [
+            {
+              "label": "Run fd2-up.bash Script",
+              "type": "shell",
+              "command": "bin/fd2-up.bash",
+              "runOptions": {
+                "runOn": "folderOpen"
+              },
+              "presentation": {
+                "reveal": "always",
+                "panel": "new"
+              }
+            }
+          ]
+        }
       }
     }
   }

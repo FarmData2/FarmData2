@@ -16,9 +16,9 @@ safe_cd "$REPO_ROOT_DIR"
 echo "Setting up the FarmData2 Development Environment..."
 safe_cd "$REPO_ROOT_DIR"
 
-# echo "  Installing npm dependencies..."
-# npm ci > /dev/null
-# echo "  Installed."
+echo "  Installing npm dependencies..."
+npm ci > /dev/null
+echo "  Installed."
 
 echo ""
 
