@@ -24,7 +24,7 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["emeraldwalk.RunOnSave", "sirmspencer.vscode-autohide"],
+      "extensions": ["sirmspencer.vscode-autohide"],
       "settings": {
         // Hide most of the VSCode UI via settings.
         // Here instead of .vscode/settings.json so that
@@ -47,16 +47,6 @@
         "terminal.integrated.hideOnStartup": "always",
         "github.codespaces.devcontainerChangedNotificationStyle": "none",
         "autoHide.hideOnOpen": true,
-        "emeraldwalk.runonsave": {
-          "commands": [
-            {
-              "match": ".*",
-              "isAsync": true,
-              "autoShowOutputPanel": "never",
-              "cmd": "echo 'heartbeat' | ncat 172.18.0.1 8888"
-            }
-          ]
-        },
         "tasks": {
           "version": "2.0.0",
           "tasks": [
