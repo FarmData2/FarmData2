@@ -107,8 +107,8 @@ if [ -n "$CURRENT" ]; then
     exit 255
   fi
 
-  if [ ! -f "$HOME/.fd2/db.sample.tar.gz" ]; then
-    echo "$HOME/.fd2/db.sample.tar.gz does not exist."
+  if [ ! -f "$REPO_DIR/.fd2/db.sample.tar.gz" ]; then
+    echo "$REPO_DIR/.fd2/db.sample.tar.gz does not exist."
     echo "Defaulting to default behavior."
     unset CURRENT
   fi

@@ -54,7 +54,7 @@ services:
       # Bump the version here if a new db volume is required.
       - farmos3_db_fd2.1:/home/fd2dev/FarmData2/docker/db
       # Mount the fd2 development environment configuration information.
-      - ~/.fd2:/home/fd2dev/.fd2
+      - ../.fd2:/home/fd2dev/.fd2
     ports:
       - 5901:5901
       - 6901:6901
