@@ -27,7 +27,6 @@ function add_log_categories() {
     ['name' => 'tillage', 'parent' => '', 'description' => 'For logs representing soil disturbances.' ],
     ['name' => 'transplanting', 'parent' => '', 'description' => 'For logs representing transplantation of a plant.' ],
     ['name' => 'weed_control', 'parent' => '', 'description' => 'For logs related to weed control.' ],
-    ['name' => 'harvest', 'parent' => '', 'description' => 'For logs related to harvesting of a plant.' ],
   ];
 
   addTerms($vocab, $terms);
