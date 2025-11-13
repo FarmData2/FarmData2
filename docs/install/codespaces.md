@@ -33,7 +33,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 
 1. The browser will display a small dialog box in the lower right corner indicating that the GitHub codespace is being built.<br><center><img src="images/building-codespace.png" alt='Dialog box indicating that the codespace is being built.' width=400 /></center>
 
-1. After about 5 minutes the browser window will change a couple of times and then display a page indicating that the FarmData2 Development Environment is loading.<br><center><img src="images/dev-env-loading.png" alt='The FarmData2 Development Environment loading page.' width=300 /></center>
+1. After about 5 minutes the browser window will change a couple of times and then display a page indicating that the FarmData2 Development Environment is loading.<br><center><img src="images/dev-env-loading.png" alt='The FarmData2 Development Environment loading page.' width=300 /></center><br>A terminal window will open at the bottom of this window and will display the output of commands that are executing as part of the startup. You may safely ignore the content in this terminal.
 
 1. After another 5-10 minutes the browser window will display a page giving information about connecting to the FarmData2 Development Environment.<br><center><img src="images/dev-env-ready.png" alt='The FarmData2 Development Environment connections page.' width=650 /></center>
 
