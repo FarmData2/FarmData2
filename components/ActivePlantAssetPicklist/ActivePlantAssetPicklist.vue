@@ -197,14 +197,24 @@ export default {
         return acc;
       }, {});
 
+      // Get total number of plants without beds
+      const bedlessTotal = this.affectedPlants.filter(
+        (p) => p.bed === ''
+      ).length;
+
+      // Get number of picked plants without beds
+      const bedlessPicked = [...picked.values()].filter(
+        (p) => p.row.bed === ''
+      ).length;
+
       // Get total number of unique beds
-      const totalUniqueBeds = Object.keys(bedTotals).length;
+      const totalUniqueBeds = Object.keys(bedTotals).length + bedlessTotal;
       if (totalUniqueBeds === 0) {
         return 0; // Avoid division by zero
       }
 
       // Area = [ ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds ] * 100
-      let weightedSum = 0;
+      let weightedSum = bedlessPicked;
 
       for (const [bed, totalForBed] of Object.entries(bedTotals)) {
         const pickedForBed = bedPicks[bed] || 0;
