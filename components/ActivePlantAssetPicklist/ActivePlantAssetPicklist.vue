@@ -183,7 +183,7 @@ export default {
 
       // Map "Bed -> Total # of plants in that bed"
       const bedTotals = this.affectedPlants.reduce((acc, row) => {
-        if (row.bed !== 'N/A') {
+        if (row.bed !== '') {
           acc[row.bed] = (acc[row.bed] || 0) + 1;
         }
         return acc;
@@ -191,7 +191,7 @@ export default {
 
       // Map "Bed -> # of picked plants in that bed"
       const bedPicks = [...picked.values()].reduce((acc, row) => {
-        if (row.row.bed !== 'N/A') {
+        if (row.row.bed !== '') {
           acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
         }
         return acc;
@@ -247,7 +247,7 @@ export default {
               : [
                   {
                     crop: plant.crop.join(', '),
-                    bed: 'N/A',
+                    bed: '',
                     timestamp: plant.timestamp,
                     uuid: plant.uuid,
                     location: plant.location,
@@ -256,9 +256,9 @@ export default {
                 ]
           );
 
-          // Check if all plants have 'N/A' beds and adjust columns accordingly
+          // Check if all plants have no beds and adjust columns accordingly
           const allBedsNA = this.affectedPlants.every(
-            (plant) => plant.bed === 'N/A'
+            (plant) => plant.bed === ''
           );
 
           if (allBedsNA) {
