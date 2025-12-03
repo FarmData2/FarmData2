@@ -41,6 +41,7 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
  *   v-bind:picked="form.picked"
  *   v-bind:isInTrays="isInTrays"
  *   v-bind:isInGround="isInGround"
+ *   v-bind:crop="selectedCrop"
  *   v-on:hasPlants="form.hasPlants = $event"
  *   v-on:update:picked="(picked) => (form.picked = picked)"
  *   v-on:update:area="form.area = $event"
@@ -91,6 +92,15 @@ export default {
       required: true,
     },
     /**
+     * The crop name used to filter the active plant assets.
+     * If provided, only plant assets matching this crop will be returned.
+     */
+    crop: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    /**
      * The crops that are currently picked.
      */
     picked: {
@@ -125,6 +135,7 @@ export default {
       },
     };
   },
+
   computed: {
     plantsAtLocation() {
       return this.affectedPlants.length > 0;
@@ -227,12 +238,16 @@ export default {
     async checkPlantsAtLocation() {
       if (this.location) {
         try {
+          // If a crop filter is provided, pass it to farmOS; otherwise use no crop filtering.
+          const cropsFilter = this.crop ? [this.crop] : [];
+
           const results = await farmosUtil.getPlantAssets(
             this.location,
-            [],
+            cropsFilter,
             this.isInTrays,
             this.isInGround
           );
+
           // Map results to rows for PicklistBase
           this.affectedPlants = results.flatMap((plant) =>
             plant.beds.length > 0
@@ -276,6 +291,7 @@ export default {
             };
           }
 
+          // Reset picked rows when data changes
           if (this.pickedRow.size > 0) {
             this.pickedRow = new Map();
             this.$emit('update:picked', this.pickedRow);
@@ -319,6 +335,11 @@ export default {
       },
       immediate: true,
     },
+    crop: {
+      handler() {
+        this.checkPlantsAtLocation();
+      },
+    },
     isInTrays: {
       handler() {
         this.checkPlantsAtLocation();
@@ -351,3 +372,7 @@ export default {
   },
 };
 </script>
+
+
+
+
