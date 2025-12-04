@@ -111,7 +111,7 @@ describe('Test the transplanting activity log functions', () => {
           '1999-01-02_xp_BROCCOLI'
         );
         expect(transplantingLog.attributes.timestamp).to.contain('1999-01-02');
-        expect(transplantingLog.type).to.equal('log--activity');
+        expect(transplantingLog.type).to.equal('log--transplanting');
         expect(transplantingLog.attributes.status).to.equal('done');
         expect(transplantingLog.attributes.is_movement).to.equal(true);
 
@@ -197,7 +197,7 @@ describe('Test the transplanting activity log functions', () => {
   });
 
   it('Error creating a transplanting log', { retries: 4 }, () => {
-    cy.intercept('POST', '**/api/log/activity', {
+    cy.intercept('POST', '**/api/log/transplanting', {
       statusCode: 401,
     });
 

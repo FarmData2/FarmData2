@@ -46,7 +46,7 @@ export async function createTransplantingActivityLog(
       .name;
 
   const activityLogData = {
-    type: 'log--activity',
+    type: 'log--transplanting',
     attributes: {
       name: logName,
       timestamp: dayjs(transplantingDate).format(),
@@ -81,7 +81,7 @@ export async function createTransplantingActivityLog(
 export async function getTransplantingActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
   const results = await farm.log.fetch({
-    filter: { type: 'log--activity', id: activityLogId },
+    filter: { type: 'log--transplanting', id: activityLogId },
   });
   return results.data[0];
 }
