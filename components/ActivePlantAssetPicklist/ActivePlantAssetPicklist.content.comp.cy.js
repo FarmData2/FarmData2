@@ -142,4 +142,115 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
         cy.get('[data-cy="picklist-bed-19"]').should('have.text', 'CHUAU-3');
       });
   });
+
+  it('Checks crop prop filters plant assets (crop="BROCCOLI")', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInTrays: true,
+        isInGround: false,
+        location: 'CHUAU',
+        crop: 'BROCCOLI',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should only show BROCCOLI plants
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(3);
+          });
+
+        // All visible crops should be BROCCOLI
+        cy.get('[data-cy="picklist-crop-0"]').should('have.text', 'BROCCOLI');
+        cy.get('[data-cy="picklist-crop-1"]').should('have.text', 'BROCCOLI');
+        cy.get('[data-cy="picklist-crop-2"]').should('have.text', 'BROCCOLI');
+      });
+  });
+
+  it('Checks crop prop filters plant assets (crop="HERB-CILANTRO")', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: false,
+        location: 'CHUAU',
+        crop: 'HERB-CILANTRO',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should only show HERB-CILANTRO plants
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(2);
+          });
+
+        // All visible crops should be HERB-CILANTRO
+        cy.get('[data-cy="picklist-crop-0"]').should(
+          'have.text',
+          'HERB-CILANTRO'
+        );
+        cy.get('[data-cy="picklist-crop-1"]').should(
+          'have.text',
+          'HERB-CILANTRO'
+        );
+      });
+  });
+
+  it('Checks crop prop with null/undefined shows all crops', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: false,
+        location: 'CHUAU',
+        crop: null,
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show all plants (same as without crop prop)
+        cy.get('[data-cy^="picklist-crop-"]')
+          .its('length')
+          .then((count) => {
+            expect(count).to.equal(8);
+          });
+      });
+  });
+
+  it('Checks crop prop with non-existent crop shows no plants', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        isInGround: true,
+        isInTrays: false,
+        location: 'CHUAU',
+        crop: 'NONEXISTENT-CROP',
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        // Should show no plants
+        cy.get('[data-cy^="picklist-crop-"]').should('not.exist');
+      });
+  });
 });
