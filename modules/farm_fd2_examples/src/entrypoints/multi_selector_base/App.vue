@@ -21,7 +21,13 @@
         validity.selected = valid;
       }
     "
-    v-on:ready="createdCount++"
+    v-on:ready="
+      (payload) => {
+        readyPayload = payload;
+        createdCount++;
+      }
+    "
+
     v-on:error="(msg) => showErrorToast('Network Error', msg)"
   />
 
@@ -142,7 +148,7 @@
     <tbody>
       <tr>
         <td>ready</td>
-        <td>None</td>  
+        <td>{{ readyPayload }}</td>  
       </tr>
       <tr>
         <td>update:selected</td>
@@ -183,6 +189,7 @@ export default {
       },
       allowDuplicates: false,
       createdCount: 0,
+      readyPayload: null,
       options: ['one', 'two', 'three', 'four', 'five'],
       popupUrl: null,
     };
