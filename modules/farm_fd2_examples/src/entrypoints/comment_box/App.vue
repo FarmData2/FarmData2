@@ -38,6 +38,7 @@
           >
             Insert Comment
           </BButton>
+          <br />
           <BButton
             id="clear-comment-button"
             data-cy="clear-comment-button"
