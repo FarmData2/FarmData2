@@ -14,7 +14,12 @@
         validity.comment = valid;
       }
     "
-    v-on:ready="createdCount++"
+    v-on:ready="
+      (ready) => {
+        ready.comment = ready;
+        createdCount++;
+      }
+    "
   />
   <hr />
 
@@ -62,6 +67,10 @@
     </thead>
     <tbody>
       <tr>
+        <td>ready</td>
+        <td>{{ ready.comment }}</td>
+      </tr>
+      <tr>
         <td>update:comment</td>
         <td>{{ form.comment }}</td>
       </tr>
@@ -97,12 +106,15 @@ export default {
       validity: {
         comment: true,
       },
+      ready: {
+        comment: true,
+      },
       createdCount: 0,
     };
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 2;
+      return this.createdCount == 1;
     },
   },
   created() {
