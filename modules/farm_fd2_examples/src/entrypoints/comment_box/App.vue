@@ -23,6 +23,7 @@
     <thead>
       <th>Prop</th>
       <th>Control</th>
+      <th>Value</th>
     </thead>
     <tbody>
       <tr>
@@ -47,6 +48,7 @@
             Clear Comment
           </BButton>
         </td>
+        <td>{{ form.comment }}</td>
       </tr>
     </tbody>
   </table>
