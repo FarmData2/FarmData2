@@ -24,6 +24,7 @@
       <tr>
         <th>Prop</th>
         <th>Control</th>
+        <th>Value</th>
       </tr>
     </thead>
     <tbody>
@@ -37,16 +38,8 @@
             v-model="required"
           />
         </td>
-      </tr>
-      <tr>
-        <td>showValidityStyling</td>
         <td>
-          <BFormCheckbox
-            id="styling-checkbox"
-            data-cy="styling-checkbox"
-            switch
-            v-model="validity.showStyling"
-          />
+          {{ required }}
         </td>
       </tr>
       <tr>
@@ -60,7 +53,7 @@
             v-on:click="selectFirstAvailableOption"
             title="Selects '72' which is expected to be an available option."
           >
-            Select first available
+            Select 1st size
           </BButton>
           <BButton
             id="clear-button"
@@ -72,6 +65,23 @@
           >
             Clear
           </BButton>
+        </td>
+        <td>
+          {{ this.form.selected }}
+        </td>
+      </tr>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+        <td>
+          {{ validity.showStyling }}
         </td>
       </tr>
     </tbody>
