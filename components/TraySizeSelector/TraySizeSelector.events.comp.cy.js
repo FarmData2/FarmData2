@@ -70,4 +70,17 @@ describe('Test the TraySizeSelector events', () => {
         .should('have.been.calledWith', 'Unable to fetch tray sizes.');
     });
   });
+
+  it('Test that "ready" event is propagated', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(TraySizeSelector, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .should('have.been.calledWith', true);
+  });
 });
