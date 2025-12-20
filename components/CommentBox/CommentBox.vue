@@ -103,7 +103,7 @@ export default {
     /**
      * The component is ready for use.
      */
-    this.$emit('ready');
+    this.$emit('ready', true);
   },
 };
 </script>
