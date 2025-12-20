@@ -4,24 +4,25 @@
     The SubmitResetButtons is a component for the Submit and Reset buttons used
     in forms
   </p>
-
   <hr />
   <SubmitResetButtons
     id="submit-reset-buttons"
     data-cy="submit-reset-buttons"
-    v-model:enableReset="this.enableReset"
-    v-model:enableSubmit="this.enableSubmit"
-    v-on:submit="this.submitCount++"
-    v-on:reset="this.resetCount++"
-    v-on:ready="createdCount++"
+    v-model:enableReset="enableReset"
+    v-model:enableSubmit="enableSubmit"
+    v-on:submit="submitCount++"
+    v-on:reset="resetCount++"
+    v-on:ready="handleReady"
   />
   <hr />
-
   <h5>Component Props:</h5>
   <table class="example-table">
     <thead>
-      <th>Prop</th>
-      <th>Control</th>
+      <tr>
+        <th>Prop</th>
+        <th>Control</th>
+        <th>Value</th>
+      </tr>
     </thead>
     <tbody>
       <tr>
@@ -31,9 +32,10 @@
             id="enable-reset-checkbox"
             data-cy="enable-reset-checkbox"
             switch
-            v-model="this.enableReset"
+            v-model="enableReset"
           />
         </td>
+        <td>{{ enableReset }}</td>
       </tr>
       <tr>
         <td>enableSubmit</td>
@@ -42,20 +44,27 @@
             id="enable-submit-checkbox"
             data-cy="enable-submit-checkbox"
             switch
-            v-model="this.enableSubmit"
+            v-model="enableSubmit"
           />
         </td>
+        <td>{{ enableSubmit }}</td>
       </tr>
     </tbody>
   </table>
 
-  <h5>Component Event</h5>
+  <h5>Component Event Payloads</h5>
   <table class="example-table">
     <thead>
-      <th>Event</th>
-      <th>Clicked Count</th>
+      <tr>
+        <th>Event</th>
+        <th>Events handled</th>
+      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>ready</td>
+        <td>{{ readyPayload }}</td>
+      </tr>
       <tr>
         <td>reset</td>
         <td>{{ resetCount }}</td>
@@ -85,23 +94,22 @@ export default {
   data() {
     return {
       enableSubmit: false,
-      submitCount: 0,
       enableReset: false,
+      submitCount: 0,
       resetCount: 0,
       createdCount: 0,
+      readyPayload: null, // now holds true/false
     };
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 2;
+      return this.createdCount === 2;
     },
   },
-  watch: {
-    enableSubmit() {
-      this.submitEnabled = null;
-    },
-    enableReset() {
-      this.resetEnabled = null;
+  methods: {
+    handleReady(isReady) {
+      this.readyPayload = isReady;
+      this.createdCount++;
     },
   },
   created() {

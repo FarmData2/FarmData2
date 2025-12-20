@@ -10,6 +10,19 @@ describe('Test the SubmitResetButtons component events', () => {
     cy.saveLocalStorage();
     cy.saveSessionStorage();
   });
+  it('Check ready payload return true', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(SubmitResetButtons, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .should('have.been.calledWith', true);
+  });
 
   it('Check submitEnabled prop is watched', () => {
     const readySpy = cy.spy().as('readySpy');
