@@ -35,6 +35,22 @@ describe('Test the CommentBox component events', () => {
       });
   });
 
+  it('Emits "ready" with payload true', () => {
+    const readySpy = cy.spy().as('readySpy');
+
+    cy.mount(CommentBox, {
+      props: {
+        onReady: readySpy,
+      },
+    });
+
+    cy.get('@readySpy')
+      .should('have.been.calledOnce')
+      .then(() => {
+        cy.get('@readySpy').should('have.been.calledWith', true);
+      });
+  });
+
   it('Payload of "update:comment" is trimmed', () => {
     const readySpy = cy.spy().as('readySpy');
     const updateSpy = cy.spy().as('updateSpy');
