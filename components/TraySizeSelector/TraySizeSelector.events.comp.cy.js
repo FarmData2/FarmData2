@@ -71,7 +71,7 @@ describe('Test the TraySizeSelector events', () => {
     });
   });
 
-  it('Test that "ready" event is propagated', () => {
+  it('Test that "ready" event is emitted with true', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(TraySizeSelector, {
