@@ -116,8 +116,11 @@ export default {
   created() {
     /**
      * This component is ready for use.
+     *
+     * @property {Boolean} ready true indicating that the component has finished
+     * initialization and is ready for interaction.
      */
-    this.$emit('ready');
+    this.$emit('ready', true);
   },
 };
 </script>
