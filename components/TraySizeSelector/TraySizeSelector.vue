@@ -126,7 +126,6 @@ export default {
       }
     },
   },
-  watch: {},
   created() {
     let canCreate = farmosUtil.checkPermission('create-terms-in-tray_size');
     let trayMap = farmosUtil.getTraySizeToTermMap();
@@ -142,8 +141,9 @@ export default {
 
         /**
          * The select has been populated with the list of tray sizes and the component is ready to be used.
+         * @property {boolean} true indicates the component is initialized and ready for use.
          */
-        this.$emit('ready');
+        this.$emit('ready', true);
       })
       .catch((error) => {
         console.error('TraySizeSelector: Error fetching tray sizes.');
