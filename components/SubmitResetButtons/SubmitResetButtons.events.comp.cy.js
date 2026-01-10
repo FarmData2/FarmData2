@@ -10,7 +10,8 @@ describe('Test the SubmitResetButtons component events', () => {
     cy.saveLocalStorage();
     cy.saveSessionStorage();
   });
-  it('Check ready payload return true', () => {
+
+  it('Check ready payload is true', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.mount(SubmitResetButtons, {

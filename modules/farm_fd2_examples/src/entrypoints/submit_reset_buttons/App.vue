@@ -98,7 +98,7 @@ export default {
       submitCount: 0,
       resetCount: 0,
       createdCount: 0,
-      readyPayload: null, // now holds true/false
+      readyPayload: null,
     };
   },
   computed: {
