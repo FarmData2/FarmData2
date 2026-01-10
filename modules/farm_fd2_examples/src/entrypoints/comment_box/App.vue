@@ -14,12 +14,7 @@
         validity.comment = valid;
       }
     "
-    v-on:ready="
-      (ready) => {
-        ready.comment = ready;
-        createdCount++;
-      }
-    "
+    v-on:ready="handleReady"
   />
   <hr />
 
@@ -104,17 +99,23 @@ export default {
         comment: '',
       },
       validity: {
-        comment: true,
+        comment: false,
       },
       ready: {
-        comment: true,
+        comment: false,
       },
       createdCount: 0,
     };
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 1;
+      return this.createdCount === 2;
+    },
+  },
+  methods: {
+    handleReady(ready) {
+      this.ready.comment = ready;
+      this.createdCount++;
     },
   },
   created() {
