@@ -36,6 +36,9 @@ echo "" >> ~/.bashrc \
 echo "" >> ~/.bashrc \
   && echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 
+# Change the group for the /var/run/docker.sock file.
+sudo chgrp docker /var/run/docker.sock
+
 # Stuff to reduce image size.
 sudo apt-get clean -y \
  && sudo apt-get autoclean -y \
