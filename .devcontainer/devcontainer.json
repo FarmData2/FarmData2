@@ -1,5 +1,7 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
+  "name": "FarmData2 Development Environment",
+  "dockerComposeFile": "compose.yml",
+  "service": "dev",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/desktop-lite:1": {
