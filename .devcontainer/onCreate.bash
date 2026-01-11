@@ -32,6 +32,10 @@ source ~/.config/envman/PATH.env
 echo "" >> ~/.bashrc \
   && echo "export PATH=$PATH:/workspaces/FarmData2/bin" >> ~/.bashrc
 
+# Setup git autocompletion
+echo "" >> ~/.bashrc \
+  && echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
+
 # Stuff to reduce image size.
 sudo apt-get clean -y \
  && sudo apt-get autoclean -y \

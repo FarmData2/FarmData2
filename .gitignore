@@ -30,7 +30,6 @@ coverage
 
 # FD2 stuff
 docker/db
-docker/db.*.tar.bz2
 docs/components
 docs/library
 docs/FarmData2.md
@@ -40,5 +39,4 @@ spikes
 .vale
 .fd2
 !.fd2dev/*
-.devcontainer/fd2_welcome.md
 bin/vale
