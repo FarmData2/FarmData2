@@ -1,4 +1,17 @@
 services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
+    container_name: fd2_dev
+    volumes: 
+      # Bump version here and in volumes if new image requires new db.
+      - farmos3_db_fd2.1:/workspaces/FarmData2/docker/db
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      - 800 # docker group
+    command: sleep infinity
+    ports:
+      - 6901:6901 # for the noVNC in desktop-lite
+  
   db:
     image: farmdata2/postgres:fd2.2
     container_name: fd2_postgres
@@ -33,34 +46,7 @@ services:
       XDEBUG_MODE: debug
       XDEBUG_CONFIG: discover_client_host=yes
 
-  fd2dev:
-    image: farmdata2/fd2dev:fd2.13
-    container_name: fd2_dev
-    profiles:
-      - dev
-    init: true
-    volumes:
-      # Mount the FarmData2 repo into the fd2dev user's home directory.
-      - ..:/home/fd2dev/FarmData2
-      # Mount the docker.sock so we can run docker commands in the container.
-      - /var/run/docker.sock:/var/run/docker.sock
-      # Preserve the fd2dev user's home directory on a docker volume.
-      # Bump the version here and in volumes below
-      # if image rebuild requires new home.
-      - fd2dev_home_fd2.3:/home/fd2dev
-      # Mount a docker volume into which the farmOS database will be built.
-      # This allows switching the database from within the dev container.
-      # This has significantly better performance than mounting a host directory.
-      # Bump the version here if a new db volume is required.
-      - farmos3_db_fd2.1:/home/fd2dev/FarmData2/docker/db
-      # Mount the fd2 development environment configuration information.
-      #- ~/.fd2:/home/fd2dev/.fd2
-    ports:
-      - 5901:5901
-      - 6901:6901
-
 volumes:
   farmos3_db_fd2.1:
   farmos3_config_fd2.1:
   farmos3_keys_fd2.1:
-  fd2dev_home_fd2.3:
