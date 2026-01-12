@@ -2,16 +2,14 @@ services:
   dev:
     image: mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
     container_name: fd2_dev
-    volumes: 
+    volumes:
       # Bump version here and in volumes if new image requires new db.
       - farmos3_db_fd2.1:/workspaces/FarmData2/docker/db
       - /var/run/docker.sock:/var/run/docker.sock
-    group_add:
-      - 800 # docker group
     command: sleep infinity
     ports:
       - 6901:6901 # for the noVNC in desktop-lite
-  
+
   db:
     image: farmdata2/postgres:fd2.2
     container_name: fd2_postgres
