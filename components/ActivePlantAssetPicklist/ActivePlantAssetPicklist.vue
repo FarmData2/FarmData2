@@ -183,7 +183,7 @@ export default {
 
       // Map "Bed -> Total # of plants in that bed"
       const bedTotals = this.affectedPlants.reduce((acc, row) => {
-        if (row.bed !== 'N/A') {
+        if (row.bed !== '') {
           acc[row.bed] = (acc[row.bed] || 0) + 1;
         }
         return acc;
@@ -191,20 +191,30 @@ export default {
 
       // Map "Bed -> # of picked plants in that bed"
       const bedPicks = [...picked.values()].reduce((acc, row) => {
-        if (row.row.bed !== 'N/A') {
+        if (row.row.bed !== '') {
           acc[row.row.bed] = (acc[row.row.bed] || 0) + 1;
         }
         return acc;
       }, {});
 
+      // Get total number of plants without beds
+      const bedlessTotal = this.affectedPlants.filter(
+        (p) => p.bed === ''
+      ).length;
+
+      // Get number of picked plants without beds
+      const bedlessPicked = [...picked.values()].filter(
+        (p) => p.row.bed === ''
+      ).length;
+
       // Get total number of unique beds
-      const totalUniqueBeds = Object.keys(bedTotals).length;
+      const totalUniqueBeds = Object.keys(bedTotals).length + bedlessTotal;
       if (totalUniqueBeds === 0) {
         return 0; // Avoid division by zero
       }
 
       // Area = [ ( SUM (picked crops in bed_i / total crops in bed_i) ) / total unique beds ] * 100
-      let weightedSum = 0;
+      let weightedSum = bedlessPicked;
 
       for (const [bed, totalForBed] of Object.entries(bedTotals)) {
         const pickedForBed = bedPicks[bed] || 0;
@@ -247,7 +257,7 @@ export default {
               : [
                   {
                     crop: plant.crop.join(', '),
-                    bed: 'N/A',
+                    bed: '',
                     timestamp: plant.timestamp,
                     uuid: plant.uuid,
                     location: plant.location,
@@ -256,9 +266,9 @@ export default {
                 ]
           );
 
-          // Check if all plants have 'N/A' beds and adjust columns accordingly
+          // Check if all plants have no beds and adjust columns accordingly
           const allBedsNA = this.affectedPlants.every(
-            (plant) => plant.bed === 'N/A'
+            (plant) => plant.bed === ''
           );
 
           if (allBedsNA) {
