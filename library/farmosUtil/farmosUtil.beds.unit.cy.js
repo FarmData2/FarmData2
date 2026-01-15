@@ -14,12 +14,12 @@ describe('Test the bed utility functions', () => {
   it('Get the bed land assets', () => {
     cy.wrap(farmosUtil.getBeds()).then((beds) => {
       expect(beds).to.not.be.null;
-      expect(beds.length).to.equal(15);
+      expect(beds.length).to.equal(17);
 
       expect(beds[0].attributes.name).to.equal('ALF-1');
       expect(beds[0].type).to.equal('asset--land');
 
-      expect(beds[14].attributes.name).to.equal('H-2');
+      expect(beds[14].attributes.name).to.equal('GHANA-4');
       expect(beds[14].type).to.equal('asset--land');
     });
   });
@@ -53,7 +53,7 @@ describe('Test the bed utility functions', () => {
   it('Get the BedNameToAsset map', () => {
     cy.wrap(farmosUtil.getBedNameToAssetMap()).then((bedNameMap) => {
       expect(bedNameMap).to.not.be.null;
-      expect(bedNameMap.size).to.equal(15);
+      expect(bedNameMap.size).to.equal(17);
 
       expect(bedNameMap.get('ALF-1')).to.not.be.null;
       expect(bedNameMap.get('ALF-1').type).to.equal('asset--land');
@@ -69,7 +69,7 @@ describe('Test the bed utility functions', () => {
   it('Get the BedIdToAsset map', () => {
     cy.wrap(farmosUtil.getBedIdToAssetMap()).then((bedIdMap) => {
       expect(bedIdMap).to.not.be.null;
-      expect(bedIdMap.size).to.equal(15);
+      expect(bedIdMap.size).to.equal(17);
 
       cy.wrap(farmosUtil.getBedNameToAssetMap()).then((bedNameMap) => {
         const bedALF1Id = bedNameMap.get('ALF-1').id;
