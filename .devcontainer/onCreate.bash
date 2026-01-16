@@ -41,7 +41,7 @@ sudo chgrp docker /var/run/docker.sock
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.
-mkdir .devcontainer/ssl
+mkdir .devcontainer/ssl 2> /dev/null
 openssl req -x509 -nodes -newkey rsa:2048 \
   -days 9125 \
   -keyout ".devcontainer/ssl/farmos.key" \
