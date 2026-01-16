@@ -32,6 +32,9 @@ services:
     volumes:
       # Mount a volume to hold the config information for farmos between runs.
       - farmos3_config_fd2.1:/opt/drupal/web/sites
+      # Mount the settings file for the reverse proxy
+      # This should be built into the image eventually.
+      - ./settings.php:/opt/drupal/web/sites/default/settings.php
       # Mount a volume to hold the farmos api keys
       - farmos3_keys_fd2.1:/opt/drupal/keys
       # Mount the dist directories containing the fd2 modules into the farmOS container.
