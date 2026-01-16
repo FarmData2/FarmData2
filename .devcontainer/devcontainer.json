@@ -19,6 +19,7 @@
     "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
   ],
   "onCreateCommand": ".devcontainer/onCreate.bash",
+  "postStartCommand": ".devcontainer/postStart.bash",
   "forwardPorts": [80, 443, 6901],
   "portsAttributes": {
     "80": {
