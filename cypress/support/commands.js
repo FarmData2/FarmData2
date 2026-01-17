@@ -34,7 +34,7 @@
  */
 Cypress.Commands.add('login', (user, password) => {
   let baseURL = Cypress.config().baseUrl;
-  if (baseURL.includes('http://farmos')) {
+  if (baseURL.includes('https://proxy')) {
     cy.request({
       method: 'POST',
       url: '/user/login',

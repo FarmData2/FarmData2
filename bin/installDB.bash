@@ -272,8 +272,8 @@ error_check "Error starting farmOS."
 echo "Started."
 
 echo "Reinstalling the FarmData2 module..."
-docker exec fd2_farmos drush pm-uninstall farm_fd2 -y
-error_check "Unable to uninstall the FarmData2 module."
+#docker exec fd2_farmos drush pm-uninstall farm_fd2 -y
+#error_check "Unable to uninstall the FarmData2 module."
 docker exec fd2_farmos drush pm-enable farm_fd2 -y
 error_check "Unable to enable the FarmData2 module."
 echo "Reinstalled."

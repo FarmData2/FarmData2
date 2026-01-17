@@ -22,15 +22,15 @@ export function clearCachedPermissions() {
 
 /**
  * Get the permissions for the currently logged in farmOS user.
- * The list of permissions can be seen by logging into farmOS and visiting:
- *  http://farmos/api/permissions
+ * The list of permissions can be seen by logging into farmOS 
+ * and visiting: api/permissions
  *
  * If a permission needs to be checked that is not yet supported it can be added
  * to the `$perms` array in the `permissions` function in
  * `modules/farm_fd2/src/module/Controller/FD2_Controller.php` file.
  *
  * The list of possible permissions can be found by logging into farmOS as `admin`
- * and visiting: http://farmos/admin/people/permissions. Right click on a checkbox
+ * and visiting: admin/people/permissions. Right click on a checkbox
  * associated with a permission and "inspect" the element. The name of the permission
  * (e.g. `create plant asset`) is given in the `name` attribute of the checkbox element.
  *
@@ -50,10 +50,10 @@ export async function getPermissions() {
       const farm = await getFarmOSInstance();
       let url = '';
       if (inFarmOS()) {
-        const host = 'http://' + document.URL.split('/')[2];
+        const host = 'https://' + document.URL.split('/')[2];
         url = host + '/api/permissions';
       } else {
-        url = 'http://farmos/api/permissions';
+        url = 'https://proxy/api/permissions';
       }
       const resp = await farm.remote.request.get(url);
       return resp.data.permissions;
@@ -66,8 +66,8 @@ export async function getPermissions() {
 /**
  * Check if the current user has a specific permission.
  *
- * The list of permissions can be seen by logging into farmOS and visiting:
- * http://farmos/api/permissions
+ * The list of permissions can be seen by logging into farmOS 
+ * and visiting: api/permissions
  *
  * NOTE: This function makes a call to
  * [`getPermissions`]{@link #module_farmosUtil.getPermissions}

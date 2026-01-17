@@ -36,6 +36,11 @@ echo "" >> ~/.bashrc \
 echo "" >> ~/.bashrc \
   && echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 
+# Make sure that node will run with a self-signed certificate.
+# This is fine for the dev container, but should not be used in production.
+echo "" >> ~/.bashrc \
+  && echo "export NODE_TLS_REJECT_UNAUTHORIZED='0'" >> ~/.bashrc
+
 # Change the group for the /var/run/docker.sock file.
 sudo chgrp docker /var/run/docker.sock
 

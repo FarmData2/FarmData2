@@ -316,7 +316,7 @@ elif [ -n "$LIVE_FARMOS_SERVER" ]; then
   LIVE_GID=$(ps --pid "$LIVE_PID" -h -o pgid | xargs)
   echo "    Builder running in process group $LIVE_GID."
 
-  BASE_URL="http://farmos"
+  BASE_URL="https://proxy"
 fi
 
 # Set environment variables to override the defaults as necessary.
