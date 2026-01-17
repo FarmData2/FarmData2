@@ -44,20 +44,17 @@ services:
     environment:
       XDEBUG_MODE: debug
       XDEBUG_CONFIG: discover_client_host=yes
-    ports:
-      - '80:80'
 
-  # proxy:
-  #   depends_on:
-  #     - farmos
-  #   image: farmdata2/nginx:fd2.1
-  #   container_name: fd2_nginx
-  #   ports:
-  #     - '80:80'
-  #     - '443:443'
-  #   volumes:
-  #     - './nginx.conf:/etc/nginx/nginx.conf'
-  #     - './ssl:/etc/nginx/ssl'
+  proxy:
+    depends_on:
+      - farmos
+    image: farmdata2/nginx:fd2.1
+    container_name: fd2_nginx
+    ports:
+      - '443:443'
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - './ssl:/etc/nginx/ssl'
 
 volumes:
   farmos3_db_fd2.1:

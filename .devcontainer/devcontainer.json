@@ -20,14 +20,11 @@
   ],
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
-  "forwardPorts": [80, 443, 6901],
+  "forwardPorts": [443, 6901],
   "portsAttributes": {
-    "80": {
-      "label": "farmOS(http)",
-      "onAutoForward": "silent"
-    },
     "443": {
-      "label": "farmOS(https)",
+      "label": "farmOS",
+      "protocol": "https",
       "onAutoForward": "silent"
     },
     "6901": {
