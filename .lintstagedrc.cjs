@@ -8,6 +8,7 @@ const fd2LibsTested = new Map();
 const examplesLibsTested = new Map();
 const schoolLibsTested = new Map();
 const compsTested = new Map();
+const compsE2ETested = new Map();
 const libsTested = new Map();
 
 /*
@@ -235,11 +236,16 @@ const getCompTestsCompCyJs = (files) => {
   return testCommands;
 };
 
+/*
+ * Construct a test command for each component e2e.cy.js file that is staged.
+ * These tests interact with farmOS and require --e2e --fd2 --live flags.
+ */
 const getCompTestsE2ECyJs = (files) => {
   const testCommands = files.map((file) => {
-    if (compsTested.get(path.basename(path.dirname(file)))) {
+    if (compsE2ETested.get(path.basename(path.dirname(file)))) {
       return 'skipping ' + file;
     } else {
+      compsE2ETested.set(path.basename(path.dirname(file)), true);
       return (
         'test.bash --e2e --fd2 --live --glob=' +
         file.substring(file.indexOf('/components'))
@@ -336,3 +342,4 @@ module.exports = {
     return getLibTestsUnitCyJs(files);
   },
 };
+
