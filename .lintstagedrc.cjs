@@ -206,7 +206,7 @@ const getModuleTestsUnitCyJs = (files) => {
  * in the component directory containing the .vue file.
  */
 const getCompTestsVue = (files) => {
-  const testCommands1 = files.map((file) => {
+  const compTestCommands = files.map((file) => {
     compsTested.set(path.basename(path.dirname(file)), true);
     return (
       'test.bash --comp --glob=' +
@@ -216,8 +216,8 @@ const getCompTestsVue = (files) => {
     );
   });
 
-  const testCommands2 = files.map((file) => {
-    // Only run *.e2e.cy.js tests if at least one exists.
+  const e2eTestCommands = files.map((file) => {
+    // Only create the command for *.e2e.cy.js tests if at least one exists.
     const dirFiles = fs.readdirSync(
       './components/' + path.basename(path.dirname(file))
     );
@@ -239,10 +239,10 @@ const getCompTestsVue = (files) => {
     }
   });
 
-  if (testCommands2.length > 0) {
-    return [...testCommands1, ...testCommands2];
+  if (e2eTestCommands.length > 0) {
+    return [...compTestCommands, ...e2eTestCommands];
   } else {
-    return testCommands1;
+    return compTestCommands;
   }
 };
 
