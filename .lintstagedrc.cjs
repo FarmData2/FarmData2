@@ -1,5 +1,6 @@
 const { ESLint } = require('eslint');
 const path = require('path');
+const fs = require('fs');
 
 const fd2EntrypointsTested = new Map();
 const examplesEntrypointsTested = new Map();
@@ -201,26 +202,48 @@ const getModuleTestsUnitCyJs = (files) => {
 
 /*
  * Construct a test command for each component .vue file that is staged.
- * The command will use a glob to run all comp.cy.js component tests and
- * all e2e.cy.js end-to-end tests in the component directory containing
- * the .vue file.
+ * The command will use a glob to run all comp.cy.js component tests
+ * in the component directory containing the .vue file.
  */
 const getCompTestsVue = (files) => {
-  const testCommands = files.map((file) => {
+  const testCommands1 = files.map((file) => {
     compsTested.set(path.basename(path.dirname(file)), true);
-    return [
+    return (
       'test.bash --comp --glob=' +
-        '/components/' +
-        path.basename(path.dirname(file)) +
-        '/*.comp.cy.js',
-      'test.bash --e2e --fd2 --live --glob=' +
-        '/components/' +
-        path.basename(path.dirname(file)) +
-        '/*.e2e.cy.js',
-    ];
+      '/components/' +
+      path.basename(path.dirname(file)) +
+      '/*.comp.cy.js'
+    );
   });
 
-  return testCommands;
+  const testCommands2 = files.map((file) => {
+    // Only run *.e2e.cy.js tests if at least one exists.
+    const dirFiles = fs.readdirSync(
+      './components/' + path.basename(path.dirname(file))
+    );
+    const regEx = /.*\.e2e\.cy\.js$/;
+    const matchFound = dirFiles.some((dirFile) => regEx.test(dirFile));
+    if (matchFound) {
+      return (
+        'test.bash --e2e --fd2 --live --glob=' +
+        '/components/' +
+        path.basename(path.dirname(file)) +
+        '/*.e2e.cy.js'
+      );
+    } else {
+      return (
+        'skipping /components/' +
+        path.basename(path.dirname(file)) +
+        '*.e2e.cjs'
+      );
+    }
+  });
+
+  if (testCommands2.length > 0) {
+    return [...testCommands1, ...testCommands2];
+  } else {
+    return testCommands1;
+  }
 };
 
 /*
