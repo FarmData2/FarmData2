@@ -61,3 +61,51 @@ sudo apt-get clean -y \
  && sudo apt-get autoclean -y \
  && sudo apt-get autoremove -y \
  && sudo rm -rf /var/lib/apt/lists/*
+
+# Wait for noVNC, postgres and farmos
+
+function waitForIt {
+  SERVICE_NAME=$1
+  CHECK_COMMAND=$2
+  OK_RESULT=$3
+  MAX_TRIES=$4
+  TRIES=0
+
+  echo "Waiting for $SERVICE_NAME "
+  echo -n "."
+  RESP=$(eval "$CHECK_COMMAND" | grep "$OK_RESULT")
+  while [ "$RESP" == "" ] && [ $TRIES -lt $MAX_TRIES ]; do
+    sleep 1
+    echo -n "."
+    RESP=$(eval "$CHECK_COMMAND" | grep "$OK_RESULT")
+    ((TRIES++))
+  done
+
+  if [ "$RESP" == "" ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+
+# docker exec fd2_postgres pg_isready
+# /var/run/postgresql:5432 - accepting connections
+
+# curl -Is localhost:6901
+# HTTP/1.1 200 OK
+
+# curl -fsIkv https://proxy
+# * Connected to proxy (172.18.0.5) port 443 (#0)
+
+# curl -fsIkv http://farmos
+# * Connected to farmos (172.18.0.4) port 80 (#0)
+
+
+# Display a message so we know everyting is done.
+echo ""
+echo "==============================================="
+echo "The FarmData2 Development Environment is ready."
+echo "Happy coding!"
+echo "==============================================="
+echo ""
