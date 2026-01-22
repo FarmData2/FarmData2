@@ -1,3 +1,7 @@
+# A collection of functions that check if the 
+# servers that make up the FarmData2 development
+# environment are up and running.
+
 function waitForIt {
   SERVICE_NAME=$1
   CHECK_COMMAND=$2
@@ -33,7 +37,7 @@ function waitForNoVNC {
 }
 
 function waitForFarmOS {
-  waitForIt farmOS "curl -sI http://farmos" "Server: Apache" 3
+  waitForIt farmOS "curl -sI http://farmos" "Server: Apache" 15
 }
 
 function waitForNginx {
@@ -46,12 +50,5 @@ function waitForAll {
   waitForFarmOS; FARMOS_STATUS=$?
   waitForNginx; NGINX_STATUS=$?
 
-  echo $POSTGRES_STATUS
-  echo $NO_VNC_STATUS
-  echo $FARMOS_STATUS
-  echo $NGINX_STATUS
-  
-  return 0
+  return $(( POSTGRES_STATUS + NO_VNC_STATUS + FARMOS_STATUS + NGINX_STATUS ))  
 }
-
-waitForAll
