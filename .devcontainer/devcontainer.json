@@ -21,7 +21,7 @@
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
-  "postAttachCommand": ".devcontainer/postAttach.bash",
+  //"postAttachCommand": ".devcontainer/postAttach.bash",
   "forwardPorts": [443, 6901],
   "portsAttributes": {
     "443": {
@@ -39,6 +39,26 @@
   },
   "customizations": {
     "vscode": {
+      "settings": {
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": [
+            {
+              "label": "Check Servers",
+              "type": "shell",
+              "command": ".devcontainer/folderOpen.bash",
+              "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+              },
+              "runOptions": {
+                "runOn": "folderOpen"
+              }
+            }
+          ]
+        }
+      },
       "extensions": [
         "Vue.volar",
         "streetsidesoftware.code-spell-checker",

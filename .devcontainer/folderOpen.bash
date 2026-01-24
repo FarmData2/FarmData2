@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This runs each time VSCode attaches to the devcontainer.
+# This runs each time the project folder is opened in VSCode.
 # E.g. on a browser window reload or opening a new window to a running container.
 
 
