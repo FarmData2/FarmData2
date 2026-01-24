@@ -44,3 +44,4 @@ bin/vale
 .crt
 .key
 .pem
+npm-ci.log

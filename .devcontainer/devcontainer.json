@@ -21,7 +21,6 @@
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
-  //"postAttachCommand": ".devcontainer/postAttach.bash",
   "forwardPorts": [443, 6901],
   "portsAttributes": {
     "443": {
