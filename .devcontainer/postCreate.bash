@@ -32,34 +32,34 @@ echo "Set up."
 # the sample database is not yet installed so these will
 # generate errors, but they will still work as expected
 # once the sample database is installed.
-echo "Building FarmData2 Drupal modules..."
-echo -n "  Building farm_fd2."
-rm -rf "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
-npm run build:fd2 &> /dev/null &
-PID=$!
-waitForProcess $PID 2
-echo ""
-echo "  Built."
+# echo "Building FarmData2 Drupal modules..."
+# echo -n "  Building farm_fd2."
+# rm -rf "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
+# mkdir "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
+# npm run build:fd2 &> /dev/null &
+# PID=$!
+# waitForProcess $PID 2
+# echo ""
+# echo "  Built."
 
-echo -n "  Building farm_fd2_examples."
-rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
-npm run build:examples &> /dev/null &
-PID=$!
-aitForProcess $PID 2
-echo ""
-echo "  Built."
+# echo -n "  Building farm_fd2_examples."
+# rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
+# mkdir "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
+# npm run build:examples &> /dev/null &
+# PID=$!
+# waitForProcess $PID 2
+# echo ""
+# echo "  Built."
 
-echo -n "  Building farm_fd2_school."
-rm -rf "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
-npm run build:school &> /dev/null &
-PID=$!
-waitForProcess $PID 2
-echo "  Built."
-echo ""
-echo "All modules built."
+# echo -n "  Building farm_fd2_school."
+# rm -rf "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
+# mkdir "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
+# npm run build:school &> /dev/null &
+# PID=$!
+# waitForProcess $PID 2
+# echo ""
+# echo "  Built."
+# echo "All modules built."
 
 # echo -n "Building FarmData2 documentation."
 # npm run docs:gen &> /dev/null &
