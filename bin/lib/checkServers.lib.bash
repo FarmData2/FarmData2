@@ -1,6 +1,9 @@
 # A collection of functions that check if the 
 # servers that make up the FarmData2 development
 # environment are up and running.
+#
+# Each of the functions returns a zero value on success
+# and a non-zero value on failure.
 
 function checkServer {
   SERVICE_NAME=$1
@@ -51,5 +54,5 @@ function checkAllServers {
   checkFarmOS; FARMOS_STATUS=$?
   checkNginx; NGINX_STATUS=$?
 
-  return $(( POSTGRES_STATUS + NO_VNC_STATUS + FARMOS_STATUS + NGINX_STATUS ))  
+  return $(( POSTGRES_STATUS + NO_VNC_STATUS + FARMOS_STATUS + NGINX_STATUS ))
 }

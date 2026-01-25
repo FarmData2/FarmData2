@@ -4,11 +4,12 @@
 # E.g. on a browser window reload or opening a new window to a running container.
 
 
+source bin/lib/checkServers.lib.bash
+
 # Wait until postgres, noVNC, farmOS and nginx have started and 
 # display a message for the user.
-source .devcontainer/checkServers.lib.bash
 checkAllServers
-if [ $? ];
+if [ $? == 0 ];
 then
   echo ""
   echo "==============================================="
@@ -18,9 +19,9 @@ then
   echo ""
 else
   echo ""
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "One or more of the servers has not started."
-  echo "Try restarting or creating a new codespace."
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "Try restarting the codespace or creating a new one."
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo ""
 fi
