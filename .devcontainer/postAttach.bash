@@ -8,8 +8,7 @@ source bin/lib/checkServers.lib.bash
 
 # Wait until postgres, noVNC, farmOS and nginx have started and 
 # display a message for the user.
-checkAllServers
-if [ $? == 0 ];
+if checkAllServers
 then
   echo ""
   echo "==============================================="
