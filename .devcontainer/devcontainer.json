@@ -14,31 +14,33 @@
   "remoteEnv": {
     "DOCKER_API_VERSION": "1.43"
   },
-  "mounts": [
-    "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
-    "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
-  ],
+  // "mounts": [
+  //   "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+  //   "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
+  // ],
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
   "postAttachCommand": ".devcontainer/postAttach.bash",
-  "forwardPorts": [443, 6901],
+  // "forwardPorts": [443, 6901],
   "portsAttributes": {
-    "443": {
-      "label": "farmOS",
-      "protocol": "https",
-      "onAutoForward": "silent"
-    },
     "6901": {
       "label": "Cypress",
+      "protocol": "http",
       "onAutoForward": "silent"
     }
   },
   "otherPortsAttributes": {
-    "onAutoForward": "ignore"
+    "label": "farmOS",
+    "protocol": "https",
+    "onAutoForward": "silent"
   },
   "customizations": {
     "vscode": {
+      "settings": {
+        "remote.autoForwardPorts": true,
+        "remote.autoForwardPortsSource": "output"
+      },
       "extensions": [
         "Vue.volar",
         "streetsidesoftware.code-spell-checker",
