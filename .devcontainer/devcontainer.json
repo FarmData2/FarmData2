@@ -3,6 +3,7 @@
   "dockerComposeFile": "compose.yml",
   "service": "dev",
   "workspaceFolder": "/workspaces/FarmData2",
+  "containerUser": "node",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/desktop-lite:1": {
@@ -18,8 +19,8 @@
   //   "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
   //   "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
   // ],
-  "onCreateCommand": ".devcontainer/onCreate.bash",
-  "postCreateCommand": ".devcontainer/postCreate.bash",
+  //"onCreateCommand": ".devcontainer/onCreate.bash",
+  //"postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
   "postAttachCommand": ".devcontainer/postAttach.bash",
   // "forwardPorts": [443, 6901],
@@ -30,11 +31,11 @@
       "onAutoForward": "silent"
     }
   },
-  "otherPortsAttributes": {
-    "label": "farmOS",
-    "protocol": "https",
-    "onAutoForward": "silent"
-  },
+  // "otherPortsAttributes": {
+  //   "label": "farmOS",
+  //   "protocol": "https",
+  //   "onAutoForward": "silent"
+  // },
   "customizations": {
     "vscode": {
       "settings": {
