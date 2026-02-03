@@ -9,8 +9,8 @@
 FD2_PORT=$(docker port fd2_farmos | cut -d':' -f2 | head -1)
 echo "farmos is using: https://localhost:${FD2_PORT}"
 
-#PROXY_PORT=$(docker port fd2_proxy | cut -d':' -f2 | head -1)
-#echo "Proxy is using: https://localhost:${PROXY_PORT}"
+PROXY_PORT=$(docker port fd2_nginx | cut -d':' -f2 | head -1)
+echo "Proxy is using: https://localhost:${PROXY_PORT}"
 
 
 echo "noVNC is using: http://localhost:6901"

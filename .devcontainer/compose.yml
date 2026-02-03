@@ -48,27 +48,26 @@ services:
   #     XDEBUG_MODE: debug
   #     XDEBUG_CONFIG: discover_client_host=yes
 
-  # farmos:
-  #   image: httpd:latest
-  #   container_name: fd2_farmos
-  #   volumes:
-  #      - ./site/:/usr/local/apache2/htdocs/
-  #   restart: always
-  #   ports:
-  #     - '80'
-    
+  farmos:
+    image: httpd:latest
+    container_name: fd2_farmos
+    volumes:
+       - ./site/:/usr/local/apache2/htdocs/
+    restart: always
+    ports:
+      - '80'
 
-  # proxy:
-  #   depends_on:
-  #     - farmos
-  #   image: farmdata2/nginx:fd2.1
-  #   container_name: fd2_nginx
-  #   ports:
-  #     - '443'
-  #   volumes:
-  #     - './nginx.conf:/etc/nginx/nginx.conf'
-  #     - './ssl:/etc/nginx/ssl'
-  #   restart: always
+  proxy:
+    depends_on:
+      - farmos
+    image: farmdata2/nginx:fd2.1
+    container_name: fd2_nginx
+    ports:
+      - '443'
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - './ssl:/etc/nginx/ssl'
+    restart: always
 
 volumes:
   farmos3_db_fd2.1:
