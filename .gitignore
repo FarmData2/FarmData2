@@ -40,7 +40,7 @@ spikes
 .fd2
 !.fd2dev/*
 bin/vale
-.devcontainer/ssl
+docker/ssl
 .crt
 .key
 .pem
