@@ -15,7 +15,7 @@
   //   "DOCKER_API_VERSION": "1.43"
   // },
   "mounts": [
-    "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
+    "type=bind,source=../docker/db,target=/workspaces/FarmData2/docker/db"
   ],
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",

@@ -5,7 +5,8 @@ services:
     volumes:
       # Use docker volume for performance.
       # Bump version here and in volumes if new image requires new db.
-      - farmos3_db_fd2.1:/var/lib/postgresql/data
+      #- farmos3_db_fd2.1:/var/lib/postgresql/data
+      - ./db:/var/lib/postgressql/data
     ports:
       - '5432:5432'
     environment:
