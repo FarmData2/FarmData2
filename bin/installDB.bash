@@ -225,19 +225,19 @@ echo "Stopped."
 
 # Make sure that the FarmData2/docker/db directory has appropriate permissions.
 echo "Setting permissions on $REPO_DIR/docker/db..."
-if [ -d "/workspaces" ]; then
-  sudo chgrp node "$REPO_DIR/docker/db"
-else
-  echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
-fi
-error_check "Unable to change group."
-if [ -d "/workspaces" ]; then
-  sudo chmod g+rwx "$REPO_DIR/docker/db"
-else
-  echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
-fi
+# if [ -d "/workspaces" ]; then
+#   sudo chgrp node "$REPO_DIR/docker/db"
+# else
+#   echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
+# fi
+# error_check "Unable to change group."
+# if [ -d "/workspaces" ]; then
+#   sudo chmod g+rwx "$REPO_DIR/docker/db"
+# else
+#   echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
+# fi
+sudo chmod 777 "$REPO_DIR/docker/db"
 error_check "Unable to set permissions."
-
 echo "Set."
 
 safe_cd "$DB_DIR"
