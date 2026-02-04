@@ -1,6 +1,6 @@
 {
   "name": "FarmData2 Development Environment",
-  "image": "image: mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
   "workspaceFolder": "/workspaces/FarmData2",
   "containerUser": "node",
   "features": {

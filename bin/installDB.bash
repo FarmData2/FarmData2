@@ -210,6 +210,9 @@ else
   echo "Database downloaded."
 fi
 
+# DO FORCE UNINSTTALL FD2 HERE 
+
+
 echo "Stopping farmOS..."
 docker stop fd2_farmos > /dev/null
 error_check "Error occurred stopping farmOS."

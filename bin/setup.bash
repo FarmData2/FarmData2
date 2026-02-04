@@ -1,10 +1,10 @@
 #!/bin/bash
-# shellcheck disable=SC1091  # Make sources okay.
 
 # Script that does much of the initial setup for the FD2 dev environment
 # This script should only be run once when the dev environment is first setup.
 
 # Define some useful variables, import libraries
+# shellcheck disable=SC1091  # Make sources okay.
 source colors.bash
 source lib.bash
 
@@ -21,13 +21,13 @@ echo "  Installed."
 
 echo ""
 
-echo "  Setting up git hooks..."
-safe_cd .git
-rm -rf hooks
-ln -s ../.githooks hooks
-safe_cd ..
-echo "  Set up."
-echo ""
+# echo "  Setting up git hooks..."
+# safe_cd .git
+# rm -rf hooks
+# ln -s ../.githooks hooks
+# safe_cd ..
+# echo "  Set up."
+# echo ""
 
 # echo "  Configuring vale linter..."
 # if [ -f /usr/local/bin/vale ]; then
@@ -80,8 +80,8 @@ echo ""
 # echo "  Documentation built."
 # echo ""
 
-echo "  Installing the sample database..."
-bin/installDB.bash > /dev/null
-echo "  Installed."
+# echo "  Installing the sample database..."
+# bin/installDB.bash > /dev/null
+# echo "  Installed."
 
 echo "Setup."
