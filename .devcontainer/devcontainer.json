@@ -1,7 +1,6 @@
 {
   "name": "FarmData2 Development Environment",
-  "dockerComposeFile": "compose.yml",
-  "service": "dev",
+  "image": "image: mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
   "workspaceFolder": "/workspaces/FarmData2",
   "containerUser": "node",
   "features": {
@@ -12,17 +11,17 @@
       "vncPort": "5901"
     }
   },
-  "remoteEnv": {
-    "DOCKER_API_VERSION": "1.43"
-  },
+  // "remoteEnv": {
+  //   "DOCKER_API_VERSION": "1.43"
+  // },
   // "mounts": [
   //   "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
   //   "type=volume,source=farmos3_db_fd2.1,target=/workspaces/FarmData2/docker/db"
   // ],
-  //"onCreateCommand": ".devcontainer/onCreate.bash",
+  "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
-  "postAttachCommand": ".devcontainer/postAttach.bash",
+  //"postAttachCommand": ".devcontainer/postAttach.bash",
   // "forwardPorts": [443, 6901],
   "portsAttributes": {
     "6901": {
