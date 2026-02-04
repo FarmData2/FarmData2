@@ -22,7 +22,7 @@ services:
       # Mount a volume to hold the config information for farmos between runs.
       - farmos3_config_fd2.1:/opt/drupal/web/sites
       # Mount the settings file for the reverse proxy
-      - ./settings.php:/opt/drupal/web/sites/default/settings.php
+      #- ./settings.php:/opt/drupal/web/sites/default/settings.php
       # Mount a volume to hold the farmos api keys
       - farmos3_keys_fd2.1:/opt/drupal/keys
       # Mount the dist directories containing the fd2 modules into the farmOS container.
@@ -44,17 +44,17 @@ services:
   #     - '80:80'
   #   restart: always
 
-  proxy:
-    depends_on:
-      - farmos
-    image: farmdata2/nginx:fd2.1
-    container_name: fd2_nginx
-    ports:
-      - '443:443'
-    volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf'
-      - './ssl:/etc/nginx/ssl'
-    restart: always
+  # proxy:
+  #   depends_on:
+  #     - farmos
+  #   image: farmdata2/nginx:fd2.1
+  #   container_name: fd2_nginx
+  #   ports:
+  #     - '443:443'
+  #   volumes:
+  #     - './nginx.conf:/etc/nginx/nginx.conf'
+  #     - './ssl:/etc/nginx/ssl'
+  #   restart: always
 
 volumes:
   farmos3_db_fd2.1:
