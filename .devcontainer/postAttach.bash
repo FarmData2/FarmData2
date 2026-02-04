@@ -6,8 +6,8 @@
 #source bin/lib/checkServers.lib.bash
 
 # Print out links here so that VSCode picks them up and exposes the ports.
-FD2_PORT=$(docker port fd2_farmos | cut -d':' -f2 | head -1)
-echo "farmos is using: https://localhost:${FD2_PORT}"
+# FD2_PORT=$(docker port fd2_farmos | cut -d':' -f2 | head -1)
+# echo "farmos is using: https://localhost:${FD2_PORT}"
 
 PROXY_PORT=$(docker port fd2_nginx | cut -d':' -f2 | head -1)
 echo "Proxy is using: https://localhost:${PROXY_PORT}"
