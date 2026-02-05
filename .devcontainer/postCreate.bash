@@ -80,3 +80,12 @@ PID=$!
 waitForProcess "PID" 3
 echo ""
 echo "Documentation built."
+
+
+# Launch the containers for postgres, farmos and the nginx reverse proxy for https.
+cd "$REPO_DIR/docker" || { echo " Error docker directory does not exist."; exit 1; }
+docker compose up --detach
+
+# Install the sample database
+#"$REPO_DIR/bin/installDB.bash"
+
