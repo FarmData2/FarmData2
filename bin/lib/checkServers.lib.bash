@@ -18,7 +18,7 @@ function checkServer {
   while [ "$RESP" == "" ] && [ $TRIES -lt "$MAX_TRIES" ]; do
     sleep 1
     echo -n "."
-    RESP=$(eval "$CHECK_COMMAND 2> /dev/null" | grep "$OK_RESULT")
+    RESP=$(eval "$CHECK_COMMAND 2> /dev/null" | grep -E "$OK_RESULT")
     ((TRIES++))
   done
 
@@ -32,15 +32,15 @@ function checkServer {
 }
 
 function checkPostgres {
-  checkServer postgres "docker exec fd2_postgres pg_isready" "/var/run/postgresql:5432 - accepting connections" 60
+  checkServer postgres "docker exec fd2_postgres pg_isready" "/var/run/postgresql:5432 - accepting connections" 30
 }
 
 function checkNoVNC {
-  checkServer noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 60
+  checkServer noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 30
 }
 
 function checkNginxFarmOS {
-  checkServer nginx "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 200 OK" 60
+  checkServer nginx "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 200 OK|HTTP/1.1 403 Forbidden" 30
 }
 
 function checkAllServers {

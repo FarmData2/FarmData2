@@ -5,6 +5,7 @@
   "containerUser": "node",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/desktop-lite:1": {
       "password": "noPassword",
       "webPort": "6901",
