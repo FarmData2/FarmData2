@@ -210,7 +210,7 @@ else
   echo "Database downloaded."
 fi
 
-# DO FORCE UNINSTTALL FD2 HERE 
+
 
 
 echo "Stopping farmOS..."
@@ -225,17 +225,6 @@ echo "Stopped."
 
 # Make sure that the FarmData2/docker/db directory has appropriate permissions.
 echo "Setting permissions on $REPO_DIR/docker/db..."
-# if [ -d "/workspaces" ]; then
-#   sudo chgrp node "$REPO_DIR/docker/db"
-# else
-#   echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
-# fi
-# error_check "Unable to change group."
-# if [ -d "/workspaces" ]; then
-#   sudo chmod g+rwx "$REPO_DIR/docker/db"
-# else
-#   echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
-# fi
 sudo chmod 777 "$REPO_DIR/docker/db"
 error_check "Unable to set permissions."
 echo "Set."
@@ -243,20 +232,12 @@ echo "Set."
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
-if [ -d "/workspaces" ]; then
-  sudo rm -rf ./*
-else
-  echo "fd2dev" | sudo -Sk -p "" rm -rf ./*
-fi
+sudo rm -rf ./*
 error_check "Unable to delete the current database."
 echo "Deleted."
 
 echo "Extracting $DB_ASSET..."
-if [ -d "/workspaces" ]; then
-  sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
-else
-  echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
-fi
+sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "Extracted."
 
@@ -274,12 +255,20 @@ docker start fd2_farmos > /dev/null
 error_check "Error starting farmOS."
 echo "Started."
 
-echo "Reinstalling the FarmData2 module..."
-#docker exec fd2_farmos drush pm-uninstall farm_fd2 -y
-#error_check "Unable to uninstall the FarmData2 module."
-docker exec fd2_farmos drush pm-enable farm_fd2 -y
-error_check "Unable to enable the FarmData2 module."
-echo "Reinstalled."
+## SOMETHING COULD GO WRONG HERE SWITCHING BETWEEN BRANCHES WITH DIFFERENT VERSIONS ...
+# Need to think this trough.
+# Also have the case where the module .install has changed.
+
+
+# echo "Uninstalling the FarmData2 module..."
+# docker exec fd2_farmos drush eval "\$module_data = \Drupal::config('core.extension')->get('module'); unset(\$module_data['farm_fd2']); \Drupal::configFactory()->getEditable('core.extension')->set('module', \$module_data)->save();"
+# docker exec fd2_farmos drush cr
+# echo "Uninstalled."
+
+# echo "Reinstalling the FarmData2 module..."
+# docker exec fd2_farmos drush pm-enable farm_fd2 -y
+# error_check "Unable to enable the FarmData2 module."
+# echo "Reinstalled."
 
 echo "Clearing the Drupal cache..."
 docker exec fd2_farmos drush cr

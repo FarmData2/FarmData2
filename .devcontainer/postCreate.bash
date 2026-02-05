@@ -39,13 +39,13 @@ echo "Installed."
 
 echo "Setting up git hooks..."
 cd "$REPO_DIR/.git" || {
-  echo " Error .git directory does not exist."
+  echo " Error $REPO_DIR/.git directory does not exist."
   exit 1
 }
 rm -rf hooks
 ln -s ../.githooks hooks
 cd "$REPO_DIR" || {
-  echo " Error repo directory does not exist."
+  echo " Error $REPO_DIR does not exist."
   exit 1
 }
 echo "Set up."
@@ -84,7 +84,7 @@ echo "All modules built."
 echo -n "Building FarmData2 documentation..."
 npm run docs:gen &> /dev/null &
 PID=$!
-waitForProcess "PID" 3
+waitForProcess "$PID" 3
 echo ""
 echo "Documentation built."
 
