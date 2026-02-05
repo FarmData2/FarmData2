@@ -16,6 +16,11 @@
   //"postStartCommand": ".devcontainer/postStart.bash",
   "postAttachCommand": ".devcontainer/postAttach.bash",
   "portsAttributes": {
+    "443": {
+      "label": "farmOS",
+      "protocol": "https",
+      "onAutoForward": "silent"
+    },
     "6901": {
       "label": "Cypress",
       "protocol": "http",
@@ -23,9 +28,7 @@
     }
   },
   "otherPortsAttributes": {
-    "label": "farmOS",
-    "protocol": "https",
-    "onAutoForward": "silent"
+    "onAutoForward": "ignore"
   },
   "customizations": {
     "vscode": {
