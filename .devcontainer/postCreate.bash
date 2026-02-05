@@ -6,6 +6,7 @@
 REPO_DIR=$(git rev-parse --show-toplevel)
 
 source "$REPO_DIR"/bin/lib/waitForProcess.lib.bash
+source "$REPO_DIR"/bin/lib/checkServers.lib.bash
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.
@@ -96,7 +97,6 @@ docker compose up --detach
 
 # Wait until postgres, noVNC, farmOS and nginx have started and
 # display a message for the user.
-source bin/lib/checkServers.lib.bash
 if checkAllServers; then
   echo ""
   echo "=================================="
