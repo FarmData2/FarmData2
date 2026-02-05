@@ -37,10 +37,16 @@ echo ""
 echo "Installed."
 
 echo "Setting up git hooks..."
-cd "$REPO_DIR/.git" || { echo " Error .git directory does not exist."; exit 1; }
+cd "$REPO_DIR/.git" || {
+  echo " Error .git directory does not exist."
+  exit 1
+}
 rm -rf hooks
 ln -s ../.githooks hooks
-cd "$REPO_DIR" || { echo " Error repo directory does not exist."; exit 1; }
+cd "$REPO_DIR" || {
+  echo " Error repo directory does not exist."
+  exit 1
+}
 echo "Set up."
 
 # Redirect both stdout and stderr to /dev/null because
@@ -81,11 +87,35 @@ waitForProcess "PID" 3
 echo ""
 echo "Documentation built."
 
-
 # Launch the containers for postgres, farmos and the nginx reverse proxy for https.
-cd "$REPO_DIR/docker" || { echo " Error docker directory does not exist."; exit 1; }
+cd "$REPO_DIR/docker" || {
+  echo " Error docker directory does not exist."
+  exit 1
+}
 docker compose up --detach
+
+# Wait until postgres, noVNC, farmOS and nginx have started and
+# display a message for the user.
+source bin/lib/checkServers.lib.bash
+if checkAllServers; then
+  echo ""
+  echo "=================================="
+  echo "The FarmData2 servers are running."
+  echo "=================================="
+  echo ""
+else
+  echo ""
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "One or more of the FarmData2 servers has not started."
+  echo "Try restarting the codespace or creating a new one."
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo ""
+fi
 
 # Install the sample database
 #"$REPO_DIR/bin/installDB.bash"
 
+# Print out links here so that VSCode picks them up and exposes the ports.
+PROXY_PORT=$(docker port fd2_nginx | cut -d':' -f2 | head -1)
+echo "Proxy is using: https://localhost:${PROXY_PORT}"
+echo "noVNC is using: http://localhost:6901"
