@@ -1,4 +1,4 @@
-# A collection of functions that check if the 
+# A collection of functions that check if the
 # servers that make up the FarmData2 development
 # environment are up and running.
 #
@@ -32,27 +32,25 @@ function checkServer {
 }
 
 function checkPostgres {
-  checkServer postgres "docker exec fd2_postgres pg_isready" "/var/run/postgresql:5432 - accepting connections" 15
+  checkServer postgres "docker exec fd2_postgres pg_isready" "/var/run/postgresql:5432 - accepting connections" 60
 }
 
 function checkNoVNC {
-  checkServer noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 15
+  checkServer noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 60
 }
 
-function checkFarmOS {
-  checkServer farmOS "curl -sI http://farmos" "Server: Apache" 15
-}
-
-function checkNginx {
-  checkServer nginx "curl -ksI --connect-timeout 1 https://proxy" "Server: nginx" 15
+function checkNginxFarmOS {
+  checkServer nginx "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 200 OK" 60
 }
 
 function checkAllServers {
   echo "Checking for the FarmData2 Development Environment servers..."
-  checkPostgres; POSTGRES_STATUS=$?
-  checkNoVNC; NO_VNC_STATUS=$?
-  checkFarmOS; FARMOS_STATUS=$?
-  checkNginx; NGINX_STATUS=$?
+  checkPostgres
+  POSTGRES_STATUS=$?
+  checkNoVNC
+  NO_VNC_STATUS=$?
+  checkNginxFarmOS
+  NGINX_FARMOS_STATUS=$?
 
-  return $(( POSTGRES_STATUS + NO_VNC_STATUS + FARMOS_STATUS + NGINX_STATUS ))
+  return $((POSTGRES_STATUS + NO_VNC_STATUS + NGINX_FARMOS_STATUS))
 }
