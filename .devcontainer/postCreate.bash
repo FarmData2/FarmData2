@@ -6,7 +6,7 @@
 REPO_DIR=$(git rev-parse --show-toplevel)
 
 source "$REPO_DIR"/bin/lib/waitForProcess.lib.bash
-source "$REPO_DIR"/bin/lib/checkServers.lib.bash
+source "$REPO_DIR"/bin/lib/checkServices.lib.bash
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.

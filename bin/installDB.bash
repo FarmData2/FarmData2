@@ -258,6 +258,14 @@ echo "Started."
 ## SOMETHING COULD GO WRONG HERE SWITCHING BETWEEN BRANCHES WITH DIFFERENT VERSIONS ...
 # Need to think this trough.
 # Also have the case where the module .install has changed.
+# Probably have to uninstall the module... rebuild it... reinstall it.
+# Thats the only way to be sure we have the version that matches the db.
+# maybe include a flag so that we don't have to rebuild when this is run from the tests?
+# or have two scripts... one that does it all and one thats short?
+
+# Maybe just a flag here --skip-reinstall ? 
+# then just call the reinstallFD2Module.bash script that is currently in development branch.
+
 
 
 # echo "Uninstalling the FarmData2 module..."

@@ -23,7 +23,12 @@
       "onAutoForward": "silent"
     },
     "6901": {
-      "label": "Cypress",
+      "label": "noVNC",
+      "protocol": "http",
+      "onAutoForward": "silent"
+    },
+    "8082": {
+      "label": "FD2 Docs",
       "protocol": "http",
       "onAutoForward": "silent"
     }
