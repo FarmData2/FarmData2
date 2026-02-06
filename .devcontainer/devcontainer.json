@@ -14,7 +14,7 @@
   },
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
-  //"postStartCommand": ".devcontainer/postStart.bash",
+  "postStartCommand": ".devcontainer/postStart.bash",
   "postAttachCommand": ".devcontainer/postAttach.bash",
   "portsAttributes": {
     "443": {
@@ -28,7 +28,7 @@
       "onAutoForward": "silent"
     },
     "8082": {
-      "label": "FD2 Docs",
+      "label": "docs",
       "protocol": "http",
       "onAutoForward": "silent"
     }

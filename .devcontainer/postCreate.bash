@@ -95,21 +95,20 @@ cd "$REPO_DIR/docker" || {
 }
 docker compose up --detach
 
-# Wait until postgres, noVNC, farmOS+nginx have started.
-if checkAllServers; then
-  echo ""
-  echo "=================================="
-  echo "The FarmData2 servers are running."
-  echo "=================================="
-  echo ""
+# Check that the minimum services to install the sample database are running.
+READY=$(( "$(checkPostgres)" + "$(checkDrupal)" ))
+if "$READY"; then
+  echo "Installing the sample database..."
+  "$REPO_DIR/bin/installDB.bash"
+  echo "Sample database installed."
 else
   echo ""
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  echo "One or more of the FarmData2 servers has not started."
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "Either postgres or farmOS has not started."
+  echo "So the sample database cannot be installed."
   echo "Try restarting the codespace or creating a new one."
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo ""
 fi
 
-# Install the sample database
-#"$REPO_DIR/bin/installDB.bash"
+

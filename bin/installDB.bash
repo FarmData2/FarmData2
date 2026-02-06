@@ -210,8 +210,10 @@ else
   echo "Database downloaded."
 fi
 
-
-
+echo "Stopping nginx..."
+docker stop fd2_nginx > /dev/null
+error_check "Error occurred stopping nginx."
+echo "Stopped."
 
 echo "Stopping farmOS..."
 docker stop fd2_farmos > /dev/null
@@ -255,6 +257,11 @@ docker start fd2_farmos > /dev/null
 error_check "Error starting farmOS."
 echo "Started."
 
+echo "Restarting nginx..."
+docker start fd2_nginx > /dev/null
+error_check "Error starting nginx."
+echo "Started."
+
 ## SOMETHING COULD GO WRONG HERE SWITCHING BETWEEN BRANCHES WITH DIFFERENT VERSIONS ...
 # Need to think this trough.
 # Also have the case where the module .install has changed.
@@ -265,8 +272,6 @@ echo "Started."
 
 # Maybe just a flag here --skip-reinstall ? 
 # then just call the reinstallFD2Module.bash script that is currently in development branch.
-
-
 
 # echo "Uninstalling the FarmData2 module..."
 # docker exec fd2_farmos drush eval "\$module_data = \Drupal::config('core.extension')->get('module'); unset(\$module_data['farm_fd2']); \Drupal::configFactory()->getEditable('core.extension')->set('module', \$module_data)->save();"

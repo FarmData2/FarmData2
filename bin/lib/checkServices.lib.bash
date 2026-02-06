@@ -2,8 +2,16 @@
 # services that make up the FarmData2 development
 # environment are up and running.
 #
-# Each of the functions returns a zero value on success
-# and a non-zero value on failure.
+# Each of the functions returns:
+#  - a zero value on success
+#  - a non-zero value on failure.
+#
+# Note that in bash 0 is true, and non-zero is false.
+# So despite this seeming weird and opposite of other languages,
+# it leads to more intuitive if statements like:
+#   if checkPostgres; then
+#     echo "Postgres is running."
+#   fi
 
 function checkService {
   SERVICE_NAME=$1
@@ -36,25 +44,25 @@ function checkDocker {
 }
 
 function checkPostgres {
-  checkService postgres "docker exec fd2_postgres pg_isready" "/var/run/postgresql:5432 - accepting connections" 30
+  checkService postgres "docker exec fd2_postgres pg_isready" "accepting connections" 30
+}
+
+function checkDrupal {
+  checkService Drupal "docker exec fd2_farmos drush core-status" "Drupal version" 30
 }
 
 function checkNoVNC {
   checkService noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 30
 }
 
-function checkNginxFarmOS {
-  checkService nginx "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 200 OK|HTTP/1.1 403 Forbidden" 30
+function checkNginx {
+  checkService nginx "docker exec fd2_nginx curl -k --max-time 1 https://localhost/nginx_status" "Active connections" 30
 }
 
-function checkAllServers {
-  echo "Checking for the FarmData2 Development Environment servers..."
-  checkPostgres
-  POSTGRES_STATUS=$?
-  checkNoVNC
-  NO_VNC_STATUS=$?
-  checkNginxFarmOS
-  NGINX_FARMOS_STATUS=$?
+function checkFarmOS {
+  checkService farmOS "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 403 Forbidden|HTTP/1.1 200 OK" 30
+}
 
-  return $((POSTGRES_STATUS + NO_VNC_STATUS + NGINX_FARMOS_STATUS))
+function checkDocs {
+  checkService Documentation "curl -Is --max-time 1 http://localhost:8082/docs/index.md" "HTTP/1.1 200 OK" 30
 }

@@ -18,11 +18,12 @@ if ! checkDocker; then
   exit 1
 fi
 
-# Wait until postgres, noVNC, farmOS+nginx have started.
-if ! checkAllServers; then
+# Check that all of the relevant FarmData2 servers have started.
+RES=$(( "$(checkPostgres)" + "$(checkFarmOS)" + "$(checkDocs)" + "$(checkNoVNC)" ))
+if "$RES"; then
   echo ""
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  echo "One or more of the FarmData2 servers has not started."
+  echo "One or more of the FarmData2 services has not started."
   echo ""
   echo "Try:"
   echo "  cd docker"
@@ -51,9 +52,9 @@ echo "==============================================="
 echo "The FarmData2 Development Environment is ready."
 echo ""
 echo "The following are available in the PORTS tab:"
-echo "    farmOS: https://localhost:${PROXY_PORT}"
-echo "     noVNC: http://localhost:6901"
-echo "  FD2 Docs: http://localhost:8082"
+echo "  farmOS: https://localhost:${PROXY_PORT}"
+echo "  noVNC: http://localhost:6901"
+echo "  docs: http://localhost:8082"
 echo "" 
 echo "Happy coding!"
 echo "==============================================="
