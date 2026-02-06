@@ -96,8 +96,10 @@ cd "$REPO_DIR/docker" || {
 docker compose up --detach
 
 # Check that the minimum services to install the sample database are running.
-READY=$(( "$(checkPostgres)" + "$(checkDrupal)" ))
-if "$READY"; then
+checkPostgres; POSTGRES=$?
+checkDrupal; DRUPAL=$?
+READY=$(( POSTGRES && DRUPAL ))
+if (( READY )); then
   echo "Installing the sample database..."
   "$REPO_DIR/bin/installDB.bash"
   echo "Sample database installed."

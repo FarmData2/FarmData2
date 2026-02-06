@@ -6,10 +6,14 @@
 REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR"/bin/lib/checkServices.lib.bash
 
+echo "The FarmData2 Development Environment is almost ready."
+echo "Just a few more things to check..."
+echo ""
+
 # Sometimes on restart we can't connect to the Docker daemon right away.
 # So wait here for it to become available.
-if ! checkDocker; then
-  echo ""
+checkDocker; DOCKER=$?
+if (( ! DOCKER )); then
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "Could not connect to the Docker daemon."
   echo "Try restarting the codespace or creating a new one."
@@ -19,8 +23,12 @@ if ! checkDocker; then
 fi
 
 # Check that all of the relevant FarmData2 servers have started.
-RES=$(( "$(checkPostgres)" + "$(checkFarmOS)" + "$(checkDocs)" + "$(checkNoVNC)" ))
-if "$RES"; then
+checkPostgres; POSTGRES=$?
+checkFarmOS; FARMOS=$?
+checkDocs; DOCS=$?
+checkNoVNC; NOVNC=$?
+READY=$(( POSTGRES && FARMOS && DOCS && NOVNC ))
+if (( ! READY )); then
   echo ""
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "One or more of the FarmData2 services has not started."

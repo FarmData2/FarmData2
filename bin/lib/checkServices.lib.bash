@@ -3,14 +3,17 @@
 # environment are up and running.
 #
 # Each of the functions returns:
-#  - a zero value on success
-#  - a non-zero value on failure.
+#  - 1 if the service is running.
+#  - 0 if the service is not running.
 #
-# Note that in bash 0 is true, and non-zero is false.
-# So despite this seeming weird and opposite of other languages,
-# it leads to more intuitive if statements like:
-#   if checkPostgres; then
-#     echo "Postgres is running."
+# A typical use will be something like:
+#   checkPostgres; POSTGRES=$?
+#   checkFarmOS; FARMOS=$?
+#   checkDocs; DOCS=$?
+#   checkNoVNC; NOVNC=$?
+#   READY=$(( POSTGRES && FARMOS && DOCS && NOVNC ))
+#   if (( ! READY )); then
+#     echo "Servers are running."
 #   fi
 
 function checkService {
@@ -32,10 +35,10 @@ function checkService {
 
   if [ "$RESP" == "" ]; then
     echo " not found."
-    return 1
+    return 0
   else
     echo " running."
-    return 0
+    return 1
   fi
 }
 
