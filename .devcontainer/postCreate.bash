@@ -7,7 +7,7 @@
 sudo chown -R fd2dev:fd2dev /workspaces
 
 REPO_DIR=$(git rev-parse --show-toplevel)
-source "$REPO_DIR"/bin/lib/checkServices.lib.bash
+source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.
@@ -29,13 +29,8 @@ echo "" >> ~/.bashrc \
   && echo "export PATH=$PATH:/workspaces/FarmData2/bin" >> ~/.bashrc
 echo "FarmData2/bin added."
 
-echo -n "Installing npm dependencies..."
-echo "NPM dependencies installed on $(date)." > npm-ci.log
-echo "" >> npm-ci.log
-npm ci --no-fund --loglevel=error --quiet &>> npm-ci.log &
-PID=$!
-waitForProcess $PID 3
-echo ""
+echo "Installing npm dependencies..."
+npm ci --no-fund --loglevel=error --quiet
 echo "Installed."
 
 echo "Setting up git hooks..."
@@ -51,15 +46,14 @@ cd "$REPO_DIR" || {
 }
 echo "Set up."
 
-# Redirect both stdout and stderr to /dev/null because
-# the sample database is not yet installed so these will
-# generate errors, but they will still work as expected
-# once the sample database is installed.
+# Note: Because the sample database is not yet installed
+# these builds will generate errors, but they will still 
+# work as expected once the sample database is installed.
 echo "Building FarmData2 Drupal modules..."
 echo "  Building farm_fd2..."
 rm -rf "$REPO_DIR/modules/farm_fd2/dist"
 mkdir "$REPO_DIR/modules/farm_fd2/dist"
-npm run build:fd2 &> /dev/null
+npm run build:fd2
 echo "  Built."
 echo "  Building farm_fd2_examples..."
 rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist"

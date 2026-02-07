@@ -1,22 +1,20 @@
 #!/bin/bash
 
-source colors.bash
-source lib.bash
-
-PWD="$(pwd)"
-
 # Get the path to the main repo directory.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
+source "$REPO_ROOT_DIR/bin/colors.bash"
+source "$REPO_ROOT_DIR/bin/lib.bash"
+
 echo -e "${GREEN}Generating FarmData2 documentation.${NO_COLOR}."
 
 echo "  Deleting old docs..."
-rm -rf docs/components 2 &> /dev/null
+rm -rf "$REPO_ROOT_DIR/docs/components" 2 &> /dev/null
 mkdir docs/components
-rm -rf docs/library 2 &> /dev/null
-mkdir docs/library
+rm -rf "$REPO_ROOT_DIR/docs/library" 2 &> /dev/null
+mkdir "$REPO_ROOT_DIR/docs/library"
 echo "  Deleted."
 
 echo "  Creating index file: $INDEX_FILE..."

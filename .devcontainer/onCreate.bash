@@ -19,7 +19,7 @@ echo "Dependencies installed."
 # This will likely need to change if package.lock is updateed
 echo "Setting the node version..."
 sudo chown -R fd2dev /usr/local/share/nvm
-sudo bash -c "source /usr/local/share/nvm/nvm.sh; \
+bash -c "source /usr/local/share/nvm/nvm.sh; \
      nvm install 18.20.6; \
      npm install -g npm@10.8.2"
 echo "Node version set"
