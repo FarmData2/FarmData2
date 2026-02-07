@@ -226,7 +226,7 @@ docker stop fd2_postgres > /dev/null
 error_check "Error occurred stopping Postgres."
 echo "Stopped."
 
-# Make sure that the FarmData2/docker/db directory has appropriate permissions.
+# Make sure that the current user can update the db files in FarmData2/docker/db directory.
 echo "Setting permissions on $REPO_DIR/docker/db..."
 sudo chmod 777 "$REPO_DIR/docker/db"
 error_check "Unable to set permissions."

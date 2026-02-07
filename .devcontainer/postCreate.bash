@@ -102,6 +102,11 @@ READY=$(( POSTGRES && DRUPAL ))
 if (( READY )); then
   echo "Installing the sample database..."
   "$REPO_DIR/bin/installDB.bash"
+
+  # This ensures that the docker/db files have the correct user.
+  docker stop postgres 2> /dev/null
+  docker start postgres 2> /devnull
+
   echo "Sample database installed."
 else
   echo ""
