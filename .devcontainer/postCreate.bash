@@ -3,13 +3,11 @@
 # This runs once after the container is created and the source is available.
 # This installs npm dependencies and builds the modules and docs.
 
-REPO_DIR=$(git rev-parse --show-toplevel)
-
-source "$REPO_DIR"/bin/lib/waitForProcess.lib.bash
-source "$REPO_DIR"/bin/lib/checkServices.lib.bash
-
-# Reassign all of the workshpace files to our non-root user.
+# Reassign all of the workshpace files to the fd2dev user.
 sudo chown -R fd2dev:fd2dev /workspaces
+
+REPO_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_DIR"/bin/lib/checkServices.lib.bash
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.
@@ -58,42 +56,30 @@ echo "Set up."
 # generate errors, but they will still work as expected
 # once the sample database is installed.
 echo "Building FarmData2 Drupal modules..."
-echo -n "  Building farm_fd2..."
-rm -rf "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2/dist" &> /dev/null
-npm run build:fd2 &> /dev/null &
-PID=$!
-waitForProcess $PID 1
-echo ""
+echo "  Building farm_fd2..."
+rm -rf "$REPO_DIR/modules/farm_fd2/dist"
+mkdir "$REPO_DIR/modules/farm_fd2/dist"
+npm run build:fd2 &> /dev/null
 echo "  Built."
-echo -n "  Building farm_fd2_examples..."
-rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2_examples/dist" &> /dev/null
-npm run build:examples &> /dev/null &
-PID=$!
-waitForProcess $PID 1
-echo ""
+echo "  Building farm_fd2_examples..."
+rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist"
+mkdir "$REPO_DIR/modules/farm_fd2_examples/dist"
+npm run build:examples
 echo "  Built."
-echo -n "  Building farm_fd2_school..."
-rm -rf "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
-mkdir "$REPO_DIR/modules/farm_fd2_school/dist" &> /dev/null
-npm run build:school &> /dev/null &
-PID=$!
-waitForProcess $PID 1
-echo ""
+echo "  Building farm_fd2_school..."
+rm -rf "$REPO_DIR/modules/farm_fd2_school/dist"
+mkdir "$REPO_DIR/modules/farm_fd2_school/dist"
+npm run build:school
 echo "  Built."
 echo "All modules built."
 
-echo -n "Building FarmData2 documentation..."
-npm run docs:gen &> /dev/null &
-PID=$!
-waitForProcess "$PID" 3
-echo ""
+echo "Building FarmData2 documentation..."
+"$REPO_DIR/bin/makeDocs.bash"
 echo "Documentation built."
 
 # Launch the containers for postgres, farmos and the nginx reverse proxy for https.
 cd "$REPO_DIR/docker" || {
-  echo " Error docker directory does not exist."
+  echo "Error docker directory does not exist."
   exit 1
 }
 docker compose up --detach
@@ -105,11 +91,6 @@ READY=$(( POSTGRES && DRUPAL ))
 if (( READY )); then
   echo "Installing the sample database..."
   "$REPO_DIR/bin/installDB.bash"
-
-  # This ensures that the docker/db files have the correct user.
-  docker stop postgres 2> /dev/null
-  docker start postgres 2> /devnull
-
   echo "Sample database installed."
 else
   echo ""
@@ -119,5 +100,3 @@ else
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo ""
 fi
-
-

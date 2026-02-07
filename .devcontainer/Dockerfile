@@ -14,7 +14,3 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 USER $USERNAME
-
-
-#    && apt-get update \
-#    && apt-get install -y sudo \

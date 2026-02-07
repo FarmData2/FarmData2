@@ -1,11 +1,9 @@
 {
   "name": "FarmData2 Development Environment",
-  //"image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
   "build": {
     "dockerfile": "Dockerfile"
   },
   "workspaceFolder": "/workspaces/FarmData2",
-  //"containerUser": "fd2dev",
   "remoteUser": "fd2dev",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},

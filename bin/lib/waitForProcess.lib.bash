@@ -2,9 +2,9 @@
 # the given PID exits.
 #
 # Usage example:
-#   cmd_to_run &
+#   cmd_to_run 2> /dev/null &
 #   PID=$!
-#  waitForProcess $PID 3
+#   waitForProcess $PID 3
 #
 function waitForProcess {
   PID=$1
