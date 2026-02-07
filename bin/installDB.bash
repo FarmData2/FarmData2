@@ -1,8 +1,9 @@
 #!/bin/bash
 # shellcheck disable=SC1091  # Make sources okay.
 
-source colors.bash
-source lib.bash
+REPO_DIR=$(git rev-parse --show-toplevel)
+source "$REPO_DIR/bin/colors.bash"
+source "$REPO_DIR/bin/lib.bash"
 
 function usage {
   echo "installDB.bash usage:"
