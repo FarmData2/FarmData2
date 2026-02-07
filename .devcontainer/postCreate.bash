@@ -8,6 +8,9 @@ REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR"/bin/lib/waitForProcess.lib.bash
 source "$REPO_DIR"/bin/lib/checkServices.lib.bash
 
+# Reassign all of the workshpace files to our non-root user.
+sudo chown -R fd2dev:fd2dev /workspaces
+
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.
 echo "Generating self-signed SSL certificate..."

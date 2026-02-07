@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
 
 ARG USERNAME=fd2dev
 ARG USER_UID=999
-ARG USER_GID=$USER_UID
+ARG USER_GID=1001
 
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
