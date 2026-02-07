@@ -105,11 +105,10 @@ if (( READY )); then
   echo "Sample database installed."
 else
   echo ""
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  echo "Either postgres or farmOS has not started."
-  echo "So the sample database cannot be installed."
-  echo "Try restarting the codespace or creating a new one."
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "The postgres or farmOS container has not started."
+  echo "The sample database cannot be installed at this time."
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo ""
 fi
 

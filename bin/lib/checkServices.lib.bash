@@ -44,28 +44,35 @@ function checkService {
 
 function checkDocker {
   checkService docker "docker ps" "CONTAINER ID" 30
+  return $?
 }
 
 function checkPostgres {
   checkService postgres "docker exec fd2_postgres pg_isready" "accepting connections" 30
+  return $?
 }
 
 function checkDrupal {
   checkService Drupal "docker exec fd2_farmos drush core-status" "Drupal version" 30
+  return $?
 }
 
 function checkNoVNC {
   checkService noVNC "curl -Is localhost:6901" "HTTP/1.1 200 OK" 30
+  return $?
 }
 
 function checkNginx {
   checkService nginx "docker exec fd2_nginx curl -k --max-time 1 https://localhost/nginx_status" "Active connections" 30
+  return $?
 }
 
 function checkFarmOS {
   checkService farmOS "curl -kIs --max-time 1 https://localhost" "HTTP/1.1 403 Forbidden|HTTP/1.1 200 OK" 30
+  return $?
 }
 
 function checkDocs {
   checkService Documentation "curl -Is --max-time 1 http://localhost:8082/docs/index.md" "HTTP/1.1 200 OK" 30
+  return $?
 }
