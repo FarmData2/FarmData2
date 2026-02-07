@@ -18,8 +18,9 @@ echo "Dependencies installed."
 
 # This will likely need to change if package.lock is updateed
 echo "Setting the node version..."
-source /usr/local/share/nvm/nvm.sh && nvm install 18.20.6
-npm install -g npm@10.8.2
+sudo bash -c "source /usr/local/share/nvm/nvm.sh; \
+     nvm install 18.20.6; \
+     npm install -g npm@10.8.2"
 echo "Node version set"
 
 # Make sure that node will run with a self-signed certificate.
