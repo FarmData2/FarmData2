@@ -51,7 +51,7 @@
         "esbenp.prettier-vscode",
         "bierner.markdown-preview-github-styles",
         "timonwong.shellcheck",
-        "chrischinchilla.vale-vscode"
+        "chrischinchilla.vale-vscode@0.20.0"
       ]
     }
   }
