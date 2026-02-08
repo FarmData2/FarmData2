@@ -3,7 +3,8 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "workspaceFolder": "/workspaces/FarmData2",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/fd2dev/FarmData2,type=bind",
+  "workspaceFolder": "/home/fd2dev/FarmData2",
   "remoteUser": "fd2dev",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},

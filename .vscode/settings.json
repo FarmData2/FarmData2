@@ -8,6 +8,6 @@
     "markdown",
     "md"
   ],
-  "vale.valeCLI.config": "/workspaces/FarmData2/.vale.ini",
-  "vale.valeCLI.path": "/workspaces/FarmData2/bin/vale",
+  "vale.valeCLI.config": "${workspaceFolder}/.vale.ini",
+  "vale.valeCLI.path": "${workspaceFolder}/bin/vale",
 }
