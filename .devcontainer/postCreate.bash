@@ -26,7 +26,7 @@ echo "SSL certificate generated."
 
 echo "Adding FarmData2/bin to the PATH..."
 echo "" >> ~/.bashrc \
-  && echo "export PATH=$PATH:/workspaces/FarmData2/bin" >> ~/.bashrc
+  && echo "export PATH=$PATH:$REPO_DIR/bin" >> ~/.bashrc
 echo "FarmData2/bin added."
 
 echo "Installing npm dependencies..."
