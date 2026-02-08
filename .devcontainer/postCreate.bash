@@ -4,7 +4,7 @@
 # This installs npm dependencies and builds the modules and docs.
 
 # Reassign all of the workshpace files to the fd2dev user.
-sudo chown -R fd2dev:fd2dev /workspaces
+#sudo chown -R fd2dev:fd2dev /workspaces
 
 REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR/bin/lib/checkServices.lib.bash"
