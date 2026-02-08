@@ -7,7 +7,9 @@ REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 
 # Ensure fd2dev owns the contents of the workspace directory.
-#sudo chown -R fd2dev /workspaces
+echo "Setting fd2dev as owner of /workspaces and /home/fd2dev content..."
+sudo chown -R fd2dev /workspaces
+echo "Ownership set."
 
 # Generate the self-signed SSL certificate.
 # It will be valid for 25 years - codepsace is unlikely to live that long.

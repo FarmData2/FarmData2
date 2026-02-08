@@ -3,9 +3,6 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  //"dockerComposeFile": "../docker/compose.yml",
-  //"service": "dev",
-  //"runServices": ["dev"],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/fd2dev/FarmData2,type=bind",
   "workspaceFolder": "/home/fd2dev/FarmData2",
   "remoteUser": "fd2dev",
@@ -16,7 +13,7 @@
       "password": "noPassword",
       "webPort": "6901",
       "vncPort": "5901"
-    }
+    },
   },
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
