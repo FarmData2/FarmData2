@@ -1,26 +1,28 @@
 services:
-  dev:
-    build: "../.devcontainer"
-    container_name: fd2_dev
-    volumes: 
-      - type: bind
-        source: ..
-        target: /home/fd2dev/FarmData2
-      - type: bind
-        source: ..
-        target: /workspaces/FarmData2
-    networks:
-      - fd2_network
-    command: sleep infinity
+  # dev:
+  #   build: "../.devcontainer"
+  #   container_name: fd2_dev
+  #   profiles: [devcontainer]
+  #   volumes: 
+  #     - type: bind
+  #       source: ..
+  #       target: /home/fd2dev/FarmData2
+  #     - type: bind
+  #       source: ..
+  #       target: /workspaces/FarmData2
+  #   networks:
+  #     - fd2_network
+  #   command: sleep infinity
   db:
     image: farmdata2/postgres:fd2.2
     container_name: fd2_postgres
+    #profiles: [farmdata2]
     volumes:
       - type: bind
         source: ./db
         target: /var/lib/postgresql/data
-    networks:
-      - fd2_network
+#    networks:
+#      - fd2_network
     ports:
       - '5432:5432'
     restart: unless-stopped
@@ -34,6 +36,7 @@ services:
       - db
     image: farmdata2/farmos3:fd2.1
     container_name: fd2_farmos
+    #profiles: [farmdata2]
     volumes:
       # Mount a volume to hold the config information for farmos between runs.
       - farmos3_config_fd2.1:/opt/drupal/web/sites
@@ -45,8 +48,8 @@ services:
       - ../modules/farm_fd2/dist/farmdata2:/opt/drupal/web/sites/all/modules/farmdata2
       - ../modules/farm_fd2_examples/dist/fd2_examples:/opt/drupal/web/sites/all/modules/fd2_examples
       - ../modules/farm_fd2_school/dist/fd2_school:/opt/drupal/web/sites/all/modules/fd2_school
-    networks:
-      - fd2_network
+#    networks:
+#      - fd2_network
     restart: unless-stopped
     environment:
       XDEBUG_MODE: debug
@@ -57,8 +60,9 @@ services:
       - farmos
     image: farmdata2/nginx:fd2.1
     container_name: fd2_nginx
-    networks:
-      - fd2_network
+    #profiles: [farmdata2]
+#    networks:
+#      - fd2_network
     ports:
       - '443:443'
     volumes:
@@ -70,5 +74,6 @@ volumes:
   farmos3_config_fd2.1:
   farmos3_keys_fd2.1:
 
-networks:
-  fd2_network:
+#networks:
+#  fd2_network:
+#    #external: true
