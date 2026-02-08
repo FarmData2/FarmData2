@@ -11,9 +11,9 @@ sudo apt install -y --no-install-recommends \
   jq
 
 sudo apt-get clean -y \
- && sudo apt-get autoclean -y \
- && sudo apt-get autoremove -y \
- && sudo rm -rf /var/lib/apt/lists/*
+  && sudo apt-get autoclean -y \
+  && sudo apt-get autoremove -y \
+  && sudo rm -rf /var/lib/apt/lists/*
 echo "Dependencies installed."
 
 # This will likely need to change if package.lock is updateed
@@ -42,3 +42,9 @@ sudo curl -sS https://webinstall.dev/shfmt | bash
 source ~/.config/envman/PATH.env
 echo "shfmt installed."
 
+echo "Linking dash to bash..."
+# The /bin/dash shell runs in fluxbox terminal by default.
+# link it to /bin/bash instead so bash runs in fluxbox terminal..
+sudo rm /bin/dash
+sudo ln -s /bin/bash /bin/dash
+echo "Linked."
