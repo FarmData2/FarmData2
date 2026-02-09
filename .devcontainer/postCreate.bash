@@ -9,6 +9,8 @@ source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 # Ensure fd2dev owns the contents of the workspace directory.
 echo "Setting fd2dev as owner of /workspaces and /home/fd2dev content..."
 sudo chown -R fd2dev /workspaces
+git config --global --add safe.directory /workspaces/FarmData2
+git config --global --add safe.directory /home/fd2dev/FarmData2
 echo "Ownership set."
 
 # Generate the self-signed SSL certificate.
@@ -54,9 +56,10 @@ cd "$REPO_DIR" || {
 echo "Set up."
 
 # Note: Because the sample database is not yet installed
-# these builds will generate errors, but they will still 
+# these builds will generate errors, but they will still
 # work as expected once the sample database is installed.
 echo "Building FarmData2 Drupal modules..."
+echo "  Note: Errors during these builds are expected."
 echo "  Building farm_fd2..."
 rm -rf "$REPO_DIR/modules/farm_fd2/dist"
 mkdir "$REPO_DIR/modules/farm_fd2/dist"
@@ -86,10 +89,12 @@ cd "$REPO_DIR/docker" || {
 docker compose up --detach
 
 # Check that the minimum services to install the sample database are running.
-checkPostgres; POSTGRES=$?
-checkDrupal; DRUPAL=$?
-READY=$(( POSTGRES && DRUPAL ))
-if (( READY )); then
+checkPostgres
+POSTGRES=$?
+checkDrupal
+DRUPAL=$?
+READY=$((POSTGRES && DRUPAL))
+if ((READY)); then
   echo "Installing the sample database..."
   "$REPO_DIR/bin/installDB.bash"
   echo "Sample database installed."
