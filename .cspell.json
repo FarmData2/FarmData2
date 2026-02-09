@@ -16,7 +16,7 @@
   ],
   "import": ["@cspell/dict-vue/cspell-ext.json"],
   "ignorePaths": [
-    "docker/db",
+    "docker",
     "**/dist",
     "node_modules",
     ".fd2-cspell.txt",
