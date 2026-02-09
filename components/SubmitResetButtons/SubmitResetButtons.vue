@@ -39,7 +39,7 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/submit_reset_buttons">The SubmitResetButtons Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/submit_reset_buttons">The SubmitResetButtons Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/submit_reset_buttons/App.vue">App.vue</a>
  *

@@ -70,7 +70,7 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/picker_base">The PickerBase Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/picker_base">The PickerBase Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picker_base/App.vue">App.vue</a>
  *

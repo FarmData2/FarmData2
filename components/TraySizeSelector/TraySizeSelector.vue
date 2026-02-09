@@ -26,6 +26,12 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * It fetches the list of tray sizes (farmOS `taxonomy_term--tray_size` records) from the farmOS server.
  *
+ * ## Live Example
+ *
+ * <a href="https://%HOST_NAME%/fd2_examples/tray_size_selector">The TraySizeSelector Example</a>
+ *
+ * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/tray_size_selector/App.vue">App.vue</a>
+ * 
  * ## Usage Example
  *
  * ```html

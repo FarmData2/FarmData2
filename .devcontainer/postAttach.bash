@@ -5,15 +5,17 @@
 
 REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR"/bin/lib/checkServices.lib.bash
+source "$REPO_DIR/bin/lib/rewriteCompDocsExURL.lib.bash"
 
 echo ""
 echo "The FarmData2 Development Environment is almost ready."
-echo "Just a few more things to check..."
+echo "Just a few more things to take care of..."
 echo ""
 
 # Sometimes on restart we can't connect to the Docker daemon right away.
-checkDocker; DOCKER=$?
-if (( ! DOCKER )); then
+checkDocker
+DOCKER=$?
+if ((!DOCKER)); then
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "Could not connect to the Docker daemon."
   echo ""
@@ -24,9 +26,11 @@ if (( ! DOCKER )); then
   exit 1
 fi
 
-checkPostgres; POSTGRES=$?
-checkFarmOS; FARMOS=$?
-if (( (! POSTGRES) ||  (! FARMOS) )); then
+checkPostgres
+POSTGRES=$?
+checkFarmOS
+FARMOS=$?
+if (((!POSTGRES) || (!FARMOS))); then
   echo ""
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "One or more of the FarmData2 docker containers is not running."
@@ -50,8 +54,9 @@ if (( (! POSTGRES) ||  (! FARMOS) )); then
   exit 1
 fi
 
-checkDocs; DOCS=$?
-if (( ! DOCS )); then
+checkDocs
+DOCS=$?
+if ((!DOCS)); then
   echo ""
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "The FarmData2 documentation server did not start."
@@ -65,8 +70,9 @@ if (( ! DOCS )); then
   echo ""
 fi
 
-checkNoVNC; NOVNC=$?
-if (( ! NOVNC )); then
+checkNoVNC
+NOVNC=$?
+if ((!NOVNC)); then
   echo ""
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "The noVNC server is not running."
@@ -86,13 +92,13 @@ echo "The FarmData2 Development Environment is ready."
 echo ""
 echo "The following are available in the PORTS tab:"
 echo "  farmOS: https://localhost:${PROXY_PORT}"
-if (( NOVNC )); then
+if ((NOVNC)); then
   echo "  noVNC: http://localhost:6901"
 fi
-if (( DOCS )); then
+if ((DOCS)); then
   echo "  docs: http://localhost:8082"
 fi
-echo "" 
+echo ""
 echo "Happy coding!"
 echo "==============================================="
 echo ""

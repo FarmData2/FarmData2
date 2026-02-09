@@ -23,7 +23,7 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/comment_box">The CommentBox Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/comment_box">The CommentBox Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/comment_box/App.vue">App.vue</a>
  * ## Usage Example

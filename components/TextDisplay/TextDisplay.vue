@@ -31,7 +31,7 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/text_display">The TextDisplay Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/text_display">The TextDisplay Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/text_display/App.vue">App.vue</a>
  *

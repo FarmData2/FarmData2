@@ -25,7 +25,7 @@ import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/active_plant_asset_picklist">The ActivePlantAssetPicklist Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/active_plant_asset_picklist">The ActivePlantAssetPicklist Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/active_plant_asset_picklist/App.vue">App.vue</a>
  *

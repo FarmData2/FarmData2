@@ -61,7 +61,7 @@ import { BAccordion } from 'bootstrap-vue-next';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/location_selector">The LocationSelector Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/location_selector">The LocationSelector Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/location_selector/App.vue">App.vue</a>
  *

@@ -226,7 +226,7 @@ import SortOrderButton from '@comps/SortOrderButton/SortOrderButton.vue';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/picklist_base">The PicklistBase Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/picklist_base">The PicklistBase Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picklist_base/App.vue">App.vue</a>
  *

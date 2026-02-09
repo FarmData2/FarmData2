@@ -36,7 +36,7 @@
  *
  * ## Live Example
  * 
- * <a href="http://farmos/fd2_examples/%COMPONENT_ID%">The %COMPONENT_NAME% Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/%COMPONENT_ID%">The %COMPONENT_NAME% Example</a>
  * 
  * ## Usage Example
  *

@@ -44,7 +44,7 @@ import dayjs from 'dayjs';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/date_selector">The DateSelector Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/date_selector">The DateSelector Example</a>
  *
  * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/date_selector/App.vue">App.vue</a>
  *
