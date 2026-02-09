@@ -7,6 +7,7 @@ REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
 source "$REPO_ROOT_DIR/bin/colors.bash"
 source "$REPO_ROOT_DIR/bin/lib.bash"
+source "$REPO_ROOT_DIR/bin/lib/rewriteCompDocsExURL.lib.bash"
 
 echo -e "${GREEN}Generating FarmData2 documentation.${NO_COLOR}."
 
@@ -72,6 +73,9 @@ for DIR in $DIRS; do                     # Names of the components with a traili
   echo "      Added."
   echo "    Generated."
 done
+echo "    Rewriting component example URLs in the documentation as needed..."
+rewriteCompDocsExURL
+echo "    Rewritten."
 echo "  Generated."
 
 echo "  Generating docs for all libraries..."

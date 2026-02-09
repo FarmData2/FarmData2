@@ -4,8 +4,7 @@
 # E.g. on a browser window reload or opening a new window to a running container.
 
 REPO_DIR=$(git rev-parse --show-toplevel)
-source "$REPO_DIR"/bin/lib/checkServices.lib.bash
-source "$REPO_DIR/bin/lib/rewriteCompDocsExURL.lib.bash"
+source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 
 echo ""
 echo "The FarmData2 Development Environment is almost ready."
