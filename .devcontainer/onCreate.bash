@@ -48,10 +48,3 @@ echo "Linking dash to bash..."
 sudo rm /bin/dash
 sudo ln -s /bin/bash /bin/dash
 echo "Linked."
-
-echo "Adding rountes to docker containers to /etc/hosts..."
-# Note the IP addresses are specified in /docker/compose.yml.
-echo "172.20.0.2  db" | sudo tee -a /etc/hosts > /dev/null
-echo "172.20.0.3  farmos" | sudo tee -a /etc/hosts > /dev/null
-echo "172.20.0.4  proxy" | sudo tee -a /etc/hosts > /dev/null
-echo "Added."
