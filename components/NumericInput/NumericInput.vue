@@ -123,8 +123,8 @@ import { BButton } from 'bootstrap-vue-next';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/numeric_input">The NumericInput Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/numeric_input/App.vue">App.vue</a>
+ *   - Example Source: <a href="./NumericInput.ex.src.md">modules/farm_fd2_examples/src/entrypoints/numeric_input/App.vue</a>
+ *   - Component Source: <a href="./NumericInput.comp.src.md">components/NumericInput/NumericInput.vue</a>
  *
  * ## Usage Example
  *

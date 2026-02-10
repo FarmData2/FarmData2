@@ -45,8 +45,8 @@ import dayjs from 'dayjs';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/date_selector">The DateSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/date_selector/App.vue">App.vue</a>
+ *   - Example Source: <a href="./DateSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/date_selector/App.vue</a>
+ *   - Component Source: <a href="./DateSelector.comp.src.md">components/DateSelector/DateSelector.vue</a>
  *
  * ## Usage Example
  *
@@ -64,13 +64,13 @@ import dayjs from 'dayjs';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name          | Description
- * ------------------------| -----------
- * date-group              | The `BFormGroup` component containing this component.
- * date-label              | The `span` component containing the "Date:" label.
- * date-required           | The `*` that appears in the label if the input is required.
- * date-input              | The `BFormInput` component used to select a date.
- * date-invalid-feedback   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
+ * Attribute Name            | Description
+ * --------------------------| -----------
+ * 'date-group'              | The `BFormGroup` component containing this component.
+ * 'date-label'              | The `span` component containing the "Date:" label.
+ * 'date-required'           | The `*` that appears in the label if the input is required.
+ * 'date-input'              | The `BFormInput` component used to select a date.
+ * 'date-invalid-feedback'   | The `BFormInvalidFeedback` component that displays help when the date is invalid.
  */
 export default {
   name: 'DateSelector',

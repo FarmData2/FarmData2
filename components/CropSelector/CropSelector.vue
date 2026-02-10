@@ -29,8 +29,8 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/crop_selector">The CropSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/crop_selector/App.vue">App.vue</a>
+ *   - Example Source: <a href="./CropSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/crop_selector/App.vue</a>
+ *   - Component Source: <a href="./CropSelector.comp.src.md">components/CropSelector/CropSelector.vue</a>
  *
  * ## Usage Example
  *
@@ -55,7 +55,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * Attribute Name        | Description
  * ----------------------| -----------
- * crop-selector         | The `SelectorBase` component containing the dropdown.
+ * `crop-selector`       | The `SelectorBase` component containing the dropdown.
  */
 export default {
   name: 'CropSelector',

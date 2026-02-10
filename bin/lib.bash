@@ -85,3 +85,8 @@ function safe_cd {
     exit 255
   ) || exit 255
 }
+
+# Convert a string from CamelCase to snake_case.
+function camel_to_snake() {
+    echo "$1" | sed 's/\([A-Z]\)/_\1/g' | sed 's/^_//' | tr '[:upper:]' '[:lower:]'
+}

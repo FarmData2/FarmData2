@@ -71,8 +71,8 @@
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/picker_base">The PickerBase Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/picker_base/App.vue">App.vue</a>
+ *   - Example Source: <a href="./PickerBase.ex.src.md">modules/farm_fd2_examples/src/entrypoints/picker_base/App.vue</a>
+ *   - Component Source: <a href="./PickerBase.comp.src.md">components/PickerBase/PickerBase.vue</a>
  *
  * ## Usage Example
  *

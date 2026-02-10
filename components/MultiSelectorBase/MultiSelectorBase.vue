@@ -29,8 +29,8 @@ import SelectorBase from '@comps/SelectorBase/SelectorBase.vue';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/multi_selector_base">The MultiSelectorBase Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/multi_selector_base/App.vue">App.vue</a>
+ *   - Example Source: <a href="./MultiSelectorBase.ex.src.md">modules/farm_fd2_examples/src/entrypoints/multi_selector_base/App.vue</a>
+ *   - Component Source: <a href="./MultiSelectorBase.comp.src.md">components/MultiSelectorBase/MultiSelectorBase.vue</a>
  *
  * ## Usage Example
  *

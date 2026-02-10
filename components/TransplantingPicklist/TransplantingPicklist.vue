@@ -67,8 +67,8 @@ import dayjs from 'dayjs';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/transplanting_picklist">The TransplantingPicklist Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/transplanting_picklist/App.vue">App.vue</a>
+ *   - Example Source: <a href="./TransplantingPicklist.ex.src.md">modules/farm_fd2_examples/src/entrypoints/transplanting_picklist/App.vue</a>
+ *   - Component Source: <a href="./TransplantingPicklist.comp.src.md">components/TransplantingPicklist/TransplantingPicklist.vue</a>
  *
  * ## Usage Example
  *

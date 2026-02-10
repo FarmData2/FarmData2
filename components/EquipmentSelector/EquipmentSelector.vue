@@ -31,8 +31,8 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/equipment_selector">The EquipmentSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/equipment_selector/App.vue">App.vue</a>
+ *   - Example Source: <a href="./EquipmentSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/equipment_selector/App.vue</a>
+ *   - Component Source: <a href="./EquipmentSelector.comp.src.md">components/EquipmentSelector/EquipmentSelector.vue</a>
  *
  * ## Usage Example
  *

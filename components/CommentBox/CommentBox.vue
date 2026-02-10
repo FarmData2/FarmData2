@@ -24,8 +24,9 @@
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/comment_box">The CommentBox Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/comment_box/App.vue">App.vue</a>
+ *   - Example Source: <a href="./CommentBox.ex.src.md">modules/farm_fd2_examples/src/entrypoints/comment_box/App.vue</a>
+ *   - Component Source: <a href="./CommentBox.comp.src.md">components/CommentBox/CommentBox.vue</a>
+ * 
  * ## Usage Example
  *
  * ```html

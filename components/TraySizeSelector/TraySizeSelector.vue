@@ -29,8 +29,8 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  * ## Live Example
  *
  * <a href="https://%HOST_NAME%/fd2_examples/tray_size_selector">The TraySizeSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/tray_size_selector/App.vue">App.vue</a>
+ *   - Example Source: <a href="./TraySizeSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/tray_size_selector/App.vue</a>
+ *   - Component Source: <a href="./TraySizeSelector.comp.src.md">components/TraySizeSelector/TraySizeSelector.vue</a>
  * 
  * ## Usage Example
  *
@@ -52,9 +52,9 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * tray-size-selector    | The `SelectorBase` component containing the dropdown for the tray sizes.
+ * Attribute Name          | Description
+ * ------------------------| -----------
+ * `tray-size-selector`    | The `SelectorBase` component containing the dropdown for the tray sizes.
  */
 export default {
   name: 'TraySizeSelector',
