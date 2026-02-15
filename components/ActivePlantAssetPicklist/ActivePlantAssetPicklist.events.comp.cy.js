@@ -236,7 +236,7 @@ describe('Test the ActivePlantAssetPicklist component events', () => {
     const readySpy = cy.spy().as('readySpy');
     const errorSpy = cy.spy().as('errorSpy');
 
-    cy.intercept('GET', '**/farmos/api/fd2_plant_assets?location=*', {
+    cy.intercept('GET', '**/api/fd2_plant_assets?location=*', {
       forceNetworkError: true,
     }).as('farmOSRequest');
 

@@ -16,7 +16,7 @@ describe('Test the MultiCropSelector permissions', () => {
     const readySpy = cy.spy().as('readySpy');
 
     cy.wrap(
-      farmosUtil.getFarmOSInstance('http://farmos', 'farm', 'admin', 'admin')
+      farmosUtil.getFarmOSInstance('https://proxy', 'farm', 'admin', 'admin')
     ).then(() => {
       cy.mount(MultiCropSelector, {
         props: {
@@ -37,7 +37,7 @@ describe('Test the MultiCropSelector permissions', () => {
 
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'
