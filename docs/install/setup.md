@@ -8,7 +8,15 @@ Within the FarmData2 Development Environment:
 1. Use the `ls` command and notice that there is a directory with the same name as your fork of FarmData2. This directory is a clone of your fork of FarmData2 that GitPod made when you created the workspace.
 1. `cd` into this directory.
 1. Run the following command: `setup.bash`
-   - This script will install all the dependencies, configure the FarmData2 Development Environment for use and build the FarmData2 project. Note that in doing so, the script will prompt you for information and will ask you to authenticate with GitHub. If you want to know what the script is doing you can examine the source code in `bin/setup.bash`.
+   - This script will install all the dependencies, configure the FarmData2 Development Environment for use and build the FarmData2 project. If you want to know exactly what the script is doing you can examine the source code in `bin/setup.bash`.
+     1. When "Configuring git information" you will be prompted for your "Name" and "Email." Give the name and email that you want to have associated with your commits on GitHub.
+     2. When "Authenticating with GitHub" the following is the recommended approach:
+        1. Choose "**HTTPS**" as the preferred protocol git Operations on this host.
+        2. Respond "**Yes**" to authenticating Git with your GitHub credentials.
+        3. Choose "**Paste an authentication token**" when asked how you want to authenticate GitHub CLI.
+        4. Copy your GitHub token to the Clipboard
+        5. Paste it into the "_NoVNC Clipboard_" using the tool palate at the left of the window.
+        6. Use "**Ctrl-Shift-V**" to paste the token into the terminal and press enter.
 1. Open the Mozilla Firefox web browser from the dock at the bottom of the Linux desktop.
 1. Visit the URL:
    - [`http://farmos`](http://farmos)

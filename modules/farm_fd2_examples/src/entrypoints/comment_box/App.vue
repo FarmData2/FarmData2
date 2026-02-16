@@ -14,7 +14,7 @@
         validity.comment = valid;
       }
     "
-    v-on:ready="createdCount++"
+    v-on:ready="handleReady"
   />
   <hr />
 
@@ -23,6 +23,7 @@
     <thead>
       <th>Prop</th>
       <th>Control</th>
+      <th>Value</th>
     </thead>
     <tbody>
       <tr>
@@ -37,6 +38,7 @@
           >
             Insert Comment
           </BButton>
+          <br />
           <BButton
             id="clear-comment-button"
             data-cy="clear-comment-button"
@@ -47,6 +49,7 @@
             Clear Comment
           </BButton>
         </td>
+        <td>{{ form.comment }}</td>
       </tr>
     </tbody>
   </table>
@@ -58,6 +61,10 @@
       <th>Payload</th>
     </thead>
     <tbody>
+      <tr>
+        <td>ready</td>
+        <td>{{ ready.comment }}</td>
+      </tr>
       <tr>
         <td>update:comment</td>
         <td>{{ form.comment }}</td>
@@ -92,14 +99,23 @@ export default {
         comment: '',
       },
       validity: {
-        comment: true,
+        comment: false,
+      },
+      ready: {
+        comment: false,
       },
       createdCount: 0,
     };
   },
   computed: {
     pageDoneLoading() {
-      return this.createdCount == 2;
+      return this.createdCount === 2;
+    },
+  },
+  methods: {
+    handleReady(ready) {
+      this.ready.comment = ready;
+      this.createdCount++;
     },
   },
   created() {

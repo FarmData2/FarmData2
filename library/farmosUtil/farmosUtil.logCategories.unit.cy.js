@@ -14,7 +14,7 @@ describe('Test the log categories utility functions', () => {
   it('Get the log categories', () => {
     cy.wrap(farmosUtil.getLogCategories()).then((categories) => {
       expect(categories).to.not.be.null;
-      expect(categories.length).to.equal(12);
+      expect(categories.length).to.equal(13);
 
       expect(categories[0].attributes.name).to.equal('amendment');
       expect(categories[0].attributes.description.value).to.equal(
@@ -22,9 +22,9 @@ describe('Test the log categories utility functions', () => {
       );
       expect(categories[0].type).to.equal('taxonomy_term--log_category');
 
-      expect(categories[11].attributes.name).to.equal('weed_control');
+      expect(categories[11].attributes.name).to.equal('transplanting');
       expect(categories[11].attributes.description.value).to.equal(
-        'For logs related to weed control.'
+        'For logs representing transplantation of a plant.'
       );
       expect(categories[11].type).to.equal('taxonomy_term--log_category');
     });
@@ -60,7 +60,7 @@ describe('Test the log categories utility functions', () => {
   it('Get the logCategoryToTerm map', () => {
     cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((categoryMap) => {
       expect(categoryMap).to.not.be.null;
-      expect(categoryMap.size).to.equal(12);
+      expect(categoryMap.size).to.equal(13);
 
       expect(categoryMap.get('seeding_cover_crop')).to.not.be.null;
       expect(categoryMap.get('seeding_cover_crop').type).to.equal(
@@ -77,7 +77,7 @@ describe('Test the log categories utility functions', () => {
   it('Get the logCategoryIdToAsset map', () => {
     cy.wrap(farmosUtil.getLogCategoryIdToTermMap()).then((categoryIdMap) => {
       expect(categoryIdMap).to.not.be.null;
-      expect(categoryIdMap.size).to.equal(12);
+      expect(categoryIdMap.size).to.equal(13);
 
       cy.wrap(farmosUtil.getLogCategoryToTermMap()).then((categoryNameMap) => {
         const coverId = categoryNameMap.get('seeding_cover_crop').id;

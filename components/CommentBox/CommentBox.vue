@@ -103,8 +103,9 @@ export default {
 
     /**
      * The component is ready for use.
+     * @property {boolean} valid true to indicate that the component is initialized and ready for use.
      */
-    this.$emit('ready');
+    this.$emit('ready', true);
   },
 };
 </script>

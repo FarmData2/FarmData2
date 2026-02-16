@@ -17,9 +17,10 @@ Creating a new FarmData2 Development Environment in Codespaces will take about 1
 Use the following steps to create a new FarmData2 Development Environment in Codespaces:
 
 1. Log in to GitHub.
-
-1. [Create a (classic) Personal Access Token (PAT)] in GitHub with the `repo`, `workflow`, `read:org` and `codespace` scopes selected. Choose an expiration date that is appropraite for the work you plan to do. __Be sure to copy and paste your token somewhere safe.__ You'll need it later and you cannot retrieve again after you leave the creation page.
-
+   <!-- vale write-good.TooWordy = NO -->
+   <!-- "expiration" is terminology from GitHub-->
+1. [Create a (classic) Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) in GitHub with the `repo`, `workflow`, `read:org` and `codespace` scopes selected. Set an expiration date that is appropriate for the work you plan to do. **Be sure to copy and paste your token somewhere safe.** You'll need it later and you cannot retrieve again after you leave the creation page.
+   <!-- vale write-good.TooWordy = YES -->
 1. Visit the [Codespace settings page](https://github.com/settings/codespaces). Scroll down and adjust the "Default Idle Timeout" setting. This is the amount of time the codespace will continue running if you are not interacting with the development environment. 15 minutes is a good balance that ensures the development environment is not shutdown too soon, but also does not waste your free usage.
 
 1. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
@@ -32,7 +33,7 @@ Use the following steps to create a new FarmData2 Development Environment in Cod
 
 1. The browser will display a small dialog box in the lower right corner indicating that the GitHub codespace is being built.<br><center><img src="images/building-codespace.png" alt='Dialog box indicating that the codespace is being built.' width=400 /></center>
 
-1. After about 5 minutes the browser window will change a couple of times and then display a page indicating that the FarmData2 Development Environment is loading.<br><center><img src="images/dev-env-loading.png" alt='The FarmData2 Development Environment loading page.' width=300 /></center>
+1. After about 5 minutes the browser window will change a couple of times and then display a page indicating that the FarmData2 Development Environment is loading.<br><center><img src="images/dev-env-loading.png" alt='The FarmData2 Development Environment loading page.' width=300 /></center><br>A terminal window will open at the bottom of this window and will display the output of commands that are executing as part of the startup. You may safely ignore the content in this terminal.
 
 1. After another 5-10 minutes the browser window will display a page giving information about connecting to the FarmData2 Development Environment.<br><center><img src="images/dev-env-ready.png" alt='The FarmData2 Development Environment connections page.' width=650 /></center>
 

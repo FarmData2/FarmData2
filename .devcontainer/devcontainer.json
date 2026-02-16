@@ -13,7 +13,7 @@
       "password": "noPassword",
       "webPort": "6901",
       "vncPort": "5901"
-    },
+    }
   },
   "onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
