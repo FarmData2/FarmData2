@@ -48,3 +48,8 @@ echo "Linking dash to bash..."
 sudo rm /bin/dash
 sudo ln -s /bin/bash /bin/dash
 echo "Linked."
+
+echo "Configuring vale linter..."
+sudo ln -s /home/fd2dev/FarmData2/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
+/usr/local/bin/vale sync
+echo "Configured."

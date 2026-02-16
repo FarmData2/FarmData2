@@ -4,10 +4,7 @@
   "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.quickSuggestionsDelay": 3000,
-  "eslint.validate": [
-    "markdown",
-    "md"
-  ],
-  "vale.valeCLI.config": "${workspaceFolder}/.vale.ini",
-  "vale.valeCLI.path": "${workspaceFolder}/bin/vale",
+  "eslint.validate": ["markdown", "md"],
+  "vale.valeCLI.config": "/home/fd2dev/FarmData2/.vale.ini",
+  "vale.valeCLI.path": "/usr/local/bin/vale"
 }
