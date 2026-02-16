@@ -37,6 +37,8 @@ Within the Droplet Console:
 
 ### Deploying the FarmData2 Instance
 
+**NOTE:** these directions need to be updated to use `docker compose up` and to work without the fd2_dev container.
+
 Within the Droplet Console:
 
 1. `su - fd2dev`
@@ -57,6 +59,8 @@ Within the Droplet Console:
 
 ### Connect to the Live FarmData2 Instance
 
+**NOTE:** these directions need to be updated to reflect use of `https`
+
 1. Enter `http://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
    - Note that this is `http` and not `https`.
 2. Log in to FarmData2 using the password you set for one of the following users:
@@ -66,6 +70,8 @@ Within the Droplet Console:
    - `guest`
 
 ## Updating the Deployed Instance
+
+**NOTE:** these directions need to be updated to work without the fd2_dev container.
 
 If the deployed branch is updated, or you want to deploy a different branch fetching any changes to the branch and rebuild the `farm_fd2` module.
 
