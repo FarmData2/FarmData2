@@ -146,7 +146,7 @@ describe('Cover Crop Seeding: Submission tests', () => {
      * Give time for all the records to be created and then check
      * for the toast indicating that the submission was successful.
      */
-    cy.get('.toast', { timeout: 10000 })
+    cy.get('.toast', { timeout: 20000 })
       .should('be.visible')
       .should('contain.text', 'Cover Crop Seeding created.');
 

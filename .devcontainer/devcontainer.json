@@ -3,6 +3,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "containerEnv": {
+    "TZ": "America/New_York"
+  },
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/fd2dev/FarmData2,type=bind",
   "workspaceFolder": "/home/fd2dev/FarmData2",
   "remoteUser": "fd2dev",
