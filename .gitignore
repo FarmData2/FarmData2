@@ -30,6 +30,7 @@ coverage
 
 # FD2 stuff
 docker/db
+docker/ssl
 docs/components
 docs/library
 docs/FarmData2.md
@@ -40,7 +41,6 @@ spikes
 .fd2
 !.fd2dev/*
 bin/vale
-docker/ssl
 .crt
 .key
 .pem
