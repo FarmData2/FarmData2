@@ -4,6 +4,7 @@
 REPO_DIR=$(git rev-parse --show-toplevel)
 source "$REPO_DIR/bin/colors.bash"
 source "$REPO_DIR/bin/lib.bash"
+source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 
 function usage {
   echo "installDB.bash usage:"
@@ -221,14 +222,14 @@ else
   echo "Database downloaded."
 fi
 
-echo "Stopping nginx..."
-docker stop fd2_nginx > /dev/null
-error_check "Error occurred stopping nginx."
-echo "Stopped."
-
 echo "Stopping farmOS..."
 docker stop fd2_farmos > /dev/null
 error_check "Error occurred stopping farmOS."
+echo "Stopped."
+
+echo "Stopping nginx..."
+docker stop fd2_nginx > /dev/null
+error_check "Error occurred stopping nginx."
 echo "Stopped."
 
 echo "Stopping Postgres..."
@@ -239,54 +240,65 @@ echo "Stopped."
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
-sudo rm -rf ./*
+#sudo rm -rf ./*
+rm -rf ./*
 error_check "Unable to delete the current database."
 echo "Deleted."
 
 echo "Extracting $DB_ASSET..."
-sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+#sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "Extracted."
 
-echo "Restarting Postgres..."
+echo "Restarting..."
 docker start fd2_postgres > /dev/null
-error_check "Error starting Postgres."
-STATUS=$(docker exec fd2_postgres pg_isready)
-while [[ ! "$STATUS" == *"accepting connections"* ]]; do
-  STATUS=$(docker exec fd2_postgres pg_isready)
-done
-echo "Started."
+checkPostgres
+POSTGRES=$?
+if ((!POSTGRES)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Postgres did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
 
-echo "Restarting farmOS..."
 docker start fd2_farmos > /dev/null
-error_check "Error starting farmOS."
-echo "Started."
+# Check drupal here because we can't check for farmOS until nginx is running.
+checkDrupal
+DRUPAL=$?
+if ((!DRUPAL)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} drupal id not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
 
-echo "Restarting nginx..."
 docker start fd2_nginx > /dev/null
-error_check "Error starting nginx."
-echo "Started."
+checkNginx
+NGINX=$?
+if ((!NGINX)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} nginx did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
 
-## SOMETHING COULD GO WRONG HERE SWITCHING BETWEEN BRANCHES WITH DIFFERENT VERSIONS ...
-# Need to think this trough.
-# Also have the case where the module .install has changed.
-# Probably have to uninstall the module... rebuild it... reinstall it.
-# Thats the only way to be sure we have the version that matches the db.
-# maybe include a flag so that we don't have to rebuild when this is run from the tests?
-# or have two scripts... one that does it all and one thats short?
+# Note: We can't check for farmOS until after nginx is running.
+checkFarmOS
+FARMOS=$?
+if ((!FARMOS)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} farmOS did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
 
-# Maybe just a flag here --skip-reinstall ? 
-# then just call the reinstallFD2Module.bash script that is currently in development branch.
+echo "Restarted."
 
-# echo "Uninstalling the FarmData2 module..."
-# docker exec fd2_farmos drush eval "\$module_data = \Drupal::config('core.extension')->get('module'); unset(\$module_data['farm_fd2']); \Drupal::configFactory()->getEditable('core.extension')->set('module', \$module_data)->save();"
-# docker exec fd2_farmos drush cr
-# echo "Uninstalled."
-
-# echo "Reinstalling the FarmData2 module..."
-# docker exec fd2_farmos drush pm-enable farm_fd2 -y
-# error_check "Unable to enable the FarmData2 module."
-# echo "Reinstalled."
+if [ -z "$CURRENT" ]; then
+  # If we didn't use the same DB then rebuild and reinstall the FarmData2 module too.
+  # This is important when we switch to a branch where the module targets a different DB version.
+  echo "Rebuilding and reinstalling the FarmData2 module..."
+  "$REPO_DIR/bin/reinstallFD2Module.bash"
+  error_check "Unable to rebuild and reinstall the FarmData2 module."
+  echo "Rebuilt and reinstalled."
+fi
 
 echo "Clearing the Drupal cache..."
 docker exec fd2_farmos drush cr
