@@ -53,3 +53,7 @@ echo "Configuring vale linter..."
 sudo ln -s /home/fd2dev/FarmData2/node_modules/@vvago/vale/bin/vale /usr/local/bin/vale
 /usr/local/bin/vale sync
 echo "Configured."
+
+echo "Installing devcontainer extensions..."
+npm install -g @devcontainers/cli
+echo "Installed."

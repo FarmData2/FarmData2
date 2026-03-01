@@ -5,6 +5,7 @@ bashlint
 bedless
 bierner
 Braught
+buildx
 chgrp
 chrischinchilla
 CHUAU
