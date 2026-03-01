@@ -26,7 +26,10 @@ fi
 
 TAG="fd2.14"
 DOCKER_HUB_USER="farmdata2"
-PLATFORMS=linux/amd64,linux/arm64
+#PLATFORMS=linux/amd64,linux/arm64
+PLATFORMS=linux/amd64
+#PLATFORMS=linux/arm64
+
 DEVCONTAINER_PATH=./.devcontainer/devcontainer.json
 
 PUSH=0
