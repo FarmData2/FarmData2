@@ -27,7 +27,7 @@ fi
 TAG="fd2.14"
 DOCKER_HUB_USER="farmdata2"
 PLATFORMS=linux/amd64,linux/arm64
-DEVCONTAINER_PATH=./.devcontainer/.devcontainer.json
+DEVCONTAINER_PATH=./.devcontainer/devcontainer.json
 
 PUSH=0
 BUILD=0
@@ -95,7 +95,7 @@ if [ "$BUILD" = "1" ]; then
 
 devcontainer build \
   --workspace-folder "$REPO_DIR" \
-  --devcontainer-path DEVCONTAINER_PATH \
+  --config $DEVCONTAINER_PATH \
   --image-name $DOCKER_HUB_USER/fd2dev:$TAG \
   --platform "$PLATFORMS" \
   --push false
