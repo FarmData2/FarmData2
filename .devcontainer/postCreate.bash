@@ -37,6 +37,10 @@ echo "Installing npm dependencies..."
 npm ci --no-fund --loglevel=error --quiet
 echo "Installed."
 
+echo "Configuring vale linter..."
+/usr/bin/vale sync
+echo "Configured."
+
 echo "Setting up git hooks..."
 cd "$REPO_DIR/.git" || {
   echo " Error $REPO_DIR/.git directory does not exist."

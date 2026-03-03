@@ -1,8 +1,5 @@
 {
   "name": "FarmData2 Development Environment",
-  // "build": {
-  //   "dockerfile": "Dockerfile"
-  // },
   "image": "farmdata2/fd2dev:fd2.14",
   "containerEnv": {
     "TZ": "America/New_York"
@@ -10,16 +7,6 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/fd2dev/FarmData2,type=bind",
   "workspaceFolder": "/home/fd2dev/FarmData2",
   "remoteUser": "fd2dev",
-  // "features": {
-  //   "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-  //   "ghcr.io/devcontainers/features/github-cli:1": {},
-  //   "ghcr.io/devcontainers/features/desktop-lite:1": {
-  //     "password": "noPassword",
-  //     "webPort": "6901",
-  //     "vncPort": "5901"
-  //   }
-  // },
-  //"onCreateCommand": ".devcontainer/onCreate.bash",
   "postCreateCommand": ".devcontainer/postCreate.bash",
   "postStartCommand": ".devcontainer/postStart.bash",
   "postAttachCommand": ".devcontainer/postAttach.bash",
