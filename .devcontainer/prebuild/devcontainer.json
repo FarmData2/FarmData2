@@ -18,6 +18,7 @@
       "vncPort": "5901"
     },
     "ghcr.io/devcontainers-extra/features/shfmt:1": {},
+    "ghcr.io/devcontainers-extra/features/shellcheck:1": {},
     "ghcr.io/shinepukur/devcontainer-features/vale:1": {
       "version": "3.9.6"
     }
