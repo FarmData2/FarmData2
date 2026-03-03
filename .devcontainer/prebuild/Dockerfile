@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
+#FROM mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
+FROM mcr.microsoft.com/devcontainers/javascript-node:4-24-bookworm
 
 # Install additional packages needed for the development enviornment.
 RUN apt update \
