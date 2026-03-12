@@ -32,6 +32,7 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 Within the Droplet Console:
 
 1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/config.bash -o config.bash`
+   - If doing development on the `config.bash` script the URL will need to be changed to raw file for the desired branch.
 2. `chmod 755 config.bash`
 3. `./config.bash`
 4. `gh auth login`
@@ -43,13 +44,11 @@ Within the Droplet Console:
 
 1. `su - fd2dev`
 2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `cd ~/FarmData2/docker`
-4. `docker compose up --detach`
-5. `cd ~/FarmData2/bin/deploy`
-6. `./deploy.bash [branch]`
+3. `cd ~/FarmData2/bin/deploy`
+4. `./deploy.bash [branch]`
    - Replace `[branch]` with the branch to be deployed.
    - Defaults to `development` if no `branch` is specified.
-7. `./setPasswords.bash`
+5. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance

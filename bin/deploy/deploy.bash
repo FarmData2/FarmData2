@@ -28,6 +28,8 @@ IP_ADDR=$(curl -s ifconfig.me | cut -f1 -d'f')
 sudo certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d "$IP_ADDR.sslip.io"
 sudo cp /etc/letsencrypt/live/"$IP_ADDR.sslip.io"/fullchain.pem "docker/ssl/farmos.crt"
 sudo cp /etc/letsencrypt/live/"$IP_ADDR.sslip.io"/privkey.pem "docker/ssl/farmos.key"
+sudo chown fd2dev:fd2dev "docker/ssl/farmos.crt"
+sudo chown fd2dev:fd2dev "docker/ssl/farmos.key"
 chmod 644 "docker/ssl/farmos.crt"
 chmod 600 "docker/ssl/farmos.key"
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
@@ -51,13 +53,7 @@ echo "Setup."
 
 # echo "SSL certificate generated."
 
-# Bring up FarmData2...
-echo "Bringing up FarmData2..."
-rm -drf "$REPO_DIR/docker/db" 2> /dev/null
-mkdir "$REPO_DIR/docker/db"
-cd "$REPO_DIR/docker" || exit
-docker compose up --detach
-echo "FarmData2 is up."
+
 
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
@@ -74,6 +70,14 @@ rm -rf "$REPO_DIR/modules/farm_fd2_school/dist" 2> /dev/null
 mkdir "$REPO_DIR/modules/farm_fd2_school/dist"
 npm run build:school 2> /dev/null
 echo "Built."
+
+# Bring up FarmData2...
+echo "Bringing up FarmData2..."
+rm -drf "$REPO_DIR/docker/db" 2> /dev/null
+mkdir "$REPO_DIR/docker/db"
+cd "$REPO_DIR/docker" || exit
+docker compose up --detach
+echo "FarmData2 is up."
 
 # Installing the sample Database
 echo "Installing the sample database..."
