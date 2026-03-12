@@ -30,6 +30,12 @@ chmod 644 "docker/ssl/farmos.crt"
 chmod 600 "docker/ssl/farmos.key"
 echo "SSL certificate generated."
 
+# Bring up FarmData2...
+echo "Bringing up FarmData2..."
+cd "$REPO_DIR/docker" || exit
+docker compose up --detach
+echo "FarmData2 is up."
+
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
 echo "  FarmData2..."

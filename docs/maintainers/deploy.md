@@ -34,6 +34,8 @@ Within the Droplet Console:
 1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/config.bash -o config.bash`
 2. `chmod 755 config.bash`
 3. `./config.bash`
+4. `gh auth login`
+   - Login using your GitHub username and PAT with 'repo', 'read:org', 'workflow' permissions.
 
 ### Deploying the FarmData2 Instance
 
