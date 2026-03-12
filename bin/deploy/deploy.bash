@@ -1,10 +1,13 @@
 #!/bin/bash
 
+# Get the directory of the FarmData2 repository.
+REPO_DIR=$(git rev-parse --show-toplevel)
+
 # Get the branch to deploy
 BRANCH=${1:-"development"}
 
 # Switch to the branch to deploy
-cd ~/FarmData2 || exit
+cd "$REPO_DIR" || exit
 git switch "$BRANCH"
 
 # Installing FD2 Dependencies
@@ -27,24 +30,25 @@ chmod 644 "docker/ssl/farmos.crt"
 chmod 600 "docker/ssl/farmos.key"
 echo "SSL certificate generated."
 
-echo "Adding FarmData2/bin to the PATH..."
-echo "" >> ~/.bashrc \
-  && echo "export PATH=$PATH:$REPO_DIR/bin" >> ~/.bashrc
-echo "FarmData2/bin added."
-
 # Build the FD2 modules.
 echo "Building the FD2 modules..."
 echo "  FarmData2..."
-sg fd2grp "npm run build:fd2"
+rm -rf "$REPO_DIR/modules/farm_fd2/dist"
+mkdir "$REPO_DIR/modules/farm_fd2/dist"
+npm run build:fd2
 echo "  Examples..."
-sg fd2grp "npm run build:examples"
+rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist"
+mkdir "$REPO_DIR/modules/farm_fd2_examples/dist"
+npm run build:examples
 echo "  School..."
-sg fd2grp "npm run build:school"
+rm -rf "$REPO_DIR/modules/farm_fd2_school/dist"
+mkdir "$REPO_DIR/modules/farm_fd2_school/dist"
+npm run build:school
 echo "Built."
 
 # Installing the sample Database
 echo "Installing the sample database..."
-cd ~/FarmData2/bin || exit
+cd "$REPO_DIR/bin" || exit
 ./installDB.bash
 echo "Installed."
 

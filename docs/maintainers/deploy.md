@@ -37,31 +37,22 @@ Within the Droplet Console:
 
 ### Deploying the FarmData2 Instance
 
-**NOTE:** these directions need to be updated to use `docker compose up` and to work without the fd2_dev container.
-
 Within the Droplet Console:
 
 1. `su - fd2dev`
 2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `cd FarmData2/bin`
-4. `./fd2-up.bash`
-5. `docker exec -it fd2_dev /bin/bash`
-   - At the bash shell prompt in the `fd2_dev` container:
-     1. `gh auth login`
-        - Log in to GitHub using a Personal Access Token (PAT) with `repo`, `read:org` and `workflow` permission.
-     2. `cd FarmData2/bin/deploy`
-     3. `./deploy.bash [branch]`
-        - Replace `[branch]` with the branch to be deployed.
-        - Defaults to `development` if no `branch` is specified.
-     4. `./setPasswords.bash`
-        - Change the passwords for each of the different types of FarmData2 users.
-     5. `docker stop fd2_dev`
+3. `cd ~/FarmData2/docker`
+4. `docker compose up --detach`
+5. `cd ~/FarmData2/bin/deploy`
+6. `./deploy.bash [branch]`
+   - Replace `[branch]` with the branch to be deployed.
+   - Defaults to `development` if no `branch` is specified.
+7. `./setPasswords.bash`
+   - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance
 
-**NOTE:** these directions need to be updated to reflect use of `https`
-
-1. Enter `http://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
+1. Enter `https://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
    - Note that this is `http` and not `https`.
 2. Log in to FarmData2 using the password you set for one of the following users:
    - `admin`

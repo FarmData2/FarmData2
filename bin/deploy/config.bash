@@ -26,11 +26,21 @@ sudo apt install docker-ce -y
 echo "Installed."
 
 # Create and configure a non-root user.
+# Create a non-root user with UID that matches the UID of
+# the postgres user in the fd2_postgres container.  This
+# ensure proper permissions to the mounted docker/db directory.
 echo "Creating non-root user..."
-useradd -m -G sudo,docker fd2dev
-passwd -l fd2dev # Disable login
-echo "fd2dev:fd2dev" | chpasswd
-echo "fd2dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USERNAME=fd2dev
+USER_UID=999
+USER_GID=1001
+
+groupadd --gid $USER_GID $USERNAME
+useradd --uid $USER_UID --gid $USER_GID -s /bin/bash -m $USERNAME
+echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
+chmod 0440 /etc/sudoers.d/$USERNAME
+usermod -aG docker $USERNAME
+passwd -l $USERNAME # Disable login
+echo "$USERNAME:$USERNAME" | chpasswd
 echo "Created."
 
 # Install Docker Compose for the non-root user
@@ -44,3 +54,14 @@ curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compo
 chmod +x ~/.docker/cli-plugins/docker-compose
 EOF
 echo "Installed."
+
+# Install node and npm.
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+nvm install 18.20.6
+
+# Install the GitHub CLI.
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" |
