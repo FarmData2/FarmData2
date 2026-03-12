@@ -1,3 +1,4 @@
+addext
 autoconnect
 backmerge
 backmerged
@@ -41,6 +42,7 @@ githubcli
 isready
 jsdoc
 jsdocrc
+keyout
 langcode
 linkcheck
 lintstagedrc
@@ -53,6 +55,7 @@ mkhl
 mktemp
 mryhryki
 newgrp
+newkey
 NOPASSWD
 novnc
 PASA

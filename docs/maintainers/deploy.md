@@ -10,7 +10,7 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 
 1. [Create a new Droplet in Digital Ocean](https://docs.digitalocean.com/products/droplets/how-to/create/) with the following specifications:
    - Choose a region and data center close to you.
-   - Image: Debian 12 or newer
+   - Image: Debian 12
    - Size: Shared CPU (Basic)
    - CPU Options: Regular, 1~GB RAM, 35~GB SSD Disk, 1000-GB transfer.
    - Authentication Method: Password
