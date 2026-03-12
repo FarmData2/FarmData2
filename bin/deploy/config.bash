@@ -11,6 +11,7 @@ echo "Configuring the firewall..."
 apt update
 apt install ufw -y
 ufw allow OpenSSH
+ufw allow http
 echo "y" | ufw enable
 echo "Configured."
 
@@ -33,12 +34,6 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githu
 apt update
 apt install gh -y
 echo "Installed."
-
-# Install node and npm.
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install 18.20.6
 
 # Create and configure a non-root user.
 # Create a non-root user with UID that matches the UID of
@@ -69,3 +64,20 @@ curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compo
 chmod +x ~/.docker/cli-plugins/docker-compose
 EOF
 echo "Installed."
+
+# Install node and npm for the non-root user.
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+nvm install 18.20.6
+
+# Installing certbot
+echo "Installing certbot..."
+sudo apt update
+sudo apt install python3 python3-dev python3-venv libaugeas-dev gcc
+sudo python3 -m venv /opt/certbot/
+sudo /opt/certbot/bin/pip install --upgrade pip
+sudo /opt/certbot/bin/pip install certbot certbot-nginx
+sudo ln -s /opt/certbot/bin/certbot /usr/local/bin/certbot
+
+

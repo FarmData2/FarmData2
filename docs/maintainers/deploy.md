@@ -35,7 +35,7 @@ Within the Droplet Console:
 2. `chmod 755 config.bash`
 3. `./config.bash`
 4. `gh auth login`
-   - Login using your GitHub username and PAT with 'repo', 'read:org', 'workflow' permissions.
+   - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
 
 ### Deploying the FarmData2 Instance
 
@@ -55,7 +55,6 @@ Within the Droplet Console:
 ### Connect to the Live FarmData2 Instance
 
 1. Enter `https://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
-   - Note that this is `http` and not `https`.
 2. Log in to FarmData2 using the password you set for one of the following users:
    - `admin`
    - `manager`, `manager2`
@@ -64,15 +63,12 @@ Within the Droplet Console:
 
 ## Updating the Deployed Instance
 
-**NOTE:** these directions need to be updated to work without the fd2_dev container.
-
 If the deployed branch is updated, or you want to deploy a different branch fetching any changes to the branch and rebuild the `farm_fd2` module.
 
 Within the Droplet console:
 
-- `docker exec -it fd2_dev /bin/bash`
-  - At the bash shell prompt in the `fd2_dev` container:
-    1. `cd FarmData2`
-    2. `git switch <branch>`
-    3. `git pull origin <branch>`
-    4. `npm run build:fd2`
+1. `su - fd2dev`
+2. `cd FarmData2`
+3. `git switch <branch>`
+4. `git pull origin <branch>`
+5. `npm run build:fd2`
