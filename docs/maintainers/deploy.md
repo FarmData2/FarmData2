@@ -35,20 +35,20 @@ Within the Droplet Console:
    - If doing development on the `config.bash` script the URL will need to be changed to raw file for the desired branch.
 2. `chmod 755 config.bash`
 3. `./config.bash`
-4. `gh auth login`
-   - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
-
+=
 ### Deploying the FarmData2 Instance
 
 Within the Droplet Console:
 
 1. `su - fd2dev`
-2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `cd ~/FarmData2/bin/deploy`
-4. `./deploy.bash [branch]`
+2. `gh auth login`
+   - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
+3. `git clone https://github.com/FarmData2/FarmData2.git`
+4. `cd ~/FarmData2/bin/deploy`
+5. `./deploy.bash [branch]`
    - Replace `[branch]` with the branch to be deployed.
    - Defaults to `development` if no `branch` is specified.
-5. `./setPasswords.bash`
+6. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance
