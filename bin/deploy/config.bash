@@ -11,7 +11,7 @@ echo "Configuring the firewall..."
 apt update
 apt install ufw -y
 ufw allow OpenSSH
-ufw allow http. # needed for certbot to verify domain ownership
+ufw allow http  # needed for certbot to verify domain ownership
 echo "y" | ufw enable
 echo "Configured."
 
@@ -73,9 +73,3 @@ curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compo
 chmod +x ~/.docker/cli-plugins/docker-compose
 EOF
 echo "Installed."
-
-# Install node and npm for the non-root user.
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install 18.20.6
