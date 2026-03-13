@@ -39,8 +39,8 @@ echo "Built."
 
 # Setup an SSL certificate using sslip.io and certbot.
 echo "Setting up SSL certificate..."
-rm -rf docker/ssl 2> /dev/null
-mkdir docker/ssl 2> /dev/null
+rm -rf "$REPO_DIR/docker/ssl" 2> /dev/null
+mkdir "$REPO_DIR/docker/ssl" 2> /dev/null
 IP_ADDR=$(curl -s ifconfig.me | cut -f1 -d'f')
 sudo certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d "$IP_ADDR.sslip.io"
 sudo cp "/etc/letsencrypt/live/$IP_ADDR.sslip.io/fullchain.pem" "$REPO_DIR/docker/ssl/farmos.crt"
