@@ -17,9 +17,8 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
    - Create root password: Give a secure root password for your droplet.
    - Click "Create Droplet" at the bottom of the form.
 2. Note the IP Address of the Droplet.
-3. Assign a Reserved IP Address if necessary.
+3. Assign a Reserved IP Address.
    - Reserving and IP ensures that the site has the same IP address across Droplet restarts.
-   - This can be useful if you give the IP to external testers.
 
 ### Connect to the Droplet
 
