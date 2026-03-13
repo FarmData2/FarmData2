@@ -7,6 +7,8 @@ bedless
 bierner
 Braught
 buildx
+certbot
+certonly
 chgrp
 chrischinchilla
 CHUAU
@@ -35,6 +37,7 @@ farmdata
 Farmier
 farmos
 FOSS
+fullchain
 getent
 getopt
 gids
@@ -44,6 +47,8 @@ jsdoc
 jsdocrc
 keyout
 langcode
+letsencrypt
+libaugeas
 linkcheck
 lintstagedrc
 localstorage
@@ -70,6 +75,7 @@ prebuilding
 Preconfigured
 preprocess
 printlog
+privkey
 proselint
 readlink
 rushstack
@@ -79,6 +85,7 @@ shellcheck
 shfmt
 shinepukur
 Siddiqui
+sslip
 Steiman
 timonwong
 toplevel
@@ -86,6 +93,7 @@ transplantings
 unplugin
 unstaged
 usermod
+venv
 vite
 vncviewer
 vuejs

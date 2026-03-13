@@ -32,10 +32,10 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 Within the Droplet Console:
 
 1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/config.bash -o config.bash`
-   - If doing development on the `config.bash` script the URL will need to be changed to raw file for the desired branch.
+   - If modifying `config.bash` commit changes to a branch and adapt the URL to use the branch.
 2. `chmod 755 config.bash`
 3. `./config.bash`
-=
+
 ### Deploying the FarmData2 Instance
 
 Within the Droplet Console:
@@ -45,14 +45,15 @@ Within the Droplet Console:
    - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
 3. `git clone https://github.com/FarmData2/FarmData2.git`
 4. `git switch [branch]`
-   - Optional: Use to deploy a branch other than `development`.
+   - Optional: Use to deploy from a branch other than `development`.
 5. `cd ~/FarmData2/bin/deploy`
-6. `./setPasswords.bash`
+6. `./deploy.bash`
+7. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance
 
-1. Enter `https://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
+1. Enter `https://123.123.123.123.sslip.io` (replacing 123.123.123.123 with the IP address of your Droplet.)
 2. Log in to FarmData2 using the password you set for one of the following users:
    - `admin`
    - `manager`, `manager2`

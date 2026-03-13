@@ -72,5 +72,3 @@ docker exec fd2_farmos drush pm-uninstall farm_fd2_examples -y
 docker exec fd2_farmos drush pm-uninstall farm_fd2_school -y
 docker exec fd2_farmos drush cr
 echo "Uninstalled."
-
-
