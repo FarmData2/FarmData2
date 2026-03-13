@@ -3,13 +3,6 @@
 # Get the directory of the FarmData2 repository.
 REPO_DIR=$(git rev-parse --show-toplevel)
 
-# Get the branch to deploy
-BRANCH=${1:-"development"}
-
-# Switch to the branch to deploy
-cd "$REPO_DIR" || exit
-git switch "$BRANCH"
-
 # Ensure fd2dev owns the contents of the workspace directory.
 echo "Setting fd2dev as owner of /home/fd2dev content..."
 sudo chown -R fd2dev /home/fd2dev
@@ -44,14 +37,6 @@ mkdir "$REPO_DIR/modules/farm_fd2_school/dist"
 npm run build:school 2> /dev/null
 echo "Built."
 
-# Bring up FarmData2...
-echo "Bringing up FarmData2..."
-rm -drf "$REPO_DIR/docker/db" 2> /dev/null
-mkdir "$REPO_DIR/docker/db"
-cd "$REPO_DIR/docker" || exit
-docker compose up --detach
-echo "FarmData2 is up."
-
 # Setup an SSL certificate using sslip.io and certbot.
 echo "Setting up SSL certificate..."
 rm -rf docker/ssl 2> /dev/null
@@ -65,8 +50,15 @@ sudo chown fd2dev:fd2dev "$REPO_DIR/docker/ssl/farmos.key"
 chmod 644 "$REPO_DIR/docker/ssl/farmos.crt"
 chmod 600 "$REPO_DIR/docker/ssl/farmos.key"
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
-docker restart fd2_nginx
 echo "Setup."
+
+# Bring up FarmData2...
+echo "Bringing up FarmData2..."
+rm -drf "$REPO_DIR/docker/db" 2> /dev/null
+mkdir "$REPO_DIR/docker/db"
+cd "$REPO_DIR/docker" || exit
+docker compose up --detach
+echo "FarmData2 is up."
 
 # Installing the sample Database
 echo "Installing the sample database..."

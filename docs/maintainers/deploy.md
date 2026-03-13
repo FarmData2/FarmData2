@@ -44,10 +44,9 @@ Within the Droplet Console:
 2. `gh auth login`
    - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
 3. `git clone https://github.com/FarmData2/FarmData2.git`
-4. `cd ~/FarmData2/bin/deploy`
-5. `./deploy.bash [branch]`
-   - Replace `[branch]` with the branch to be deployed.
-   - Defaults to `development` if no `branch` is specified.
+4. `git switch [branch]`
+   - Optional: Use to deploy a branch other than `development`.
+5. `cd ~/FarmData2/bin/deploy`
 6. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 
