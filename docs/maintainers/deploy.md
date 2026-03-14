@@ -12,13 +12,13 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
    - Choose a region and data center close to you.
    - Image: Debian 12
    - Size: Shared CPU (Basic)
-   - CPU Options: Regular, 1~GB RAM, 35~GB SSD Disk, 1000-GB transfer.
+   - CPU Options: Regular, 1~GB RAM, 25~GB SSD Disk, 1000-GB transfer.
    - Authentication Method: Password
    - Create root password: Give a secure root password for your droplet.
    - Click "Create Droplet" at the bottom of the form.
-2. Note the IP Address of the Droplet.
-3. Assign a Reserved IP Address.
-   - Reserving and IP ensures that the site has the same IP address across Droplet restarts.
+2. If the droplet needs to be used across start/stop cycles:
+   - Click the link to "Add a Reserved IP" address.
+   - Note the "Reserved IP" that is assigned.
 
 ### Connect to the Droplet
 
@@ -46,7 +46,11 @@ Within the Droplet Console:
 4. `git switch [branch]`
    - Optional: Use to deploy from a branch other than `development`.
 5. `cd ~/FarmData2/bin/deploy`
-6. `./deploy.bash`
+6. Run the `deploy.bash` script.
+   - If a reserved IP address is being used, provide the IP address as a command line argument.
+     - `./deploy.bash 123.123.123.123`
+   - Otherwise run without a command line argument and the script will determine the IP to use.
+     - `./deploy.bash`
 7. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 

@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Get the IP address of the server.
+# This can be provided as an argument to the script if it is a reserved IP address on Digital Ocean.
+# If no argument is provided, the script will attempt to determine the public IP address.
+IP_ADDR=""
+if [ $# -eq 1 ]; then
+  IP_ADDR=$(echo "$1" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}')
+fi
+if [ -z "$IP_ADDR" ]; then
+  IP_ADDR=$(curl -s ifconfig.me | cut -f1 -d'f')
+fi
+
 # Get the directory of the FarmData2 repository.
 REPO_DIR=$(git rev-parse --show-toplevel)
 
@@ -41,7 +52,6 @@ echo "Built."
 echo "Setting up SSL certificate..."
 rm -rf "$REPO_DIR/docker/ssl" 2> /dev/null
 mkdir "$REPO_DIR/docker/ssl" 2> /dev/null
-IP_ADDR=$(curl -s ifconfig.me | cut -f1 -d'f')
 sudo certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d "$IP_ADDR.sslip.io"
 sudo cp "/etc/letsencrypt/live/$IP_ADDR.sslip.io/fullchain.pem" "$REPO_DIR/docker/ssl/farmos.crt"
 sudo cp "/etc/letsencrypt/live/$IP_ADDR.sslip.io/privkey.pem" "$REPO_DIR/docker/ssl/farmos.key"
