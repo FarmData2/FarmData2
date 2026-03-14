@@ -43,20 +43,23 @@ Within the Droplet Console:
 2. `gh auth login`
    - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
 3. `git clone https://github.com/FarmData2/FarmData2.git`
-4. `git switch [branch]`
+4. `cd FarmData2`
+5. `git switch [branch]`
    - Optional: Use to deploy from a branch other than `development`.
-5. `cd ~/FarmData2/bin/deploy`
-6. Run the `deploy.bash` script.
+6. `cd ~/FarmData2/bin/deploy`
+7. Run the `deploy.bash` script.
    - If a reserved IP address is being used, provide the IP address as a command line argument.
      - `./deploy.bash 123.123.123.123`
    - Otherwise run without a command line argument and the script will determine the IP to use.
      - `./deploy.bash`
-7. `./setPasswords.bash`
+8. `./setPasswords.bash`
    - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance
 
-1. Enter `https://123.123.123.123.sslip.io` (replacing 123.123.123.123 with the IP address of your Droplet.)
+1. Enter `https://123.123.123.123.sslip.io`
+   - If you provided a reserved IP address to `deploy.bash` use that IP in place of `123.123.123.123`.
+   - If no reserved IP address was provided to `deploy.bash` use the IPv4 address of the Droplet in place of `123.123.123.123`.
 2. Log in to FarmData2 using the password you set for one of the following users:
    - `admin`
    - `manager`, `manager2`
