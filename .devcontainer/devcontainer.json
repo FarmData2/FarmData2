@@ -34,7 +34,8 @@
     "vscode": {
       "settings": {
         "remote.autoForwardPorts": true,
-        "remote.autoForwardPortsSource": "output"
+        "remote.autoForwardPortsSource": "output",
+        "terminal.integrated.defaultProfile.linux": "bash"
       },
       "extensions": [
         "Vue.volar",
