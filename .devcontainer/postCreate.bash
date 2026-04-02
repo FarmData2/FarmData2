@@ -62,17 +62,17 @@ echo "  Note: Errors during these builds are expected."
 echo "  Building farm_fd2..."
 rm -rf "$REPO_DIR/modules/farm_fd2/dist"
 mkdir "$REPO_DIR/modules/farm_fd2/dist"
-npm run build:fd2
+npm run build:fd2 2> /dev/null
 echo "  Built."
 echo "  Building farm_fd2_examples..."
 rm -rf "$REPO_DIR/modules/farm_fd2_examples/dist"
 mkdir "$REPO_DIR/modules/farm_fd2_examples/dist"
-npm run build:examples
+npm run build:examples 2> /dev/null
 echo "  Built."
 echo "  Building farm_fd2_school..."
 rm -rf "$REPO_DIR/modules/farm_fd2_school/dist"
 mkdir "$REPO_DIR/modules/farm_fd2_school/dist"
-npm run build:school
+npm run build:school 2> /dev/null
 echo "  Built."
 echo "All modules built."
 
