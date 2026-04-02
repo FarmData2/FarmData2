@@ -233,11 +233,6 @@ docker stop fd2_postgres > /dev/null
 error_check "Error occurred stopping Postgres."
 echo "Stopped."
 
-echo "Setting group and permissions on db..."
-sudo chgrp fd2dev "$DB_DIR"
-sudo chmod -R g+rwx "$DB_DIR"
-echo "Set."
-
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
@@ -313,8 +308,3 @@ else
   echo "$DB_ASSET" >> "$REPO_DIR/.fd2dev/db.conf"
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from release $DB_RELEASE.${NO_COLOR}"
 fi
-
-echo "Setting group and permissions on db..."
-sudo chgrp fd2dev "$DB_DIR"
-sudo chmod -R g+rwx "$DB_DIR"
-echo "Set."
