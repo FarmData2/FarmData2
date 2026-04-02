@@ -2,6 +2,7 @@
 # shellcheck disable=SC1091  # Make sources okay.
 
 REPO_DIR=$(git rev-parse --show-toplevel)
+DB_DIR="$REPO_DIR/docker/db"
 source "$REPO_DIR/bin/colors.bash"
 source "$REPO_DIR/bin/lib.bash"
 source "$REPO_DIR/bin/lib/checkServices.lib.bash"
@@ -38,11 +39,6 @@ function usage {
   echo ""
   exit 255
 }
-
-# Define some useful variables, import libraries and
-# check some common pre-conditions.
-REPO_DIR=$(git rev-parse --show-toplevel)
-DB_DIR="$REPO_DIR/docker/db"
 
 if [ "$#" == "0" ]; then
   PREFERRED=1
@@ -237,6 +233,8 @@ docker stop fd2_postgres > /dev/null
 error_check "Error occurred stopping Postgres."
 echo "Stopped."
 
+echo "DB_DIR = $DB_DIR"
+ls -l "$REPO_DIR/docker"
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
