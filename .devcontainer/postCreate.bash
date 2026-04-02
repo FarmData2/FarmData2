@@ -94,6 +94,13 @@ checkDrupal
 DRUPAL=$?
 READY=$((POSTGRES && DRUPAL))
 if ((READY)); then
+
+  if [ ! -d "$REPO_DIR/docker/db" ]; then
+    echo "Creating db directory..."
+    mkdir "$REPO_DIR/docker/db"
+    echo "Created."
+  fi
+
   echo "Installing the sample database..."
   "$REPO_DIR/bin/installDB.bash"
   echo "Sample database installed."

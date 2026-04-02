@@ -240,13 +240,11 @@ echo "Stopped."
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
-#sudo rm -rf ./*
 rm -rf ./*
 error_check "Unable to delete the current database."
 echo "Deleted."
 
 echo "Extracting $DB_ASSET..."
-#sudo tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
 echo "Extracted."
