@@ -71,7 +71,7 @@ More detailed information about working on libraries is contained in the guide t
 
 The term _infrastructure_ in FarmData2 refers to all the tools and configuration that are used to perform tasks such as running, building, testing, and linting the FarmData2 codebase. For example, Docker, Vite, Cypress, eslint, Vale, git and GitHub are some of FarmData2's infrastructure.
 
-More detailed information about working on the FarmData2 infrastructure is contained in the guide to [Working on Infrastructure](infrastructure.md).
+More detailed information about working on the FarmData2 infrastructure is contained in the guide to [Infrastructure Guide](../maintainers/infrastructure.md).
 
 ### Repository Structure
 
