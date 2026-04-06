@@ -30,8 +30,8 @@ When you first start work on FarmData2 you will need to create a new FarmData2 C
    - You can click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->blue<!-- vale RedHat.DoNotUseTerms = YES --> "Building codespace…" text to display the output of the build process in the terminal if you want to see what is happening as the Codespace is built.
 
 8. The following message will be displayed in the terminal when the Codespace is ready for use:
-
-   ```Text
+   
+   ```text
    The FarmData2 Development Environment is almost ready.
    Just a few more things to take care of...
 
@@ -65,7 +65,7 @@ Codespaces can be stopped, restarted and deleted from your [Codespaces page on G
 
 When a FarmData2 codespace is restarted, the following message will appear indicating that the codespace is ready for use:
 
-```Text
+```plaintext
 ===============================================
 The FarmData2 Development Environment is ready.
 
