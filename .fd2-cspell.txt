@@ -19,6 +19,7 @@ contconf
 conventionalcommits
 datacy
 dbaeumer
+Decompresing
 devcontainer
 devcontainers
 docdash
@@ -36,6 +37,7 @@ farmadata
 farmdata
 Farmier
 farmos
+fluxbox
 FOSS
 fullchain
 getent
