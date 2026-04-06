@@ -57,6 +57,31 @@ When you first start work on FarmData2 you will need to create a new FarmData2 C
      - Starting to work before this message is displayed might result in errors.
      - If any errors have occurred the message will contain information about steps to take.
 
+## Stopping / Restarting / Deleting your FarmData2 Codespace
+
+Codespaces can be stopped, restarted and deleted from your [Codespaces page on GitHub](https://github.com/codespaces).
+
+<img src="docs/install/images/codespace-more-actions.png" alt='The "more actions" menu on the Codespaces page.' width=650 />
+
+When a FarmData2 codespace is restarted, the following message will appear indicating that the codespace is ready for use:
+
+```Text
+===============================================
+The FarmData2 Development Environment is ready.
+
+The following are available in the PORTS tab:
+  farmOS: https://localhost:443
+  noVNC: http://localhost:6901
+  docs: http://localhost:8082
+
+Happy coding!
+===============================================
+```
+
+- The [GitHub Codespaces documentation pages](https://docs.github.com/en/codespaces) provide more detail about stopping, starting and deleting Codespaces.
+  - [Stopping and Starting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/stopping-and-starting-a-codespace)
+  - [Deleting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/deleting-a-codespace)
+
 ## The Development Environment
 
 The FarmData2 Development Environment has four main elements:
@@ -160,16 +185,6 @@ The documentation server provides convenient access to the FarmData2 documentati
 5. Briefly browse the other topics to familiarize yourself with the documentation that is available.
 
 <!-- vale RedHat.Definitions = YES -->
-
-## Stopping / Restarting / Deleting your FarmData2 Codespace
-
-Codespaces can be stopped, restarted and deleted from your [Codespaces page on GitHub](https://github.com/codespaces).
-
-<img src="docs/install/images/codespace-more-actions.png" alt='The "more actions" menu on the Codespaces page.' width=650 />
-
-- The [GitHub Codespaces documentation pages](https://docs.github.com/en/codespaces) provide more detail about stopping, starting and deleting Codespaces.
-  - [Stopping and Starting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/stopping-and-starting-a-codespace)
-  - [Deleting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/deleting-a-codespace)
 
 ## Using Visual Studio Code Locally
 
