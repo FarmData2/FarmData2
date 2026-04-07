@@ -1,4 +1,4 @@
-# FarmData2 Infrastructure
+# FarmData2 Infrastructure Guide
 
 <!-- vale Microsoft.Vocab = NO -->
 <!-- "Sample" in "The Sample Database" is a valid use of "Sample" -->
@@ -15,7 +15,7 @@ The infrastructure for FarmData2 includes the following main elements:
 
 <!-- vale Microsoft.Vocab = YES -->
 
-The overview of the organization of the FarmData2 codebase found in the [Introduction to the Codebase](../contributing/codebase.md) might also be helpful to review.
+The overview of the organization of the FarmData2 codebase found in the [Introduction to the Codebase](../contributing/codebase.md) will also be helpful to review.
 
 ## The Development Environment
 
@@ -87,16 +87,18 @@ The `.github/workflows` directory contains the `release.yml` action that uses se
 
 ## Standard Tools
 
-- vite
-  - `vite` configuration
-- cypress
-  - `cypress` configuration
-- npm
-  - `package.json`
-- node
-- Visual Studio Code
-- Linting
+FarmData2 development uses a variety of standard development tools. Some of these tools include:
+
+<!-- vale alex.ProfanityUnlikely = NO -->
+
+- Visual Studio Code - the IDE provided by GitHub Codespaces. The IDE is used to edit all code, access the command line terminal, and interact with the CoPilot AI if used. A collection of Visual Studio Code extensions are installed by default when the Codespace is created. To change the extensions that are installed, edit the `extensions` block in `.devcontainer/devcontainer.json` and the `recommendations` block in `.vscode/extensions.json` file.
+- Linting / Formatting - code and documentation are linted and formatted with a variety of common tools. These include `eslint`, `prettier`, `shellcheck`, `vale`, `shfmt`, `cspell`. This collection of tools can be used from the command line via `npm` scripts, within Visual Studio Code via extensions, and during the pre-commit git hook.
+- `node` / `npm` - `npm` is used to manage the FarmData2 dependencies and to run scripts for some common tasks. The dependencies and the scripts can be found in `package.json`.
+- Vite - is the build tool used to assemble the Vue single file components into the HTML/CSS/Javascript that implements them. Each module in `modules` (`farm_fd2`, `farm_fd2_examples`, `farm_fd2_school`) has its own Vite configuration files. The `vite.config.js` file is used for building the modules. The `vite.config.e2e.js` is used when running the end-to-end tests in Cypress.
+- Cypress - is the testing framework that is used for all FarmData2 tests(end-to-end, component, unit). The `.cypress.module.config.js` file is used when running end-to-end tests, the `cypress.lib.config.js` is used when running unit tests, and `.cypress.comp.config.js` is used when running component tests.
+
+<!-- vale alex.ProfanityUnlikely = YES -->
 
 ## Custom Scripts
 
-- `bin` - scripts used for building / testing
+The `bin` directory contains scripts that are used to automate common tasks in FarmData2. Each of the scripts is documented in more detail in other locations where the functionality it provides is discussed.
