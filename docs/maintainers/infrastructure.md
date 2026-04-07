@@ -47,7 +47,7 @@ The structure of the Development Environment is described here, while instructio
     - starts the FarmData2 documentation server.
   - The `.devcontainer/postAttach,bash` script is run each time the Visual Studio Code client attaches to the development container. It checks that the necessary services are running and can be connected to. Specifically it checks that:
     - the docker engine can be accessed.
-    - the postgress database can be accessed.
+    - the PostgreSQL database can be accessed.
     - the farmOS instance can be accessed via the Nginx reverse proxy.
     - the FarmData2 documentation server can be accessed.
     - the fluxbox desktop can be accessed via the noVNC server.
