@@ -47,10 +47,14 @@ The structure of the Development Environment is described here, while instructio
     - starts the FarmData2 documentation server.
   - The `.devcontainer/postAttach,bash` script is run each time the Visual Studio Code client attaches to the development container. It checks that the necessary services are running and can be connected to. Specifically it checks that:
     - the docker engine can be accessed.
-    - the postgres database can be accessed.
+    - the postgress database can be accessed.
     - the farmOS instance can be accessed via the Nginx reverse proxy.
     - the FarmData2 documentation server can be accessed.
     - the fluxbox desktop can be accessed via the noVNC server.
+  - The Development Environment exports three ports that can be opened from the "PORTS" tab in the Visual Studio Code IDE. These ports are:
+    - `farmOS (443)` - The live instance of farmOS with the FarmData2 modules installed is running on this port.
+    - `noVNC (6901)` - The noVNC server that will display the fluxbox GUI desktop for the development container is running on this port. This is used primarily to view and interact with the Cypress GUI test runner.
+    - `docs (8082)` - The FarmData2 documentation server is running on this port.
 
 <!-- vale Microsoft.Vocab = NO -->
 
