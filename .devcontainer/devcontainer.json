@@ -39,7 +39,7 @@
       },
       "extensions": [
         "Vue.volar",
-        "streetsidesoftware.code-spell-checker@4.5.0",
+        "streetsidesoftware.code-spell-checker",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "bierner.markdown-preview-github-styles",
