@@ -6,5 +6,6 @@
   "editor.quickSuggestionsDelay": 3000,
   "eslint.validate": ["markdown", "md"],
   "vale.valeCLI.config": "/home/fd2dev/FarmData2/.vale.ini",
-  "vale.valeCLI.path": "/usr/bin/vale"
+  "vale.valeCLI.path": "/usr/bin/vale",
+  "cSpell.language": "en"
 }
