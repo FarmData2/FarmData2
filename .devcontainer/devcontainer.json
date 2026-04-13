@@ -39,12 +39,12 @@
       },
       "extensions": [
         "Vue.volar",
-        //"streetsidesoftware.code-spell-checker",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "bierner.markdown-preview-github-styles",
         "timonwong.shellcheck",
-        "chrischinchilla.vale-vscode@0.20.0"
+        "chrischinchilla.vale-vscode@0.20.0",
+        "streetsidesoftware.code-spell-checker"
       ]
     }
   }
