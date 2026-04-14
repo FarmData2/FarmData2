@@ -35,7 +35,8 @@
       "settings": {
         "remote.autoForwardPorts": true,
         "remote.autoForwardPortsSource": "output",
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "extensions.ignoreRecommendations": true
       },
       "extensions": [
         "Vue.volar",
