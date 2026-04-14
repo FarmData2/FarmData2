@@ -38,7 +38,9 @@ npm ci --no-fund --loglevel=error --quiet
 echo "Installed."
 
 echo "Installing VSCode extensions..."
-code --install-extension streetsidesoftware.code-spell-checker
+CURRENT_VSCODE_HASH=$(echo "$VSCODE_GIT_ASKPASS_NODE" | grep -oP '(?<=linux-x64/)[a-f0-9]+')
+VSCODE_CMD="/vscode/bin/linux-x64/$CURRENT_VSCODE_HASH/bin/remote-cli/code"
+$VSCODE_CMD --install-extension streetsidesoftware.code-spell-checker
 echo "Installed."
 
 echo "Configuring vale linter..."
