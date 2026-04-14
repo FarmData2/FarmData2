@@ -29,18 +29,13 @@ When you first start work on FarmData2 you will need to create a new FarmData2 C
 
    - You can click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->blue<!-- vale RedHat.DoNotUseTerms = YES --> "Building codespace…" text to display the output of the build process in the terminal if you want to see what is happening as the Codespace is built.
 
-8. The following message will be displayed in the terminal when the Codespace is ready for use:
+8. About half way through the installation the following message will be displayed in the terminal indicating the development container has been created and is now being configured:
+
+   <img src="docs/install/images/post-create-running.png" alt='Message indicating that the postCreate command is running.' width=600 />
+
+9. When the Codespace is ready for use the following message will be displayed in the terminal:
    
    ```text
-   The FarmData2 Development Environment is almost ready.
-   Just a few more things to take care of...
-
-   Checking for docker . running.
-   Checking for postgres . running.
-   Checking for farmOS ..... running.
-   Checking for Documentation . running.
-   Checking for noVNC . running.
-
    ===============================================
    The FarmData2 Development Environment is ready.
 
