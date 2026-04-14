@@ -37,6 +37,10 @@ echo "Installing npm dependencies..."
 npm ci --no-fund --loglevel=error --quiet
 echo "Installed."
 
+echo "Installing VSCode extensions..."
+code --install-extension streetsidesoftware.code-spell-checker
+echo "Installed."
+
 echo "Configuring vale linter..."
 /usr/bin/vale sync
 echo "Configured."
