@@ -27,7 +27,7 @@ VSCODE_EXTENSIONS=(
   "streetsidesoftware.code-spell-checker@4.6.0")
 for EXT in "${VSCODE_EXTENSIONS[@]}"; do
   echo "  $EXT"
-  $VSCODE_CMD --install-extension streetsidesoftware.code-spell-checker &> /dev/null
+  $VSCODE_CMD --install-extension "$EXT" &> /dev/null
 done
 echo "Installed."
 echo ""
