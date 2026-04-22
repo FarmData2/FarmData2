@@ -4,7 +4,7 @@ Once you have [installed the FarmData2 Development Environment](../../INSTALL.md
 
 ## Creating a Tray Seeding
 
-1. Login to farmOS using the [credentials for a farmOS Farm Manager](../install/working.md#farmos-credentials).
+1. Login to farmOS using the [credentials for a farmOS Farm Manager](./quickReference.md#farmos-credentials).
 
 2. Use the _farmOS menu_ on the left and select "FarmData2 -> Seeding -> Tray Seeding" If the farmOS menu is not present, make your browser window a little wider or click the "more options" icon (&#9776;) in the top left.
 
