@@ -39,15 +39,6 @@
         "extensions.ignoreRecommendations": true,
         "extensions.autoUpdate": false
       }
-      // "extensions": [
-      //   "Vue.volar@3.2.6",
-      //   "dbaeumer.vscode-eslint@3.0.24",
-      //   "esbenp.prettier-vscode@12.4.0",
-      //   "bierner.markdown-preview-github-styles@2.2.0",
-      //   "timonwong.shellcheck@0.39.3",
-      //   "chrischinchilla.vale-vscode@0.20.0",
-      //   "streetsidesoftware.code-spell-checker@4.6.0"
-      // ]
     }
   }
 }
