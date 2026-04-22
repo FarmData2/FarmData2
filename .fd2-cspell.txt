@@ -1,3 +1,4 @@
+addext
 autoconnect
 backmerge
 backmerged
@@ -5,6 +6,9 @@ bashlint
 bedless
 bierner
 Braught
+buildx
+certbot
+certonly
 chgrp
 chrischinchilla
 CHUAU
@@ -15,11 +19,13 @@ contconf
 conventionalcommits
 datacy
 dbaeumer
+Decompresing
 devcontainer
 devcontainers
 docdash
 docgen
 dockercompose
+dockerhub
 dockerlint
 drupalcode
 drush
@@ -31,7 +37,9 @@ farmadata
 farmdata
 Farmier
 farmos
+fluxbox
 FOSS
+fullchain
 getent
 getopt
 gids
@@ -39,7 +47,10 @@ githubcli
 isready
 jsdoc
 jsdocrc
+keyout
 langcode
+letsencrypt
+libaugeas
 linkcheck
 lintstagedrc
 localstorage
@@ -51,6 +62,7 @@ mkhl
 mktemp
 mryhryki
 newgrp
+newkey
 NOPASSWD
 novnc
 PASA
@@ -60,9 +72,12 @@ Picklist
 pietmichal
 Pietraszko
 pinia
+prebuild
+prebuilding
 Preconfigured
 preprocess
 printlog
+privkey
 proselint
 readlink
 rushstack
@@ -72,6 +87,7 @@ shellcheck
 shfmt
 shinepukur
 Siddiqui
+sslip
 Steiman
 timonwong
 toplevel
@@ -79,6 +95,7 @@ transplantings
 unplugin
 unstaged
 usermod
+venv
 vite
 vncviewer
 vuejs

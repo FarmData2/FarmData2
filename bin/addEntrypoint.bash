@@ -168,8 +168,11 @@ echo ""
 # Get the permissions required for access to this entry point.
 echo "Enter a permission string for this entry point."
 echo "For example: access content,create plant asset,create seeding log,create standard quantity"
-echo "  Permissions can be found by using dev-tools to inspect the checkboxes at:"
-echo "    http://farmos/admin/people/permissions"
+echo "  You can find permissions strings by:"
+echo "    1. Logging into farmOS as Admin."
+echo "    2. Navigating to: Administration -> People -> Permissions"
+echo "    3. Using the dev-tools to inspect the relevant check box."
+echo "    4. Finding the content contained in [ ] in the name attribute." 
 read -r ENTRY_POINT_PERMISSIONS
 echo ""
 

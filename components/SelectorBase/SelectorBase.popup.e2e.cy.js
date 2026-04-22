@@ -45,7 +45,7 @@ describe('SelectorBase popup test', () => {
 
     cy.get('[data-cy="selector-popupIframe"]', { timeout: 10000 }).then(
       ($iframe) => {
-        $iframe.attr('src', 'http://farmos/fd2/tray_seeding');
+        $iframe.attr('src', 'https://proxy/fd2/tray_seeding');
       }
     );
 

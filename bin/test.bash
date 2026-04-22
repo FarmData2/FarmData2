@@ -96,69 +96,69 @@ eval set -- "$FLAGS"
 
 while true; do
   case $1 in
-  -e | --e2e)
-    E2E_TESTS=1
-    shift 2
-    ;;
-  -c | --comp)
-    COMPONENT_TESTS=1
-    shift 2
-    ;;
-  -u | --unit)
-    UNIT_TESTS=1
-    shift 2
-    ;;
-  -i | --gui)
-    CYPRESS_GUI=1
-    shift 2
-    ;;
-  -f | --fd2)
-    TEST_FD2=1
-    shift 2
-    ;;
-  -x | --examples)
-    TEST_EXAMPLES=1
-    shift 2
-    ;;
-  -s | --school)
-    TEST_SCHOOL=1
-    shift 2
-    ;;
-  -b | --lib)
-    TEST_LIB=1
-    shift 2
-    ;;
-  -g | --glob)
-    if [ "$2" == "" ]; then
-      echo -e "${ON_RED}ERROR:${NO_COLOR} -g|--glob requires an argument."
-      echo "Use test.bash --help for usage information"
-      exit 255
-    fi
-    SPEC_GLOB=$2
-    shift 2
-    ;;
-  -d | --dev)
-    DEV_SERVER=1
-    shift 2
-    ;;
-  -p | --prev)
-    PREVIEW_SERVER=1
-    shift 2
-    ;;
-  -l | --live)
-    LIVE_FARMOS_SERVER=1
-    shift 2
-    ;;
-  -h | --help)
-    usage
-    ;;
-  --)
-    shift
-    break
-    ;;
-  *)
-    usage
-    ;;
+    -e | --e2e)
+      E2E_TESTS=1
+      shift 2
+      ;;
+    -c | --comp)
+      COMPONENT_TESTS=1
+      shift 2
+      ;;
+    -u | --unit)
+      UNIT_TESTS=1
+      shift 2
+      ;;
+    -i | --gui)
+      CYPRESS_GUI=1
+      shift 2
+      ;;
+    -f | --fd2)
+      TEST_FD2=1
+      shift 2
+      ;;
+    -x | --examples)
+      TEST_EXAMPLES=1
+      shift 2
+      ;;
+    -s | --school)
+      TEST_SCHOOL=1
+      shift 2
+      ;;
+    -b | --lib)
+      TEST_LIB=1
+      shift 2
+      ;;
+    -g | --glob)
+      if [ "$2" == "" ]; then
+        echo -e "${ON_RED}ERROR:${NO_COLOR} -g|--glob requires an argument."
+        echo "Use test.bash --help for usage information"
+        exit 255
+      fi
+      SPEC_GLOB=$2
+      shift 2
+      ;;
+    -d | --dev)
+      DEV_SERVER=1
+      shift 2
+      ;;
+    -p | --prev)
+      PREVIEW_SERVER=1
+      shift 2
+      ;;
+    -l | --live)
+      LIVE_FARMOS_SERVER=1
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      ;;
   esac
 done
 
@@ -280,11 +280,20 @@ if [ -n "$DEV_SERVER" ]; then
 elif [ -n "$PREVIEW_SERVER" ]; then
   echo "Preview tests requested..."
 
-  echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
-  BUILDER_PID=$!
-  BUILDER_GID=$(ps --pid "$BUILDER_PID" -h -o pgid | xargs)
-  echo "    Builder running in process group $BUILDER_GID."
+  if [ -n "$CYPRESS_GUI" ]; then
+    # Only run the builder in watch mode if we are running in the cypress GUI.
+    echo "  Starting builder for the distribution..."
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
+    BUILDER_PID=$!
+    BUILDER_GID=$(ps --pid "$BUILDER_PID" -h -o pgid | xargs)
+    echo "    Builder running in process group $BUILDER_GID."
+  else
+    # If we are not in the GUI then we only need to build once.
+    echo "  Building the distribution..."
+    npx vite --config ./$PROJECT_DIR/vite.config.js build > /dev/null
+    error_check "Error building the distribution."
+    echo "  Built."
+  fi
 
   echo "  Checking that the preview server is running on port 4173..."
   if [ "$(check_url localhost:4173/"$URL_PREFIX"/main/)" == "" ]; then
@@ -310,13 +319,22 @@ elif [ -n "$PREVIEW_SERVER" ]; then
 elif [ -n "$LIVE_FARMOS_SERVER" ]; then
   echo "Live tests within farmOS requested..."
 
-  echo "  Starting builder for the distribution..."
-  setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
-  LIVE_PID=$!
-  LIVE_GID=$(ps --pid "$LIVE_PID" -h -o pgid | xargs)
-  echo "    Builder running in process group $LIVE_GID."
+  if [ -n "$CYPRESS_GUI" ]; then
+    # Only run the builder in watch mode if we are running in the cypress GUI.
+    echo "  Starting builder for the distribution..."
+    setsid npx vite --config ./$PROJECT_DIR/vite.config.js build --watch > /dev/null &
+    LIVE_PID=$!
+    LIVE_GID=$(ps --pid "$LIVE_PID" -h -o pgid | xargs)
+    echo "    Builder running in process group $LIVE_GID."
+  else
+    # If we are not in the GUI then we only need to build once.
+    echo "  Building the distribution..."
+    npx vite --config ./$PROJECT_DIR/vite.config.js build > /dev/null
+    error_check "Error building the distribution."
+    echo "  Built."
+  fi
 
-  BASE_URL="http://farmos"
+  BASE_URL="https://proxy"
 fi
 
 # Set environment variables to override the defaults as necessary.

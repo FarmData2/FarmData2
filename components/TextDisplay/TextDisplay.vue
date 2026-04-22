@@ -31,9 +31,9 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/text_display">The TextDisplay Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/text_display/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/text_display">The TextDisplay Example</a>
+ *   - Example Source: <a href="./TextDisplay.ex.src.md">modules/farm_fd2_examples/src/entrypoints/text_display/App.vue</a>
+ *   - Component Source: <a href="./TextDisplay.comp.src.md">components/TextDisplay/TextDisplay.vue</a>
  *
  * ## Usage Example
  *

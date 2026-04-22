@@ -28,13 +28,13 @@
 
 /**
  * This command will log into farmOS if we are currently connecting to it.
- * That is if the tests are running with a base url of http://farmos then
+ * That is if the tests are running with a base url of https://proxy then
  * the user is logged in.  If the test are running with any other base url
  * then no login is performed.
  */
 Cypress.Commands.add('login', (user, password) => {
   let baseURL = Cypress.config().baseUrl;
-  if (baseURL.includes('http://farmos')) {
+  if (baseURL.includes('https://proxy')) {
     cy.request({
       method: 'POST',
       url: '/user/login',

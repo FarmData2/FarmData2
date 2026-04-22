@@ -8,8 +8,8 @@ The purpose of this document is to describe how to create custom API endpoints i
 
 - Documentation for the [Drupal Views Module](https://www.drupal.org/docs/8/core/modules/views).
 
-- log in as `admin`
-- Visit Administration -> Structure -> Views (or `http://farmos/admin/structure/views`)
+- log in to farmOS as `admin`
+- Visit Administration -> Structure -> Views
 - Create a new View
   - Give the View a display name of "Farm <View Name>"
   - Do not create a Page or a Block

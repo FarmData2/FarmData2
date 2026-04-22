@@ -79,9 +79,9 @@ import { BButton } from 'bootstrap-vue-next';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/sort_order_button">SortOrderButton Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/sort_order_button/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/sort_order_button">SortOrderButton Example</a>
+ *   - Example Source: <a href="./SortOrderButton.ex.src.md">modules/farm_fd2_examples/src/entrypoints/sort_order_button/App.vue</a>
+ *   - Component Source: <a href="./SortOrderButton.comp.src.md">components/SortOrderButton/SortOrderButton.vue</a>
  *
  * ## Usage Example
  *

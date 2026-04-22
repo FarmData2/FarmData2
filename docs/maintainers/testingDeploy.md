@@ -10,16 +10,15 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 
 1. [Create a new Droplet in Digital Ocean](https://docs.digitalocean.com/products/droplets/how-to/create/) with the following specifications:
    - Choose a region and data center close to you.
-   - Image: Debian 12 or newer
+   - Image: Debian 12
    - Size: Shared CPU (Basic)
-   - CPU Options: Regular, 1~GB RAM, 35~GB SSD Disk, 1000-GB transfer.
+   - CPU Options: Regular, 1~GB RAM, 25~GB SSD Disk, 1000-GB transfer.
    - Authentication Method: Password
    - Create root password: Give a secure root password for your droplet.
    - Click "Create Droplet" at the bottom of the form.
-2. Note the IP Address of the Droplet.
-3. Assign a Reserved IP Address if necessary.
-   - Reserving and IP ensures that the site has the same IP address across Droplet restarts.
-   - This can be useful if you give the IP to external testers.
+2. If the droplet needs to be used across start/stop cycles:
+   - Click the link to "Add a Reserved IP" address.
+   - Note the "Reserved IP" that is assigned.
 
 ### Connect to the Droplet
 
@@ -32,6 +31,7 @@ The instructions in this document have been used on [DigitalOcean](https://www.d
 Within the Droplet Console:
 
 1. `curl -s https://raw.githubusercontent.com/FarmData2/FarmData2/refs/heads/development/bin/deploy/config.bash -o config.bash`
+   - If modifying `config.bash` commit changes to a branch and adapt the URL to use the branch.
 2. `chmod 755 config.bash`
 3. `./config.bash`
 
@@ -40,25 +40,26 @@ Within the Droplet Console:
 Within the Droplet Console:
 
 1. `su - fd2dev`
-2. `git clone https://github.com/FarmData2/FarmData2.git`
-3. `cd FarmData2/bin`
-4. `./fd2-up.bash`
-5. `docker exec -it fd2_dev /bin/bash`
-   - At the bash shell prompt in the `fd2_dev` container:
-     1. `gh auth login`
-        - Log in to GitHub using a Personal Access Token (PAT) with `repo`, `read:org` and `workflow` permission.
-     2. `cd FarmData2/bin/deploy`
-     3. `./deploy.bash [branch]`
-        - Replace `[branch]` with the branch to be deployed.
-        - Defaults to `development` if no `branch` is specified.
-     4. `./setPasswords.bash`
-        - Change the passwords for each of the different types of FarmData2 users.
-     5. `docker stop fd2_dev`
+2. `gh auth login`
+   - Login using a personal access token with at least 'repo', 'read:org', 'workflow' permissions.
+3. `git clone https://github.com/FarmData2/FarmData2.git`
+4. `cd FarmData2`
+5. `git switch [branch]`
+   - Optional: Use to deploy from a branch other than `development`.
+6. `cd ~/FarmData2/bin/deploy`
+7. Run the `deploy.bash` script.
+   - If a reserved IP address is being used, provide the IP address as a command line argument.
+     - `./deploy.bash 123.123.123.123`
+   - Otherwise run without a command line argument and the script will determine the IP to use.
+     - `./deploy.bash`
+8. `./setPasswords.bash`
+   - Change the passwords for each of the different types of FarmData2 users.
 
 ### Connect to the Live FarmData2 Instance
 
-1. Enter `http://123.123.123.123` (replacing 123.123.123.123 with the IP address of your Droplet.)
-   - Note that this is `http` and not `https`.
+1. Enter `https://123.123.123.123.sslip.io`
+   - If you provided a reserved IP address to `deploy.bash` use that IP in place of `123.123.123.123`.
+   - If no reserved IP address was provided to `deploy.bash` use the IPv4 address of the Droplet in place of `123.123.123.123`.
 2. Log in to FarmData2 using the password you set for one of the following users:
    - `admin`
    - `manager`, `manager2`
@@ -71,9 +72,8 @@ If the deployed branch is updated, or you want to deploy a different branch fetc
 
 Within the Droplet console:
 
-- `docker exec -it fd2_dev /bin/bash`
-  - At the bash shell prompt in the `fd2_dev` container:
-    1. `cd FarmData2`
-    2. `git switch <branch>`
-    3. `git pull origin <branch>`
-    4. `npm run build:fd2`
+1. `su - fd2dev`
+2. `cd FarmData2`
+3. `git switch <branch>`
+4. `git pull origin <branch>`
+5. `npm run build:fd2`

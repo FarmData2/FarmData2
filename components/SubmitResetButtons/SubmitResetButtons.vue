@@ -39,9 +39,9 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/submit_reset_buttons">The SubmitResetButtons Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/submit_reset_buttons/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/submit_reset_buttons">The SubmitResetButtons Example</a>
+ *   - Example Source: <a href="./SubmitResetButtons.ex.src.md">modules/farm_fd2_examples/src/entrypoints/submit_reset_buttons/App.vue</a>
+ *   - Component Source: <a href="./SubmitResetButtons.comp.src.md">components/SubmitResetButtons/SubmitResetButtons.vue</a>
  *
  * ## Usage Example
  *
@@ -57,11 +57,11 @@
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name        | Description
- * ----------------------| -----------
- * submit-reset          | The `<row>` element containing the submit and reset buttons.
- * submit-button         | The submit button.
- * reset-button          | The reset button.
+ * Attribute Name          | Description
+ * ------------------------| -----------
+ * `submit-reset`          | The `<row>` element containing the submit and reset buttons.
+ * `submit-button`         | The submit button.
+ * `reset-button`          | The reset button.
  */
 export default {
   name: 'SubmitResetButtons',

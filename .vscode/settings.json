@@ -5,10 +5,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.quickSuggestionsDelay": 3000,
   "eslint.validate": ["markdown", "md"],
-  // Setup to auto-save a second after any change.  This invokes the
-  // codeActionsOnSave that sends a heartbeat signal to
-  // the codespace that keeps it from timing out due to inactivity.
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 30000,
-  "vale.valeCLI.path": "${workspaceFolder}/node_modules/@vvago/vale/bin/vale"
+  "vale.valeCLI.config": "/home/fd2dev/FarmData2/.vale.ini",
+  "vale.valeCLI.path": "/usr/bin/vale",
+  "cSpell.language": "en"
 }

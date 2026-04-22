@@ -27,7 +27,7 @@ describe('Test the permissions checking utility functions', () => {
   it('Get the permissions as guest', () => {
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'
@@ -93,7 +93,7 @@ describe('Test the permissions checking utility functions', () => {
   it('Test getPermission function as guest', () => {
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'

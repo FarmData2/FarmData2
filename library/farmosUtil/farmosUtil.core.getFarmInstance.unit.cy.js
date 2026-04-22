@@ -380,7 +380,7 @@ describe('Test getFarmOSInstance', () => {
       .then(() => {
         cy.wrap(
           farmosUtil.getFarmOSInstance(
-            'http://farmos',
+            'https://proxy',
             'farm',
             'guest',
             'farmdata2'
@@ -414,7 +414,7 @@ describe('Test getFarmOSInstance', () => {
   it('Error when not all params are provided.', () => {
     cy.wrap(
       farmosUtil
-        .getFarmOSInstance('http://farmos', 'farm')
+        .getFarmOSInstance('https://proxy', 'farm')
         .then(() => {
           throw new Error('Should have thrown an error');
         })

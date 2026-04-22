@@ -20,7 +20,7 @@ Clicking on the name of a component will take you to the complete documentation 
 
 The documentation for each component also contains a link to an example page with a live version of the component. The example page for a component can be used to learn about, experiment with and manually test the component.
 
-The live example pages are also available from the [Components option](http://farmos/fd2_examples/component_examples) on the FD2 Examples menu in farmOS.
+The live example pages are also available from the Components option on the FD2 Examples menu in farmOS.
 
 ## Creating a New Component
 
@@ -36,7 +36,7 @@ The script will create new directory with the name `ComponentName` in the `compo
 
 <a href="images/ExampleComponent.png"><img src="images/ExampleComponent.png" alt='The component that is created by the `addComponent.bash` script showing the text "Replace this `p` element with your component content."' width="320" style="border: 1px solid black"></a>
 
-The script also creates an example page for the new component that can be accessed via the [Components option](http://farmos/fd2_examples/component_examples) on the FD2 Examples menu in farmOS.
+The script also creates an example page for the new component that can be accessed via the Components option on the FD2 Examples menu in farmOS.
 
 <a href="images/ExamplePage.png"><img src="images/ExamplePage.png" alt='The example page that is created by the `addComponent.bash` script showing the newly created component, controls for the `required` and `showValidityStyling` props, and the `valid` event."' width="320" style="border: 1px solid black"></a>
 
@@ -96,13 +96,13 @@ This directory will contain the following files:
 - `App.vue` - this is the `.vue` file that defines the example page for the component. This file contains extensive comments that document the structure and purpose of the different elements of the example page. The goal of the example page is to enable the component to be tested manually. Thus, the example page should display the component, provide controls for the component's props and display any of the emitted events that are under the user's control. Exploring the other example pages to see what they provide is a good way to get started. Some good example pages to begin with might be:
   - `DateSelector` - one of the simpler examples and a good place to start with understanding the example pages.
     - [source](../../modules/farm_fd2_examples/src/entrypoints/date_selector/App.vue)
-    - [live example](http://farmos/fd2_examples/date_selector/)
+    - [docs](../components/DateSelector.md)
   - `BedPicker` - a little more complex example with a few more props that require controls.
     - [source](../../modules/farm_fd2_examples/src/entrypoints/bed_picker/App.vue)
-    - [live example](http://farmos/fd2_examples/bed_picker/)
+    - [docs](../components/BedPicker.md)
   - `LocationSelector` - a more complex example with many prop controls and events.
     - [source](../../modules/farm_fd2_examples/src/entrypoints/location_selector/App.vue)
-    - [live example](http://farmos/fd2_examples/location_selector/)
+    - [docs](../components/LocationSelector.md)
 - `component_name.exist.e2e.cy.js` - a test that checks that the example page exists and can be displayed. No changes are needed to this file.
 - `index.html`, `component_name.html`, and `component_name.js` - boiler plate code that is necessary to display the example page. No changes are needed in these files.
 

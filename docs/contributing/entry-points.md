@@ -70,7 +70,11 @@ This command will prompt you for the following information that will be used to 
 1. **A short title** for the new entry point. The title is the text that will be used as the menu option for accessing the entry point. It also appears at the top of the entry point page. The title should be in Title Case, with words capitalized and separated by spaces. This often uses the same words as the name.
 1. A one sentence **description** of the new entry point. This description is used as a tooltip by Drupal and should be written to be meaningful to a user.
 1. The **parent menu** on which the option for this entry point should be added. The title for this entry point will appear on the specified menu.
-1. The **permissions** that a user must have to see the menu. The permissions that are available can be found by logging into farmOS as `admin` and visiting the [farmOS People page](http://farmos/admin/people/permissions). Then use the browser dev-tools to inspect the check boxes to find the name of the permission.
+1. The **permissions** that a user must have to see the menu. The permissions that are available can be found by:
+   1. Logging into farmOS as `admin`.
+   2. Navigating to Administration -> People -> Permissions.
+   3. Then use the browser dev-tools to inspect the relevant checkbox elements.
+   4. Finding the permission string in the [ ] of the `name` attribute.
 
 After confirming the information that you entered, the script will generate the new entry point from the template by:
 
@@ -91,7 +95,7 @@ The running instance of the new entry point can be found in farmOS and the sourc
 
 #### Finding the Running Entry Point in farmOS
 
-Open Mozilla Firefox and login to farmOS at [http://farmos](http://farmos). Then use the FarmData2 menus to find the module containing the new entry point that you created. If the entrypoint page is blank when you visit it the first time, hold the "shift" key and click the reload button in the browser (&#10227;).
+Open farmOS, log in, and use the FarmData2 menus to find the module containing the new entry point that you created. If the entrypoint page is blank when you visit it the first time, hold the "shift" key and click the reload button in the browser (&#10227;).
 
 #### Finding the Source Code for the Entry Point
 
@@ -177,7 +181,7 @@ test.bash --e2e --live --<module> --glob=modules/**/<entry_point_name>/*.e2e.cy.
 
 ## Tour of an Entry Point
 
-The [Example Entry Point](http://farmos/fd2_examples/example_entry_point) contained on the FD2 Examples menu is an example of a new entry point as created by the `addEntrypoint.bash` script. The following sub-sections provide a guide to the structure and functionality of the example entry point. They also provide pointers to more information and links to implemented entry points that will be helpful in customizing new entry points.
+An Example Entry Point is contained on the FD2 Examples menu. This is an example of a new entry point as created by the `addEntrypoint.bash` script. The following sub-sections provide a guide to the structure and functionality of the example entry point. They also provide pointers to more information and links to implemented entry points that will be helpful in customizing new entry points.
 
 ### Entry Point Directory Structure
 

@@ -98,9 +98,9 @@ import NumericInput from '@comps/NumericInput/NumericInput.vue';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/soil_disturbance">The SoilDisturbance Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/soil_disturbance/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/soil_disturbance">The SoilDisturbance Example</a>
+ *   - Example Source: <a href="./SoilDisturbance.ex.src.md">modules/farm_fd2_examples/src/entrypoints/soil_disturbance/App.vue</a>
+ *   - Component Source: <a href="./SoilDisturbance.comp.src.md">components/SoilDisturbance/SoilDisturbance.vue</a>
  *
  * ## Usage Example
  *

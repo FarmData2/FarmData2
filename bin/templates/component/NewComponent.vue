@@ -36,7 +36,9 @@
  *
  * ## Live Example
  * 
- * <a href="http://farmos/fd2_examples/%COMPONENT_ID%">The %COMPONENT_NAME% Example</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/%COMPONENT_ID%">The %COMPONENT_NAME% Example</a>
+ *   - Example Source: <a href="./%COMPONENT_NAME%.ex.src.md">modules/farm_fd2_examples/src/entrypoints/%COMPONENT_ID%/App.vue</a>
+ *   - Component Source: <a href="./%COMPONENT_NAME%.comp.src.md">components/%COMPONENT_NAME%/%COMPONENT_NAME%.vue</a>
  * 
  * ## Usage Example
  *

@@ -1,22 +1,21 @@
 #!/bin/bash
 
-source colors.bash
-source lib.bash
-
-PWD="$(pwd)"
-
 # Get the path to the main repo directory.
 SCRIPT_PATH=$(readlink -f "$0")                     # Path to this script.
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")                # Path to directory containing this script.
 REPO_ROOT_DIR=$(builtin cd "$SCRIPT_DIR/.." && pwd) # REPO root directory.
 
+source "$REPO_ROOT_DIR/bin/colors.bash"
+source "$REPO_ROOT_DIR/bin/lib.bash"
+source "$REPO_ROOT_DIR/bin/lib/rewriteCompDocsExURL.lib.bash"
+
 echo -e "${GREEN}Generating FarmData2 documentation.${NO_COLOR}."
 
 echo "  Deleting old docs..."
-rm -rf docs/components 2 &> /dev/null
+rm -rf "$REPO_ROOT_DIR/docs/components" 2 &> /dev/null
 mkdir docs/components
-rm -rf docs/library 2 &> /dev/null
-mkdir docs/library
+rm -rf "$REPO_ROOT_DIR/docs/library" 2 &> /dev/null
+mkdir "$REPO_ROOT_DIR/docs/library"
 echo "  Deleted."
 
 echo "  Creating index file: $INDEX_FILE..."
@@ -43,17 +42,19 @@ safe_cd "$REPO_ROOT_DIR"
 for DIR in $DIRS; do                     # Names of the components with a trailing /
   COMP_NAME=$(echo "$DIR" | cut -d/ -f1) # Only the name of the component
   COMP_VUE_PATH="components/$COMP_NAME/$COMP_NAME.vue"
+  COMP_NAME_SNAKE_CASE=$(camel_to_snake "$COMP_NAME")
+  COMP_EX_PATH="modules/farm_fd2_examples/src/entrypoints/$COMP_NAME_SNAKE_CASE/App.vue"
   COMP_MD_FILE="$COMP_NAME.md"
   DOCS_DIR="docs"
 
-  echo "    Generating docs for $COMP_NAME..."
-  echo "      Creating docs for $COMP_NAME..."
+  echo "    Creating docs for $COMP_NAME component..."
+  echo "      Generating docs for component..."
   # vue-docgen expects paths relative to components directory.
   npx vue-docgen "$COMP_VUE_PATH" "$DOCS_DIR"
   # Get rid of the extra directory layer that we don't need.
   mv "$DOCS_DIR/components/$COMP_NAME/$COMP_MD_FILE" "$DOCS_DIR/components/$COMP_MD_FILE"
   rmdir "$DOCS_DIR/components/$COMP_NAME"
-  echo "      Created."
+  echo "      Generated."
 
   echo "      Adding link for $COMP_MD_FILE to $INDEX_FILE..."
   DESC_TEXT=$(grep -m 1 -A 1 "/\*\*" "$COMP_VUE_PATH" | tail -1 | cut -d' ' -f3-)
@@ -62,7 +63,7 @@ for DIR in $DIRS; do                     # Names of the components with a traili
   echo "      Added."
 
   echo "      Adding back links from $COMP_MD_FILE to $INDEX_FILE..."
-  TMP_PATH="docs/components/$COMP_NAME.tmp"
+  TMP_PATH="$DOCS_DIR/components/$COMP_NAME.tmp"
   {
     echo "[[FarmData2 Documentation]](../$INDEX_FILE)"
     echo ""
@@ -70,10 +71,37 @@ for DIR in $DIRS; do                     # Names of the components with a traili
     echo ""
     echo "[[FarmData2 Documentation]](../$INDEX_FILE)"
   } >> "$TMP_PATH"
-  mv -f "$TMP_PATH" "docs/components/$COMP_MD_FILE"
+  mv -f "$TMP_PATH" "$DOCS_DIR/components/$COMP_MD_FILE"
   echo "      Added."
-  echo "    Generated."
+
+  echo "      Generating source code md file for component example page..."
+  {
+    echo "# Source code for the $COMP_NAME component example page"
+    echo "## $COMP_EX_PATH"
+    echo ""
+    echo "\`\`\`html"
+    cat "$COMP_EX_PATH"
+    echo "\`\`\`"
+  } > "$DOCS_DIR/components/$COMP_NAME.ex.src.md"
+  echo "      Generated."
+
+  echo "      Generating source code md file for component..."
+  {
+    echo "# Source code for the $COMP_NAME component"
+    echo "## $COMP_VUE_PATH"
+    echo ""
+    echo "\`\`\`html"
+    cat "$COMP_VUE_PATH"
+    echo "\`\`\`"
+  } > "docs/components/$COMP_NAME.comp.src.md"
+  echo "      Generated."
+
+  echo "    Created."
 done
+echo "    Added."
+echo "    Rewriting component example URLs in the documentation as needed..."
+rewriteCompDocsExURL
+echo "    Rewritten."
 echo "  Generated."
 
 echo "  Generating docs for all libraries..."

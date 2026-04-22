@@ -66,7 +66,7 @@ var libSessionStorage = null;
  */
 export function inFarmOS() {
   try {
-    const onLocalhost = document.URL.startsWith('http://localhost');
+    const onLocalhost = document.URL.includes('://localhost');
     const inFarmOS = !onLocalhost;
     return inFarmOS;
   } catch (e) {
@@ -291,7 +291,7 @@ async function getFarmOSInstanceForNotInFarmOS(
     // Create a new farmOS instance using the default credentials if none are provided.
 
     if (!hostURL && !client && !user && !pass) {
-      hostURL = 'http://farmos';
+      hostURL = 'https://proxy';
       client = 'farm';
       user = 'admin';
       pass = 'admin';

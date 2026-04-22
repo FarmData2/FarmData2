@@ -6,7 +6,7 @@ import { LocalStorage } from 'node-localstorage';
  * in the FarmData2 development environment.  Note: URL cannot
  * have a trailing /.
  */
-const URL = 'http://farmos';
+const URL = 'https://proxy';
 const client = 'farm';
 const user = 'admin';
 const pass = 'admin';

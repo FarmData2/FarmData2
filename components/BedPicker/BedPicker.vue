@@ -27,10 +27,10 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/bed_picker">The BedPicker Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/bed_picker/App.vue">App.vue</a>
- *
+ * <a href="https://%HOST_NAME%/fd2_examples/bed_picker">The BedPicker Example</a>
+ *   - Example Source: <a href="./BedPicker.ex.src.md">modules/farm_fd2_examples/src/entrypoints/bed_picker/App.vue</a>
+ *   - Component Source: <a href="./BedPicker.comp.src.md">components/BedPicker/BedPicker.vue</a>
+ * 
  * ## Usage Example
  *
  * ```html
