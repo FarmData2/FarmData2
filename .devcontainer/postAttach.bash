@@ -48,28 +48,30 @@ fi
 
 checkPostgres
 POSTGRES=$?
-checkFarmOS
-FARMOS=$?
+if ((POSTGRES)); then
+  checkFarmOS
+  FARMOS=$?
+fi
 if (((!POSTGRES) || (!FARMOS))); then
   echo ""
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo "One or more of the FarmData2 docker containers is not running."
   echo ""
   echo "Try restarting them with the commands:"
-  echo "  cd docker"
+  echo "  cd ~/FarmData2/docker"
   echo "  docker compose down"
-  echo "  docker compose up --detach"
+  echo "  docker compose -f compose.yml -f compose.codespaces.yml up --detach"
   echo "  docker ps"
   echo ""
-  echo "Verify that ontainers with the following NAMES are running:"
+  echo "Verify that containers with the following NAMES are running:"
   echo "  fd2_postgres"
   echo "  fd2_farmos"
   echo "  fd2_nginx"
   echo ""
   echo "Then use the commands:"
-  echo "  cd .."
+  echo "  cd ~/FarmData2"
   echo "  .devcontainer/postAttach.bash"
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   echo ""
   exit 1
 fi

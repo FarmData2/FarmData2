@@ -85,7 +85,7 @@ cd "$REPO_DIR/docker" || {
   echo "Error docker directory does not exist."
   exit 1
 }
-docker compose up --detach
+docker compose -f compose.yml -f compose.codespaces.yml up --detach
 
 # Check that the minimum services to install the sample database are running.
 checkPostgres

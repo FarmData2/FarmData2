@@ -31,10 +31,6 @@ services:
       - type: bind
         source: ./settings.php
         target: /opt/drupal/web/sites/default/settings.php
-      # Mount a volume to hold the farmos api keys
-      - type: volume
-        source: farmos3_keys_fd2.1
-        target: /opt/drupal/keys
       # Mount the dist directories containing the fd2 modules into the farmOS container.
       - type: bind
         source: ../modules/farm_fd2/dist/farmdata2
@@ -65,7 +61,7 @@ services:
       - '443:443'
     volumes:
       - type: bind
-        source: ./nginx.conf
+        source: ./nginx.conf/nginx.deploy.conf
         target: /etc/nginx/nginx.conf
       - type: bind
         source: ./ssl
@@ -74,7 +70,6 @@ services:
 
 volumes:
   farmos3_config_fd2.1:
-  farmos3_keys_fd2.1:
 
 networks:
   fd2_network:
