@@ -61,8 +61,8 @@ services:
       - '443:443'
     volumes:
       - type: bind
-        source: ./nginx.conf/codespaces.conf.template
-        target: /etc/nginx/templates/codespaces.conf.template
+        source: ./nginx.conf/nginx.deploy.conf
+        target: /etc/nginx/nginx.conf
       - type: bind
         source: ./ssl
         target: /etc/nginx/ssl
