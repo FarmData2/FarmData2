@@ -25,21 +25,10 @@ server {
     deny all;
   }
 
-  location /user/logout {
-    # Rewrite the Location header for the logout request.
-    proxy_pass http://farmos/user/logout;
-    proxy_hide_header Location;
-    add_header Location "https://${CODESPACE_NAME}-443.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}";
-  }
-
-  location /403 {
-    # Rewrite the Location header for the login request.
-    proxy_pass http://farmos;
-    proxy_hide_header Location;
-    add_header Location "https://${CODESPACE_NAME}-443.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}";
-  }
-
   location / {
     proxy_pass http://farmos;
+
+    # Update Location headers from Drupal/farmOS that point to localhost to the GitHub app domain.
+    proxy_redirect https://localhost https://${CODESPACE_NAME}-443.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN};
   }
 }
