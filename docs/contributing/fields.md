@@ -96,3 +96,7 @@ function farm_plant_type_entity_view_display_alter(
   }
 }
 ```
+
+### Update `deleteCustomFD2Fields.bash` Script
+
+The `deleteCustomFD2Fields.bash` script contains commands that removes the custom fields created by FarmData2 from farmOS. The `deleteCustomFD2Fields.bash` script is called by `installDB.bash` when a new database is installed (see `installDB.bash` for more information). Any time a custom field is added or removed this script will need to be updated. This is an important step when installing different database versions that can include different fields.
