@@ -19,11 +19,22 @@ The overview of the organization of the FarmData2 codebase found in the [Introdu
 
 ## The Development Environment
 
-The FarmData2 Development Environment is a [Development Container](https://containers.dev/) that runs in GitHub Codespaces. When running this development container provides a Linux machine with a Visual Studio Code IDE, all the tools and extensions necessary for FarmData2 work, and a running instance of farmOS. The running instance of farmOS is provided by three _side car_ containers that are started when the development container is started:
+The FarmData2 Development Environment is a [Development Container](https://containers.dev/) that runs in GitHub Codespaces. When running this development container provides a Linux machine with a Visual Studio Code IDE, all the tools and extensions necessary for FarmData2 work, and a running instance of farmOS.
+
+### The farmOS Instance
+
+The running instance of farmOS is provided by three _side car_ containers that are started by the `.devcontainer/postCreate.bash` script when the development container is started:
 
 - `fd2_farmos` - a Drupal instance that is running farmOS.
 - `fd2_postgres` - the postgres database that Drupal uses to store its data.
 - `fd2_nginx` - An Nginx reverse proxy server allowing farmOS to be accessed via https.
+
+These containers are configured by the `compose.yml` and `compose.codespaces.yml` in the `docker` directory.
+
+- `compose.yml` - provides a base configuration for running the containers on a hosted server (a deployment), but that will not work when farmOS is running on an exposed port within a codespace.
+- `compose.codespace.yml` - is [merged](https://docs.docker.com/compose/how-tos/multiple-compose-files/merge/) with `compose.yml` when running within codespaces. This config defines a few environment variables and changes the nginx configuration that is mounted into the `fd2_nginx` container so that farmOS runs correctly within codespaces.
+
+### The devcontainer
 
 The structure of the Development Environment is described here, while instructions for starting the Development Environment in a codespace are given in [INSTALL.md](../../INSTALL.md).
 
