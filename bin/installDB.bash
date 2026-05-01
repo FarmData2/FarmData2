@@ -216,6 +216,24 @@ else
     --clobber
   error_check "Unable to download the database."
   echo "Database downloaded."
+
+  # If we didn't use the same DB then uninstall the FarmData2 module here.
+  # We will rebuild and reinstall it after the new database has been installed.
+  # This is important when we switch to a branch where the module targets a different DB version.
+  echo "Uninstalling the FarmData2 module..."
+  echo "  Deleting custom farm_fd2 module custom fields..."
+  "$REPO_DIR/bin/deleteCustomFD2Fields.bash"
+  error_check "Unable to delete custom FD2 fields."
+  echo "  Deleted."
+  echo "  Running farmOS cron to update fields..."
+  docker exec fd2_farmos drush cron > /dev/null 2>&1
+  error_check "Unable to run cron."
+  echo "  Done."
+  echo "  Removing farm_fd2 module from farmOS..."
+  docker exec fd2_farmos drush pmu farm_fd2 -y
+  error_check "Unable to remove the farm_fd2 module from farmOS."
+  echo "  Removed."
+  echo "Uninstalled."
 fi
 
 echo "Stopping farmOS..."
@@ -286,12 +304,17 @@ fi
 echo "Restarted."
 
 if [ -z "$CURRENT" ]; then
-  # If we didn't use the same DB then rebuild and reinstall the FarmData2 module too.
-  # This is important when we switch to a branch where the module targets a different DB version.
-  echo "Rebuilding and reinstalling the FarmData2 module..."
-  "$REPO_DIR/bin/reinstallFD2Module.bash"
-  error_check "Unable to rebuild and reinstall the FarmData2 module."
-  echo "Rebuilt and reinstalled."
+  echo "Re-adding the farm_fd2 module to farmOS..."
+  # Now rebuild and reinstall the FarmData2 module.
+  echo "  Building farm_fd2 module..."
+  npm run build:fd2 > /dev/null
+  error_check "Unable to rebuild the FarmData2 module."
+  echo "  Built."
+  echo "  Installing farm_fd2 module into farmOS..."
+  docker exec fd2_farmos drush en farm_fd2 -y
+  error_check "Unable to reinstall the FarmData2 module."
+  echo "  Installed."
+  echo "Added."
 fi
 
 echo "Clearing the Drupal cache..."
