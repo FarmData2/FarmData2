@@ -220,7 +220,7 @@ else
   # If Drupal is not connected to the database then this is a new codespace and we have
   # not yet installed a database, so we don't need to uninstall the FarmData2 module.
   DB_CONNECTED=$(docker exec fd2_farmos drush status | grep -E "^Database\s+: Connected")
-  FD2_ENABLED=$(docker exec fd2_farmos drush pm-list --type=Module --status=enabled | grep "(farm_fd2)")
+  FD2_ENABLED=$(docker exec fd2_farmos drush pm-list --type=Module --status=enabled 2> /dev/null | grep "(farm_fd2)")
   if [ -n "$DB_CONNECTED" ] && [ -n "$FD2_ENABLED" ]; then
     # If we didn't use the same DB then uninstall the FarmData2 module here.
     # We will rebuild and reinstall it after the new database has been installed.
