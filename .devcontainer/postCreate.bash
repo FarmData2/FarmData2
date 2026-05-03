@@ -58,7 +58,6 @@ echo "Set up."
 # these builds will generate errors, but they will still
 # work as expected once the sample database is installed.
 echo "Building FarmData2 Drupal modules..."
-echo "  Note: Errors during these builds are expected."
 echo "  Building farm_fd2..."
 rm -rf "$REPO_DIR/modules/farm_fd2/dist"
 mkdir "$REPO_DIR/modules/farm_fd2/dist"
