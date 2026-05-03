@@ -217,23 +217,28 @@ else
   error_check "Unable to download the database."
   echo "Database downloaded."
 
-  # If we didn't use the same DB then uninstall the FarmData2 module here.
-  # We will rebuild and reinstall it after the new database has been installed.
-  # This is important when we switch to a branch where the module targets a different DB version.
-  echo "Uninstalling the FarmData2 module..."
-  echo "  Deleting custom farm_fd2 module custom fields..."
-  "$REPO_DIR/bin/deleteCustomFD2Fields.bash"
-  error_check "Unable to delete custom FD2 fields."
-  echo "  Deleted."
-  echo "  Running farmOS cron to update fields..."
-  docker exec fd2_farmos drush cron > /dev/null 2>&1
-  error_check "Unable to run cron."
-  echo "  Done."
-  echo "  Removing farm_fd2 module from farmOS..."
-  docker exec fd2_farmos drush pmu farm_fd2 -y
-  error_check "Unable to remove the farm_fd2 module from farmOS."
-  echo "  Removed."
-  echo "Uninstalled."
+  # If Drupal is not connected to the database then this is a new codespace and we have
+  # not yet installed a database, so we don't need to uninstall the FarmData2 module.
+  DB_CONNECTED=$(docker exec fd2_farmos drush status | grep -E "^Database\s+: Connected")
+  FD2_ENABLED=$(docker exec fd2_farmos drush pm-list --type=Module --status=enabled 2> /dev/null | grep "(farm_fd2)")
+  if [ -n "$DB_CONNECTED" ] && [ -n "$FD2_ENABLED" ]; then
+    # If we didn't use the same DB then uninstall the FarmData2 module here.
+    # We will rebuild and reinstall it after the new database has been installed.
+    # This is important when we switch to a branch where the module targets a different DB version.
+    echo "Uninstalling the FarmData2 module..."
+    echo "  Deleting custom farm_fd2 module custom fields..."
+    "$REPO_DIR/bin/deleteCustomFD2Fields.bash" > /dev/null 2>&1
+    echo "  Deleted."
+    echo "  Running farmOS cron to update fields..."
+    docker exec fd2_farmos drush cron > /dev/null 2>&1
+    error_check "Unable to run cron."
+    echo "  Done."
+    echo "  Removing farm_fd2 module from farmOS..."
+    docker exec fd2_farmos drush pmu farm_fd2 -y > /dev/null 2>&1
+    error_check "Unable to remove the farm_fd2 module from farmOS."
+    echo "  Removed."
+    echo "Uninstalled."
+  fi
 fi
 
 echo "Stopping farmOS..."
@@ -311,14 +316,14 @@ if [ -z "$CURRENT" ]; then
   error_check "Unable to rebuild the FarmData2 module."
   echo "  Built."
   echo "  Installing farm_fd2 module into farmOS..."
-  docker exec fd2_farmos drush en farm_fd2 -y
+  docker exec fd2_farmos drush en farm_fd2 -y > /dev/null 2>&1
   error_check "Unable to reinstall the FarmData2 module."
   echo "  Installed."
   echo "Added."
 fi
 
 echo "Clearing the Drupal cache..."
-docker exec fd2_farmos drush cr
+docker exec fd2_farmos drush cr > /dev/null 2>&1
 error_check "Unable to clear the cache."
 echo "Cleared."
 
