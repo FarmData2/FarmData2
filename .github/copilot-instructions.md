@@ -50,9 +50,13 @@ When creating a plan, the plan must:
   - Complete the relevant sections of the pull request template
   - If the pull request does not contain any new or modified automated tests, the "Testing" section should be omitted
   - Include in the "Further Information" section the name and version of the AI model used to generate the changes in the pull request
+  - Add a section to the body of the pull request titled "Prompt" and include the prompt used to create the plan in that section
   - Apply the "ai generated" label to the draft pull request
 - Add the full plan document to the draft pull request as a comment
-- For all commits generated after the plan is completed add a comment to the pull request linking to the commit and briefly describing its purpose
+- When a new commit is added to a pull draft pull request after the plan is completed add a comment to the pull request that:
+  - describes what the commit does
+  - gives the prompt that led to the commit
+  - links to the commit
 
 ## Technical Stack
 
