@@ -108,16 +108,19 @@ The FarmData2 architecture has four main parts:
 
 - Libraries: Collections of Javascript functions that are used across the FarmData2 Components and entrypoints
   - Each library is contained in a collection of .js files in the subdirectories of the library directory
+  - Every library function is documented using JSDoc
   - Every library function is accompanied by a set of Cypress unit tests that verify the functionality of the functions that it contains
 - FarmData2 Components: Custom UI elements that encapsulate the UI elements and relevant logic for UI elements used in FarmData2 input forms
   - FarmData2 Components are built as Vue.js 3 single file components using BootstrapVueNext components
   - Each FarmData2 Component is contained in a .vue file in a subdirectory of the components directory
+  - Every FarmData2 Component is documented using JSDoc
   - Each FarmData2 Component is accompanied by a set of Cypress component tests that verify its functionality
 - Entrypoints: Data input forms built as Vue.js 3 single file components and appear as pages in farmOS
   - Entrypoints are built as Vue.js 3 single file components using custom FarmData2 Components and BootstrapVueNext components
   - Each entrypoint is contained in an App.vue file in a subdirectory of src/entrypoints in farm_fd2, farm_fd2_examples or farm_fd2_school
   - The logic for submitting data from the input form to farmOS is encapsulated in the lib.js file in the entrypoint's directory
   - Every entrypoint is accompanied by a set of Cypress end to end tests that verify its functionality
+  - The lib.js file for every entrypoint is accompanied by a set of Cypress unit tests that verify its functionality
 - Scripts: Bash scripts that automate common tasks
   - The scripts are contained in the bin directory
   - The bin/lib subdirectory contains functions that are used by other scripts
