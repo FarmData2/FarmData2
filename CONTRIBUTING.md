@@ -52,7 +52,7 @@ The following are links to some the Zulip _streams_ and _topics_ that you might 
 
 - [Introduce Yourself](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/Introduce.20Yourself) - A stream where new developers can introduce themselves to the community.
 - [Newcomer Questions](https://farmdata2.zulipchat.com/#narrow/stream/271292-developers/topic/Newcomer.20Questions) - A topic created specifically as a place for newcomers to FarmData2 to ask questions.
-- [Install](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) - A stream dedicated to questions about the installation of FarmData2.
+- [Install](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) - A stream dedicated to questions about the installation of FarmData2.
 - [Developers](https://farmdata2.zulipchat.com/#narrow/stream/271292-developers) - A stream for developers to ask questions, discuss issues and debate design decisions.
 - [Suggestions](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) - A topic for discussing suggestions for changes, additions or anything related to improving FarmData2.
 
@@ -159,7 +159,7 @@ Depending upon what you are working on, one of the following guides might be hel
 - [Working on a Vue.js Component or Example](docs/contributing/components.md)
 - [Working on Documentation](docs/contributing/documentation.md)
 - [Working on an Entry Point](docs/contributing/entry-points.md)
-- [Working on Infrastructure](docs/contributing/infrastructure.md)
+- [Working on Infrastructure](docs/contributing/maintainers/infrastructure.md)
 - [Working on a Library](docs/contributing/libraries.md)
 
 ### 6. Commit your Changes to your Feature Branch

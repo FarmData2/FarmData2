@@ -4,7 +4,7 @@ This document describes how to run the FarmData2 Development Environment in a Gi
 
 ## Install Help
 
-If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
+If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
 
 ## Creating a FarmData2 Codespace
 
