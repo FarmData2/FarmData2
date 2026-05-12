@@ -159,7 +159,7 @@ Depending upon what you are working on, one of the following guides might be hel
 - [Working on a Vue.js Component or Example](docs/contributing/components.md)
 - [Working on Documentation](docs/contributing/documentation.md)
 - [Working on an Entry Point](docs/contributing/entry-points.md)
-- [Working on Infrastructure](docs/contributing/maintainers/infrastructure.md)
+- [Working on Infrastructure](docs/maintainers/infrastructure.md)
 - [Working on a Library](docs/contributing/libraries.md)
 
 ### 6. Commit your Changes to your Feature Branch
@@ -227,26 +227,9 @@ To create a draft pull request:
     - your `origin` as the "head repository"
     - your feature branch as the "compare branch"
 
-When you create a pull request for FarmData2 you will need to include:
+When you create a new pull request for FarmData2 it will be pre-populated with a template. Each section of the template includes a comment describing what content should be provided in that section. The comments and any unused sections will need to be removed before creating the pull request.
 
-- Title - a concise summary of the pull request.
-- Description - a longer description of the changes you made. This should include:
-  - why you made the changes.
-  - your approach to implementation.
-  - any possible complications caused by your changes.
-  - thoughts or questions you have for the maintainers.
-  - steps that a reviewer should take to review your changes.
-- Closes tags - if your pull request closes any issues, list them here by including one "Closes" tag for each issue that is closed. Include a blank line before your first `Closes` tag. Do not include any blank lines between `Closes` tags if you use more than one. For example:
-  - `Closes #123`
-- Coauthor footers - if you have any coauthors, list them at the bottom of your pull request by including one "Co-authored-by line" for each coauthor. Include a blank line before your first coauthor footer, and no blank lines between coauthor footers if you have more than one. You can use this nifty little tool to [generate your coauthor footers](https://coauthoredby.netlify.app/).
-  <!-- vale RedHat.Hyphens = NO-->
-  <!-- vale Microsoft.Vocab = NO -->
-  <!-- Co-authored-by must be hyphenated here to be recognized by GitHub -->
-
-  - `Co-authored-by: Awesome Contributor <12345678+awesomec@users.noreply.github.com>`
-
-  <!-- vale RedHat.Hyphens = YES-->
-  <!-- vale Microsoft.Vocab =YES -->
+**Be sure to read the "Licensing Certification" section and review the [Developer Certificate of Origin](https://developercertificate.org/) and then check the box.**. Your pull request will not be able to be merged if you do not check the box.
 
 ### 9. Discuss and Repeat
 
@@ -272,7 +255,7 @@ git push origin MyFeatureBranch
 
 When you think you have finished your changes and are ready to have the maintainers review them [mark your pull request as ready for review](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request#marking-a-pull-request-as-ready-for-review)
 
-Maintainer will review (or assign reviewers) and then take one of three actions
+Maintainer will review (or assign reviewers) and then take one of three actions:
 
 - If everything looks good, they will merge your changes into the `development` branch.
 - If they have questions or want to see further changes they will comment on the pull request and mark it as a draft pull request again. In this case you will want to review the feedback and respond to it in the comments or by making more changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and pushing them ([Step #7](#7-push-your-feature-branch)) to update your pull request.
