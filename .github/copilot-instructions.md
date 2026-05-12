@@ -54,7 +54,7 @@ All contributions to FarmData2 use the following workflow:
 
 ### Pull Requests
 
-- Pull request titles are conventional commit messages with the format "type(scope): description"
+- A pull request title is a conventional commit messages with the format "type(scope): description"
   - The description begins with an action verb and briefly describes what the pull request does
   - The conventional commit message uses only the following types:
     - feat - when the pull request adds a new feature
@@ -73,10 +73,11 @@ All contributions to FarmData2 use the following workflow:
     - dev - when the pull request modifies any . file, the contents of any . directory, any contents of the following directories bin, cypress, or docker
     - deps - when the pull request modifies the package.json or package-lock.json files
     - When more than one scope applies the one higher in the list is used
-- Pull request bodies must:
+- The pull request body must:
   - Use the `.github/PULL_REQUEST_TEMPLATE.md`
   - Remove the body comments in each section of the templates. These comments start with > _ and end with ._
   - Complete the relevant sections of the pull request template
+  - Reference the issues that are resolved by the pull request by including "Closes #" followed by the issue number in the "Related issues" section
   - Remove the "Testing" section if no automated tests have been added or modified
   - Place the prompt that was used to generate the work into the "Further Information" section
   - Add an `ai-assisted` attribution that identifies the AI models and versions used to create the plan and the code
