@@ -4,6 +4,7 @@
 
 - [README.md](../README.md) - the main FarmData2 README.
 - [INSTALL.md](../INSTALL.md) - directions for installing the FarmData2 Developer Environment.
+- [AI_POLICY.md](../AI_POLICY.md) - FarmData2's policy on AI assisted contributions.
 - [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) - FarmData2's community standards.
 - [LICENSE.md](../LICENSE.md) - details of FarmData2's licensing.
 - [CHANGELOG.md](../CHANGELOG.md) - running log of changes to FarmData2 by version and scope.
@@ -25,7 +26,7 @@
 
 ## FarmData2 Component and Library Documentation
 
-- [FarmData2 Documentation](FarmData2.md) - API documentation for the FarmData2 custom Vue components and JavaScript libraries.
+- [FarmData2 Documentation](FarmData2.md) - API documentation for the FarmData2 custom Vue components and JavaScript libraries. Note: This documentation is generated when the developer environment is created (See: [INSTALL.md](../INSTALL.md)).
 
 ## Maintainer Documentation
 

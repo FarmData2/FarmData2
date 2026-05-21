@@ -24,7 +24,7 @@
 
 ### Licensing Certification
 
-- [ ] **I certify that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.**
+- [ ] **I attest that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.**
 
 ### Attributions
 
