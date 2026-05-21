@@ -170,12 +170,13 @@ The documentation server provides convenient access to the FarmData2 documentati
 
 3. The documentation server will open in a new browser tab and display the "Index of the FarmData2 Documentation."
 
-4. If you are new to FarmData2 read the following documents:
+4. If you are new to FarmData2 consider reviewing the following key documents:
 
+   - `README.md`
+   - `AI_POLICY.md`
    - `CODE_OF_CONDUCT.md`
    - `LICENSE.md`
    - `CONTRIBUTING.md`
-   - `Introduction to the Codebase`
 
 5. Briefly browse the other topics to familiarize yourself with the documentation that is available.
 

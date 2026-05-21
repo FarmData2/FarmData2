@@ -85,7 +85,7 @@ Review the Licensing information before contributing to FarmData2.
 - [FarmData2 Licensing](LICENSE.md)
 
 
-### Review the FarmData2 AI Policy
+### Review FarmData2's AI Policy
 
 
 ### 3. Join the FarmData2 Community
@@ -161,7 +161,7 @@ If you decide not to continue working on that issue, make another comment on the
 
 ### 3. Synchronize `development` with the Upstream
 
-New work in FarmData2 occurs on the `development` branch. Before beginning to address an issue you should synchronize the `development` branch of your local repository with the `upstream` FarmData2 repository. This ensures that you begin your changes with the most up to date code and documentation.
+New work in FarmData2 should be based on the `development` branch. Before beginning new work you should synchronize the `development` branch of your local repository with the `upstream` FarmData2 repository. This ensures that you begin your changes with the most up to date code and documentation.
 
 Open a Terminal window and use the following commands:
 
@@ -172,11 +172,11 @@ git pull --ff-only upstream development
 
 If you cloned your FarmData2 repository somewhere other than the `FarmData2` directory in the `fd2dev` home directory you'll need to adjust the `cd` command that you use.
 
-If you want to also synchronize the `development` branch of your `origin` repository with the `upstream`:
+If you also want to also synchronize the `development` branch of your `origin` repository with the `upstream` use the command:
 
-1. Visit your FarmData2 repo on GitHub.
-2. Make sure that the `Development` branch is active.
-3. Click the "Sync Fork" button.
+```bash
+git push origin development
+```
 
 Note that all future sections of this document will assume that the directory containing your FarmData2 repository is the current working directory.
 

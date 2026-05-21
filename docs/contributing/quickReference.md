@@ -4,18 +4,19 @@
 
 ### Visual Studio Code IDE
 
-| Windows/Linux     | MacOS                | Action                      |
-| ----------------- | -------------------- | --------------------------- |
-| `Ctrl + c`        | &#8984;`+ c`         | Copy                        |
-| `Ctrl + v`        | &#8984;`+ v`         | Paste                       |
-| `Ctrl + s`        | &#8984;`+ s`         | Save                        |
-| `Ctrl + Z`        | &#8984;`+ z`         | Undo                        |
-| `Ctrl + Y`        | &#8984;`+ Shift + Z` | Redo                        |
-| `Ctrl + f`        | &#8984;`+ f`         | Find                        |
-| `Shift + Alt + F` | `Shift + Option + F` | Auto format text/code.      |
-| `Alt + z`         | `Alt + z`            | Toggle word wrap in editor. |
-| `Ctrl + /`        | &#8984;`+ /`         | Toggle comment.             |
-| `Ctrl + b`        | &#8984;`+ b`         | Toggle EXPLORER side bar.   |
+| Windows/Linux          | MacOS                | Action                     |
+| ---------------------- | -------------------- | -------------------------- |
+| `Ctrl + c`             | &#8984;`+ c`         | Copy                       |
+| `Ctrl + v`             | &#8984;`+ v`         | Paste                      |
+| `Ctrl + s`             | &#8984;`+ s`         | Save                       |
+| `Ctrl + Z`             | &#8984;`+ z`         | Undo                       |
+| `Ctrl + Y`             | &#8984;`+ Shift + Z` | Redo                       |
+| `Ctrl + f`             | &#8984;`+ f`         | Find                       |
+| `` Shift + Ctrl + ` `` | &#8984;`+ Shift + C` | Open a new terminal        |
+| `Shift + Alt + F`      | `Shift + Option + F` | Auto format text/code      |
+| `Alt + z`              | `Alt + z`            | Toggle word wrap in editor |
+| `Ctrl + /`             | &#8984;`+ /`         | Toggle comment             |
+| `Ctrl + b`             | &#8984;`+ b`         | Toggle EXPLORER side bar   |
 
 ### Browser
 
