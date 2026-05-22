@@ -1,5 +1,71 @@
 # Contributing
 
+Welcome. We are thrilled that you are interested in contributing to FarmData2. This document contains all the information that you need to get started.
+
+If you are new to Open Source contribution, or just new to FarmData2 this document the place to start. The document is ordered from top-to-bottom to provide what you need to know to begin contributing to FarmData2. Following along in order and exploring the links that it contains should tell you everything you need to know.
+
+## Ways to Contribute
+
+We welcome many different types of contributions:
+
+- **Documentation**: Improve the documentation in any way - from fixing typos and grammar to revising existing documentation for correctness and clarity, to adding new documentation to help others.
+- **Running Tests**: Run the test suite and report or confirm failing tests in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues). Be sure search for an existing report before creating a new one.
+- **Issue Gardening**: Help to keep the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) up to date and useful. Pick a ticket and check to see if the bug it reports still exist or the improvement it requests still make sense. Then report your findings and any clarifying information in a comment on the ticket in the issue tracker.
+- **Pull Request Reviews**: Find an [open pull request](https://github.com/FarmData2/FarmData2/pulls), check it out locally, build it, and test it. Let the maintainers know if the pull request accomplishes its purpose by adding a comment to the pull request reporting your findings.
+- **Bug Reporting**: Work with the FarmData2 application and use the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) to report any bugs you encounter.
+- **Improvement Suggestions**: Work with the FarmData2 application and propose your ideas for how FarmData2 can be improved in the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
+- **Bug Fixes**: Make a pull request for changes to the code or tests to fix a bug reported in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues).
+- **New Features**: Propose, discuss and provide feedback on new features in the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Then take the next step and make a pull request that implements a new feature.
+- **Other Ideas**: If you have other ideas for contributions, propose them on the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
+
+## Getting started
+
+The following are some things that you'll need to do to get started on the path to contributing to FarmData2.
+
+### 1. Review the Key FarmData2 Policies
+
+- [FarmData2 Code of Conduct](./CODE_OF_CONDUCT.md)
+- [FarmData2 Licensing](./LICENSE.md)
+- [FarmData2 AI Policy](./AI_POLICY.md)
+
+### 2. Join the FarmData2 Community
+
+The FarmData2 community uses the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com) as its primary tool for communications. It provides a place where you can search for answers and reach out to the community with questions.
+
+1. Create a account on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
+2. [Introduce Yourself](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers/topic/Introduce.20Yourself/with/496454405) to the FarmData2 community.
+3. Browse some the _channels_ on the FarmData2 Zulip chat
+   - [Newcomers](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers) - A channel created specifically as a place for newcomers to the FarmData2 community to ask questions.
+   - [Install](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) - A channel for questions about the installation of FarmData2.
+   - [Contributors](https://farmdata2.zulipchat.com/#narrow/channel/271292-Contributors) - A channel for FarmData2 contributors to ask questions, discuss issues and debate design decisions.
+   - [Suggestions](https://farmdata2.zulipchat.com/#narrow/channel/603478-Suggestions) - A channel for discussing suggestions for changes, additions or anything related to improving FarmData2.
+
+If you are new to Zulip, the [Getting Started with Zulip Page](https://zulip.com/help/getting-started-with-zulip) from the [Zulip Help Center](https://zulip.com/help/) provides a quick introduction.
+
+### 3. Install the FarmData2 Development Environment
+
+FarmData2 provides a [Codespaces](https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces) based development environment with all the necessary tools and dependencies automatically installed. This simplifies the process of getting up and working toward your first FarmData2 contribution.
+
+1. [Install the FarmData2 Development Environment](./INSTALL.md)
+
+### 4. Familiarize Yourself with FarmData2
+
+With your FarmData2 Development Environment up and running, you can now familiarize yourself with the FarmData2 application, its codebase and its documentation.
+
+1. Take [A Quick Tour of FarmData2](docs/contributing/tour.md)
+2. Get an [Overview of the FarmData2 Codebase](docs/contributing/codebase.md)
+
+## The FarmData2 Contribution Workflow
+
+Contributions of code and documentation to FarmData2 are made using a modified [forking workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow). Not every contribution will be the same, but the prototypical workflow will contain the following steps.
+
+
+
+
+
+
+
+
 - Split sections for
   - concise overview of workflow
   - new to OSS with all the details for workflow
@@ -29,101 +95,6 @@ Squash merge generally
   - Critial clearly copyrightable parts should be their own PR.
 
 
-
-Welcome. We are thrilled that you are interested in contributing to FarmData2. This document contains all the information that you need to get started.
-
-If you are new to Open Source contribution, or just new to FarmData2 this document the place to start. The document is ordered from top-to-bottom to provide what you need to know to begin contributing to FarmData2. Following along in order and exploring the links that it contains should tell you everything you need to know.
-
-<!--
-If you are an experienced Open Source contributor, you might just skim this document and then jump in by:
-
-- reviewing the [FarmData2 Code of Conduct](CODE_OF_CONDUCT.md).
-- reviewing the [FarmData2 Licensing](LICENSE.md).
-- look through the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues).
-- [installing the FarmData2 Development Environment](INSTALL.md).
-- reviewing the [Overview of the FarmData2 Codebase](docs/contributing/codebase.md).
-- becoming familiar with the [FarmData2 Contribution Workflow](#the-farmdata2-workflow).
-- referring to the [FarmData2 Documentation](docs/index.md) as necessary.
--->
-
-## Ways to Contribute
-
-We welcome different types of contributions:
-
-- Documentation: Improve the documentation in any way - from fixing typos and grammar to revising existing documentation for correctness and clarity, to adding new documentation to help others.
-- Running Tests: Run the test suite and report or confirm reported failing tests in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues).
-- Issue Gardening: Help to keep the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) up to date and useful by checking tickets to see if reported bugs still exist or requested improvements still make sense and then adding clarifying information to the associated issue tracker tickets.
-
-
-- Reviewing Pull Requests: 
-
-
-- Bug Reporting: Work with the FarmData2 application and use the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues) to report any bugs you encounter.
-- Improvement Suggestions: Work with the FarmData2 application and propose your ideas for how FarmData2 can be improved in the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
-- Bug Fixes: Make a pull request for changes to the code or tests to fix a bug reported in the [FarmData2 Issue Tracker](https://github.com/FarmData2/FarmData2/issues).
-- New Features: Propose, discuss and provide feedback on new features in the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Then take the next step and make a pull request that implements a new feature.
-- Other Ideas: If you have other ideas for contributions, propose them on the [suggestions topic](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
-
-## Getting started
-
-The following are some things that you'll need to do to get started on the path to contributing to FarmData2.
-
-### 1. Review FarmData2's Code of Conduct
-
-The FarmData2 community values an open, welcoming, inclusive, and harassment-free experience for all community members.
-
-Review the Code of Conduct before engaging with the FarmData2 community.
-
-- [FarmData2 Code of Conduct](CODE_OF_CONDUCT.md)
-
-### 2. Review FarmData2's Licensing
-
-We use a variety of licenses and agreements to guarantee that FarmData2 continues to be free and open source while protecting both the project and its community of contributors.
-
-Review the Licensing information before contributing to FarmData2.
-
-- [FarmData2 Licensing](LICENSE.md)
-
-
-### Review FarmData2's AI Policy
-
-
-### 3. Join the FarmData2 Community
-
-The FarmData2 community uses the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com) as its primary tool for communications. It provides a place where you can search for answers and reach out to the community with questions.
-
-Create a account and introduce yourself.
-
-- [Introduce Yourself](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/Introduce.20Yourself) - A stream where new developers can introduce themselves to the community.
-
-The [Getting Started with Zulip Page](https://zulip.com/help/getting-started-with-zulip) from the [Zulip Help Center](https://zulip.com/help/) provides a quick introduction on how to use Zulip if you want a some pointers.
-
-The following are links to some the Zulip _streams_ and _topics_ that you might find useful:
-
-- [Newcomer Questions](https://farmdata2.zulipchat.com/#narrow/stream/271292-developers/topic/Newcomer.20Questions) - A topic created specifically as a place for newcomers to FarmData2 to ask questions.
-- [Install](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) - A stream dedicated to questions about the installation of FarmData2.
-- [Developers](https://farmdata2.zulipchat.com/#narrow/stream/271292-developers) - A stream for developers to ask questions, discuss issues and debate design decisions.
-- [Suggestions](https://farmdata2.zulipchat.com/#narrow/stream/270883-general/topic/suggestions) - A topic for discussing suggestions for changes, additions or anything related to improving FarmData2.
-
-### 4. Install the FarmData2 Development Environment
-
-FarmData2 provides a containerized Linux-based development environment with all the necessary tools and dependencies already installed. This simplifies the process of getting up and working toward your first FarmData2 contribution.
-
-The `INSTALL.md` document gives descriptions and links to detailed instructions for different approaches to installing the FarmData2 Development Environment.
-
-- [Installing the FarmData2 Development Environment](INSTALL.md)
-
-### 5. Take a Tour
-
-With the FarmData2 Development Environment up and running, consider taking a tour of FarmData2 to familiarize yourself with what it does and how it works.
-
-- [Take a quick tour of FarmData2](docs/contributing/tour.md)
-
-### 6. Learn about FarmData2's Codebase
-
-Become familiar with the organization, terminology, and tools and technologies used by FarmData2.
-
-- [Overview of the FarmData2 Codebase](docs/contributing/codebase.md)
 
 ## The FarmData2 Workflow
 
