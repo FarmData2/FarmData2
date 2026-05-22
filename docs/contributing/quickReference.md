@@ -1,5 +1,14 @@
 # FarmData2 Development Environment Quick Reference
 
+## farmOS Credentials
+
+| User                   | Password    | Notes                                         |
+| ---------------------- | ----------- | --------------------------------------------- |
+| `manager1` (or `2`)    | `farmdata2` | A farmOS user with manager privileges.        |
+| `worker1` (or `2`-`5`) | `farmdata2` | A farmOS user with worker privileges.         |
+| `guest`                | `farmdata2` | A farmOS user with guest privileges.          |
+| `admin`                | `admin`     | The Drupal/farmOS user with admin privileges. |
+
 ## Keyboard Shortcuts
 
 ### Visual Studio Code IDE
@@ -56,30 +65,32 @@
 
 ### Building FarmData2 Modules
 
-| Command                   | Action                                                              |
-| ------------------------- | ------------------------------------------------------------------- |
-| `npm run build:fd2`       | Rebuild the `farm_fd2` module.                                      |
-| `npm run watch:fd2`       | Watch the `farm_fd2` module and rebuild when files change.          |
-| `npm run build:examples`  | Rebuild the `farm_fd2_examples` module.                             |
-| `npm run watch:examples`  | Watch the `farm_fd2_examples` module and rebuild when files change. |
-| `npm run build:school`    | Rebuild the `farm_fd2_school` module.                               |
-| `npm run watch:school`    | Watch the `farm_fd2_school` module and rebuild when files change.   |
-| `reinstallFD2Module.bash` | Reinstall the `farm_fd2_module` so that Drupal `install` hooks run. |
+| Command                  | Action                                                              |
+| ------------------------ | ------------------------------------------------------------------- |
+| `npm run build:fd2`      | Rebuild the `farm_fd2` module.                                      |
+| `npm run watch:fd2`      | Watch the `farm_fd2` module and rebuild when files change.          |
+| `npm run build:examples` | Rebuild the `farm_fd2_examples` module.                             |
+| `npm run watch:examples` | Watch the `farm_fd2_examples` module and rebuild when files change. |
+| `npm run build:school`   | Rebuild the `farm_fd2_school` module.                               |
+| `npm run watch:school`   | Watch the `farm_fd2_school` module and rebuild when files change.   |
+
+### (Re)Building the Documentation
+
+| Command            | Action                                                                 |
+| ------------------ | ---------------------------------------------------------------------- |
+| `npm run docs:gen` | Rebuild the component and library documentation from the source files. |
 
 ### Viewing farmOS JSON Schema
 
-| Command                             | Action                                                 |
-| ----------------------------------- | ------------------------------------------------------ |
-| `npm run printlog`                  | List the JSON structures in the farmOS schema.         |
-| `npm run printlog asset--equipment` | Print the JSON structure used for equipment assets.    |
-| `npm run printlog log--type`        | Replace `log--type` with the name of the log to print. |
-| `npm run printlog all`              | Print all JSON structures in the farmOS schema         |
+| Command                       | Action                                             |
+| ----------------------------- | -------------------------------------------------- |
+| `npm run printlog`            | List the JSON structures in the farmOS schema.     |
+| `npm run printlog <log type>` | Print the JSON structure used for <log type> logs. |
+| `npm run printlog all`        | Print all JSON structures in the farmOS schema.    |
 
-## farmOS Credentials
+### Working with Pull Requests
 
-| User                   | Password    | Notes                                         |
-| ---------------------- | ----------- | --------------------------------------------- |
-| `manager1` (or `2`)    | `farmdata2` | A farmOS user with manager privileges.        |
-| `worker1` (or `2`-`5`) | `farmdata2` | A farmOS user with worker privileges.         |
-| `guest`                | `farmdata2` | A farmOS user with guest privileges.          |
-| `admin`                | `admin`     | The Drupal/farmOS user with admin privileges. |
+| Command                    | Action                                                        |
+| -------------------------- | ------------------------------------------------------------- |
+| `fetchPR.bash <PR Number>` | Fetch the compare branch for pull request number <PR number>. |
+| `pushPR.bash <PR Number>`  | Push a fetched PR to upstream (requires write permission.     |
