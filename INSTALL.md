@@ -34,7 +34,7 @@ When you first start work on FarmData2 you will need to create a new FarmData2 C
    <img src="docs/install/images/post-create-running.png" alt='Message indicating that the postCreate command is running.' width=600 />
 
 9. When the Codespace is ready for use the following message will be displayed in the terminal:
-   
+
    ```text
    ===============================================
    The FarmData2 Development Environment is ready.
@@ -58,20 +58,7 @@ Codespaces can be stopped, restarted and deleted from your [Codespaces page on G
 
 <img src="docs/install/images/codespace-more-actions.png" alt='The "more actions" menu on the Codespaces page.' width=650 />
 
-When a FarmData2 codespace is restarted, the following message will appear indicating that the codespace is ready for use:
-
-```plaintext
-===============================================
-The FarmData2 Development Environment is ready.
-
-The following are available in the PORTS tab:
-  farmOS: https://localhost:443
-  noVNC: http://localhost:6901
-  docs: http://localhost:8082
-
-Happy coding!
-===============================================
-```
+When a FarmData2 codespace is restarted, the "The FarmData2 Development Environment is ready" message will appear again, indicating that the codespace is ready for use.
 
 - The [GitHub Codespaces documentation pages](https://docs.github.com/en/codespaces) provide more detail about stopping, starting and deleting Codespaces.
   - [Stopping and Starting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/stopping-and-starting-a-codespace)
@@ -94,7 +81,10 @@ When the Codespace for the FarmData2 Developer Environment opens a Visual Studio
 
   <img src="docs/install/images/codespace-vscode.png" alt='The Visual Studio Code IDE with the FarmData2 repository open.' width=600 />
 
-If you are new to the Visual Studio Code IDE, you might find this [guide to the User Interface](https://code.visualstudio.com/docs/getstarted/userinterface) helpful.
+If you are new to the Visual Studio Code IDE, you might find the following resources helpful:
+
+- A guide to the [Visual Studio Code IDE User Interface](https://code.visualstudio.com/docs/getstarted/userinterface)
+- The [FarmData2 Quick Reference](./docs/contributing/quickReference.md), which includes a list of helpful keyboard shortcuts.
 
 ### The Running farmOS Instance
 
@@ -136,7 +126,7 @@ The noVNC Server provides a Linux desktop interface to the running Codespace tha
 
    - This desktop will initially be empty as no tests are running.
 
-5. Return to the terminal in the Visual Studio Code IDE and enter the command:
+5. Enter the following command in a terminal in the Visual Studio Code IDE:
 
    ```Text
    test.bash --e2e --fd2 --live --glob=**/direct_seeding/*.e2e.cy.js --gui
@@ -170,15 +160,7 @@ The documentation server provides convenient access to the FarmData2 documentati
 
 3. The documentation server will open in a new browser tab and display the "Index of the FarmData2 Documentation."
 
-4. If you are new to FarmData2 consider reviewing the following key documents:
-
-   - `README.md`
-   - `AI_POLICY.md`
-   - `CODE_OF_CONDUCT.md`
-   - `LICENSE.md`
-   - `CONTRIBUTING.md`
-
-5. Briefly browse the other topics to familiarize yourself with the documentation that is available.
+4. Briefly browse the topics to familiarize yourself with the documentation that is available.
 
 <!-- vale RedHat.Definitions = YES -->
 
