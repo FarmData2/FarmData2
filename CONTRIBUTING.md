@@ -2,8 +2,6 @@
 
 Welcome. We are thrilled that you are interested in contributing to FarmData2. This document contains all the information that you need to get started.
 
-If you are new to Open Source contribution, or just new to FarmData2 this document the place to start. The document is ordered from top-to-bottom to provide what you need to know to begin contributing to FarmData2. Following along in order and exploring the links that it contains should tell you everything you need to know.
-
 ## Ways to Contribute
 
 We welcome many different types of contributions:
@@ -22,15 +20,17 @@ We welcome many different types of contributions:
 
 The following are some things that you'll need to do to get started on the path to contributing to FarmData2.
 
-### 1. Review the Key FarmData2 Policies
+### 1. Review the FarmData2 Policies
 
-- [FarmData2 Code of Conduct](./CODE_OF_CONDUCT.md)
-- [FarmData2 Licensing](./LICENSE.md)
-- [FarmData2 AI Policy](./AI_POLICY.md)
+The following documents contain the essential FarmData2 policies.
+
+1. [FarmData2 Code of Conduct](./CODE_OF_CONDUCT.md)
+2. [FarmData2 Licensing](./LICENSE.md)
+3. [FarmData2 AI Policy](./AI_POLICY.md)
 
 ### 2. Join the FarmData2 Community
 
-The FarmData2 community uses the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com) as its primary tool for communications. It provides a place where you can search for answers and reach out to the community with questions.
+The FarmData2 community uses the [Zulip](https://zulip.com/) for communications.
 
 1. Create a account on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
 2. [Introduce Yourself](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers/topic/Introduce.20Yourself/with/496454405) to the FarmData2 community.
@@ -44,7 +44,7 @@ If you are new to Zulip, the [Getting Started with Zulip Page](https://zulip.com
 
 ### 3. Install the FarmData2 Development Environment
 
-FarmData2 provides a [Codespaces](https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces) based development environment with all the necessary tools and dependencies automatically installed. This simplifies the process of getting up and working toward your first FarmData2 contribution.
+FarmData2 provides a [Codespaces](https://docs.github.com/en/codespaces/about-codespaces/what-are-codespaces) based development environment that simplifies the process of contributing.
 
 1. [Install the FarmData2 Development Environment](./INSTALL.md)
 
@@ -52,16 +52,43 @@ FarmData2 provides a [Codespaces](https://docs.github.com/en/codespaces/about-co
 
 With your FarmData2 Development Environment up and running, you can now familiarize yourself with the FarmData2 application, its codebase and its documentation.
 
-1. Take [A Quick Tour of FarmData2](docs/contributing/tour.md)
-2. Get an [Overview of the FarmData2 Codebase](docs/contributing/codebase.md)
+1. Take [A Quick Tour of FarmData2](docs/contributing/tour.md).
+2. Get an [Overview of the FarmData2 Codebase](docs/contributing/codebase.md).
+3. Browse the [FarmData2 Documentation](docs/index.md) to get an idea of what is available.
 
-## The FarmData2 Contribution Workflow
+### 5. Use the FarmData2 Contribution Workflow
 
-Contributions of code and documentation to FarmData2 are made using a modified [forking workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow). Not every contribution will be the same, but the prototypical workflow will contain the following steps.
+Contributions of code and documentation to FarmData2 are made using a modified [forking workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow). Not every contribution will be the same, but the prototypical workflow will contain the following steps. **Click the step number to see more detailed information about the step.**
+
+<!-- eslint disable no-heading-punctuation maximum-heading-length -->
+<!-- prettier-ignore-start -->
+<!-- vale RedHat.HeadingPunctuation = NO -->
+<!-- vale Google.HeadingPunctuation = NO -->
+<!-- vale Microsoft.HeadingPunctuation = NO -->
+
+> #### [0.](./docs/contributing/workflow/0.md) Prerequisite Knowledge.
+> #### [1.](./docs/contributing/workflow/1.md) Find something to work on.
+> #### [2.](./docs/contributing/workflow/2.md) Comment on the issue that you found.
+> #### [3.](./docs/contributing/workflow/3.md) Create or Restart the FarmData2 development environment codespace.
+> #### [4.](./docs/contributing/workflow/4.md) Synchronize your `development` branch with the upstream repository.
+> #### [5.](./docs/contributing/workflow/5.md) Create and switch to a new feature branch.
+6. Make, test and commit changes to your feature branch. Repeat as necessary.
+> #### [7.](./docs/contributing/workflow/7.md) Merge changes to the upstream `development` branch into your feature branch.
+> #### [8.](./docs/contributing/workflow/8.md) Push your feature branch to your fork on GitHub.
+> #### [9.](./docs/contributing/workflow/9.md) Create a pull request asking to merge your feature branch into the upstream `development` branch.
+10. Respond to all comments, questions, suggestions that you receive on your pull request.
+11. Iterate on steps 7-11 as necessary until your contribution is accepted.
+12. Celebrate your accomplishment. &#x1F389;
+
+<!-- eslint enable no-heading-punctuation maximum-heading-length -->
+<!-- prettier-ignore-end -->
+<!-- vale RedHat.HeadingPunctuation = YES -->
+<!-- vale Google.HeadingPunctuation = YES -->
+<!-- vale Microsoft.HeadingPunctuation = YES -->
 
 
 
-
+LINK in the quick reference here somewhere.
 
 
 
@@ -98,7 +125,10 @@ Squash merge generally
 
 ## The FarmData2 Workflow
 
-FarmData2 uses a modified [forking workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) to accept contributions from the community. Not every contribution will be the same, but the prototypical workflow will contain the following steps.
+
+
+
+
 
 Note that the following instructions assume that you are working within the FarmData2 Development Environment.
 

@@ -94,3 +94,21 @@
 | -------------------------- | ------------------------------------------------------------- |
 | `fetchPR.bash <PR Number>` | Fetch the compare branch for pull request number <PR number>. |
 | `pushPR.bash <PR Number>`  | Push a fetched PR to upstream (requires write permission.     |
+
+## Git Commands
+| Command                    | Action                                                        |
+| -------------------------- | ------------------------------------------------------------- |
+| `cd ~/FarmData2`           | Change to the root directory of the FarmData2 repository.     |
+| `git status`               | Display the current branch, modified, and staged files.       |
+| `git switch development`   | Switch to the `development` branch.                           |
+| `git pull upstream development` | Synchronize with the upstream `development` branch.      |
+| `git branch <name>`             | Create a new branch <name>.                              |
+| `git switch <name>`             | Switch to the branch <name>`                             |
+
+## Linux CLI Commands
+| Command                    | Action                                                        |
+| -------------------------- | ------------------------------------------------------------- |
+| `pwd`
+| `ls`
+| `cd <path>`
+
