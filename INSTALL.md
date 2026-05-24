@@ -10,47 +10,49 @@ If you run into problems during the install visit the dedicated [install channel
 
 When you first start work on FarmData2 you will need to create a new FarmData2 Codespace.
 
-1. Login to your [GitHub account](https://github.com/login).
+1. Use a [Browser based on Chromium](<https://en.wikipedia.org/wiki/Chromium_(web_browser)#Browsers_based_on_Chromium>). Github Codespaces is optimized for chromium based browsers and some features may not work if a non-chromium browser is used.
 
-2. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
+2. Login to your [GitHub account](https://github.com/login).
 
-3. Find your fork of the FarmData2 repository in [your GitHub space](https://github.com/).
+3. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
 
-4. Click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> "Code" button:  
+4. Find your fork of the FarmData2 repository in [your GitHub space](https://github.com/).
+
+5. Click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> "Code" button:  
    <img src="docs/install/images/code-button.png" alt='The GitHub "Code" Button.' width=100 />
 
-5. Click the "Codespaces" tab and then click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> button labeled "Create codespace on development."  
+6. Click the "Codespaces" tab and then click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> button labeled "Create codespace on development."  
    <img src="docs/install/images/codespace-button.png" alt='The GitHub "Create codespace on development" button.' width=400 />
 
-6. After a few moments the browser will change to show a Visual Studio Code interface and a small dialog box will appear in the lower right corner indicating that the GitHub Codespace is being built.  
+7. After a few moments the browser will change to show a Visual Studio Code interface and a small dialog box will appear in the lower right corner indicating that the GitHub Codespace is being built.  
    <img src="docs/install/images/building-codespace.png" alt='Dialog box indicating that the Codespace is being built.' width=400 />
 
-7. Wait patiently… Creating the new Codespace takes some time (up to 10 minutes).
+8. Wait patiently… Creating the new Codespace takes some time (up to 10 minutes).
 
    - You can click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->blue<!-- vale RedHat.DoNotUseTerms = YES --> "Building codespace…" text to display the output of the build process in the terminal if you want to see what is happening as the Codespace is built.
 
-8. About half way through the installation the following message will be displayed in the terminal indicating the development container has been created and is now being configured:
+9. About half way through the installation the following message will be displayed in the terminal indicating the development container has been created and is now being configured:
 
    <img src="docs/install/images/post-create-running.png" alt='Message indicating that the postCreate command is running.' width=600 />
 
-9. When the Codespace is ready for use the following message will be displayed in the terminal:
+10. When the Codespace is ready for use the following message will be displayed in the terminal:
 
-   ```text
-   ===============================================
-   The FarmData2 Development Environment is ready.
+    ```text
+    ===============================================
+    The FarmData2 Development Environment is ready.
 
-   The following are available in the PORTS tab:
-     farmOS: https://localhost:443
-     noVNC: http://localhost:6901
-     docs: http://localhost:8082
+    The following are available in the PORTS tab:
+      farmOS: https://localhost:443
+      noVNC: http://localhost:6901
+      docs: http://localhost:8082
 
-   Happy coding!
-   ===============================================
-   ```
+    Happy coding!
+    ===============================================
+    ```
 
-   - Notes:
-     - Starting to work before this message is displayed might result in errors.
-     - If any errors have occurred the message will contain information about steps to take.
+    - Notes:
+      - Starting to work before this message is displayed might result in errors.
+      - If any errors have occurred the message will contain information about steps to take.
 
 ## Stopping / Restarting / Deleting your FarmData2 Codespace
 
