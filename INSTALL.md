@@ -6,6 +6,15 @@ This document describes how to run the FarmData2 Development Environment in a Gi
 
 If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
 
+## GitHub Codespaces
+
+<!-- vale RedHat.Slash = NO -->
+<!-- Allow hours/month etc. -->
+
+The FarmData2 development environment runs in GitHub codespaces. GitHub provides all users with 120 core hours/month and 15 GB/month of storage at no cost. This is enough free time and storage to run the FarmData2 development environment for 60 hours per month. For users with a GitHub Pro subscription receive 180 core hours/month and 20 GB/month of storage, which is enough to run the environment for 80 hours/month. [Students](https://github.com/education/students) and [teachers](https://github.com/education/teachers) can join to [GitHub Education](https://github.com/education) and receive 180 core hours/month and 20 GB/month of storage plus other educational benefits.
+
+<!-- vale RedHat.Slash = YES -->
+
 ## Creating a FarmData2 Codespace
 
 When you first start work on FarmData2 you will need to create a new FarmData2 Codespace.
