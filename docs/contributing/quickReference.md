@@ -95,8 +95,6 @@
 | `fetchPR.bash <PR Number>` | Fetch the compare branch for pull request number <PR number>. |
 | `pushPR.bash <PR Number>`  | Push a fetched PR to upstream (requires write permission.     |
 
-[Coauthors Generator](https://coauthors.me/generator)
-
 ## Git Commands
 
 | Command                         | Action                                                      |
@@ -117,3 +115,6 @@
 | `ls`
 | `cd <path>`
 
+## Workflow
+
+[Coauthors Generator](https://coauthors.me/generator)
