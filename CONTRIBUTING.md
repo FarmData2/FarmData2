@@ -76,9 +76,9 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 > #### [7.](./docs/contributing/workflow/7.md) Merge changes to the upstream `development` branch into your feature branch.
 > #### [8.](./docs/contributing/workflow/8.md) Push your feature branch to your fork on GitHub.
 > #### [9.](./docs/contributing/workflow/9.md) Create a pull request asking to merge your feature branch into the upstream `development` branch.
-10. Respond to all comments, questions, suggestions that you receive on your pull request.
-11. Iterate on steps 7-11 as necessary until your contribution is accepted.
-12. Celebrate your accomplishment. &#x1F389;
+> #### [10.](./docs/contributing/workflow/10.md) Request a Copilot Pull Request Review (optional).
+> #### [11.](./docs/contributing/workflow/11.md) Address all comments, questions, and suggestions. Commit, push and repeat.
+> #### 12. Get your PR merged and celebrate your accomplishment. &#x1F389;
 
 <!-- eslint enable no-heading-punctuation maximum-heading-length -->
 <!-- prettier-ignore-end -->

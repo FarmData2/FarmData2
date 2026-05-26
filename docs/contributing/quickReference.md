@@ -82,11 +82,11 @@
 
 ### Viewing farmOS JSON Schema
 
-| Command                       | Action                                             |
-| ----------------------------- | -------------------------------------------------- |
-| `npm run printlog`            | List the JSON structures in the farmOS schema.     |
-| `npm run printlog <log type>` | Print the JSON structure used for <log type> logs. |
-| `npm run printlog all`        | Print all JSON structures in the farmOS schema.    |
+| Command                       | Action                                               |
+| ----------------------------- | ---------------------------------------------------- |
+| `npm run printlog`            | List the JSON structures in the farmOS schema.       |
+| `npm run printlog <log_type>` | Print the JSON structure used for `<log_type>` logs. |
+| `npm run printlog all`        | Print all JSON structures in the farmOS schema.      |
 
 ### Working with Pull Requests
 
@@ -95,15 +95,20 @@
 | `fetchPR.bash <PR Number>` | Fetch the compare branch for pull request number <PR number>. |
 | `pushPR.bash <PR Number>`  | Push a fetched PR to upstream (requires write permission.     |
 
+[Coauthors Generator](https://coauthors.me/generator)
+
 ## Git Commands
-| Command                    | Action                                                        |
-| -------------------------- | ------------------------------------------------------------- |
-| `cd ~/FarmData2`           | Change to the root directory of the FarmData2 repository.     |
-| `git status`               | Display the current branch, modified, and staged files.       |
-| `git switch development`   | Switch to the `development` branch.                           |
-| `git pull upstream development` | Synchronize with the upstream `development` branch.      |
-| `git branch <name>`             | Create a new branch <name>.                              |
-| `git switch <name>`             | Switch to the branch <name>`                             |
+
+| Command                         | Action                                                      |
+| ------------------------------- | ----------------------------------------------------------- |
+| `cd ~/FarmData2`                | Change to the root directory of the FarmData2 repository.   |
+| `git status`                    | Display the current branch, modified, and staged files.     |
+| `git switch development`        | Switch to the `development` branch.                         |
+| `git pull upstream development` | Synchronize with the upstream `development` branch.         |
+| `git branch <branch_name>`      | Create a new branch named `<branch_name>`.                  |
+| `git switch <branch_name>`      | Switch to the branch named `<branch_name>`.                 |
+| `git push origin <branch_name>` | Push the branch named `<branch_name>` to your GitHub space. |
+
 
 ## Linux CLI Commands
 | Command                    | Action                                                        |

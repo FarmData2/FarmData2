@@ -24,8 +24,8 @@
 
 ### Licensing Certification
 
-- [ ] **I attest that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.**
+- [ ] **I attest that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.** Place an X between the [ ] or check the box in the opened pull request to complete the attestation.
 
 ### Attributions
 
-> _Add a `Co-authored-by: name <address>` attribution for any human collaborator who does not have a commit in this PR. Use the [Coauthors Generator](https://coauthors.me/generator) to get a Co-authored-by line from a GitHub user's id. Also Add an `Assisted-by: model, version` line for each AI model (if any) that were used._
+> _Add a `Co-authored-by`, `Assisted-by` and `Generated-by` footers as described in the pull request step in CONTRIBUTING.md._

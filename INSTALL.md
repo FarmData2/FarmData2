@@ -11,7 +11,9 @@ If you run into problems during the install visit the dedicated [install channel
 <!-- vale RedHat.Slash = NO -->
 <!-- Allow hours/month etc. -->
 
-The FarmData2 development environment runs in GitHub codespaces. GitHub provides all users with 120 core hours/month and 15 GB/month of storage at no cost. This is enough free time and storage to run the FarmData2 development environment for 60 hours per month. For users with a GitHub Pro subscription receive 180 core hours/month and 20 GB/month of storage, which is enough to run the environment for 80 hours/month. [Students](https://github.com/education/students) and [teachers](https://github.com/education/teachers) can join to [GitHub Education](https://github.com/education) and receive 180 core hours/month and 20 GB/month of storage plus other educational benefits.
+The FarmData2 development environment runs in GitHub codespaces. GitHub provides all users with 120 core hours/month and 15 GB/month of storage at no cost. This is enough free time and storage to run the FarmData2 development environment for 60 hours per month. [Students](https://github.com/education/students) and [teachers](https://github.com/education/teachers) can join to [GitHub Education](https://github.com/education) and receive 180 core hours/month and 20 GB/month of storage (plus other educational benefits), which is enough to run the environment for 80 hours/month. 
+
+If you find you are exceeding your allotted Codespaces usage limits you can [add payment information](https://docs.github.com/en/billing/how-tos/set-up-payment/manage-payment-info) and [setup budgets](https://docs.github.com/en/billing/how-tos/set-up-budgets) to place monthly limits on costs.
 
 <!-- vale RedHat.Slash = YES -->
 
