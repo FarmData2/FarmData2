@@ -81,22 +81,10 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 > #### 12. Get your PR merged and celebrate your accomplishment. &#x1F389;
 
 <!-- eslint enable no-heading-punctuation maximum-heading-length -->
-<!-- prettier-ignore-end -->
 <!-- vale RedHat.HeadingPunctuation = YES -->
 <!-- vale Google.HeadingPunctuation = YES -->
 <!-- vale Microsoft.HeadingPunctuation = YES -->
-
-
-
-LINK in the quick reference here somewhere.
-
-
-
-
-- Split sections for
-  - concise overview of workflow
-  - new to OSS with all the details for workflow
-  - ai pieces including attribution and use of skills for commits and prs with ai
+<!-- prettier-ignore-end -->
 
 
 WORKFLOW STUFF: PUT IN CONTRIBUTING?
@@ -127,6 +115,7 @@ Squash merge generally
 
 
 
+******* REVIEW ALL OF THIS AND COMPARE TO THE STEP DETAIL DOCUMENTS TO BE SURE WE GOT EVERYTHING!!!!!
 
 
 
