@@ -72,13 +72,14 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 > #### [3.](./docs/contributing/workflow/3.md) Create or Restart the FarmData2 development environment codespace.
 > #### [4.](./docs/contributing/workflow/4.md) Synchronize your `development` branch with the upstream repository.
 > #### [5.](./docs/contributing/workflow/5.md) Create and switch to a new feature branch.
-> #### [6.](./docs/contributing/workflow/6.md) Make, test and commit changes to your feature branch. Repeat as necessary.
-> #### [7.](./docs/contributing/workflow/7.md) Merge changes to the upstream `development` branch into your feature branch.
-> #### [8.](./docs/contributing/workflow/8.md) Push your feature branch to your fork on GitHub.
-> #### [9.](./docs/contributing/workflow/9.md) Create a pull request asking to merge your feature branch into the upstream `development` branch.
-> #### [10.](./docs/contributing/workflow/10.md) Request a Copilot Pull Request Review (optional).
-> #### [11.](./docs/contributing/workflow/11.md) Address all comments, questions, and suggestions.
-> #### 12. Get your PR merged and celebrate your accomplishment. &#x1F389;
+> #### [6.](./docs/contributing/workflow/6.md) Make and test changes.
+> #### [7.](./docs/contributing/workflow/7.md) Commit changes to your feature branch.
+> #### [8.](./docs/contributing/workflow/8.md) Merge changes to the upstream `development` branch into your feature branch.
+> #### [9.](./docs/contributing/workflow/9.md) Push your feature branch to your fork on GitHub.
+> #### [10.](./docs/contributing/workflow/10.md) Create a pull request asking to merge your feature branch into the upstream `development` branch.
+> #### [11.](./docs/contributing/workflow/11.md) Request a Copilot Pull Request Review (optional).
+> #### [12.](./docs/contributing/workflow/12.md) Address all comments, questions, and suggestions.
+> #### 13. Get your PR merged and celebrate your accomplishment. &#x1F389;
 
 <!-- eslint enable no-heading-punctuation maximum-heading-length -->
 <!-- vale RedHat.HeadingPunctuation = YES -->
@@ -114,65 +115,8 @@ Squash merge generally
 ## The FarmData2 Workflow
 
 
-
 ******* REVIEW ALL OF THIS AND COMPARE TO THE STEP DETAIL DOCUMENTS TO BE SURE WE GOT EVERYTHING!!!!!
 
-
-
-
-
-
-
-### 5. Make and Test your Changes
-
-Open the _VSCodium IDE_ and edit the contents of the files in your local FarmData2 repository to address the issue.
-
-If your work requires more than one change you should iterate between this step and the following step until you fully solve the issue.
-
-Depending upon what you are working on, one of the following guides might be helpful:
-
-- [Working on a Vue.js Component or Example](docs/contributing/components.md)
-- [Working on Documentation](docs/contributing/documentation.md)
-- [Working on an Entry Point](docs/contributing/entry-points.md)
-- [Working on Infrastructure](docs/maintainers/infrastructure.md)
-- [Working on a Library](docs/contributing/libraries.md)
-
-### 6. Commit your Changes to your Feature Branch
-
-Each time you complete a _nameable unit of work_ (for example a function, a test, or adding a form element) commit the changes to your feature branch. Use a commit message for your commit that will help you identify it if you need to roll back to that commit later.
-
-```bash
-git stage <files>
-git commit -m "message that describes the changes"
-```
-
-#### Pre-Commit Checks
-
-When you make your commit, a <!-- vale alex.ProfanityUnlikely = NO : hook is standard terminology here. -->_pre-commit git hook_<!-- vale alex.ProfanityUnlikely = NO --> in the FarmData2 Development Environment will run and perform a set of checks on the files that you are committing.
-
-These checks include things such as:
-
-- Checking code for:
-  - Proper formatting
-  - Spelling errors
-  - Linting issues (common coding or stylistic mistakes)
-  - Correctness (new and existing tests for staged files must pass)
-- Checking documentation for:
-  - Spelling errors
-  - Broken links
-  - Use of inclusive language
-
-<!-- vale alex.ProfanityUnlikely = NO : failure refers to an automated test not a person here. -->
-
-If any of the pre-commit checks fail, the reasons for the failure will be displayed and the commit will not be made.
-
-If a commit fails you will need to:
-
-- Address the reason for the failure.
-- Stage any files that you modified in addressing the failure.
-- Try the commit again.
-
-<!-- vale alex.ProfanityUnlikely = YES -->
 
 ### 7. Push Your Feature Branch
 
