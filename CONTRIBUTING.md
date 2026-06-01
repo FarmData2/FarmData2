@@ -88,23 +88,11 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 <!-- prettier-ignore-end -->
 
 
-WORKFLOW STUFF: PUT IN CONTRIBUTING?
-
-        Disclosures are made where authorship is normally indicated. For contributions tracked in git, the recommended method is an Assisted-by: commit message trailer. For other contributions, disclosure may include document preambles, design file metadata, translation notes, or wiki page categories.
-
-
-            Assisted-by: <model>, <version>
-
-        Examples:
-            Assisted-by: GPT-4.5
-            Assisted-by: Claude 3.7 Sonnet
-
 All contributions must be submitted by a human author.
 As per the contributing document you may:
 - Create a Pull Request manually
 - Use the Pull Request skill
-WORKFLOW STUFF... put in CONTRIBUTING?
-Approval at each step in agent plan execution - no changes made without explicit human approval.
+
 
 Squash merge generally
   - admittedly introduces provenance issues when AI assists.

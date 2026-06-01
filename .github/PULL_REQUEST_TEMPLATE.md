@@ -28,4 +28,4 @@
 
 ### Attributions
 
-> _Add a `Co-authored-by`, `Assisted-by` and `Generated-by` footers as described in the pull request step in CONTRIBUTING.md._
+> _Add a `Co-authored-by`, `Assisted-by` and `Generated-by` footers as described in the pull request step in CONTRIBUTING.md._. Leave one blank line between the "Attributes" header and the first footer.
