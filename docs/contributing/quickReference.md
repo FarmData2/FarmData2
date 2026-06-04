@@ -36,7 +36,7 @@
 
 ## FarmData2 Commands
 
-### Test Commands
+### Testing
 
 | Command                                                    | Action                                                           |
 | ---------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -63,7 +63,7 @@
 
 <!-- vale Microsoft.Vocab = YES -->
 
-### Building FarmData2 Modules
+### Building Modules
 
 | Command                  | Action                                                              |
 | ------------------------ | ------------------------------------------------------------------- |
@@ -73,6 +73,14 @@
 | `npm run watch:examples` | Watch the `farm_fd2_examples` module and rebuild when files change. |
 | `npm run build:school`   | Rebuild the `farm_fd2_school` module.                               |
 | `npm run watch:school`   | Watch the `farm_fd2_school` module and rebuild when files change.   |
+
+### Creating Components and Entrypoints
+
+| Command                      |                                                           |
+| ---------------------------- | --------------------------------------------------------- |
+| `addComponent.bash`          | Create a new component and its associated example page.   |
+| `addEntryPoint.bash`         | Create a new entrypoint in one of the FarmData2 modules.  |
+| `removeComments.bash <file>` | Remove the comments from the `App.vue` or `lib.js` files. |
 
 ### (Re)Building the Documentation
 
@@ -90,31 +98,24 @@
 
 ### Working with Pull Requests
 
-| Command                    | Action                                                        |
-| -------------------------- | ------------------------------------------------------------- |
-| `fetchPR.bash <PR Number>` | Fetch the compare branch for pull request number <PR number>. |
-| `pushPR.bash <PR Number>`  | Push a fetched PR to upstream (requires write permission.     |
+| Command                    | Action                                                      |
+| -------------------------- | ----------------------------------------------------------- |
+| `fetchPR.bash <pr_number>` | Fetch compare branch for pull request `<pr_number>`.        |
+| `pushPR.bash <pr_number>`  | Push fetched compare branch for pull request `<pr_number>`. |
 
 ## Git Commands
 
-| Command                         | Action                                                      |
-| ------------------------------- | ----------------------------------------------------------- |
-| `cd ~/FarmData2`                | Change to the root directory of the FarmData2 repository.   |
-| `git status`                    | Display the current branch, modified, and staged files.     |
-| `git switch development`        | Switch to the `development` branch.                         |
-| `git pull upstream development` | Synchronize with the upstream `development` branch.         |
-| `git branch <branch_name>`      | Create a new branch named `<branch_name>`.                  |
-| `git switch <branch_name>`      | Switch to the branch named `<branch_name>`.                 |
-| `git push origin <branch_name>` | Push the branch named `<branch_name>` to your GitHub space. |
+| Command                                   | Action                                                      |
+| ----------------------------------------- | ----------------------------------------------------------- |
+| `cd ~/FarmData2`                          | Change to the root directory of the FarmData2 repository.   |
+| `git status`                              | Display the current branch, modified, and staged files.     |
+| `git switch development`                  | Switch to the `development` branch.                         |
+| `git pull --ff-only upstream development` | Synchronize with the upstream `development` branch.         |
+| `git branch <branch_name>`                | Create a new branch named `<branch_name>`.                  |
+| `git switch <branch_name>`                | Switch to the branch named `<branch_name>`.                 |
+| `git push origin <branch_name>`           | Push the branch named `<branch_name>` to your GitHub space. |
 
+## Miscellaneous
 
-## Linux CLI Commands
-| Command                    | Action                                                        |
-| -------------------------- | ------------------------------------------------------------- |
-| `pwd`
-| `ls`
-| `cd <path>`
-
-## Workflow
-
-[Coauthors Generator](https://coauthors.me/generator)
+- [Workflow Steps](../../CONTRIBUTING.md#5-use-the-farmdata2-contribution-workflow)
+- [Coauthors Generator](https://coauthors.me/generator)
