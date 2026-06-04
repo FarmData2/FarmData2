@@ -30,7 +30,7 @@ The following documents contain the essential FarmData2 policies.
 
 ### 2. Join the FarmData2 Community
 
-The FarmData2 community uses the [Zulip](https://zulip.com/) for communications.
+The FarmData2 community uses [Zulip](https://zulip.com/) for communications.
 
 1. Create a account on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com).
 2. [Introduce Yourself](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers/topic/Introduce.20Yourself/with/496454405) to the FarmData2 community.
@@ -87,87 +87,4 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 <!-- vale Microsoft.HeadingPunctuation = YES -->
 <!-- prettier-ignore-end -->
 
-
-All contributions must be submitted by a human author.
-As per the contributing document you may:
-- Create a Pull Request manually
-- Use the Pull Request skill
-
-
-Squash merge generally
-  - admittedly introduces provenance issues when AI assists.
-  - Critial clearly copyrightable parts should be their own PR.
-
-
-
-## The FarmData2 Workflow
-
-
-******* REVIEW ALL OF THIS AND COMPARE TO THE STEP DETAIL DOCUMENTS TO BE SURE WE GOT EVERYTHING!!!!!
-
-
-### 7. Push Your Feature Branch
-
-Push your feature branch to your `origin` repository on GitHub. Be sure to replace the text `MyFeatureBranch` with the name of your feature branch.
-
-```bash
-git push origin MyFeatureBranch
-```
-
-At this point you might:
-
-- go back to [Step #5](#5-make-and-test-your-changes) and add more changes to your feature branch.
-- continue to the next step and create a draft pull request to let the maintainers know what you are working on and get some preliminary feedback.
-- go to [Step #10](#10-merge-development-branch-into-your-feature-branch) and then [Step #11](#11-mark-your-pull-request-as-ready-for-review) to let the maintainers know your pull request is ready for them to review and consider merging it.
-
-### 8. Create a Draft Pull Request
-
-As you are working on your change you can create a [_draft pull request_](https://github.blog/2019-02-14-introducing-draft-pull-requests/). Creating a draft pull request lets the maintainers know you are working on an issue. It makes your work visible to them, but also makes it clear that your pull request is still a work in progress and not ready for a full review. Draft pull requests are a great way to begin a discussion about what you are doing and get some feedback on your work.
-
-To create a draft pull request:
-
-- Visit your fork of FarmData2 (your `origin`) on GitHub
-- [Create the draft pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) for your feature branch.
-  - When following the linked directions be sure to use:
-    - the `upstream` FarmData2 repository as the "base repository"
-    - `development` as the "base branch"
-    - your `origin` as the "head repository"
-    - your feature branch as the "compare branch"
-
-When you create a new pull request for FarmData2 it will be pre-populated with a template. Each section of the template includes a comment describing what content should be provided in that section. The comments and any unused sections will need to be removed before creating the pull request.
-
-**Be sure to read the "Licensing Certification" section and review the [Developer Certificate of Origin](https://developercertificate.org/) and then check the box.**. Your pull request will not be able to be merged if you do not check the box.
-
-### 9. Discuss and Repeat
-
-If your pull request is ready for review, go to the next step.
-
-Otherwise, go back to [Step #5](#5-make-and-test-your-changes) and continue working on your changes. But, be sure to check your draft pull request frequently for comments, feedback or questions from the maintainers and respond to them.
-
-### 10. Merge `development` Branch into your Feature Branch
-
-The `development` branch might have had new commits added to it since you began your work. These changes might conflict with your changes. To resolve any conflicts you should merge the current `development` branch into your feature branch and resolve any merge conflicts.
-
-```bash
-git switch development
-git pull --ff-only upstream development
-git push origin development
-git switch MyFeatureBranch
-git merge development
-<Resolve Any Merge Conflicts>
-git push origin MyFeatureBranch
-```
-
-### 11. Mark Your Pull Request as Ready for Review
-
-When you think you have finished your changes and are ready to have the maintainers review them [mark your pull request as ready for review](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request#marking-a-pull-request-as-ready-for-review)
-
-Maintainer will review (or assign reviewers) and then take one of three actions:
-
-- If everything looks good, they will merge your changes into the `development` branch.
-- If they have questions or want to see further changes they will comment on the pull request and mark it as a draft pull request again. In this case you will want to review the feedback and respond to it in the comments or by making more changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and pushing them ([Step #7](#7-push-your-feature-branch)) to update your pull request.
-- If the maintainers determine that your pull request is not suitable for merging into development (even with changes), they will close the pull request with a comment explaining their decision.
-
-### 12. Respond to comments, suggestions, requests for changes
-
-Review your pull request for comments, feedback or questions from the maintainers and respond to them. This might require you to make more changes ([Step #5](#5-make-and-test-your-changes) and [Step #6](#6-commit-your-changes-to-your-feature-branch)) and to push them ([Step #7](#7-push-your-feature-branch)) to update your pull request. When your pull request has addressed all the changes requested by the maintainers, merge the `development` branch again ([Step #10](#10-merge-development-branch-into-your-feature-branch)) and mark your pull request as ready for review ([Step #11](#11-mark-your-pull-request-as-ready-for-review))
+If you have any questions about the workflow, reach out on the FarmData2 [Newcomers](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers) or [Contributors](https://farmdata2.zulipchat.com/#narrow/channel/271292-Contributors) channels on Zulip.
