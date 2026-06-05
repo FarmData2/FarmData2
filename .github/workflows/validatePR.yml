@@ -1,4 +1,4 @@
-name: Validate the pull request title and description
+name: Validate the pull request body.
 description: 'Checks that the PR meets the requirements.'
 
 # The requirements are:
