@@ -19,7 +19,7 @@ jobs:
         id: dco
         env:
           BODY: ${{ github.event.pull_request.body }}
-          DCO_CHECKBOX: 'I certify that myself and any co-authors'
+          DCO_CHECKBOX: 'I attest that myself and any co-authors'
         run: |
           # This is the string used to find the DCO check box.
           UNCHECKED="\[ \] .*$DCO_CHECKBOX.*"
