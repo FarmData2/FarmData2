@@ -1,0 +1,42 @@
+name: New PR
+description: 'Handles new pull requests.'
+
+# Ensures that all new pull requests are marked as draft.
+# Adds a comment to all new pull requests with basic info.
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  make_draft_and_comment:
+    name: Make draft and comment
+    runs-on: ubuntu-latest
+    steps:
+      # Ensure the PR is a draft.
+      - name: Convert PR to draft
+        if: github.event.action == 'opened' && github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr ready --undo ${{ github.event.pull_request.html_url }}
+
+      # Add a comment with basic information to all new pull requests.
+      - name: Add new PR comment
+        if: github.event.action == 'opened'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+        issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Thank you for your pull request. 
+            
+            Note that all new pull requests to FarmData2 are [opened as draft pull requests](). When you believe your work is complete, consider [requesting a CoPilot review]() and then [mark your pull request as ready for review]() and a maintainer will review it as soon as possible. 
+            
+            If you have questions as you work you can get in touch via:
+            - comments on this pull request.
+            - comments on the associated issue(s).
+            - the [Contributors channel](https://farmdata2.zulipchat.com/#narrow/channel/271292-Contributors) or the [Newcomers channel](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers) on the Farmdata2 Zulip server.

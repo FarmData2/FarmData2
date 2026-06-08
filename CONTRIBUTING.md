@@ -68,18 +68,19 @@ Contributions of code and documentation to FarmData2 are made using a modified [
 
 > #### [0.](./docs/contributing/workflow/0.md) Prerequisite Knowledge.
 > #### [1.](./docs/contributing/workflow/1.md) Find something to work on.
-> #### [2.](./docs/contributing/workflow/2.md) Comment on the issue ticket that you found.
-> #### [3.](./docs/contributing/workflow/3.md) Create or Restart the FarmData2 development environment codespace.
-> #### [4.](./docs/contributing/workflow/4.md) Synchronize your `development` branch with the upstream repository.
-> #### [5.](./docs/contributing/workflow/5.md) Create and switch to a new feature branch.
+> #### [2.](./docs/contributing/workflow/2.md) Comment on the ticket that you found.
+> #### [3.](./docs/contributing/workflow/3.md) Create or Restart the FarmData2 development environment.
+> #### [4.](./docs/contributing/workflow/4.md) Synchronize your `development` branch with the upstream.
+> #### [5.](./docs/contributing/workflow/5.md) Create and switch to a feature branch.
 > #### [6.](./docs/contributing/workflow/6.md) Make and test changes.
 > #### [7.](./docs/contributing/workflow/7.md) Commit changes to your feature branch.
-> #### [8.](./docs/contributing/workflow/8.md) Merge changes to the upstream `development` branch into your feature branch.
-> #### [9.](./docs/contributing/workflow/9.md) Push your feature branch to your fork on GitHub.
-> #### [10.](./docs/contributing/workflow/10.md) Create a pull request asking to merge your feature branch into the upstream `development` branch.
-> #### [11.](./docs/contributing/workflow/11.md) Request a Copilot Pull Request Review (optional).
-> #### [12.](./docs/contributing/workflow/12.md) Address all comments, questions, and suggestions.
-> #### 13. Get your PR merged and celebrate your accomplishment. &#x1F389;
+> #### [8.](./docs/contributing/workflow/8.md) Merge upstream changes into your feature branch.
+> #### [9.](./docs/contributing/workflow/9.md) Push your feature branch to your fork.
+> #### [10.](./docs/contributing/workflow/10.md) Create a draft pull request.
+> #### [11.](./docs/contributing/workflow/11.md) Request a Copilot Review (optional).
+> #### [12.](./docs/contributing/workflow/12.md) Mark your pull request as ready for review.
+> #### [13.](./docs/contributing/workflow/13.md) Address all comments, questions, and suggestions.
+> #### 14. Get your PR merged and celebrate your accomplishment. &#x1F389;
 
 <!-- eslint enable no-heading-punctuation maximum-heading-length -->
 <!-- vale RedHat.HeadingPunctuation = YES -->
