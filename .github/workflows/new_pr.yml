@@ -5,7 +5,7 @@ description: 'Handles new pull requests.'
 # Adds a comment to all new pull requests with basic info.
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened]
 
 permissions:
