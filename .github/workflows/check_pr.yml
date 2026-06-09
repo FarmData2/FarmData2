@@ -30,12 +30,12 @@ jobs:
         if: github.event.action == 'opened'
         uses: peter-evans/create-or-update-comment@v5
         with:
-        issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
             Thank you for your pull request. 
-            
-            Note that all new pull requests to FarmData2 are [opened as draft pull requests](). When you believe your work is complete, consider [requesting a CoPilot review]() and then [mark your pull request as ready for review]() and a maintainer will review it as soon as possible. 
-            
+
+            Note that all new pull requests to FarmData2 are [opened as draft pull requests](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/10.md). When you believe your work is complete, consider [requesting a CoPilot review](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/11.md) and then [mark your pull request as ready for review](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/12.md) and a maintainer will review it as soon as possible. 
+
             If you have questions as you work you can get in touch via:
             - comments on this pull request.
             - comments on the associated issue(s).
