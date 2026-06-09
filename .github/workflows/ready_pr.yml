@@ -1,0 +1,78 @@
+name: Ready PR
+description: 'Checks a PR content when it is ready for review.'
+
+# When a pull request becomes ready for review the body is checked
+# for the following requirements:
+#   The DCO box is checked.
+#   Placeholder comments have been removed.
+#   There are no blank sections.
+
+on:
+  pull_request_target:
+    types: [ready_for_review, reopened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  check_pr_template:
+    name: Check PR template contents
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      # Check if the DCO checkbox in the PR Template is checked.
+      - name: Check DCO attestation checkbox
+        id: dco
+        if: success() || failure()
+        #continue-on-error: true
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -Eq "\[[xX]\].*I attest that myself and any co-authors"; then
+            echo "DCO attestation checkbox is checked."
+            exit 0
+          else
+            echo "The DCO attestation checkbox must be checked in the License Certification section in order to contribute."
+            exit 1 
+          fi
+
+      # Check if there is any placeholder text left in the template.
+      - name: Check for placeholder text
+        id: placeholder_text
+        if: success() || failure()
+        #continue-on-error: true
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -Eq '> &#9432; _.+\._'; then
+            echo "Informational placeholder text must be removed from all template sections."
+            exit 1
+          else
+            echo "Placeholder text has been removed."
+            exit 0 
+          fi
+
+      # Check if there are any blank sections in the PR body.
+      - name: Check for blank sections
+        id: blank_sections
+        if: success() || failure()
+        # continue-on-error: true
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -Pzoq '### .+\n\s*### .+'; then
+            echo "Unused (blank) template sections must be removed."
+            exit 1
+          else
+            echo "There are no blank sections."
+            exit 0 
+          fi
+
+      # Convert to draft if any checks failed.
+      - name: Convert to draft
+        if: always() && (steps.dco.outcome == 'failure' || steps.placeholder_text.outcome == 'failure' || steps.blank_sections.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr ready --undo ${{ github.event.pull_request.html_url }}
