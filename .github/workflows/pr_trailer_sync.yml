@@ -1,6 +1,9 @@
 name: PR Trailer Sync
 description: 'Synchronize commit authors and trailers into the PR description.'
 
+# Automatically adds an "Attributions" section to PR descriptions containing Co-authored-by,
+# Assisted-by, and Generated-by trailers extracted from commit messages.
+
 on:
   pull_request_target:
     types: [opened, edited, synchronize]
