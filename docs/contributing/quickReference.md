@@ -105,19 +105,24 @@
 
 ## Git Commands
 
-| Command                                   | Action                                                      |
-| ----------------------------------------- | ----------------------------------------------------------- |
-| `cd ~/FarmData2`                          | Change to the root directory of the FarmData2 repository.   |
-| `git status`                              | Display the current branch, modified, and staged files.     |
-| `git switch development`                  | Switch to the `development` branch.                         |
-| `git pull --ff-only upstream development` | Synchronize with the upstream `development` branch.         |
-| `git branch <branch_name>`                | Create a new branch named `<branch_name>`.                  |
-| `git switch <branch_name>`                | Switch to the branch named `<branch_name>`.                 |
-| `git stage <file_1>`                      | Stage the file identified by `<file_1>` for commit.         |
-| `git stage .`                             | Stage all changed files for commit.                         |
-| `git commit -m "<your commit message>"`   | Commit the staged changes using the provided message.       |
-| `git commit -m "..." --trailer "..."`     | Commit with [attribution trailers].                         |
-| `git push origin <branch_name>`           | Push the branch named `<branch_name>` to your GitHub space. |
+<!-- vale Microsoft.Vocab = NO --> <!-- allow in --allow-empty is correct. -->
+
+| Command                                                               | Action                                                                             |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `cd ~/FarmData2`                                                      | Change to the root directory of the FarmData2 repository.                          |
+| `git status`                                                          | Display the current branch, modified, and staged files.                            |
+| `git switch development`                                              | Switch to the `development` branch.                                                |
+| `git pull --ff-only upstream development`                             | Synchronize with the upstream `development` branch.                                |
+| `git branch <branch_name>`                                            | Create a new branch named `<branch_name>`.                                         |
+| `git switch <branch_name>`                                            | Switch to the branch named `<branch_name>`.                                        |
+| `git stage <file_1>`                                                  | Stage the file identified by `<file_1>` for commit.                                |
+| `git stage .`                                                         | Stage all changed files for commit.                                                |
+| `git commit -m "<commit message>"`                                    | Commit the staged changes using the provided message.                              |
+| `git commit -m "..." \`<br>`  --trailer "..."`                        | Commit with [attribution trailers](./workflow/7.md#attribution-commit-trailers).   |
+| `git commit --allow-empty \`<br>`  -m "..." \`<br>`  --trailer "..."` | Add a missing [attribution trailers](./workflow/7.md#attribution-commit-trailers). |
+| `git push origin <branch_name>`                                       | Push the branch named `<branch_name>` to your GitHub space.                        |
+
+<!-- vale Microsoft.Vocab = YES -->
 
 ## Miscellaneous
 
