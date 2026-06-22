@@ -7,8 +7,6 @@ description: 'Handles new pull requests.'
 on:
   pull_request_target:
     types: [opened]
-  pull_request:
-    types: [opened]
 
 permissions:
   pull-requests: write

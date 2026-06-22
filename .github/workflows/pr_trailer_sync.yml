@@ -4,8 +4,6 @@ description: 'Synchronize commit authors and trailers into the PR description.'
 on:
   pull_request_target:
     types: [opened, edited, synchronize]
-  pull_request:
-    types: [opened, edited, synchronize]
 
 permissions:
   pull-requests: write
@@ -26,9 +24,7 @@ jobs:
             const pullNumber = pr.number;
             const prCreatorLogin = (pr.user?.login || '').toLowerCase();
 
-            const START = '<!-- fd2-trailer-sync:start -->';
-            const END = '<!-- fd2-trailer-sync:end -->';
-            const blockRegex = new RegExp(`${START}[\\s\\S]*?${END}\\n?`, 'g');
+            const blockRegex = /(?:\n\n|^)### Attributions[\s\S]*$/;
 
             function normalizeIdentity(raw) {
               return (raw || '').replace(/\s+/g, ' ').trim();
@@ -198,7 +194,7 @@ jobs:
 
             let newBody = strippedBody;
             if (trailerLines.length > 0) {
-              const managedBlock = `${START}\n${trailerLines.join('\n')}\n${END}`;
+              const managedBlock = `### Attributions\n\n${trailerLines.join('\n')}`;
               newBody = strippedBody ? `${strippedBody}\n\n${managedBlock}` : managedBlock;
             }
 
