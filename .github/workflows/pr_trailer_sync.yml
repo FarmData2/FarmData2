@@ -2,16 +2,10 @@ name: PR Trailer Sync
 description: 'Synchronize commit authors and trailers into the PR description.'
 
 on:
+  pull_request_target:
+    types: [opened, edited, synchronize]
   pull_request:
-    types:
-      [
-        opened,
-        edited,
-        reopened,
-        synchronize,
-        ready_for_review,
-        converted_to_draft,
-      ]
+    types: [opened, edited, synchronize]
 
 permissions:
   pull-requests: write
