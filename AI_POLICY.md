@@ -1,8 +1,8 @@
 # FarmData2 AI Policy
 
-<!-- vale RedHat.TermsWarnings = NO --> <-- for Tooling -->
-<!-- vale RedHat.Definitions = NO --> <-- for ASF, LLVM, MAY, MUST, SHOULD, etc -->
-<!-- vale Microsoft.Vocab = NO --> <-- for author -->
+<!-- vale RedHat.TermsWarnings = NO --> <!-- for Tooling -->
+<!-- vale RedHat.Definitions = NO --> <!-- for ASF, LLVM, MAY, MUST, SHOULD, etc -->
+<!-- vale Microsoft.Vocab = NO --> <!-- for author -->
 
 FarmData2 is at its core an application created for humans by humans. Working with people is what we find enjoyable about this project. We also recognize that AI tools can help us to produce a better product more quickly. This policy aims to provide guidance (and even encourage) the use of AI in FarmData2 while protecting the humanness of the community.
 
@@ -19,7 +19,7 @@ This policy is modeled on the structure of the [Fedora Council AI-Assisted Contr
 
 3. **Accountability**: You MUST take the responsibility for your contribution. Contributing to FarmData2 means vouching for the authorship, quality, license compliance, utility of your submission, and respecting the time and effort of all members of the FarmData2 community. The contributor is always the author and is fully accountable for the entirety of their contributions. This accountability MUST be signified by the human author by attesting to the [Developer Certificate of Origin](https://developercertificate.org/) as described in [LICENSE.md](./LICENSE.md).
 
-4. **Transparency**: You MUST disclose the use of AI tools when they have played a significant role in the creation of a contribution. Routine use of assistive tools for correcting grammar and spelling, clarifying language, adding small segments of code with autocomplete does not require disclosure. If in doubt disclose the use of the AI tools. See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to disclose AI use in FarmData2 contributions.
+4. **Transparency**: You MUST disclose the use of AI tools when they have played a significant role in the creation of a contribution. Routine use of assistive tools for correcting grammar and spelling, clarifying language, adding small segments of code with autocomplete does not require disclosure. If in doubt disclose the use of the AI tools. See [Attribution Commit Trailers](./docs/contributing/workflow/7.md#attribution-commit-trailers) details on how to disclose AI use in FarmData2 contributions.
 
 5. **Contribution and Community Evaluation**: As a maintainer you MAY use AI tools to provide analysis, suggestions, and automated feedback to contributors. But maintainers MUST NOT use AI as the sole or final arbiter in making a final decision to accept or decline a contribution, nor to assess a person's standing within the community (for example for funding, leadership roles, or Code of Conduct matters). The responsibility for accepting or rejecting a contribution, even if implemented by an automated system, always rests with the human maintainer who authorizes the action.
 
