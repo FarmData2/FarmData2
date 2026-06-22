@@ -10,6 +10,7 @@ description: 'Checks a PR content when it is ready for review.'
 on:
   pull_request_target:
     types: [ready_for_review, reopened, edited, synchronize]
+    branches: [development]
 
 permissions:
   pull-requests: write
