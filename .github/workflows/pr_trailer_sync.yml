@@ -1,0 +1,200 @@
+name: PR Trailer Sync
+description: 'Synchronize commit authors and trailers into the PR description.'
+
+# Automatically adds an "Attributions" section to PR descriptions containing
+# Assisted-by and Generated-by trailers extracted from commit messages.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  sync_trailers:
+    name: Sync PR trailers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update PR body from commit authors and trailers
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pr = context.payload.pull_request;
+            const pullNumber = pr.number;
+
+            const attributionHeaderRegex = /^###\s+Attributions\s*$/im;
+
+            const currentBody = pr.body || '';
+            const attributionHeaderMatch = attributionHeaderRegex.exec(currentBody);
+            const existingAttributionsText = attributionHeaderMatch
+              ? currentBody.slice(attributionHeaderMatch.index)
+              : '';
+
+            function normalizeIdentity(raw) {
+              return (raw || '').replace(/\s+/g, ' ').trim();
+            }
+
+            function parseIdentity(raw) {
+              const trimmed = normalizeIdentity(raw);
+              const m = trimmed.match(/^(.*?)\s*<([^>]+)>$/);
+              if (!m) {
+                return {
+                  normalized: trimmed.toLowerCase(),
+                  nameLower: trimmed.toLowerCase(),
+                  emailLower: '',
+                };
+              }
+              const name = m[1].trim();
+              const email = m[2].trim().toLowerCase();
+              return {
+                normalized: `${name} <${email}>`,
+                nameLower: name.toLowerCase(),
+                emailLower: email,
+              };
+            }
+
+            function addIdentity(set, raw) {
+              const parsed = parseIdentity(raw);
+              const key = parsed.emailLower || parsed.nameLower;
+              if (key) {
+                set.set(key, parsed.normalized);
+              }
+            }
+
+            function parseTrailers(message) {
+              const trailers = {
+                assisted: [],
+                generated: [],
+              };
+
+              for (const line of (message || '').split(/\r?\n/)) {
+                const m = line.match(/^\s*([A-Za-z][A-Za-z-]*):\s*(.+?)\s*$/);
+                if (!m) {
+                  continue;
+                }
+                const key = m[1].toLowerCase();
+                const value = m[2];
+                if (key === 'assisted-by') {
+                  trailers.assisted.push(value);
+                } else if (key === 'generated-by') {
+                  trailers.generated.push(value);
+                }
+              }
+
+              return trailers;
+            }
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner,
+              repo,
+              pull_number: pullNumber,
+              per_page: 100,
+            });
+
+            const assistedFromTrailers = new Map();
+            const generatedFromTrailers = new Map();
+
+            const commitTrailerSummary = [];
+
+            for (const commit of commits) {
+              const message = commit.commit?.message || '';
+              const trailers = parseTrailers(message);
+              commitTrailerSummary.push({
+                assistedCount: trailers.assisted.length,
+                generatedCount: trailers.generated.length,
+              });
+
+              for (const value of trailers.assisted) {
+                addIdentity(assistedFromTrailers, value);
+              }
+
+              for (const value of trailers.generated) {
+                addIdentity(generatedFromTrailers, value);
+              }
+
+            }
+
+            // Seed Maps with any manually-added trailers from the existing Attributions
+            // section so they are preserved in the rebuilt block.
+            const existingManualTrailers = parseTrailers(existingAttributionsText);
+            for (const value of existingManualTrailers.assisted) {
+              addIdentity(assistedFromTrailers, value);
+            }
+            for (const value of existingManualTrailers.generated) {
+              addIdentity(generatedFromTrailers, value);
+            }
+
+            // Compute reclassification flags after seeding manual trailers so that
+            // manually added Assisted-by entries also influence
+            // whether Generated-by is kept or reclassified to Assisted-by.
+            // allCommitsGeneratedOnly uses commitTrailerSummary and is always commit-only.
+            const hasGeneratedTrailers = generatedFromTrailers.size > 0;
+            const hasOtherTrailers = assistedFromTrailers.size > 0;
+            const allCommitsGeneratedOnly =
+              commitTrailerSummary.length > 0 &&
+              commitTrailerSummary.every(
+                (summary) =>
+                  summary.generatedCount > 0 &&
+                  summary.assistedCount === 0
+              );
+
+            const finalAssisted = new Map(assistedFromTrailers);
+            const finalGenerated = new Map();
+
+            if (hasGeneratedTrailers) {
+              if (allCommitsGeneratedOnly && !hasOtherTrailers) {
+                for (const [key, value] of generatedFromTrailers) {
+                  finalGenerated.set(key, value);
+                }
+              } else {
+                for (const [key, value] of generatedFromTrailers) {
+                  finalAssisted.set(key, value);
+                }
+              }
+            }
+
+            const generatedLines = [];
+            for (const value of finalGenerated.values()) {
+              generatedLines.push(`Generated-by: ${value}`);
+            }
+
+            const assistedLines = [];
+            for (const value of finalAssisted.values()) {
+              assistedLines.push(`Assisted-by: ${value}`);
+            }
+            assistedLines.sort((a, b) => a.localeCompare(b));
+
+            const trailerSections = [generatedLines, assistedLines]
+              .filter((section) => section.length > 0)
+              .map((section) => section.join('\n'));
+            const trailerText = trailerSections.join('\n\n');
+
+            const strippedBody = attributionHeaderMatch
+              ? currentBody.slice(0, attributionHeaderMatch.index).trimEnd()
+              : currentBody.trimEnd();
+
+            let newBody = strippedBody;
+            if (trailerText) {
+              const managedBlock = `### Attributions\n\n${trailerText}`;
+              newBody = strippedBody ? `${strippedBody}\n\n${managedBlock}` : managedBlock;
+            }
+
+            if (newBody !== currentBody) {
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: pullNumber,
+                body: newBody,
+              });
+              core.info('Updated PR body with synced attribution trailers.');
+            } else {
+              core.info('PR body already up to date.');
+            }
+
+            core.info(`Commits examined: ${commits.length}`);
+            core.info(`Unique Assisted-by added: ${finalAssisted.size}`);
+            core.info(`Unique Generated-by added: ${finalGenerated.size}`);

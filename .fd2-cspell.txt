@@ -56,6 +56,8 @@ lintstagedrc
 localstorage
 loglevel
 longform
+Madav
+Malhotra
 mfinelli
 Michal
 mkhl
@@ -79,6 +81,7 @@ preprocess
 printlog
 privkey
 proselint
+Pzoq
 readlink
 rushstack
 saithodev

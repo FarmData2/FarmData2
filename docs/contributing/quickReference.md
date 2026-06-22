@@ -1,21 +1,31 @@
 # FarmData2 Development Environment Quick Reference
 
+## farmOS Credentials
+
+| User                   | Password    | Notes                                         |
+| ---------------------- | ----------- | --------------------------------------------- |
+| `manager1` (or `2`)    | `farmdata2` | A farmOS user with manager privileges.        |
+| `worker1` (or `2`-`5`) | `farmdata2` | A farmOS user with worker privileges.         |
+| `guest`                | `farmdata2` | A farmOS user with guest privileges.          |
+| `admin`                | `admin`     | The Drupal/farmOS user with admin privileges. |
+
 ## Keyboard Shortcuts
 
 ### Visual Studio Code IDE
 
-| Windows/Linux     | MacOS                | Action                      |
-| ----------------- | -------------------- | --------------------------- |
-| `Ctrl + c`        | &#8984;`+ c`         | Copy                        |
-| `Ctrl + v`        | &#8984;`+ v`         | Paste                       |
-| `Ctrl + s`        | &#8984;`+ s`         | Save                        |
-| `Ctrl + Z`        | &#8984;`+ z`         | Undo                        |
-| `Ctrl + Y`        | &#8984;`+ Shift + Z` | Redo                        |
-| `Ctrl + f`        | &#8984;`+ f`         | Find                        |
-| `Shift + Alt + F` | `Shift + Option + F` | Auto format text/code.      |
-| `Alt + z`         | `Alt + z`            | Toggle word wrap in editor. |
-| `Ctrl + /`        | &#8984;`+ /`         | Toggle comment.             |
-| `Ctrl + b`        | &#8984;`+ b`         | Toggle EXPLORER side bar.   |
+| Windows/Linux          | MacOS                | Action                     |
+| ---------------------- | -------------------- | -------------------------- |
+| `Ctrl + c`             | &#8984;`+ c`         | Copy                       |
+| `Ctrl + v`             | &#8984;`+ v`         | Paste                      |
+| `Ctrl + s`             | &#8984;`+ s`         | Save                       |
+| `Ctrl + Z`             | &#8984;`+ z`         | Undo                       |
+| `Ctrl + Y`             | &#8984;`+ Shift + Z` | Redo                       |
+| `Ctrl + f`             | &#8984;`+ f`         | Find                       |
+| `` Shift + Ctrl + ` `` | &#8984;`+ Shift + C` | Open a new terminal        |
+| `Shift + Alt + F`      | `Shift + Option + F` | Auto format text/code      |
+| `Alt + z`              | `Alt + z`            | Toggle word wrap in editor |
+| `Ctrl + /`             | &#8984;`+ /`         | Toggle comment             |
+| `Ctrl + b`             | &#8984;`+ b`         | Toggle EXPLORER side bar   |
 
 ### Browser
 
@@ -26,7 +36,7 @@
 
 ## FarmData2 Commands
 
-### Test Commands
+### Testing
 
 | Command                                                    | Action                                                           |
 | ---------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -53,32 +63,70 @@
 
 <!-- vale Microsoft.Vocab = YES -->
 
-### Building FarmData2 Modules
+### Building Modules
 
-| Command                   | Action                                                              |
-| ------------------------- | ------------------------------------------------------------------- |
-| `npm run build:fd2`       | Rebuild the `farm_fd2` module.                                      |
-| `npm run watch:fd2`       | Watch the `farm_fd2` module and rebuild when files change.          |
-| `npm run build:examples`  | Rebuild the `farm_fd2_examples` module.                             |
-| `npm run watch:examples`  | Watch the `farm_fd2_examples` module and rebuild when files change. |
-| `npm run build:school`    | Rebuild the `farm_fd2_school` module.                               |
-| `npm run watch:school`    | Watch the `farm_fd2_school` module and rebuild when files change.   |
-| `reinstallFD2Module.bash` | Reinstall the `farm_fd2_module` so that Drupal `install` hooks run. |
+| Command                  | Action                                                              |
+| ------------------------ | ------------------------------------------------------------------- |
+| `npm run build:fd2`      | Rebuild the `farm_fd2` module.                                      |
+| `npm run watch:fd2`      | Watch the `farm_fd2` module and rebuild when files change.          |
+| `npm run build:examples` | Rebuild the `farm_fd2_examples` module.                             |
+| `npm run watch:examples` | Watch the `farm_fd2_examples` module and rebuild when files change. |
+| `npm run build:school`   | Rebuild the `farm_fd2_school` module.                               |
+| `npm run watch:school`   | Watch the `farm_fd2_school` module and rebuild when files change.   |
+
+### Creating Components and Entrypoints
+
+| Command                      |                                                           |
+| ---------------------------- | --------------------------------------------------------- |
+| `addComponent.bash`          | Create a new component and its associated example page.   |
+| `addEntryPoint.bash`         | Create a new entrypoint in one of the FarmData2 modules.  |
+| `removeComments.bash <file>` | Remove the comments from the `App.vue` or `lib.js` files. |
+
+### (Re)Building the Documentation
+
+| Command            | Action                                                                 |
+| ------------------ | ---------------------------------------------------------------------- |
+| `npm run docs:gen` | Rebuild the component and library documentation from the source files. |
 
 ### Viewing farmOS JSON Schema
 
-| Command                             | Action                                                 |
-| ----------------------------------- | ------------------------------------------------------ |
-| `npm run printlog`                  | List the JSON structures in the farmOS schema.         |
-| `npm run printlog asset--equipment` | Print the JSON structure used for equipment assets.    |
-| `npm run printlog log--type`        | Replace `log--type` with the name of the log to print. |
-| `npm run printlog all`              | Print all JSON structures in the farmOS schema         |
+| Command                       | Action                                               |
+| ----------------------------- | ---------------------------------------------------- |
+| `npm run printlog`            | List the JSON structures in the farmOS schema.       |
+| `npm run printlog <log_type>` | Print the JSON structure used for `<log_type>` logs. |
+| `npm run printlog all`        | Print all JSON structures in the farmOS schema.      |
 
-## farmOS Credentials
+### Working with Pull Requests
 
-| User                   | Password    | Notes                                         |
-| ---------------------- | ----------- | --------------------------------------------- |
-| `manager1` (or `2`)    | `farmdata2` | A farmOS user with manager privileges.        |
-| `worker1` (or `2`-`5`) | `farmdata2` | A farmOS user with worker privileges.         |
-| `guest`                | `farmdata2` | A farmOS user with guest privileges.          |
-| `admin`                | `admin`     | The Drupal/farmOS user with admin privileges. |
+| Command                    | Action                                                      |
+| -------------------------- | ----------------------------------------------------------- |
+| `fetchPR.bash <pr_number>` | Fetch compare branch for pull request `<pr_number>`.        |
+| `pushPR.bash <pr_number>`  | Push fetched compare branch for pull request `<pr_number>`. |
+
+## Git Commands
+
+<!-- vale Microsoft.Vocab = NO --> <!-- allow in --allow-empty is correct. -->
+
+| Command                                                               | Action                                                                             |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `cd ~/FarmData2`                                                      | Change to the root directory of the FarmData2 repository.                          |
+| `git status`                                                          | Display the current branch, modified, and staged files.                            |
+| `git switch development`                                              | Switch to the `development` branch.                                                |
+| `git pull --ff-only upstream development`                             | Synchronize with the upstream `development` branch.                                |
+| `git branch <branch_name>`                                            | Create a new branch named `<branch_name>`.                                         |
+| `git switch <branch_name>`                                            | Switch to the branch named `<branch_name>`.                                        |
+| `git stage <file_1>`                                                  | Stage the file identified by `<file_1>` for commit.                                |
+| `git stage .`                                                         | Stage all changed files for commit.                                                |
+| `git commit -m "<commit message>"`                                    | Commit the staged changes using the provided message.                              |
+| `git commit -m "..." \`<br>`  --trailer "..."`                        | Commit with [attribution trailers](./workflow/7.md#attribution-commit-trailers).   |
+| `git commit --allow-empty \`<br>`  -m "..." \`<br>`  --trailer "..."` | Add a missing [attribution trailers](./workflow/7.md#attribution-commit-trailers). |
+| `git push origin <branch_name>`                                       | Push the branch named `<branch_name>` to your GitHub space.                        |
+
+<!-- vale Microsoft.Vocab = YES -->
+
+## Miscellaneous
+
+- [Workflow Steps](../../CONTRIBUTING.md#5-use-the-farmdata2-contribution-workflow)
+- [Coauthors Generator](https://coauthors.me/generator)
+
+[attribution trailers]: ./workflow/7.md#attribution-commit-trailers

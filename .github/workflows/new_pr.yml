@@ -1,0 +1,69 @@
+name: New PR
+description: 'Handles new pull requests.'
+
+# Ensures that all new pull requests are marked as draft.
+# Removes commit message from above Purpose if PR was created on branch with one commit.
+# Adds a comment to all new pull requests with basic info.
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  make_draft_and_comment:
+    name: Make draft and comment
+    runs-on: ubuntu-latest
+    steps:
+      # Ensure the PR is a draft.
+      - name: Convert PR to draft
+        if: github.event.action == 'opened' && github.event.pull_request.draft == false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr ready --undo ${{ github.event.pull_request.html_url }}
+
+      # Remove any text that appears above the Purpose heading.
+      - name: Remove single commit info from PR body
+        if: github.event.action == 'opened'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            const body = pr.data.body || '';
+            const purposeHeaderRegex = /^###\s+Purpose\s*$/im;
+            const match = purposeHeaderRegex.exec(body);
+
+            if (match && match.index > 0) {
+              const cleanedBody = body.slice(match.index);
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                body: cleanedBody,
+              });
+              core.info('Removed text before Purpose heading.');
+            }
+
+      # Add a comment with basic information to all new pull requests.
+      - name: Add new PR comment
+        if: github.event.action == 'opened'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Thank you for your pull request. 
+
+            Note that all new pull requests to FarmData2 are [opened as draft pull requests](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/10.md). When you believe your work is complete, consider [requesting a CoPilot review](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/11.md) and then [mark your pull request as ready for review](https://github.com/FarmData2/FarmData2/tree/development/docs/contributing/workflow/12.md) and a maintainer will review it as soon as possible. 
+
+            If you have questions as you work you can get in touch via:
+            - comments on this pull request.
+            - comments on the associated issue(s).
+            - the [Contributors channel](https://farmdata2.zulipchat.com/#narrow/channel/271292-Contributors) or the [Newcomers channel](https://farmdata2.zulipchat.com/#narrow/channel/603473-Newcomers) on the Farmdata2 Zulip server.

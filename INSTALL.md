@@ -4,53 +4,66 @@ This document describes how to run the FarmData2 Development Environment in a Gi
 
 ## Install Help
 
-If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/stream/270906-install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
+If you run into problems during the install visit the dedicated [install channel](https://farmdata2.zulipchat.com/#narrow/channel/592674-Install) on the [FarmData2 Zulip chat](https://farmdata2.zulipchat.com). Use the search feature to see of others have had and solved the problem you are experiencing. If you do not find a solution, post a summary of your problem and the community will help.
+
+## GitHub Codespaces
+
+<!-- vale RedHat.Slash = NO -->
+<!-- Allow hours/month etc. -->
+
+The FarmData2 development environment runs in GitHub codespaces. GitHub provides all users with 120 core hours/month and 15 GB/month of storage at no cost. This is enough free time and storage to run the FarmData2 development environment for 60 hours per month. [Students](https://github.com/education/students) and [teachers](https://github.com/education/teachers) can join to [GitHub Education](https://github.com/education) and receive 180 core hours/month and 20 GB/month of storage (plus other educational benefits), which is enough to run the environment for 80 hours/month. 
+
+If you find you are exceeding your allotted Codespaces usage limits you can [add payment information](https://docs.github.com/en/billing/how-tos/set-up-payment/manage-payment-info) and [setup budgets](https://docs.github.com/en/billing/how-tos/set-up-budgets) to place monthly limits on costs.
+
+<!-- vale RedHat.Slash = YES -->
 
 ## Creating a FarmData2 Codespace
 
 When you first start work on FarmData2 you will need to create a new FarmData2 Codespace.
 
-1. Login to your [GitHub account](https://github.com/login).
+1. Use a [Browser based on Chromium](<https://en.wikipedia.org/wiki/Chromium_(web_browser)#Browsers_based_on_Chromium>). Github Codespaces is optimized for chromium based browsers and some features may not work if a non-chromium browser is used.
 
-2. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
+2. Login to your [GitHub account](https://github.com/login).
 
-3. Find your fork of the FarmData2 repository in [your GitHub space](https://github.com/).
+3. Fork the [upstream FarmData2 repository](https://github.com/FarmData2/FarmData2) in GitHub.
 
-4. Click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> "Code" button:  
+4. Find your fork of the FarmData2 repository in [your GitHub space](https://github.com/).
+
+5. Click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> "Code" button:  
    <img src="docs/install/images/code-button.png" alt='The GitHub "Code" Button.' width=100 />
 
-5. Click the "Codespaces" tab and then click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> button labeled "Create codespace on development."  
+6. Click the "Codespaces" tab and then click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->green<!-- vale RedHat.DoNotUseTerms = YES --> button labeled "Create codespace on development."  
    <img src="docs/install/images/codespace-button.png" alt='The GitHub "Create codespace on development" button.' width=400 />
 
-6. After a few moments the browser will change to show a Visual Studio Code interface and a small dialog box will appear in the lower right corner indicating that the GitHub Codespace is being built.  
+7. After a few moments the browser will change to show a Visual Studio Code interface and a small dialog box will appear in the lower right corner indicating that the GitHub Codespace is being built.  
    <img src="docs/install/images/building-codespace.png" alt='Dialog box indicating that the Codespace is being built.' width=400 />
 
-7. Wait patiently… Creating the new Codespace takes some time (up to 10 minutes).
+8. Wait patiently… Creating the new Codespace takes some time (up to 10 minutes).
 
    - You can click the <!-- vale RedHat.DoNotUseTerms = NO : the button label is also given -->blue<!-- vale RedHat.DoNotUseTerms = YES --> "Building codespace…" text to display the output of the build process in the terminal if you want to see what is happening as the Codespace is built.
 
-8. About half way through the installation the following message will be displayed in the terminal indicating the development container has been created and is now being configured:
+9. About half way through the installation the following message will be displayed in the terminal indicating the development container has been created and is now being configured:
 
    <img src="docs/install/images/post-create-running.png" alt='Message indicating that the postCreate command is running.' width=600 />
 
-9. When the Codespace is ready for use the following message will be displayed in the terminal:
-   
-   ```text
-   ===============================================
-   The FarmData2 Development Environment is ready.
+10. When the Codespace is ready for use the following message will be displayed in the terminal:
 
-   The following are available in the PORTS tab:
-     farmOS: https://localhost:443
-     noVNC: http://localhost:6901
-     docs: http://localhost:8082
+    ```text
+    ===============================================
+    The FarmData2 Development Environment is ready.
 
-   Happy coding!
-   ===============================================
-   ```
+    The following are available in the PORTS tab:
+      farmOS: https://localhost:443
+      noVNC: http://localhost:6901
+      docs: http://localhost:8082
 
-   - Notes:
-     - Starting to work before this message is displayed might result in errors.
-     - If any errors have occurred the message will contain information about steps to take.
+    Happy coding!
+    ===============================================
+    ```
+
+    - Notes:
+      - Starting to work before this message is displayed might result in errors.
+      - If any errors have occurred the message will contain information about steps to take.
 
 ## Stopping / Restarting / Deleting your FarmData2 Codespace
 
@@ -58,20 +71,7 @@ Codespaces can be stopped, restarted and deleted from your [Codespaces page on G
 
 <img src="docs/install/images/codespace-more-actions.png" alt='The "more actions" menu on the Codespaces page.' width=650 />
 
-When a FarmData2 codespace is restarted, the following message will appear indicating that the codespace is ready for use:
-
-```plaintext
-===============================================
-The FarmData2 Development Environment is ready.
-
-The following are available in the PORTS tab:
-  farmOS: https://localhost:443
-  noVNC: http://localhost:6901
-  docs: http://localhost:8082
-
-Happy coding!
-===============================================
-```
+When a FarmData2 codespace is restarted, the "The FarmData2 Development Environment is ready" message will appear again, indicating that the codespace is ready for use.
 
 - The [GitHub Codespaces documentation pages](https://docs.github.com/en/codespaces) provide more detail about stopping, starting and deleting Codespaces.
   - [Stopping and Starting a Codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/stopping-and-starting-a-codespace)
@@ -94,7 +94,10 @@ When the Codespace for the FarmData2 Developer Environment opens a Visual Studio
 
   <img src="docs/install/images/codespace-vscode.png" alt='The Visual Studio Code IDE with the FarmData2 repository open.' width=600 />
 
-If you are new to the Visual Studio Code IDE, you might find this [guide to the User Interface](https://code.visualstudio.com/docs/getstarted/userinterface) helpful.
+If you are new to the Visual Studio Code IDE, you might find the following resources helpful:
+
+- A guide to the [Visual Studio Code IDE User Interface](https://code.visualstudio.com/docs/getstarted/userinterface)
+- The [FarmData2 Quick Reference](./docs/contributing/quickReference.md), which includes a list of helpful keyboard shortcuts.
 
 ### The Running farmOS Instance
 
@@ -136,7 +139,7 @@ The noVNC Server provides a Linux desktop interface to the running Codespace tha
 
    - This desktop will initially be empty as no tests are running.
 
-5. Return to the terminal in the Visual Studio Code IDE and enter the command:
+5. Enter the following command in a terminal in the Visual Studio Code IDE:
 
    ```Text
    test.bash --e2e --fd2 --live --glob=**/direct_seeding/*.e2e.cy.js --gui
@@ -170,14 +173,7 @@ The documentation server provides convenient access to the FarmData2 documentati
 
 3. The documentation server will open in a new browser tab and display the "Index of the FarmData2 Documentation."
 
-4. If you are new to FarmData2 read the following documents:
-
-   - `CODE_OF_CONDUCT.md`
-   - `LICENSE.md`
-   - `CONTRIBUTING.md`
-   - `Introduction to the Codebase`
-
-5. Briefly browse the other topics to familiarize yourself with the documentation that is available.
+4. Briefly browse the topics to familiarize yourself with the documentation that is available.
 
 <!-- vale RedHat.Definitions = YES -->
 
