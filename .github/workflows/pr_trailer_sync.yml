@@ -1,0 +1,226 @@
+name: PR Trailer Sync
+description: 'Synchronize commit authors and trailers into the PR description.'
+
+on:
+  pull_request:
+    types:
+      [
+        opened,
+        edited,
+        reopened,
+        synchronize,
+        ready_for_review,
+        converted_to_draft,
+      ]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  sync_trailers:
+    name: Sync PR trailers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update PR body from commit authors and trailers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pr = context.payload.pull_request;
+            const pullNumber = pr.number;
+            const prCreatorLogin = (pr.user?.login || '').toLowerCase();
+
+            const START = '<!-- fd2-trailer-sync:start -->';
+            const END = '<!-- fd2-trailer-sync:end -->';
+            const blockRegex = new RegExp(`${START}[\\s\\S]*?${END}\\n?`, 'g');
+
+            function normalizeIdentity(raw) {
+              return (raw || '').replace(/\s+/g, ' ').trim();
+            }
+
+            function parseIdentity(raw) {
+              const trimmed = normalizeIdentity(raw);
+              const m = trimmed.match(/^(.*?)\s*<([^>]+)>$/);
+              if (!m) {
+                return {
+                  normalized: trimmed,
+                  nameLower: trimmed.toLowerCase(),
+                  emailLower: '',
+                };
+              }
+              return {
+                normalized: `${m[1].trim()} <${m[2].trim()}>`,
+                nameLower: m[1].trim().toLowerCase(),
+                emailLower: m[2].trim().toLowerCase(),
+              };
+            }
+
+            function isPrCreatorIdentity(raw) {
+              const id = parseIdentity(raw);
+              if (!prCreatorLogin) {
+                return false;
+              }
+              if (id.nameLower === prCreatorLogin) {
+                return true;
+              }
+              if (id.emailLower === `${prCreatorLogin}@users.noreply.github.com`) {
+                return true;
+              }
+              return false;
+            }
+
+            function addIdentity(set, raw) {
+              const normalized = parseIdentity(raw).normalized;
+              if (normalized) {
+                set.add(normalized);
+              }
+            }
+
+            function parseTrailers(message) {
+              const trailers = {
+                co: [],
+                assisted: [],
+                generated: [],
+              };
+
+              for (const line of (message || '').split(/\r?\n/)) {
+                const m = line.match(/^\s*([A-Za-z][A-Za-z-]*):\s*(.+?)\s*$/);
+                if (!m) {
+                  continue;
+                }
+                const key = m[1].toLowerCase();
+                const value = m[2];
+                if (key === 'co-authored-by') {
+                  trailers.co.push(value);
+                } else if (key === 'assisted-by') {
+                  trailers.assisted.push(value);
+                } else if (key === 'generated-by') {
+                  trailers.generated.push(value);
+                }
+              }
+
+              return trailers;
+            }
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner,
+              repo,
+              pull_number: pullNumber,
+              per_page: 100,
+            });
+
+            const coFromAuthors = new Set();
+            const coFromTrailers = new Set();
+            const assistedFromTrailers = new Set();
+            const generatedFromTrailers = new Set();
+
+            const commitTrailerSummary = [];
+
+            for (const commit of commits) {
+              const message = commit.commit?.message || '';
+              const trailers = parseTrailers(message);
+              commitTrailerSummary.push({
+                coCount: trailers.co.length,
+                assistedCount: trailers.assisted.length,
+                generatedCount: trailers.generated.length,
+              });
+
+              for (const value of trailers.co) {
+                if (!isPrCreatorIdentity(value)) {
+                  addIdentity(coFromTrailers, value);
+                }
+              }
+
+              for (const value of trailers.assisted) {
+                addIdentity(assistedFromTrailers, value);
+              }
+
+              for (const value of trailers.generated) {
+                addIdentity(generatedFromTrailers, value);
+              }
+
+              const commitAuthorLogin = (commit.author?.login || '').toLowerCase();
+              if (commitAuthorLogin && commitAuthorLogin === prCreatorLogin) {
+                continue;
+              }
+
+              const commitAuthorName = commit.commit?.author?.name;
+              const commitAuthorEmail = commit.commit?.author?.email;
+
+              let authorIdentity = '';
+              if (commitAuthorName && commitAuthorEmail) {
+                authorIdentity = `${commitAuthorName} <${commitAuthorEmail}>`;
+              } else if (commitAuthorLogin) {
+                authorIdentity = `${commitAuthorLogin} <${commitAuthorLogin}@users.noreply.github.com>`;
+              }
+
+              if (authorIdentity && !isPrCreatorIdentity(authorIdentity)) {
+                addIdentity(coFromAuthors, authorIdentity);
+              }
+            }
+
+            const hasGeneratedTrailers = generatedFromTrailers.size > 0;
+            const hasOtherTrailers = coFromTrailers.size > 0 || assistedFromTrailers.size > 0;
+            const allCommitsGeneratedOnly =
+              commitTrailerSummary.length > 0 &&
+              commitTrailerSummary.every(
+                (summary) =>
+                  summary.generatedCount > 0 &&
+                  summary.coCount === 0 &&
+                  summary.assistedCount === 0
+              );
+
+            const finalCo = new Set([...coFromAuthors, ...coFromTrailers]);
+            const finalAssisted = new Set(assistedFromTrailers);
+            const finalGenerated = new Set();
+
+            if (hasGeneratedTrailers) {
+              if (allCommitsGeneratedOnly && !hasOtherTrailers) {
+                for (const value of generatedFromTrailers) {
+                  finalGenerated.add(value);
+                }
+              } else {
+                for (const value of generatedFromTrailers) {
+                  finalAssisted.add(value);
+                }
+              }
+            }
+
+            const trailerLines = [];
+            for (const value of finalCo) {
+              trailerLines.push(`Co-authored-by: ${value}`);
+            }
+            for (const value of finalAssisted) {
+              trailerLines.push(`Assisted-by: ${value}`);
+            }
+            for (const value of finalGenerated) {
+              trailerLines.push(`Generated-by: ${value}`);
+            }
+
+            const currentBody = pr.body || '';
+            const strippedBody = currentBody.replace(blockRegex, '').trimEnd();
+
+            let newBody = strippedBody;
+            if (trailerLines.length > 0) {
+              const managedBlock = `${START}\n${trailerLines.join('\n')}\n${END}`;
+              newBody = strippedBody ? `${strippedBody}\n\n${managedBlock}` : managedBlock;
+            }
+
+            if (newBody !== currentBody) {
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: pullNumber,
+                body: newBody,
+              });
+              core.info('Updated PR body with synced attribution trailers.');
+            } else {
+              core.info('PR body already up to date.');
+            }
+
+            core.info(`Commits examined: ${commits.length}`);
+            core.info(`Unique Co-authored-by added: ${finalCo.size}`);
+            core.info(`Unique Assisted-by added: ${finalAssisted.size}`);
+            core.info(`Unique Generated-by added: ${finalGenerated.size}`);

@@ -8,7 +8,7 @@ description: 'Checks a PR content when it is ready for review.'
 #   There are no blank sections.
 
 on:
-  pull_request:
+  pull_request_target:
     types: [ready_for_review, reopened, edited, synchronize]
 
 permissions:
@@ -25,7 +25,6 @@ jobs:
       - name: Check DCO attestation checkbox
         id: dco
         if: success() || failure()
-        #continue-on-error: true
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -41,7 +40,6 @@ jobs:
       - name: Check for placeholder text
         id: placeholder_text
         if: success() || failure()
-        #continue-on-error: true
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -57,7 +55,6 @@ jobs:
       - name: Check for blank sections
         id: blank_sections
         if: success() || failure()
-        # continue-on-error: true
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
