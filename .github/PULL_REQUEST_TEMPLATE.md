@@ -25,7 +25,3 @@
 ### Licensing Certification
 
 - [ ] **I attest that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.**
-
-### Attributions
-
-> &#9432; _Add a `Co-authored-by: NAME <NAME@EXAMPLE.COM>` line for each collaborator who does not have a commit in this PR. Use the [Coauthors Generator](https://coauthors.me/generator) to get a Co-authored-by line for a GitHub user._

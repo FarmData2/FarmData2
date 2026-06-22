@@ -1,14 +1,12 @@
 name: PR Trailer Sync
 description: 'Synchronize commit authors and trailers into the PR description.'
 
-# Automatically adds an "Attributions" section to PR descriptions containing Co-authored-by,
-# Assisted-by, and Generated-by trailers extracted from commit messages.
+# Automatically adds an "Attributions" section to PR descriptions containing
+# Assisted-by and Generated-by trailers extracted from commit messages.
 
 on:
   pull_request_target:
     types: [opened, edited, synchronize]
-    branches: [development]
-  workflow_dispatch: # allow manual runs.
 
 permissions:
   pull-requests: write
@@ -20,16 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update PR body from commit authors and trailers
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const pr = context.payload.pull_request;
             const pullNumber = pr.number;
-            const prCreatorLogin = (pr.user?.login || '').toLowerCase();
 
-            const blockRegex = /(?:\n\n|^)### Attributions[\s\S]*$/;
+            const attributionHeaderRegex = /^###\s+Attributions\s*$/im;
+
+            const currentBody = pr.body || '';
+            const attributionHeaderMatch = attributionHeaderRegex.exec(currentBody);
+            const existingAttributionsText = attributionHeaderMatch
+              ? currentBody.slice(attributionHeaderMatch.index)
+              : '';
 
             function normalizeIdentity(raw) {
               return (raw || '').replace(/\s+/g, ' ').trim();
@@ -40,42 +43,30 @@ jobs:
               const m = trimmed.match(/^(.*?)\s*<([^>]+)>$/);
               if (!m) {
                 return {
-                  normalized: trimmed,
+                  normalized: trimmed.toLowerCase(),
                   nameLower: trimmed.toLowerCase(),
                   emailLower: '',
                 };
               }
+              const name = m[1].trim();
+              const email = m[2].trim().toLowerCase();
               return {
-                normalized: `${m[1].trim()} <${m[2].trim()}>`,
-                nameLower: m[1].trim().toLowerCase(),
-                emailLower: m[2].trim().toLowerCase(),
+                normalized: `${name} <${email}>`,
+                nameLower: name.toLowerCase(),
+                emailLower: email,
               };
             }
 
-            function isPrCreatorIdentity(raw) {
-              const id = parseIdentity(raw);
-              if (!prCreatorLogin) {
-                return false;
-              }
-              if (id.nameLower === prCreatorLogin) {
-                return true;
-              }
-              if (id.emailLower === `${prCreatorLogin}@users.noreply.github.com`) {
-                return true;
-              }
-              return false;
-            }
-
             function addIdentity(set, raw) {
-              const normalized = parseIdentity(raw).normalized;
-              if (normalized) {
-                set.add(normalized);
+              const parsed = parseIdentity(raw);
+              const key = parsed.emailLower || parsed.nameLower;
+              if (key) {
+                set.set(key, parsed.normalized);
               }
             }
 
             function parseTrailers(message) {
               const trailers = {
-                co: [],
                 assisted: [],
                 generated: [],
               };
@@ -87,9 +78,7 @@ jobs:
                 }
                 const key = m[1].toLowerCase();
                 const value = m[2];
-                if (key === 'co-authored-by') {
-                  trailers.co.push(value);
-                } else if (key === 'assisted-by') {
+                if (key === 'assisted-by') {
                   trailers.assisted.push(value);
                 } else if (key === 'generated-by') {
                   trailers.generated.push(value);
@@ -106,10 +95,8 @@ jobs:
               per_page: 100,
             });
 
-            const coFromAuthors = new Set();
-            const coFromTrailers = new Set();
-            const assistedFromTrailers = new Set();
-            const generatedFromTrailers = new Set();
+            const assistedFromTrailers = new Map();
+            const generatedFromTrailers = new Map();
 
             const commitTrailerSummary = [];
 
@@ -117,16 +104,9 @@ jobs:
               const message = commit.commit?.message || '';
               const trailers = parseTrailers(message);
               commitTrailerSummary.push({
-                coCount: trailers.co.length,
                 assistedCount: trailers.assisted.length,
                 generatedCount: trailers.generated.length,
               });
-
-              for (const value of trailers.co) {
-                if (!isPrCreatorIdentity(value)) {
-                  addIdentity(coFromTrailers, value);
-                }
-              }
 
               for (const value of trailers.assisted) {
                 addIdentity(assistedFromTrailers, value);
@@ -136,70 +116,70 @@ jobs:
                 addIdentity(generatedFromTrailers, value);
               }
 
-              const commitAuthorLogin = (commit.author?.login || '').toLowerCase();
-              if (commitAuthorLogin && commitAuthorLogin === prCreatorLogin) {
-                continue;
-              }
-
-              const commitAuthorName = commit.commit?.author?.name;
-              const commitAuthorEmail = commit.commit?.author?.email;
-
-              let authorIdentity = '';
-              if (commitAuthorName && commitAuthorEmail) {
-                authorIdentity = `${commitAuthorName} <${commitAuthorEmail}>`;
-              } else if (commitAuthorLogin) {
-                authorIdentity = `${commitAuthorLogin} <${commitAuthorLogin}@users.noreply.github.com>`;
-              }
-
-              if (authorIdentity && !isPrCreatorIdentity(authorIdentity)) {
-                addIdentity(coFromAuthors, authorIdentity);
-              }
             }
 
+            // Seed Maps with any manually-added trailers from the existing Attributions
+            // section so they are preserved in the rebuilt block.
+            const existingManualTrailers = parseTrailers(existingAttributionsText);
+            for (const value of existingManualTrailers.assisted) {
+              addIdentity(assistedFromTrailers, value);
+            }
+            for (const value of existingManualTrailers.generated) {
+              addIdentity(generatedFromTrailers, value);
+            }
+
+            // Compute reclassification flags after seeding manual trailers so that
+            // manually added Assisted-by entries also influence
+            // whether Generated-by is kept or reclassified to Assisted-by.
+            // allCommitsGeneratedOnly uses commitTrailerSummary and is always commit-only.
             const hasGeneratedTrailers = generatedFromTrailers.size > 0;
-            const hasOtherTrailers = coFromTrailers.size > 0 || assistedFromTrailers.size > 0;
+            const hasOtherTrailers = assistedFromTrailers.size > 0;
             const allCommitsGeneratedOnly =
               commitTrailerSummary.length > 0 &&
               commitTrailerSummary.every(
                 (summary) =>
                   summary.generatedCount > 0 &&
-                  summary.coCount === 0 &&
                   summary.assistedCount === 0
               );
 
-            const finalCo = new Set([...coFromAuthors, ...coFromTrailers]);
-            const finalAssisted = new Set(assistedFromTrailers);
-            const finalGenerated = new Set();
+            const finalAssisted = new Map(assistedFromTrailers);
+            const finalGenerated = new Map();
 
             if (hasGeneratedTrailers) {
               if (allCommitsGeneratedOnly && !hasOtherTrailers) {
-                for (const value of generatedFromTrailers) {
-                  finalGenerated.add(value);
+                for (const [key, value] of generatedFromTrailers) {
+                  finalGenerated.set(key, value);
                 }
               } else {
-                for (const value of generatedFromTrailers) {
-                  finalAssisted.add(value);
+                for (const [key, value] of generatedFromTrailers) {
+                  finalAssisted.set(key, value);
                 }
               }
             }
 
-            const trailerLines = [];
-            for (const value of finalCo) {
-              trailerLines.push(`Co-authored-by: ${value}`);
-            }
-            for (const value of finalAssisted) {
-              trailerLines.push(`Assisted-by: ${value}`);
-            }
-            for (const value of finalGenerated) {
-              trailerLines.push(`Generated-by: ${value}`);
+            const generatedLines = [];
+            for (const value of finalGenerated.values()) {
+              generatedLines.push(`Generated-by: ${value}`);
             }
 
-            const currentBody = pr.body || '';
-            const strippedBody = currentBody.replace(blockRegex, '').trimEnd();
+            const assistedLines = [];
+            for (const value of finalAssisted.values()) {
+              assistedLines.push(`Assisted-by: ${value}`);
+            }
+            assistedLines.sort((a, b) => a.localeCompare(b));
+
+            const trailerSections = [generatedLines, assistedLines]
+              .filter((section) => section.length > 0)
+              .map((section) => section.join('\n'));
+            const trailerText = trailerSections.join('\n\n');
+
+            const strippedBody = attributionHeaderMatch
+              ? currentBody.slice(0, attributionHeaderMatch.index).trimEnd()
+              : currentBody.trimEnd();
 
             let newBody = strippedBody;
-            if (trailerLines.length > 0) {
-              const managedBlock = `### Attributions\n\n${trailerLines.join('\n')}`;
+            if (trailerText) {
+              const managedBlock = `### Attributions\n\n${trailerText}`;
               newBody = strippedBody ? `${strippedBody}\n\n${managedBlock}` : managedBlock;
             }
 
@@ -216,6 +196,5 @@ jobs:
             }
 
             core.info(`Commits examined: ${commits.length}`);
-            core.info(`Unique Co-authored-by added: ${finalCo.size}`);
             core.info(`Unique Assisted-by added: ${finalAssisted.size}`);
             core.info(`Unique Generated-by added: ${finalGenerated.size}`);

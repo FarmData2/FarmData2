@@ -2,13 +2,12 @@ name: New PR
 description: 'Handles new pull requests.'
 
 # Ensures that all new pull requests are marked as draft.
+# Removes commit message from above Purpose if PR was created on branch with one commit.
 # Adds a comment to all new pull requests with basic info.
 
 on:
   pull_request_target:
     types: [opened]
-    branches: [development]
-  workflow_dispatch: # allow manual runs.
 
 permissions:
   pull-requests: write
@@ -26,6 +25,32 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr ready --undo ${{ github.event.pull_request.html_url }}
+
+      # Remove any text that appears above the Purpose heading.
+      - name: Remove single commit info from PR body
+        if: github.event.action == 'opened'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            const body = pr.data.body || '';
+            const purposeHeaderRegex = /^###\s+Purpose\s*$/im;
+            const match = purposeHeaderRegex.exec(body);
+
+            if (match && match.index > 0) {
+              const cleanedBody = body.slice(match.index);
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                body: cleanedBody,
+              });
+              core.info('Removed text before Purpose heading.');
+            }
 
       # Add a comment with basic information to all new pull requests.
       - name: Add new PR comment
