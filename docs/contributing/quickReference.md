@@ -29,10 +29,14 @@
 
 ### Browser
 
-| Windows/Linux           | MacOS                     | Action                     |
-| ----------------------- | ------------------------- | -------------------------- |
-| `F12`                   | `F12`                     | Toggle the Developer Tools |
-| `Ctrl + Shift + Delete` | &#8984;`+ Shift + Delete` | Clear browsing history.    |
+
+| Windows/Linux           | MacOS                     | Action                        |
+| ----------------------- | ------------------------- | ----------------------------- |
+| `F12`                   | `F12`                     | Toggle the Developer Tools    |
+| `Ctrl + Shift + Delete` | &#8984;`+ Shift + Delete` | Clear browsing history.       |
+| `Ctrl + R`              | &#8984;`+ R`              | Standard refresh              |
+| `Ctrl + Shift + R`      | &#8984;`+ Shift + R`      | Hard refresh (bypass cache)   |
+
 
 ## FarmData2 Commands
 
