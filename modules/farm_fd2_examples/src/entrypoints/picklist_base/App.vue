@@ -340,7 +340,8 @@
         if (index > -1) {
           this.columns.splice(index, 1);
         } else {
-          this.columns.splice(1, 0, 'c2');
+          const c1Index = this.columns.indexOf('c1');
+          this.columns.splice(c1Index > -1 ? c1Index + 1 : 0, 0, 'c2');
         }
       },
       toggleColumn1Label() {
