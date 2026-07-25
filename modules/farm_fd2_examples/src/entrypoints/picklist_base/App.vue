@@ -52,7 +52,6 @@
         </td>
         <td>
           <details>
-            <summary>Details</summary>
             <pre>{{ columns }}</pre>
           </details>
         </td>
@@ -85,7 +84,6 @@
         </td>
         <td>
           <details>
-            <summary>Details</summary>
             <pre>{{ labels }}</pre>
           </details>
         </td>
@@ -105,7 +103,6 @@
         </td>
         <td>
           <details>
-            <summary>Details</summary>
             <pre>{{ form.picked }}</pre>
           </details>
         </td>
@@ -151,7 +148,6 @@
         </td>
         <td>
           <details>
-            <summary>Details</summary>
             <pre>{{ rows }}</pre>
           </details>
         </td>
@@ -224,7 +220,6 @@
         <td>update:picked</td>
         <td>
           <details>
-            <summary>Details</summary>
             <pre>{{ form.picked }}</pre>
           </details>
         </td>
@@ -401,16 +396,5 @@
  */
   picklist-base-hack {
     display: none;
-  }
-
-  /*
-   * Normalize the <summary> element inside <details> so it matches
-   * the surrounding table text instead of using the browser's
-   * default bold/larger styling.
-   */
-  .example-table summary {
-    font-weight: normal;
-    font-size: inherit;
-    cursor: pointer;
   }
 </style>
