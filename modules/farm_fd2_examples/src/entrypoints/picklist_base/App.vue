@@ -23,7 +23,7 @@
     v-bind:picked="form.picked"
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
-    v-on:ready="createdCount++"
+    v-on:ready="handleReady"
   />
   <hr />
 
@@ -51,7 +51,10 @@
           </BButton>
         </td>
         <td>
-          <pre>{{ columns }}</pre>
+          <details>
+            <summary>Details</summary>
+            <pre>{{ columns }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -81,7 +84,10 @@
           </BButton>
         </td>
         <td>
-          <pre>{{ labels }}</pre>
+          <details>
+            <summary>Details</summary>
+            <pre>{{ labels }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -98,7 +104,10 @@
           </BButton>
         </td>
         <td>
-          <pre>{{ form.picked }}</pre>
+          <details>
+            <summary>Details</summary>
+            <pre>{{ form.picked }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -141,7 +150,10 @@
           </BButton>
         </td>
         <td>
-          <pre>{{ rows }}</pre>
+          <details>
+            <summary>Details</summary>
+            <pre>{{ rows }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -205,9 +217,16 @@
     </thead>
     <tbody>
       <tr>
+        <td>ready</td>
+        <td>{{ ready }}</td>
+      </tr>
+      <tr>
         <td>update:picked</td>
         <td>
-          <pre>{{ form.picked }}</pre>
+          <details>
+            <summary>Details</summary>
+            <pre>{{ form.picked }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -304,6 +323,7 @@
         showAllButton: true,
         showInfoIcons: true,
         invalidFeedbackText: 'invalidFeedbackText',
+        ready: true,
         form: {
           picked: new Map(),
         },
@@ -320,6 +340,10 @@
       },
     },
     methods: {
+      handleReady(payload) {
+        this.ready = payload;
+        this.createdCount++;
+      },
       toggleFirstRow() {
         const firstRow = this.rows[0];
         const firstRowIndex = this.rows.indexOf(firstRow);
@@ -377,5 +401,16 @@
  */
   picklist-base-hack {
     display: none;
+  }
+
+  /*
+   * Normalize the <summary> element inside <details> so it matches
+   * the surrounding table text instead of using the browser's
+   * default bold/larger styling.
+   */
+  .example-table summary {
+    font-weight: normal;
+    font-size: inherit;
+    cursor: pointer;
   }
 </style>
