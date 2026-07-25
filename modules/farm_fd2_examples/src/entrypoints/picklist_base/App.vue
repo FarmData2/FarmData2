@@ -214,7 +214,7 @@
     <tbody>
       <tr>
         <td>ready</td>
-        <td>{{ ready }}</td>
+        <td>{{ String(ready) }}</td>
       </tr>
       <tr>
         <td>update:picked</td>
@@ -336,7 +336,7 @@
     },
     methods: {
       handleReady(payload) {
-        this.ready = payload;
+        this.ready = payload ?? true;
         this.createdCount++;
       },
       toggleFirstRow() {
