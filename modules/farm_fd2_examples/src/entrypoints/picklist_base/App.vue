@@ -11,7 +11,7 @@
     data-cy="picklist"
     class="w-100"
     v-bind:required="required"
-    invalidFeedbackText="At least one row must be selected."
+    v-bind:invalidFeedbackText="invalidFeedbackText"
     v-bind:showValidityStyling="validity.showStyling"
     v-bind:columns="columns"
     v-bind:labels="labels"
@@ -23,7 +23,7 @@
     v-bind:picked="form.picked"
     v-on:valid="(valid) => (validity.picked = valid)"
     v-on:update:picked="form.picked = $event"
-    v-on:ready="createdCount++"
+    v-on:ready="handleReady"
   />
   <hr />
 
@@ -31,65 +31,61 @@
   <table class="example-table">
     <thead>
       <tr>
-        <th>Prop</th>
-        <th>Control</th>
+        <th style="width: 20%">Prop</th>
+        <th style="width: 30%">Control</th>
+        <th style="width: 50%">Value</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>required</td>
+        <td>columns</td>
         <td>
-          <BFormCheckbox
-            id="required-checkbox"
-            data-cy="required-checkbox"
-            switch
-            v-model="required"
-          />
+          <BButton
+            id="toggle-column2-button"
+            data-cy="toggle-column2-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="toggleColumn2"
+          >
+            Toggle Column2
+          </BButton>
+        </td>
+        <td>
+          <details>
+            <pre>{{ columns }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
-        <td>showValidityStyling</td>
+        <td>invalidFeedbackText</td>
         <td>
-          <BFormCheckbox
-            id="styling-checkbox"
-            data-cy="styling-checkbox"
-            switch
-            v-model="validity.showStyling"
+          <BFormInput
+            id="invalid-feedback-text-input"
+            data-cy="invalid-feedback-text-input"
+            class="w-100"
+            size="sm"
+            v-model="invalidFeedbackText"
           />
         </td>
+        <td>{{ invalidFeedbackText }}</td>
       </tr>
       <tr>
-        <td>showAllButton</td>
+        <td>labels</td>
         <td>
-          <BFormCheckbox
-            id="show-all-button-checkbox"
-            data-cy="show-all-button-checkbox"
-            switch
-            v-model="showAllButton"
-          />
+          <BButton
+            id="toggle-column1-name-button"
+            data-cy="toggle-column1-name-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="toggleColumn1Label"
+          >
+            Toggle Column1 Name
+          </BButton>
         </td>
-      </tr>
-      <tr>
-        <td>showInfoIcons</td>
         <td>
-          <BFormCheckbox
-            id="show-info-icons-checkbox"
-            data-cy="show-info-icons-checkbox"
-            switch
-            v-model="showInfoIcons"
-          />
-        </td>
-      </tr>
-
-      <tr>
-        <td>useUnits</td>
-        <td>
-          <BFormCheckbox
-            id="use-units-checkbox"
-            data-cy="use-units-checkbox"
-            switch
-            v-model="useUnits"
-          />
+          <details>
+            <pre>{{ labels }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -102,12 +98,29 @@
             size="sm"
             v-on:click="toggleFirstRow"
           >
-            Pick row
+            Toggle 1st Row
           </BButton>
+        </td>
+        <td>
+          <details>
+            <pre>{{ form.picked }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
-        <td>rows / rowsInfo</td>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+        <td>{{ required }}</td>
+      </tr>
+      <tr>
+        <td>rows</td>
         <td>
           <BButton
             id="add-row-button"
@@ -130,9 +143,62 @@
               }
             "
           >
-            Add/Remove 5th row
+            Toggle 5th Row
           </BButton>
         </td>
+        <td>
+          <details>
+            <pre>{{ rows }}</pre>
+          </details>
+        </td>
+      </tr>
+      <tr>
+        <td>showAllButton</td>
+        <td>
+          <BFormCheckbox
+            id="show-all-button-checkbox"
+            data-cy="show-all-button-checkbox"
+            switch
+            v-model="showAllButton"
+          />
+        </td>
+        <td>{{ showAllButton }}</td>
+      </tr>
+      <tr>
+        <td>showInfoIcons</td>
+        <td>
+          <BFormCheckbox
+            id="show-info-icons-checkbox"
+            data-cy="show-info-icons-checkbox"
+            switch
+            v-model="showInfoIcons"
+          />
+        </td>
+        <td>{{ showInfoIcons }}</td>
+      </tr>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+        <td>{{ validity.showStyling }}</td>
+      </tr>
+      <tr>
+        <td>units</td>
+        <td>
+          <BFormCheckbox
+            id="use-units-checkbox"
+            data-cy="use-units-checkbox"
+            switch
+            v-model="useUnits"
+          />
+        </td>
+        <td>{{ units }}</td>
       </tr>
     </tbody>
   </table>
@@ -141,15 +207,21 @@
   <table class="example-table">
     <thead>
       <tr>
-        <th>Event</th>
-        <th>Payload</th>
+        <th style="width: 20%">Event</th>
+        <th style="width: 80%">Payload</th>
       </tr>
     </thead>
     <tbody>
       <tr>
+        <td>ready</td>
+        <td>{{ String(ready) }}</td>
+      </tr>
+      <tr>
         <td>update:picked</td>
         <td>
-          {{ form.picked }}
+          <details>
+            <pre>{{ form.picked }}</pre>
+          </details>
         </td>
       </tr>
       <tr>
@@ -168,142 +240,161 @@
 </template>
 
 <script>
-import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
+  import PicklistBase from '@comps/PicklistBase/PicklistBase.vue';
 
-export default {
-  components: {
-    PicklistBase,
-  },
-  data() {
-    return {
-      columns: ['c1', 'c2', 'c3'],
-      labels: {
-        c1: 'Column1',
-        c2: 'Column2',
-        c3: 'Column3',
-        stuff: 'More Info',
-        name: 'Name',
-        value: 'A Number',
-        text: 'Text',
-        text2: 'Text2',
-        text4: 'Text4',
-        text6: 'Text6',
-        text8: 'Text8',
-        text10: 'Text10',
-        text12: 'Text12',
-        text14: 'Text14',
-      },
-      rows: [
-        {
-          c1: 'B',
-          c2: 5,
-          c3: 'Y',
-          stuff: 'B, 5, Y',
-          quantity: 1,
-        },
-        {
-          c1: 'A',
-          c2: 25,
-          c3: 'X',
-          stuff: 'A, 25, X',
-          quantity: 2,
-        },
-        {
-          c1: 'D',
-          c2: 7,
-          c3: 5,
-          stuff: 'D, 7, 5',
-          quantity: 3,
-        },
-        {
-          c1: 'A',
-          c2: 1,
-          c3: 25,
-          stuff: 'A, 1, 25',
-          name: 'C, 1, 25',
-          value: '8',
-          text: 'Lots of values here as an example.',
-          text2: '2',
-          text3: '3',
-          text4: '4',
-          text5: '5',
-          text6: '6',
-          text7: '7',
-          text8: '8',
-          text9: '9',
-          text10: '10',
-          text11: '11',
-          text12: '12',
-          text13: '13',
-          text14: '14',
-          quantity: 4,
-        },
-      ],
-      required: true,
-      useUnits: true,
-      units: 'Trays',
-      quantityAttribute: 'quantity', // Added quantityAttribute variable to be used directly
-      showAllButton: true,
-      showInfoIcons: true,
-      form: {
-        picked: new Map(),
-      },
-      validity: {
-        showStyling: false,
-        picked: false,
-      },
-      createdCount: 0,
-    };
-  },
-  computed: {
-    pageDoneLoading() {
-      return this.createdCount == 2;
+  export default {
+    components: {
+      PicklistBase,
     },
-  },
-  methods: {
-    toggleFirstRow() {
-      const firstRow = this.rows[0];
-      const firstRowIndex = this.rows.indexOf(firstRow);
-      const newPicked = new Map(this.form.picked);
+    data() {
+      return {
+        columns: ['c1', 'c2', 'c3'],
+        labels: {
+          c1: 'Column1',
+          c2: 'Column2',
+          c3: 'Column3',
+          stuff: 'More Info',
+          name: 'Name',
+          value: 'A Number',
+          text: 'Text',
+          text2: 'Text2',
+          text4: 'Text4',
+          text6: 'Text6',
+          text8: 'Text8',
+          text10: 'Text10',
+          text12: 'Text12',
+          text14: 'Text14',
+        },
+        rows: [
+          {
+            c1: 'B',
+            c2: 5,
+            c3: 'Y',
+            stuff: 'B, 5, Y',
+            quantity: 1,
+          },
+          {
+            c1: 'A',
+            c2: 25,
+            c3: 'X',
+            stuff: 'A, 25, X',
+            quantity: 2,
+          },
+          {
+            c1: 'D',
+            c2: 7,
+            c3: 5,
+            stuff: 'D, 7, 5',
+            quantity: 3,
+          },
+          {
+            c1: 'A',
+            c2: 1,
+            c3: 25,
+            stuff: 'A, 1, 25',
+            name: 'C, 1, 25',
+            value: '8',
+            text: 'Lots of values here as an example.',
+            text2: '2',
+            text3: '3',
+            text4: '4',
+            text5: '5',
+            text6: '6',
+            text7: '7',
+            text8: '8',
+            text9: '9',
+            text10: '10',
+            text11: '11',
+            text12: '12',
+            text13: '13',
+            text14: '14',
+            quantity: 4,
+          },
+        ],
+        required: true,
+        useUnits: true,
+        units: 'Trays',
+        quantityAttribute: 'quantity',
+        showAllButton: true,
+        showInfoIcons: true,
+        invalidFeedbackText: 'invalidFeedbackText',
+        ready: true,
+        form: {
+          picked: new Map(),
+        },
+        validity: {
+          showStyling: false,
+          picked: false,
+        },
+        createdCount: 0,
+      };
+    },
+    computed: {
+      pageDoneLoading() {
+        return this.createdCount == 2;
+      },
+    },
+    methods: {
+      handleReady(payload) {
+        this.ready = payload ?? true;
+        this.createdCount++;
+      },
+      toggleFirstRow() {
+        const firstRow = this.rows[0];
+        const firstRowIndex = this.rows.indexOf(firstRow);
+        const newPicked = new Map(this.form.picked);
 
-      if (newPicked.has(firstRowIndex)) {
-        newPicked.delete(firstRowIndex);
-      } else {
-        newPicked.set(firstRowIndex, {
-          row: firstRow,
-          picked: 1,
-        });
-      }
-      this.form.picked = newPicked;
+        if (newPicked.has(firstRowIndex)) {
+          newPicked.delete(firstRowIndex);
+        } else {
+          newPicked.set(firstRowIndex, {
+            row: firstRow,
+            picked: 1,
+          });
+        }
+        this.form.picked = newPicked;
+      },
+      toggleColumn2() {
+        const index = this.columns.indexOf('c2');
+        if (index > -1) {
+          this.columns.splice(index, 1);
+        } else {
+          const c1Index = this.columns.indexOf('c1');
+          this.columns.splice(c1Index > -1 ? c1Index + 1 : 0, 0, 'c2');
+        }
+      },
+      toggleColumn1Label() {
+        this.labels.c1 =
+          this.labels.c1 === 'Column1' ? 'Col1 New Name' : 'Column1';
+      },
     },
-  },
-  created() {
-    this.createdCount++;
-  },
-  watch: {
-    useUnits(val) {
-      if (!val) {
-        this.units = null;
-        this.quantityAttribute = null;
-      } else {
-        this.units = 'Trays';
-        this.quantityAttribute = 'quantity';
-      }
+    created() {
+      this.createdCount++;
     },
-  },
-};
+    watch: {
+      useUnits(val) {
+        if (!val) {
+          this.units = null;
+          this.quantityAttribute = null;
+        } else {
+          this.units = 'Trays';
+          this.quantityAttribute = 'quantity';
+        }
+      },
+    },
+  };
 </script>
 
 <style>
-@import url('@css/fd2-examples.css');
-@import url('@css/fd2-mobile.css');
+  @import url('@css/fd2-examples.css');
+  @import url('@css/fd2-mobile.css');
 
-/**
+  /**
  * This ensures that the css for this file is picked up by the builder.
  * Not sure why this is necessary, but without it the css imports
  * above are not processed.
  */
-picklist-base-hack {
-  display: none;
-}
+  picklist-base-hack {
+    display: none;
+  }
 </style>
