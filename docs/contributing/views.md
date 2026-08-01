@@ -16,21 +16,18 @@ The purpose of this document is to describe how to create custom API endpoints i
   - Provide a REST endpoint
     - Use a path of `/api/fd2_[endpoint]`
 - Configure the View
-
   - Format: JSON
   - Show: Fields
-
 - Use `farmos/api/fd2_[endpoint]` to test the new endpoint.
 
 ## Adding the View to FarmData2
 
-### Installing the View
+### Installing or Updating the View
 
 - Export the view in farmOS.
 - Copy into a `.yml` file in `farm_fd2/module/config/optional`
 - Remove the `uuid` line
-- `npm run build:fd2`
-- `installDB --current`
+- Run `installDB.bash` to uninstall and reinstall the `farm_fd2` module and pickup the view.
 
 ### Accessing the View
 
