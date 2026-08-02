@@ -239,6 +239,71 @@ describe('Test the plant asset functions', () => {
     );
   });
 
+  it('Get plant assets for a specific crop', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['LETTUCE-MES MIX'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets.length).to.be.greaterThan(0);
+      plantAssets.forEach((plantAsset) => {
+        expect(plantAsset.crop).to.include('LETTUCE-MES MIX');
+      });
+    });
+  });
+
+  it('Get plant assets for multiple crops', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['LETTUCE-MES MIX', 'BROCCOLI'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets.length).to.be.greaterThan(0);
+      plantAssets.forEach((plantAsset) => {
+        const matchesCrop = cropNames.some((name) =>
+          plantAsset.crop.includes(name)
+        );
+        expect(matchesCrop).to.equal(true);
+      });
+    });
+  });
+
+  it('Get plant assets for a specific crop and bed', () => {
+    const locationName = 'CHUAU';
+    const checkedBeds = ['CHUAU-1', 'CHUAU-2'];
+    const cropNames = ['LETTUCE-MES MIX'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(
+        locationName,
+        checkedBeds,
+        true,
+        true,
+        cropNames
+      )
+    ).then((plantAssets) => {
+      plantAssets.forEach((plantAsset) => {
+        const inChuau1 = plantAsset.beds.includes('CHUAU-1');
+        const inChuau2 = plantAsset.beds.includes('CHUAU-2');
+        expect(inChuau1 || inChuau2).to.equal(true);
+        expect(plantAsset.crop).to.include('LETTUCE-MES MIX');
+      });
+    });
+  });
+
+  it('Get plant assets with no matching crop', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['NonExistentCrop'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets).to.be.an('array').that.is.empty;
+    });
+  });
+
   it('Get plant assets in trays only', () => {
     cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], true, false)).then(
       (plantAssets) => {
