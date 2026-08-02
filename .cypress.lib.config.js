@@ -30,7 +30,7 @@ export default defineConfig({
         },
       }),
         on('before:run', () => {
-          execSync('installDB.bash', { stdio: 'inherit' });
+          execSync('installDB.bash --current', { stdio: 'inherit' });
           return null;
         });
     },

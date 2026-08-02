@@ -26,12 +26,12 @@ export default defineConfig({
           return null;
         },
         initDB() {
-          execSync('installDB.bash', { stdio: 'inherit' });
+          execSync('installDB.bash --current', { stdio: 'inherit' });
           return null;
         },
       }),
         on('before:run', () => {
-          execSync('installDB.bash', { stdio: 'inherit' });
+          execSync('installDB.bash --current', { stdio: 'inherit' });
           return null;
         });
     },
