@@ -91,7 +91,7 @@ To add or edit the information in the sample database, see the instructions in t
 
 ## Git Hooks
 
-The FarmData2 Development Environment installs Git hooks from the `.githooks` directory:
+The FarmData2 Development Environment installs the following Git hooks from the `.githooks` directory:
 
 - `pre-commit` - prevents direct commits to the `development` or `production` branch, performs linting, and runs automated tests on code that is modified by the commit.
 - `pre-push` - uses the `drupal-release` script to build a release on [git.drupalcode.org/farmdata2](https://git.drupalcode.org/project/farmdata2) when the `production` branch is pushed.
@@ -101,7 +101,12 @@ The FarmData2 Development Environment installs Git hooks from the `.githooks` di
 
 ## GitHub Actions
 
-The `.github/workflows` directory contains the `release.yml` action that uses semantic versioning to build releases anytime new code is pushed to the `development` or `production` branches. When code is pushed to `development` a pre-release with a name such as `v1.2.3-development.4` is created. The `v1.2.3` indicates the next semantic release that would be created and the `.4` indicates the number of pre-releases that have been created for that version. When the push is to `production` a new semantic release is created, and all pre-releases except the most recent one are deleted. Also, a release will be created on [git.drupalcode.org/farmdata2](https://git.drupalcode.org/project/farmdata2) as described in the [Git Hooks](#git-hooks) section.
+The `.github/workflows` directory contains GitHub actions that automate aspects of the workflow.
+
+- `new_pr.yml` - runs when a new pull request is created. It converts the PR to a draft and posts a comment with information about marking a PR ready for review and where to see help if necessary.
+- `pr_trailer_sync.yml` - runs anytime the PR is modified. It adds (or updates) an "Attributions" section to the PR body that collects the `co-authored-by`, `assisted-by` and `generated-by` commit trailers from the commits in the PR. This ensures that attribution is given when the PR is squash merged into the `development` branch.
+- `ready_pr.yml` - runs when a PR is marked ready for review. It ensures that the Developer Certificate of Origin (DCO) box is checked, that all placeholder comments have been removed from the body text and that the body does not contain any blank sections. If any of those checks fail, the PR is converted back to a draft.
+- `release.yml` - uses semantic versioning to build releases anytime new code is pushed to the `development` or `production` branches. When code is pushed to `development` a pre-release with a name such as `v1.2.3-development.4` is created. The `v1.2.3` indicates the next semantic release that would be created and the `.4` indicates the number of pre-releases that have been created for that version. When the push is to `production` a new semantic release is created, and all pre-releases except the most recent one are deleted. Also, a release will be created on [git.drupalcode.org/farmdata2](https://git.drupalcode.org/project/farmdata2) as described in the [Git Hooks](#git-hooks) section.
 
 ## Standard Tools
 
