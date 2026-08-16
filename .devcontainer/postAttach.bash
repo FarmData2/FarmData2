@@ -11,26 +11,30 @@ echo "The FarmData2 Development Environment is almost ready."
 echo "Just a few more things to take care of..."
 echo ""
 
-echo "Installing VSCode extensions..."
 # Note: This is done here becuase installing in devcontainer.json causes race condition
 # with npm ci AND the code command must be run in a VSCode Terminal and earlier scripts
 # are not.
-VSCODE_HASH=$(ls ~/.vscode-remote/bin)
+VSCODE_HASH=$(find ~/.vscode-remote/bin -mindepth 1 -maxdepth 1 -printf '%T@ %f\n' | sort -nr | head -n 1 | cut -d' ' -f2-)
 VSCODE_CMD=~/.vscode-remote/bin/"$VSCODE_HASH"/bin/remote-cli/code
-VSCODE_EXTENSIONS=(
-  "Vue.volar@3.2.6"
-  "dbaeumer.vscode-eslint@3.0.24"
-  "esbenp.prettier-vscode@12.4.0"
-  "bierner.markdown-preview-github-styles@2.2.0"
-  "timonwong.shellcheck@0.39.3"
-  "chrischinchilla.vale-vscode@0.20.0"
-  "streetsidesoftware.code-spell-checker@4.6.0")
+mapfile -t VSCODE_EXTENSIONS < <(jq -r '.recommendations[]' "$REPO_DIR/.vscode/extensions.json")
+INSTALLED_EXTENSIONS=$($VSCODE_CMD --list-extensions)
+
+MISSING_EXTENSIONS=()
 for EXT in "${VSCODE_EXTENSIONS[@]}"; do
-  echo "  $EXT"
-  $VSCODE_CMD --install-extension "$EXT" &> /dev/null
+  if ! grep -qi "^${EXT}$" <<< "$INSTALLED_EXTENSIONS"; then
+    MISSING_EXTENSIONS+=("$EXT")
+  fi
 done
-echo "Installed."
-echo ""
+
+if ((${#MISSING_EXTENSIONS[@]})); then
+  echo "Installing VSCode extensions..."
+  for EXT in "${MISSING_EXTENSIONS[@]}"; do
+    echo "  Installing $EXT"
+    $VSCODE_CMD --install-extension "$EXT" &> /dev/null
+  done
+  echo "Extensions installed."
+  echo ""
+fi
 
 # Sometimes on restart we can't connect to the Docker daemon right away.
 checkDocker
