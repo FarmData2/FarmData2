@@ -38,7 +38,7 @@ describe('Test the permission based TraySize content', () => {
        * is authorized as guest as well.
        */
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'

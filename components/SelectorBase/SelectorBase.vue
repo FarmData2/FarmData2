@@ -143,9 +143,9 @@
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/selector_base">The SelectorBase Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/selector_base/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/selector_base">The SelectorBase Example</a>
+ *   - Example Source: <a href="./SelectorBase.ex.src.md">modules/farm_fd2_examples/src/entrypoints/selector_base/App.vue</a>
+ *   - Component Source: <a href="./SelectorBase.comp.src.md">components/SelectorBase/SelectorBase.vue</a>
  *
  * ## Usage Example
  *
@@ -168,21 +168,21 @@
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name            | Description
- * --------------------------| -----------
- * selector-group            | The `BFormGroup` component containing this component.
- * selector-label            | The `span` component containing the dropdown label.
- * selector-required         | The `*` that appears in the label if the input is required.
- * selector-input            | The `BFormSelect` component used to select an option.
- * selector-option-0         | The disabled blank option that appears first in the `BFormSelect` component.
- * selector-option-n         | The nth option in the `BFormSelect` component [1...n].
- * selector-add-button       | The `BButton` component that redirects to the page for adding a new option.
- * selector-delete-button    | The `BButton` component with the trash icon that clears the selected option.
- * selector-invalid-feedback | The `BFormInvalidFeedback` component that displays help when input is invalid.
- * selector-overlay          | The overlay that darkens the page behind the popup.
- * selector-popup            | The parent `<div>` containing the `<iframe>` and close button.
- * selector-closePopup       | The button to close the popup.
- * selector-popupIframe      | The `<iframe>` element used to navigate to the page.
+ * Attribute Name              | Description
+ * ----------------------------| -----------
+ * `selector-group`            | The `BFormGroup` component containing this component.
+ * `selector-label`            | The `span` component containing the dropdown label.
+ * `selector-required`         | The `*` that appears in the label if the input is required.
+ * `selector-input`            | The `BFormSelect` component used to select an option.
+ * `selector-option-0`         | The disabled blank option that appears first in the `BFormSelect` component.
+ * `selector-option-n`         | The nth option in the `BFormSelect` component [1...n].
+ * `selector-add-button`       | The `BButton` component that redirects to the page for adding a new option.
+ * `selector-delete-button`    | The `BButton` component with the trash icon that clears the selected option.
+ * `selector-invalid-feedback` | The `BFormInvalidFeedback` component that displays help when input is invalid.
+ * `selector-overlay`          | The overlay that darkens the page behind the popup.
+ * `selector-popup`            | The parent `<div>` containing the `<iframe>` and close button.
+ * `selector-closePopup`       | The button to close the popup.
+ * `selector-popupIframe`      | The `<iframe>` element used to navigate to the page.
  */
 export default {
   name: 'SelectorBase',

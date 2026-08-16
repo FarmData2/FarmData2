@@ -61,9 +61,9 @@ import { BAccordion } from 'bootstrap-vue-next';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/location_selector">The LocationSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/location_selector/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/location_selector">The LocationSelector Example</a>
+ *   - Example Source: <a href="./LocationSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/location_selector/App.vue</a>
+ *   - Component Source: <a href="./LocationSelector.comp.src.md">components/LocationSelector/LocationSelector.vue</a>
  *
  * ## Usage Example
  *
@@ -93,7 +93,7 @@ import { BAccordion } from 'bootstrap-vue-next';
  * Attribute Name                  | Description
  * --------------------------------| -----------
  * `location-selector`             | The `SelectorBase` component containing the locations dropdown.
- * `location-beds-accordion` }     | The `BAccordion` component containing the `BedPicker`.
+ * `location-beds-accordion`       | The `BAccordion` component containing the `BedPicker`.
  * `location-beds-accordion-item`  | The `BAccordionItem` component containing the `BedPicker`.
  * `location-beds-accordion-title` | The title displayed in the `BAccordionItem` containing the `BedPicker`.
  * `location-bed-picker`           | The `BedPicker` component containing the beds.

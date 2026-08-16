@@ -11,6 +11,7 @@ echo "Configuring the firewall..."
 apt update
 apt install ufw -y
 ufw allow OpenSSH
+ufw allow http  # needed for certbot to verify domain ownership
 echo "y" | ufw enable
 echo "Configured."
 
@@ -20,18 +21,46 @@ echo "Installing Docker..."
 apt update
 apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" -y
-sudo apt update
-sudo apt install docker-ce -y
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" -y
+apt update
+apt install docker-ce -y
 echo "Installed."
 
-# Create and configure a non-root user.
+# Install the GitHub CLI.
+echo "Installing the GitHub CLI..."
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+apt update
+apt install gh -y
+echo "Installed."
+
+# Create a non-root user with UID that matches the UID of
+# the postgres user in the fd2_postgres container.  This
+# ensure proper permissions to the mounted docker/db directory.
 echo "Creating non-root user..."
-useradd -m -G sudo,docker fd2dev
-passwd -l fd2dev # Disable login
-echo "fd2dev:fd2dev" | chpasswd
-echo "fd2dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USERNAME=fd2dev
+USER_UID=999
+USER_GID=1001
+
+groupadd --gid $USER_GID $USERNAME
+useradd --uid $USER_UID --gid $USER_GID -s /bin/bash -m $USERNAME
+echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
+chmod 0440 /etc/sudoers.d/$USERNAME
+usermod -aG docker $USERNAME
+passwd -l $USERNAME # Disable login
+echo "$USERNAME:$USERNAME" | chpasswd
 echo "Created."
+
+# Installing certbot so that we can get a signed certificate.
+echo "Installing certbot..."
+apt update
+apt install python3 python3-dev python3-venv libaugeas-dev gcc -y
+python3 -m venv /opt/certbot/
+/opt/certbot/bin/pip install --upgrade pip
+/opt/certbot/bin/pip install certbot certbot-nginx
+ln -s /opt/certbot/bin/certbot /usr/local/bin/certbot
+echo "Installed."
 
 # Install Docker Compose for the non-root user
 echo "Installing Docker Compose..."

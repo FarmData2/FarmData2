@@ -43,9 +43,9 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## Live Example
  *
- * <a href="http://farmos/fd2_examples/multi_crop_selector">The MultiCropSelector Example</a>
- *
- * Source: <a href="../../modules/farm_fd2_examples/src/entrypoints/multi_crop_selector/App.vue">App.vue</a>
+ * <a href="https://%HOST_NAME%/fd2_examples/multi_crop_selector">The MultiCropSelector Example</a>
+ *   - Example Source: <a href="./MultiCropSelector.ex.src.md">modules/farm_fd2_examples/src/entrypoints/multi_crop_selector/App.vue</a>
+ *   - Component Source: <a href="./MultiCropSelector.comp.src.md">components/MultiCropSelector/MultiCropSelector.vue</a>
  *
  * ## Usage Example
  *
@@ -65,12 +65,12 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil.js';
  *
  * ## `data-cy` Attributes
  *
- * Attribute Name              | Description
- * ----------------------------| -----------
- * multi-crop-selector-main    | The container div for the MultiCropSelector component.
- * multi-crop-selector-label   | The label element for the crop selector.
- * crop-selector-container     | The container div for the individual crop selectors.
- * multi-crop-selector         | The `MultiSelectorBase` component.
+ * Attribute Name                | Description
+ * ------------------------------| -----------
+ * `multi-crop-selector-main`    | The container div for the MultiCropSelector component.
+ * `multi-crop-selector-label`   | The label element for the crop selector.
+ * `crop-selector-container`     | The container div for the individual crop selectors.
+ * `multi-crop-selector`         | The `MultiSelectorBase` component.
  */
 export default {
   name: 'MultiCropSelector',

@@ -59,7 +59,7 @@ ESLint can be turned off for a line in the `.md` file by placing a comment on th
 ```html
 <!-- eslint ignore - give an explanation -->
 
-ESLint is disabled for this line ESLint is re-enabled for this line and all
+ESLint is disabled for this line. ESLint is re-enabled for this line and all
 following lines.
 ```
 
@@ -74,14 +74,6 @@ Vale is a _prose linter_ that checks the text of the files by using a set of sty
 #### Turning Off a Vale Rule for a Block of Text
 
 A vale rule can be turned off for a full block of text.
-
-```html
-<!-- vale RedHat.DoNotUseTerms = NO : give an explanation -->
-You can turn off a specific rule for a block of text.
-<!-- vale RedHat.DoNotUseTerms = YES -->
-```
-
-Sometimes when `: explanation` is used within the `vale` comment it will not be recognized. In those cases a second comment can be used for the explanation.
 
 ```html
 <!-- vale RedHat.DoNotUseTerms = NO -->

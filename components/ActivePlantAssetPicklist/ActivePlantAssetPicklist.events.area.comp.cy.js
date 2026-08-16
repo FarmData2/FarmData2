@@ -193,6 +193,170 @@ describe('Test the ActivePlantAssetPicklist `update:area` event', () => {
     });
   });
 
+  it('should correctly calculate and emit `update:area` for a location with active plant assets and some beds', () => {
+    const readySpy = cy.spy().as('readySpy');
+    const areaSpy = cy.spy().as('areaSpy');
+
+    cy.mount(ActivePlantAssetPicklist, {
+      props: {
+        location: 'D',
+        onReady: readySpy,
+        'onUpdate:area': areaSpy,
+      },
+    }).then(() => {
+      cy.get('@readySpy')
+        .should('have.been.calledOnce')
+        .then(() => {
+          // Once on creation and then on location prop update
+          cy.get('@areaSpy').should('have.been.calledTwice');
+
+          // Select BEAN in field
+          cy.get('[data-cy="picklist-checkbox-0"]').check();
+          cy.get('@areaSpy')
+            .should('have.been.calledThrice')
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(20);
+            });
+
+          // Select RADISH in field
+          cy.get('[data-cy="picklist-checkbox-1"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 4)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(40);
+            });
+
+          // Select LETTUCE-ICEBERG in field
+          cy.get('[data-cy="picklist-checkbox-2"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 5)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(60);
+            });
+
+          // Select first LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-3"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 6)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(70);
+            });
+
+          // Select second LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-4"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 7)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(80);
+            });
+
+          // Select LETTUCE-ICEBERG in D-2
+          cy.get('[data-cy="picklist-checkbox-5"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 8)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(100);
+            });
+
+          // Unselect BEAN in field
+          cy.get('[data-cy="picklist-checkbox-0"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 9)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(80);
+            });
+
+          // Unselect RADISH in field
+          cy.get('[data-cy="picklist-checkbox-1"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 10)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(60);
+            });
+
+          // Unselect LETTUCE-ICEBERG in field
+          cy.get('[data-cy="picklist-checkbox-2"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 11)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(40);
+            });
+
+          // Unselect first LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-3"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 12)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(30);
+            });
+
+          // Unselect LETTUCE-ICEBERG in D-2
+          cy.get('[data-cy="picklist-checkbox-5"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 13)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(10);
+            });
+
+          // Select first LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-3"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 14)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(20);
+            });
+
+          // Unselect second LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-4"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 15)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(10);
+            });
+
+          // Select LETTUCE-ICEBERG in D-2
+          cy.get('[data-cy="picklist-checkbox-5"]').check();
+          cy.get('@areaSpy')
+            .should('have.callCount', 16)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(30);
+            });
+
+          // Unselect first LETTUCE-ICEBERG in D-1
+          cy.get('[data-cy="picklist-checkbox-3"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 17)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(20);
+            });
+
+          // Unselect LETTUCE-ICEBERG in D-2
+          cy.get('[data-cy="picklist-checkbox-5"]').uncheck();
+          cy.get('@areaSpy')
+            .should('have.callCount', 18)
+            .its('lastCall.args.0')
+            .should((areaValue) => {
+              expect(areaValue).to.equal(0);
+            });
+        });
+    });
+  });
+
   //-------------------------------Check it does not emit `update:area`-----------------------------------//
 
   it('should not emit `update:area` when switching between locations with beds if no crops are selected', () => {

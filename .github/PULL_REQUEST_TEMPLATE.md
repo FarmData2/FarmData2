@@ -1,11 +1,27 @@
-**Pull Request Description**
+### Purpose
 
-_Describe what your Pull Request does here_
+> &#9432; _A clear and concise description of the purpose of this pull request._
 
-_Include a "Closes #" line for the issue your PR closes._
+### Verification Steps
 
----
+> &#9432; _A clear and concise set of steps that will enable the reviewer to manually verify that this pull request accomplishes its purpose._
 
-**Licensing Certification**
+### Approach
 
-FarmData2 is a [Free Cultural Work](https://freedomdefined.org/Definition) and all accepted contributions are licensed as described in the LICENSE.md file. This requires that the contributor holds the rights to do so. By submitting this pull request **I certify that I satisfy the terms of the [Developer Certificate of Origin](https://developercertificate.org/)** for its contents.
+> &#9432; _A clear and concise description of the approach taken with rationale for design decisions that were made._
+
+### Testing
+
+> &#9432; _A clear and concise description of automated tests that have been modified or added to verify changes that were made._
+
+### Related issues
+
+> &#9432; _Include a "Fixes #" or "Closes #" line to link each issue that is resolved by this pull request. Include a "Related to #" line to link to issues related to but not resolved by this pull request._
+
+### Further Information
+
+> &#9432; _Include any further information you think might be helpful here._
+
+### Licensing Certification
+
+- [ ] **I attest that myself and any co-authors meet the terms of the [Developer Certificate of Origin](https://developercertificate.org/) for the contents of this pull request.**

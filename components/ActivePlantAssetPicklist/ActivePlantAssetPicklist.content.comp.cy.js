@@ -134,8 +134,8 @@ describe('Test the default ActivePlantAssetPicklist content', () => {
         );
 
         // check assets with no beds
-        cy.get('[data-cy="picklist-bed-0"]').should('have.text', 'N/A');
-        cy.get('[data-cy="picklist-bed-10"]').should('have.text', 'N/A');
+        cy.get('[data-cy="picklist-bed-0"]').should('have.text', '');
+        cy.get('[data-cy="picklist-bed-10"]').should('have.text', '');
 
         // check assets with beds
         cy.get('[data-cy="picklist-bed-11"]').should('have.text', 'CHUAU-1');

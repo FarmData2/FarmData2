@@ -1,8 +1,11 @@
 #!/bin/bash
 # shellcheck disable=SC1091  # Make sources okay.
 
-source colors.bash
-source lib.bash
+REPO_DIR=$(git rev-parse --show-toplevel)
+DB_DIR="$REPO_DIR/docker/db"
+source "$REPO_DIR/bin/colors.bash"
+source "$REPO_DIR/bin/lib.bash"
+source "$REPO_DIR/bin/lib/checkServices.lib.bash"
 
 function usage {
   echo "installDB.bash usage:"
@@ -36,11 +39,6 @@ function usage {
   echo ""
   exit 255
 }
-
-# Define some useful variables, import libraries and
-# check some common pre-conditions.
-REPO_DIR=$(git rev-parse --show-toplevel)
-DB_DIR="$REPO_DIR/docker/db"
 
 if [ "$#" == "0" ]; then
   PREFERRED=1
@@ -116,7 +114,7 @@ if [ -n "$CURRENT" ]; then
 
   if [ ! -f "$REPO_DIR/.fd2/db.sample.tar.gz" ]; then
     echo "$REPO_DIR/.fd2/db.sample.tar.gz does not exist."
-    echo "Defaulting to default behavior."
+    echo "Switching to default behavior."
     unset CURRENT
   fi
 fi
@@ -217,58 +215,117 @@ else
     --pattern "$DB_ASSET" \
     --clobber
   error_check "Unable to download the database."
-  echo "  Database downloaded."
+  echo "Database downloaded."
+
+  # If Drupal is not connected to the database then this is a new codespace and we have
+  # not yet installed a database, so we don't need to uninstall the FarmData2 module.
+  DB_CONNECTED=$(docker exec fd2_farmos drush status | grep -E "^Database\s+: Connected")
+  FD2_ENABLED=$(docker exec fd2_farmos drush pm-list --type=Module --status=enabled 2> /dev/null | grep "(farm_fd2)")
+  if [ -n "$DB_CONNECTED" ] && [ -n "$FD2_ENABLED" ]; then
+    # If we didn't use the same DB then uninstall the FarmData2 module here.
+    # We will rebuild and reinstall it after the new database has been installed.
+    # This is important when we switch to a branch where the module targets a different DB version.
+    echo "Uninstalling the FarmData2 module..."
+    echo "  Deleting custom farm_fd2 module custom fields..."
+    "$REPO_DIR/bin/deleteCustomFD2Fields.bash" > /dev/null 2>&1
+    echo "  Deleted."
+    echo "  Running farmOS cron to update fields..."
+    docker exec fd2_farmos drush cron > /dev/null 2>&1
+    error_check "Unable to run cron."
+    echo "  Done."
+    echo "  Removing farm_fd2 module from farmOS..."
+    docker exec fd2_farmos drush pmu farm_fd2 -y > /dev/null 2>&1
+    error_check "Unable to remove the farm_fd2 module from farmOS."
+    echo "  Removed."
+    echo "Uninstalled."
+  fi
 fi
 
 echo "Stopping farmOS..."
 docker stop fd2_farmos > /dev/null
 error_check "Error occurred stopping farmOS."
-echo "  Stopped."
+echo "Stopped."
+
+echo "Stopping nginx..."
+docker stop fd2_nginx > /dev/null
+error_check "Error occurred stopping nginx."
+echo "Stopped."
 
 echo "Stopping Postgres..."
 docker stop fd2_postgres > /dev/null
 error_check "Error occurred stopping Postgres."
-echo "  Stopped."
-
-# Make sure that the FarmData2/docker/db directory has appropriate permissions.
-echo "Setting permissions on $REPO_DIR/docker/db..."
-echo "fd2dev" | sudo -Sk -p "" chgrp fd2grp "$REPO_DIR/docker/db"
-error_check "Unable to change group."
-echo "fd2dev" | sudo -Sk -p "" chmod g+rwx "$REPO_DIR/docker/db"
-error_check "Unable to set permissions."
-
-echo "  Set."
+echo "Stopped."
 
 safe_cd "$DB_DIR"
 
 echo "Deleting current database..."
-echo "fd2dev" | sudo -Sk -p "" rm -rf ./*
+rm -rf ./*
 error_check "Unable to delete the current database."
-echo "  Deleted."
+echo "Deleted."
 
 echo "Extracting $DB_ASSET..."
-echo "fd2dev" | sudo -Sk -p "" tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
+tar -xzf "$REPO_DIR/.fd2/$DB_ASSET" > /dev/null
 error_check "Error extracting the database."
-echo "  Extracted."
+echo "Extracted."
 
-echo "Restarting Postgres..."
+echo "Restarting..."
 docker start fd2_postgres > /dev/null
-error_check "Error starting Postgres."
-STATUS=$(docker exec fd2_postgres pg_isready)
-while [[ ! "$STATUS" == *"accepting connections"* ]]; do
-  STATUS=$(docker exec fd2_postgres pg_isready)
-done
-echo "  Started."
+checkPostgres
+POSTGRES=$?
+if ((!POSTGRES)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} Postgres did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
 
-echo "Restarting farmOS..."
 docker start fd2_farmos > /dev/null
-error_check "Error starting farmOS."
-echo "  Started."
+# Check drupal here because we can't check for farmOS until nginx is running.
+checkDrupal
+DRUPAL=$?
+if ((!DRUPAL)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} drupal id not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
+
+docker start fd2_nginx > /dev/null
+checkNginx
+NGINX=$?
+if ((!NGINX)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} nginx did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
+
+# Note: We can't check for farmOS until after nginx is running.
+checkFarmOS
+FARMOS=$?
+if ((!FARMOS)); then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} farmOS did not restart."
+  echo "  Try running installDB.bash again."
+  exit 255
+fi
+
+echo "Restarted."
+
+if [ -z "$CURRENT" ]; then
+  echo "Re-adding the farm_fd2 module to farmOS..."
+  # Now rebuild and reinstall the FarmData2 module.
+  echo "  Building farm_fd2 module..."
+  npm run build:fd2 > /dev/null
+  error_check "Unable to rebuild the FarmData2 module."
+  echo "  Built."
+  echo "  Installing farm_fd2 module into farmOS..."
+  docker exec fd2_farmos drush en farm_fd2 -y > /dev/null 2>&1
+  error_check "Unable to reinstall the FarmData2 module."
+  echo "  Installed."
+  echo "Added."
+fi
 
 echo "Clearing the Drupal cache..."
-docker exec fd2_farmos drush cr
+docker exec fd2_farmos drush cr > /dev/null 2>&1
 error_check "Unable to clear the cache."
-echo "  Drupal cache cleared."
+echo "Cleared."
 
 echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
 

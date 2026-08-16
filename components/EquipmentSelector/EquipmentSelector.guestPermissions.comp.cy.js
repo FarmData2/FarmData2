@@ -17,7 +17,7 @@ describe('Test the EquipmentSelector permissions', () => {
 
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'

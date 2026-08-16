@@ -28,8 +28,8 @@
     "tgz:fd2": "tar -C modules/farm_fd2/dist/ -czf modules/farm_fd2/dist/farmdata2.tar.gz farmdata2",
     "zip:fd2": "cd modules/farm_fd2/dist/; zip -r farmdata2.zip farmdata2",
     "docs:gen": "makeDocs.bash",
-    "docs:view": "npx @mryhryki/markdown-preview --file docs/index.md --port 8082",
-    "printlog": "node bin/printFarmosLogs"
+    "docs:view": "npx @mryhryki/markdown-preview --file docs/index.md --port 8082  --no-opener",
+    "printlog": "node bin/printFarmosLogs 2> /dev/null"
   },
   "dependencies": {
     "bootstrap": "^5.3.2",
@@ -53,7 +53,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/compiler-sfc": "^3.3.7",
     "@vue/eslint-config-prettier": "^7.1.0",
-    "@vvago/vale": "^3.9.6",
+    "@vvago/vale": "3.9.6",
     "conventional-changelog-conventionalcommits": "^7.0.1",
     "cspell": "^6.31.2",
     "cypress": "12.17.4",

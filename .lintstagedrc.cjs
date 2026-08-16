@@ -1,5 +1,6 @@
 const { ESLint } = require('eslint');
 const path = require('path');
+const fs = require('fs');
 
 const fd2EntrypointsTested = new Map();
 const examplesEntrypointsTested = new Map();
@@ -201,11 +202,11 @@ const getModuleTestsUnitCyJs = (files) => {
 
 /*
  * Construct a test command for each component .vue file that is staged.
- * The command will use a glob to run all comp.cy.js component tests in the
- * component directory containing the .vue file.
+ * The command will use a glob to run all comp.cy.js component tests
+ * in the component directory containing the .vue file.
  */
 const getCompTestsVue = (files) => {
-  const testCommands = files.map((file) => {
+  const compTestCommands = files.map((file) => {
     compsTested.set(path.basename(path.dirname(file)), true);
     return (
       'test.bash --comp --glob=' +
@@ -215,7 +216,34 @@ const getCompTestsVue = (files) => {
     );
   });
 
-  return testCommands;
+  const e2eTestCommands = files.map((file) => {
+    // Only create the command for *.e2e.cy.js tests if at least one exists.
+    const dirFiles = fs.readdirSync(
+      './components/' + path.basename(path.dirname(file))
+    );
+    const regEx = /.*\.e2e\.cy\.js$/;
+    const matchFound = dirFiles.some((dirFile) => regEx.test(dirFile));
+    if (matchFound) {
+      return (
+        'test.bash --e2e --fd2 --live --glob=' +
+        '/components/' +
+        path.basename(path.dirname(file)) +
+        '/*.e2e.cy.js'
+      );
+    } else {
+      return (
+        'skipping /components/' +
+        path.basename(path.dirname(file)) +
+        '*.e2e.cjs'
+      );
+    }
+  });
+
+  if (e2eTestCommands.length > 0) {
+    return [...compTestCommands, ...e2eTestCommands];
+  } else {
+    return compTestCommands;
+  }
 };
 
 /*
@@ -235,6 +263,10 @@ const getCompTestsCompCyJs = (files) => {
   return testCommands;
 };
 
+/*
+ * Construct a test command for each component e2e.cy.js file that is staged.
+ * These tests interact with farmOS and require --e2e --fd2 --live flags.
+ */
 const getCompTestsE2ECyJs = (files) => {
   const testCommands = files.map((file) => {
     if (compsTested.get(path.basename(path.dirname(file)))) {

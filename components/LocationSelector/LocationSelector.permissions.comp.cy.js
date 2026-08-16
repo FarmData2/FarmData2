@@ -64,7 +64,7 @@ describe('Test permissions based content in the LocationSelector', () => {
 
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'
@@ -90,7 +90,7 @@ describe('Test permissions based content in the LocationSelector', () => {
 
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'
@@ -116,7 +116,7 @@ describe('Test permissions based content in the LocationSelector', () => {
 
     cy.wrap(
       farmosUtil.getFarmOSInstance(
-        'http://farmos',
+        'https://proxy',
         'farm',
         'guest',
         'farmdata2'

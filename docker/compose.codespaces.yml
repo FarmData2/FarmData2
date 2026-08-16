@@ -1,0 +1,14 @@
+services:
+  # Override the parts of the proxy service that are necessary
+  # for it to run correctly in codespaces.
+  proxy:
+    volumes: !override
+      - type: bind
+        source: ./nginx.conf/nginx.codespaces.conf.template
+        target: /etc/nginx/templates/nginx.codespaces.conf.template
+      - type: bind
+        source: ./ssl
+        target: /etc/nginx/ssl
+    environment:
+      - CODESPACE_NAME=${CODESPACE_NAME}
+      - GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN=${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}
