@@ -239,6 +239,72 @@ describe('Test the plant asset functions', () => {
     );
   });
 
+  it('Get plant assets for a specific crop', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['LETTUCE-MES MIX'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets).to.have.length(2);
+      plantAssets.forEach((plantAsset) => {
+        expect(plantAsset.crop).to.include('LETTUCE-MES MIX');
+      });
+    });
+  });
+
+  it('Get plant assets for multiple crops', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['LETTUCE-MES MIX', 'BROCCOLI'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets).to.have.length(5);
+      plantAssets.forEach((plantAsset) => {
+        const matchesCrop = cropNames.some((name) =>
+          plantAsset.crop.includes(name)
+        );
+        expect(matchesCrop).to.equal(true);
+      });
+    });
+  });
+
+  it('Get plant assets for a specific crop and bed', () => {
+    const locationName = 'CHUAU';
+    const checkedBeds = ['CHUAU-2', 'CHUAU-3'];
+    const cropNames = ['LETTUCE-MES MIX'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(
+        locationName,
+        checkedBeds,
+        true,
+        true,
+        cropNames
+      )
+    ).then((plantAssets) => {
+      expect(plantAssets).to.have.length(1);
+      plantAssets.forEach((plantAsset) => {
+        const inChuau2 = plantAsset.beds.includes('CHUAU-2');
+        const inChuau3 = plantAsset.beds.includes('CHUAU-3');
+        expect(inChuau2 || inChuau3).to.equal(true);
+        expect(plantAsset.crop).to.include('LETTUCE-MES MIX');
+      });
+    });
+  });
+
+  it('Get plant assets with no matching crop', () => {
+    const locationName = 'CHUAU';
+    const cropNames = ['NonExistentCrop'];
+
+    cy.wrap(
+      farmosUtil.getPlantAssets(locationName, [], true, true, cropNames)
+    ).then((plantAssets) => {
+      expect(plantAssets).to.be.an('array').that.is.empty;
+    });
+  });
+
   it('Get plant assets in trays only', () => {
     cy.wrap(farmosUtil.getPlantAssets('CHUAU', [], true, false)).then(
       (plantAssets) => {

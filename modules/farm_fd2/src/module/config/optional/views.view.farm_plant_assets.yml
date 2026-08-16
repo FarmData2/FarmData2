@@ -4,10 +4,11 @@ dependencies:
   config:
     - asset.type.plant
     - taxonomy.vocabulary.log_category
+    - taxonomy.vocabulary.plant_type
   content:
-    - 'taxonomy_term:log_category:a62d8a24-2b27-4feb-b7af-618e404ecce2'
-    - 'taxonomy_term:log_category:c228aeef-1c9e-4a07-8807-45bcabf68dca'
-    - 'taxonomy_term:log_category:c7c71883-8c6f-4c98-9df7-abdb31c62076'
+    - 'taxonomy_term:log_category:0acb85bb-c0f8-4882-9335-4214a28200af'
+    - 'taxonomy_term:log_category:ad38514a-46da-42b5-bfbd-df8a609920c3'
+    - 'taxonomy_term:log_category:d5cc4f92-d312-48fa-bc55-ae96e8e63007'
   module:
     - asset
     - farm_location
@@ -18,7 +19,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: ZLJTUMKzzAV51lvJzNbOixKVkihmKkTlTAPKU-WzjmM
+  default_config_hash: Tf_1spfzahQFl4-r3wnQb1uXKYo6lUnlNoeA_8nhj5s
 id: farm_plant_assets
 label: 'Farm Plant Assets'
 module: views
@@ -810,6 +811,57 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: log_category
+          type: textfield
+          hierarchy: false
+          limit: true
+          error_message: true
+        plant_type_target_id:
+          id: plant_type_target_id
+          table: asset__plant_type
+          field: plant_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: asset
+          entity_field: plant_type
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: plant_type_target_id_op
+            label: Crop/variety
+            description: ''
+            use_operator: false
+            operator: plant_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: crop
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              farm_manager: '0'
+              farm_viewer: '0'
+              farm_worker: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: plant_type
           type: textfield
           hierarchy: false
           limit: true

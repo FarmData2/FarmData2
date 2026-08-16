@@ -98,6 +98,7 @@ export async function getPlantAsset(plantAssetId) {
  * @param {string[]} [checkedBeds=[]] the beds of the plant assets.
  * @param {boolean} [isInGround=true] include plants that are in the ground (direct seeded or transplanted).
  * @param {boolean} [isInTrays=true] include plants that are in trays (tray seeded but not transplanted).
+ * @param {string[]} [cropNames=[]] the crop(s) to filter the plant assets by.
  * @return {Object[]} array of objects with information about the matching plant assets.
  * @throws {Error} if unable to fetch the plant assets.
  *
@@ -107,7 +108,8 @@ export async function getPlantAssets(
   locationName,
   checkedBeds = [],
   isInTrays = true,
-  isInGround = true
+  isInGround = true,
+  cropNames = []
 ) {
   if (!isInTrays && !isInGround) {
     return [];
@@ -118,6 +120,9 @@ export async function getPlantAssets(
   let paramStr = '?location=' + locationName;
   if (checkedBeds.length > 0) {
     paramStr = paramStr + '&beds=' + checkedBeds.join(',');
+  }
+  if (cropNames.length > 0) {
+    paramStr = paramStr + '&crop=' + cropNames.join(',');
   }
 
   let logCategories = [];
