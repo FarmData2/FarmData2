@@ -1,6 +1,6 @@
 {
   "name": "FarmData2 Development Environment",
-  "image": "farmdata2/fd2dev:fd2.15",
+  "image": "farmdata2/fd2dev:fd2.16",
   "containerEnv": {
     "TZ": "America/New_York"
   },
