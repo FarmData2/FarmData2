@@ -16,8 +16,8 @@ echo ""
 # are not.
 VSCODE_HASH=$(find ~/.vscode-remote/bin -mindepth 1 -maxdepth 1 -printf '%T@ %f\n' | sort -nr | head -n 1 | cut -d' ' -f2-)
 VSCODE_CMD=~/.vscode-remote/bin/"$VSCODE_HASH"/bin/remote-cli/code
-mapfile -t VSCODE_EXTENSIONS < <(jq -r '.recommendations[]' "$REPO_DIR/.vscode/extensions.json")
-INSTALLED_EXTENSIONS=$($VSCODE_CMD --list-extensions)
+mapfile -t VSCODE_EXTENSIONS < <(jq -r '.recommendations[]' "$REPO_DIR/.devcontainer/extensions.json")
+INSTALLED_EXTENSIONS=$($VSCODE_CMD --list-extensions --show-versions)
 
 MISSING_EXTENSIONS=()
 for EXT in "${VSCODE_EXTENSIONS[@]}"; do
