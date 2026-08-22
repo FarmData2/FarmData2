@@ -9,6 +9,7 @@ export default defineConfig({
   chromeWebSecurity: false,
   defaultCommandTimeout: 10000,
   e2e: {
+    allowCypressEnv: false,
     supportFile: '../../cypress/support/e2e.js',
     specPattern: 'src/entrypoints/*/*.e2e.cy.js',
     devServer: {
@@ -44,6 +45,7 @@ export default defineConfig({
     },
   },
   component: {
+    allowCypressEnv: false,
     supportFile: '../../cypress/support/component.js',
     indexHtmlFile: '../../cypress/support/component-index.html',
     specPattern: 'src/entrypoints/*/*.unit.cy.js',

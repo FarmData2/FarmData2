@@ -8,6 +8,7 @@ export default defineConfig({
   chromeWebSecurity: false,
   defaultCommandTimeout: 10000,
   component: {
+    allowCypressEnv: false,
     supportFile: '../cypress/support/component.js',
     indexHtmlFile: '../cypress/support/component-index.html',
     specPattern: '**/*.unit.cy.js',
