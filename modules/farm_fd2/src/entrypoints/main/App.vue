@@ -47,7 +47,7 @@
             data-cy="cover-crop-seeding-wrapper"
           >
             <BButton
-              v-on:click="navigateTo('/fd2/cover_crop_seeding')"
+              v-on:click="navigateTo('/fd2/cover_crop_seeding/')"
               class="launch-button"
               variant="none"
               id="cover-crop-seeding-button"
@@ -93,7 +93,7 @@
             data-cy="direct-seeding-wrapper"
           >
             <BButton
-              v-on:click="navigateTo('/fd2/direct_seeding')"
+              v-on:click="navigateTo('/fd2/direct_seeding/')"
               class="launch-button"
               variant="none"
               id="direct-seeding-button"
@@ -139,7 +139,7 @@
             data-cy="tray-seeding-wrapper"
           >
             <BButton
-              v-on:click="navigateTo('/fd2/tray_seeding')"
+              v-on:click="navigateTo('/fd2/tray_seeding/')"
               class="launch-button"
               variant="none"
               id="tray-seeding-button"
@@ -197,7 +197,7 @@
             data-cy="soil-disturbance-wrapper"
           >
             <BButton
-              v-on:click="navigateTo('/fd2/soil_disturbance')"
+              v-on:click="navigateTo('/fd2/soil_disturbance/')"
               class="launch-button"
               variant="none"
               id="soil-disturbance-button"
@@ -254,7 +254,7 @@
             data-cy="transplanting-wrapper"
           >
             <BButton
-              v-on:click="navigateTo('/fd2/transplanting')"
+              v-on:click="navigateTo('/fd2/transplanting/')"
               class="launch-button"
               variant="none"
               id="transplanting-button"
