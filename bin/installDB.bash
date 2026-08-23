@@ -327,8 +327,6 @@ docker exec fd2_farmos drush cr > /dev/null 2>&1
 error_check "Unable to clear the cache."
 echo "Cleared."
 
-echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
-
 if [ -n "$CURRENT" ]; then
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $REPO_DIR/.fd2/.${NO_COLOR}"
 else

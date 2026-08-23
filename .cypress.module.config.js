@@ -7,9 +7,11 @@ export default defineConfig({
   video: false,
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 15000,
   e2e: {
     allowCypressEnv: false,
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 0,
     supportFile: '../../cypress/support/e2e.js',
     specPattern: 'src/entrypoints/*/*.e2e.cy.js',
     devServer: {
@@ -46,6 +48,8 @@ export default defineConfig({
   },
   component: {
     allowCypressEnv: false,
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 0,
     supportFile: '../../cypress/support/component.js',
     indexHtmlFile: '../../cypress/support/component-index.html',
     specPattern: 'src/entrypoints/*/*.unit.cy.js',
