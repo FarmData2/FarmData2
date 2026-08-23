@@ -7,8 +7,19 @@
  * logic, with only the necessary exports added for modularization.
  */
 
-import farmOS from 'farmos';
+import * as farmOSModule from 'farmos';
 import * as runExclusive from 'run-exclusive';
+
+/*
+ * Some bundlers (e.g. Rolldown, used by Vite 8+) double-wrap the CJS/UMD
+ * default export of the `farmos` package, so `farmOSModule.default` may
+ * itself be `{ default: FarmOS, ... }` rather than the `FarmOS` function
+ * directly. Unwrap until we reach the callable constructor.
+ */
+const farmOS =
+  typeof farmOSModule.default === 'function'
+    ? farmOSModule.default
+    : farmOSModule.default.default;
 
 /*
  * This global object holds all of the values that are cached in the

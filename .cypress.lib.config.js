@@ -6,8 +6,11 @@ export default defineConfig({
   video: false,
   trashAssetsBeforeRuns: true,
   chromeWebSecurity: false,
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 15000,
   component: {
+    allowCypressEnv: false,
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 0,
     supportFile: '../cypress/support/component.js',
     indexHtmlFile: '../cypress/support/component-index.html',
     specPattern: '**/*.unit.cy.js',

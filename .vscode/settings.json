@@ -7,5 +7,7 @@
   "eslint.validate": ["markdown", "md"],
   "vale.valeCLI.config": "/home/fd2dev/FarmData2/.vale.ini",
   "vale.valeCLI.path": "/usr/bin/vale",
-  "cSpell.language": "en"
+  "cSpell.language": "en",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 60000
 }

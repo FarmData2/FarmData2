@@ -9,22 +9,17 @@ describe('Check that the tray_seeding entry point in farm_fd2 exists.', () => {
   });
 
   it('Check that guest cannot access tray seeding form', () => {
-    /*
-     * Skip this test if we are not running from the live farmOS
-     * server.  If we are running on the dev or preview server then
-     * the login does nothing and the test would fail because the page
-     * would be served to the guest.  When running on the live farmOS
-     * the login validates the guest credentials and enforces the permissions
-     * set for the entry point.
-     *
-     * For some reason the test is marked as "pending" when it is skipped
-     * in this way.  None the less, Cypress reports that all tests pass
-     * both on the live server and on the dev server.
-     */
-    cy.skipOn('localhost');
-
     cy.login('guest', 'farmdata2');
     cy.visit({ url: 'fd2/tray_seeding/', failOnStatusCode: false });
+
+    // Skip this test if running on dev/prev servers because login only fails on live server.
+    // Note: The test will be marked as pending because that is mocha's behavior.
+    cy.url().then(function (url) {
+      if (url.includes('localhost')) {
+        this.skip();
+      }
+    });
+
     cy.get('.page-title').should('contain.text', 'Access denied');
   });
 
