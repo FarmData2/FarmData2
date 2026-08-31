@@ -195,7 +195,7 @@ export async function submitForm(formData) {
     const transplantingLog = {
       name: 'transplantingLog',
       do: async (results) => {
-        return await farmosUtil.createTransplantingActivityLog(
+        return await farmosUtil.createTransplantingLog(
           formData.transplantingDate,
           formData.location,
           formData.beds,
@@ -210,7 +210,7 @@ export async function submitForm(formData) {
         );
       },
       undo: async (results) => {
-        await farmosUtil.deleteTransplantingActivityLog(
+        await farmosUtil.deleteTransplantingLog(
           results['transplantingLog'].id
         );
       },
@@ -230,7 +230,7 @@ export async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          if (results[activityLog] != 'undone') {
+          if (results['activityLog'] != 'undone') {
             await farmosUtil.deleteStandardQuantity(
               results['depthQuantity'].id
             );
@@ -250,7 +250,7 @@ export async function submitForm(formData) {
           );
         },
         undo: async (results) => {
-          if (results[activityLog] != 'undone') {
+          if (results['activityLog'] != 'undone') {
             await farmosUtil.deleteStandardQuantity(
               results['speedQuantity'].id
             );

@@ -12,19 +12,19 @@ import {
 } from './farmosUtil.utilities.js';
 
 /**
- * Create a new activity log (`log--activity`) for a transplanting.
+ * Create a new transplanting log (`log--transplanting`) for a transplanting.
  *
  * @param {string} transplantingDate - The date of the transplanting.
  * @param {string} locationName - The name of the location where the transplanting occurred.
  * @param {Array<string>} bedNames - The names of the bed(s) where the transplanting occurred.
  * @param {Object} plantAsset - The plant asset created by the transplanting.
  * @param {Array<Object>} [quantities] - An array of quantity objects.
- * @returns {Object} The new activity log.
- * @throws {Error} if unable to create the activity log.
+ * @returns {Object} The new transplanting log.
+ * @throws {Error} if unable to create the transplanting log.
  *
  * @category transplanting
  */
-export async function createTransplantingActivityLog(
+export async function createTransplantingLog(
   transplantingDate,
   locationName,
   bedNames = [],
@@ -45,7 +45,7 @@ export async function createTransplantingActivityLog(
     cropIdToTermMap.get(plantAsset.relationships.plant_type[0].id).attributes
       .name;
 
-  const activityLogData = {
+  const transplantingLogData = {
     type: 'log--transplanting',
     attributes: {
       name: logName,
@@ -63,46 +63,48 @@ export async function createTransplantingActivityLog(
   };
 
   const farm = await getFarmOSInstance();
-  const activityLog = farm.log.create(activityLogData);
-  await farm.log.send(activityLog);
+  const transplantingLog = farm.log.create(transplantingLogData);
+  await farm.log.send(transplantingLog);
 
-  return activityLog;
+  return transplantingLog;
 }
 
 /**
- * Get the transplanting activity log with the specified id.
+ * Get the transplanting log with the specified id.
  *
- * @param {string} activityLogId the id of the activity log.
- * @returns {Object} the activity log with the specified id.
- * @throws {Error} if unable to get the activity log.
+ * @param {string} transplantingLogId the id of the transplanting log.
+ * @returns {Object} the transplanting log with the specified id.
+ * @throws {Error} if unable to get the transplanting log.
  *
  * @category transplanting
  */
-export async function getTransplantingActivityLog(activityLogId) {
+export async function getTransplantingLog(transplantingLogId) {
   const farm = await getFarmOSInstance();
   const results = await farm.log.fetch({
-    filter: { type: 'log--transplanting', id: activityLogId },
+    filter: { type: 'log--transplanting', id: transplantingLogId },
   });
   return results.data[0];
 }
 
 /**
- * Delete the transplanting activity log with the specified id.
+ * Delete the transplanting log with the specified id.
  *
- * @param {string} activityLogId the id of the activity log.
- * @returns {Object} the deleted activity log.
- * @throws {Error} if unable to delete the activity log.
+ * @param {string} transplantingLogId the id of the transplanting log.
+ * @returns {Object} the deleted transplanting log.
+ * @throws {Error} if unable to delete the transplanting log.
  *
  * @category transplanting
  */
-export async function deleteTransplantingActivityLog(activityLogId) {
+export async function deleteTransplantingLog(transplantingLogId) {
   const farm = await getFarmOSInstance();
   try {
-    const result = await farm.log.delete('transplanting', activityLogId);
+    const result = await farm.log.delete('transplanting', transplantingLogId);
     return result;
   } catch (error) {
-    console.error('deleteTransplantingActivityLog:');
-    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error('deleteTransplantingLog:');
+    console.error(
+      '  Unable to delete transplanting log with id: ' + transplantingLogId
+    );
     console.error(error.message);
     console.error(error);
     throw error;
