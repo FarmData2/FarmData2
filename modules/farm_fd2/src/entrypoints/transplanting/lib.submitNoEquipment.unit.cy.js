@@ -241,7 +241,8 @@ describe('Submit w/o equipment using the transplanting lib.', () => {
       .to.be.null;
   });
 
-  it('Check the log--activity', () => {
+  it('Check the transplanting--log', () => {
+    expect(result.transplantingLog.type).to.equal('log--transplanting');
     expect(result.transplantingLog.attributes.name).to.equal(
       form.transplantingDate + '_xp_' + form.picked.get(0).data.crop
     );
