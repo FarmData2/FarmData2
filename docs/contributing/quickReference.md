@@ -58,12 +58,14 @@
 
 ### (Re)Installing the Sample Database
 
-| Command                    | Action                                                                   |
-| -------------------------- | ------------------------------------------------------------------------ |
-| `installDB.bash`           | Install the version of the sample database for the current branch.       |
-| `installDB.bash --prompt`  | Prompt the user to select the version of the sample database to install. |
-| `installDB.bash --current` | Reinstall the sample database from the `tar.gz` file in `./fd2/`         |
-| `installDB.bash --help`    | See all options, including for how to install development releases.      |
+| Command                                                    | Action                                                               |
+| ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| `installDB.bash`                                           | Install the sample database version for the current branch.          |
+| `installDB.bash --prompt`                                  | Prompt for the release and database artifact to install.             |
+| `installDB.bash --development`                             | Prompt for a local build in `../FD2-SampleDBs/dist`.                 |
+| `installDB.bash --development --artifact db.sample.tar.gz` | Install a local build without changing the branch release pin.       |
+| `installDB.bash --current`                                 | Reinstall the most recently installed database archive from `.fd2/`. |
+| `installDB.bash --help`                                    | See all options, including how to install development releases.      |
 
 <!-- vale Microsoft.Vocab = YES -->
 

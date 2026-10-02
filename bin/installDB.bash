@@ -1,8 +1,11 @@
 #!/bin/bash
 # shellcheck disable=SC1091  # Make sources okay.
 
-REPO_DIR=$(git rev-parse --show-toplevel)
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+REPO_DIR=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)
 DB_DIR="$REPO_DIR/docker/db"
+SAMPLE_DB_DIR="$(dirname "$REPO_DIR")/FD2-SampleDBs"
+LAST_INSTALLED_DB="$REPO_DIR/.fd2/last-installed-db"
 source "$REPO_DIR/bin/colors.bash"
 source "$REPO_DIR/bin/lib.bash"
 source "$REPO_DIR/bin/lib/checkServices.lib.bash"
@@ -15,9 +18,17 @@ function usage {
   echo "  release of the sample database indicated in .fd2dev/db.conf."
   echo ""
   echo "  -c|--current : Reinstall the most recently installed sample database."
-  echo "    - The file .fd2/db.sample.tar.gz will be installed if it exists."
-  echo "    - If .fd2/db.sample.tar.gz does not exist then the default behavior will be used."
+  echo "    - Reinstalls the most recently installed database archive from .fd2/."
+  echo "    - If no archive has been recorded, .fd2/db.sample.tar.gz is used if it exists."
   echo "    - No other flags may be specified with -c|--current."
+  echo ""
+  echo "  --development : Install a locally built database from the sibling FD2-SampleDBs repository."
+  echo "    - If --artifact is omitted, choose from the archives in FD2-SampleDBs/dist/."
+  echo "    - Does not change .fd2dev/db.conf."
+  echo "    - No other mode flags may be specified with --development."
+  echo ""
+  echo "    --artifact=<artifact> : If --development is used, a specific database archive to install can be specified."
+  echo "      - E.g. --development --artifact db.sample.tar.gz"
   echo ""
   echo "  -l|--latest : Install the latest release of the sample database."
   echo "    - No other flags may be specified with -l|--latest."
@@ -46,7 +57,7 @@ else
 
   # Process the command line flags
   FLAGS=$(getopt -o a::c::h::l::p::r:: \
-    --long asset::,current::,help::,latest::,prompt::,release:: \
+    --long asset::,artifact:,current::,development,help::,latest::,prompt::,release:: \
     -- "$@")
   error_check "Unrecognized option provided."
   eval set -- "$FLAGS"
@@ -62,12 +73,21 @@ else
         DB_ASSET=$2
         shift 2
         ;;
+      --artifact)
+        DB_ARTIFACT=$2
+        shift 2
+        ;;
       -c | --current)
         CURRENT=1
         shift 2
         ;;
+      --development)
+        DEVELOPMENT=1
+        shift
+        ;;
       -h | --help)
-        usage
+        HELP=1
+        shift
         ;;
       -l | --latest)
         LATEST=1
@@ -97,8 +117,26 @@ else
   done
 fi
 
+if [ -n "$HELP" ]; then
+  usage
+fi
+
+if [ -n "$DEVELOPMENT" ]; then
+  SAMPLE_DB_ROOT=$(git -C "$SAMPLE_DB_DIR" rev-parse --show-toplevel 2> /dev/null)
+  if [ -z "$SAMPLE_DB_ROOT" ] || [ "$(readlink -f "$SAMPLE_DB_ROOT")" != "$(readlink -f "$SAMPLE_DB_DIR")" ]; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} The FD2-SampleDBs repository must exist as a sibling of FarmData2."
+    echo "Expected repository at $SAMPLE_DB_DIR."
+    exit 255
+  fi
+  if [ ! -d "$SAMPLE_DB_ROOT/dist" ]; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} The FD2-SampleDBs dist directory does not exist."
+    echo "Expected directory at $SAMPLE_DB_ROOT/dist."
+    exit 255
+  fi
+fi
+
 if [ -n "$PROMPT" ]; then
-  if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$CURRENT" ]; then
+  if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$DB_ARTIFACT" ] || [ -n "$CURRENT" ] || [ -n "$DEVELOPMENT" ] || [ -n "$LATEST" ]; then
     echo -e "${ON_RED}ERROR:${NO_COLOR} When -p|--prompt is specified, no other flags may be included."
     echo "Use installDB.bash --help for usage information"
     exit 255
@@ -106,21 +144,47 @@ if [ -n "$PROMPT" ]; then
 fi
 
 if [ -n "$CURRENT" ]; then
-  if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$PROMPT" ]; then
+  if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$DB_ARTIFACT" ] || [ -n "$PROMPT" ] || [ -n "$DEVELOPMENT" ] || [ -n "$LATEST" ]; then
     echo -e "${ON_RED}ERROR:${NO_COLOR} When -c|--current is specified, no other flags may be included."
     echo "Use installDB.bash --help for usage information"
     exit 255
   fi
 
-  if [ ! -f "$REPO_DIR/.fd2/db.sample.tar.gz" ]; then
+  if [ -f "$LAST_INSTALLED_DB" ]; then
+    DB_ASSET=$(cat "$LAST_INSTALLED_DB")
+    if [ -z "$DB_ASSET" ] || [[ "$DB_ASSET" == */* ]]; then
+      echo -e "${ON_RED}ERROR:${NO_COLOR} The last installed database marker contains an invalid archive name."
+      exit 255
+    fi
+    if [ ! -f "$REPO_DIR/.fd2/$DB_ASSET" ]; then
+      echo -e "${ON_RED}ERROR:${NO_COLOR} The last installed database archive recorded in $LAST_INSTALLED_DB is missing."
+      exit 255
+    fi
+  elif [ -f "$REPO_DIR/.fd2/db.sample.tar.gz" ]; then
+    DB_ASSET="db.sample.tar.gz"
+  else
     echo "$REPO_DIR/.fd2/db.sample.tar.gz does not exist."
     echo "Switching to default behavior."
     unset CURRENT
+    PREFERRED=1
   fi
 fi
 
+if [ -n "$DEVELOPMENT" ]; then
+  if [ -n "$DB_RELEASE" ] || [ -n "$DB_ASSET" ] || [ -n "$CURRENT" ] || [ -n "$PROMPT" ] || [ -n "$LATEST" ]; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} When --development is specified, no other mode flags may be included."
+    echo "Use installDB.bash --help for usage information"
+    exit 255
+  fi
+  DB_ASSET=$DB_ARTIFACT
+elif [ -n "$DB_ARTIFACT" ]; then
+  echo -e "${ON_RED}ERROR:${NO_COLOR} --artifact may only be used with --development."
+  echo "Use installDB.bash --help for usage information"
+  exit 255
+fi
+
 if [ -n "$DB_ASSET" ]; then
-  if [ -z "$DB_RELEASE" ]; then
+  if [ -z "$DB_RELEASE" ] && [ -z "$DEVELOPMENT" ] && [ -z "$CURRENT" ]; then
     echo -e "${ON_RED}ERROR:${NO_COLOR} When -a|--asset is specified, the -r|--release flag must also be specified."
     echo "Use installDB.bash --help for usage information"
     exit 255
@@ -128,7 +192,27 @@ if [ -n "$DB_ASSET" ]; then
 fi
 
 if [ -n "$CURRENT" ]; then
-  DB_ASSET="db.sample.tar.gz"
+  :
+elif [ -n "$DEVELOPMENT" ]; then
+  if [ -z "$DB_ASSET" ]; then
+    mapfile -t DATABASES < <(find "$SAMPLE_DB_ROOT/dist" -maxdepth 1 -type f -name 'db.*.tar.gz' -printf '%f\n' | sort)
+    if [ "${#DATABASES[@]}" -eq 0 ]; then
+      echo -e "${ON_RED}ERROR:${NO_COLOR} No database archives were found in $SAMPLE_DB_ROOT/dist."
+      exit 255
+    fi
+    echo "Choose the database to install."
+    select DB_ASSET in "${DATABASES[@]}"; do
+      if ((REPLY <= 0 || REPLY > ${#DATABASES[@]})); then
+        echo -e "${ON_RED}ERROR:${NO_COLOR} Invalid choice. Please try again."
+      else
+        break
+      fi
+    done
+  fi
+  if [[ "$DB_ASSET" == */* || ! "$DB_ASSET" == db.*.tar.gz || ! -f "$SAMPLE_DB_ROOT/dist/$DB_ASSET" ]]; then
+    echo -e "${ON_RED}ERROR:${NO_COLOR} Database artifact \"$DB_ASSET\" does not exist in $SAMPLE_DB_ROOT/dist."
+    exit 255
+  fi
 elif [ -n "$DB_RELEASE" ] && [ -n "$DB_ASSET" ]; then
   echo "Checking if database asset $DB_ASSET exists in release $DB_RELEASE..."
 
@@ -198,6 +282,13 @@ fi
 
 if [ -n "$CURRENT" ]; then
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $REPO_DIR/.fd2/...${NO_COLOR}"
+elif [ -n "$DEVELOPMENT" ]; then
+  echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from $SAMPLE_DB_ROOT/dist/...${NO_COLOR}"
+  mkdir -p "$REPO_DIR/.fd2"
+  error_check "Unable to create the database archive directory."
+  cp "$SAMPLE_DB_ROOT/dist/$DB_ASSET" "$REPO_DIR/.fd2/$DB_ASSET"
+  error_check "Unable to copy the development database archive."
+  echo "Database staged in .fd2/."
 else
   echo -e "${UNDERLINE_GREEN}Installing $DB_ASSET from release $DB_RELEASE...${NO_COLOR}"
 
@@ -217,6 +308,9 @@ else
   error_check "Unable to download the database."
   echo "Database downloaded."
 
+fi
+
+if [ -z "$CURRENT" ]; then
   # If Drupal is not connected to the database then this is a new codespace and we have
   # not yet installed a database, so we don't need to uninstall the FarmData2 module.
   DB_CONNECTED=$(docker exec fd2_farmos drush status | grep -E "^Database\s+: Connected")
@@ -331,7 +425,13 @@ echo -e "${ORANGE}RECOMMENDED ACTION: Clear browser cache.${NO_COLOR}"
 
 if [ -n "$CURRENT" ]; then
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $REPO_DIR/.fd2/.${NO_COLOR}"
+elif [ -n "$DEVELOPMENT" ]; then
+  printf '%s\n' "$DB_ASSET" > "$LAST_INSTALLED_DB"
+  error_check "Unable to record the most recently installed database."
+  echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from $SAMPLE_DB_ROOT/dist.${NO_COLOR}"
 else
+  printf '%s\n' "$DB_ASSET" > "$LAST_INSTALLED_DB"
+  error_check "Unable to record the most recently installed database."
   echo "$DB_RELEASE" > "$REPO_DIR/.fd2dev/db.conf"
   echo "$DB_ASSET" >> "$REPO_DIR/.fd2dev/db.conf"
   echo -e "${UNDERLINE_GREEN}Installed $DB_ASSET from release $DB_RELEASE.${NO_COLOR}"
