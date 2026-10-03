@@ -29,14 +29,12 @@
 
 ### Browser
 
-
-| Windows/Linux           | MacOS                     | Action                        |
-| ----------------------- | ------------------------- | ----------------------------- |
-| `F12`                   | `F12`                     | Toggle the Developer Tools    |
-| `Ctrl + Shift + Delete` | &#8984;`+ Shift + Delete` | Clear browsing history.       |
-| `Ctrl + R`              | &#8984;`+ R`              | Standard refresh              |
-| `Ctrl + Shift + R`      | &#8984;`+ Shift + R`      | Hard refresh (bypass cache)   |
-
+| Windows/Linux           | MacOS                     | Action                      |
+| ----------------------- | ------------------------- | --------------------------- |
+| `F12`                   | `F12`                     | Toggle the Developer Tools  |
+| `Ctrl + Shift + Delete` | &#8984;`+ Shift + Delete` | Clear browsing history.     |
+| `Ctrl + R`              | &#8984;`+ R`              | Standard refresh            |
+| `Ctrl + Shift + R`      | &#8984;`+ Shift + R`      | Hard refresh (bypass cache) |
 
 ## FarmData2 Commands
 
@@ -58,14 +56,14 @@
 
 ### (Re)Installing the Sample Database
 
-| Command                                                    | Action                                                               |
-| ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| `installDB.bash`                                           | Install the sample database version for the current branch.          |
-| `installDB.bash --prompt`                                  | Prompt for the release and database artifact to install.             |
-| `installDB.bash --development`                             | Prompt for a local build in `../FD2-SampleDBs/dist`.                 |
-| `installDB.bash --development --artifact db.sample.tar.gz` | Install a local build without changing the branch release pin.       |
-| `installDB.bash --current`                                 | Reinstall the most recently installed database archive from `.fd2/`. |
-| `installDB.bash --help`                                    | See all options, including how to install development releases.      |
+| Command                                                    | Action                                                                           |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `installDB.bash`                                           | Install the sample database version for the current branch.                      |
+| `installDB.bash --prompt`                                  | Prompt for the release and database artifact to install.                         |
+| `installDB.bash --current`                                 | Reinstall the most recently installed database archive from `.fd2/`.             |
+| `installDB.bash --development`                             | Prompt to install from `../FD2-SampleDBs/dist`, do not update `.fd2dev/db.conf`. |
+| `installDB.bash --development --artifact db.sample.tar.gz` | Install from `../FD2-SampleDBs/dist`, do not update `.fd2dev/db.conf`.           |
+| `installDB.bash --help`                                    | See all options, including how to install development releases.                  |
 
 <!-- vale Microsoft.Vocab = YES -->
 

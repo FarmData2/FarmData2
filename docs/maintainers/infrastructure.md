@@ -76,14 +76,13 @@ The structure of the Development Environment is described here, while instructio
 
 The FarmData2 sample database is pre-loaded with a collection of data for all features that can be used for manual and automated testing, and demonstration purposes. Releases of the sample database are built from and stored in the [FD2-SampleDBs](https://github.com/FarmData2/FD2-SampleDBs) repository.
 
-The `bin/installDB.bash` script downloads and installs the sample database release associated with the current branch. It can also install a local build from a sibling `FD2-SampleDBs` repository with `--development`. The script will:
+The `bin/installDB.bash` script downloads and installs a database release. The script will:
 
-1. Download a release or stage a local archive in the `.fd2` directory.
+1. Download a release or stage a local archive from FD2-SampleDBs in the `.fd2` directory.
 2. Stopping the side car containers.
 3. Decompress the archive into the `docker/db` directory mounted into the `fd2_postgres` sidecar container.
 4. Restarting the sidecar containers.
-5. Record the most recently installed archive in `.fd2` for later restoration with `--current`.
-6. For release installs, record the database version in `.fd2dev/db.conf` so branch switching installs the correct release. Development installs do not change this branch pin.
+5. For release installs, record the database version in `.fd2dev/db.conf` so branch switching installs the correct release. Development installs do not change this branch pin.
 
 Full details on using the `installDB.bash` script can be found by running the script with the `--help` flag.
 
