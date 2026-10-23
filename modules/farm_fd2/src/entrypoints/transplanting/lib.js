@@ -17,7 +17,7 @@ import * as farmosUtil from '@libs/farmosUtil/farmosUtil';
  *   bedWidthQuantity: {quantity--standard},
  *   rowsPerBedQuantity: {quantity--standard},
  *   rowFeetQuantity: {quantity--standard},
- *   transplantingLog: {log--activity},
+ *   transplantingLog: {log--transplanting},
  *   depthQuantity: {quantity--standard},
  *   speedQuantity: {quantity--standard},
  *   equipmentAssets: [ {asset--equipment}, ... ],
