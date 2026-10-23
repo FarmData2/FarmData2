@@ -239,7 +239,8 @@ describe('Submission using the transplanting lib.', () => {
       .to.be.null;
   });
 
-  it('Check the log--activity', () => {
+  it('Check the log--transplanting', () => {
+    expect(result.transplantingLog.type).to.equal('log--transplanting');
     expect(result.transplantingLog.attributes.name).to.equal(
       form.transplantingDate + '_xp_' + form.picked.get(0).data.crop
     );
