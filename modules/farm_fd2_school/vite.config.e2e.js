@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 
-let viteConfig = {
+const viteConfig = {
   root: 'modules/farm_fd2_school/src/entrypoints',
   publicDir: '../public',
   base: '/fd2_school/',

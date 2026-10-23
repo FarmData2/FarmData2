@@ -18,11 +18,18 @@ describe('Cover Crop Seeding: exists and has main page elements.', () => {
     cy.waitForPage();
   });
 
-  it('Check that guest cannot access cover crop seeding form', () => {
-    cy.skipOn('localhost');
-
+  it('Check that guest cannot access cover crop seeding form', function () {
     cy.login('guest', 'farmdata2');
     cy.visit({ url: 'fd2/cover_crop_seeding/', failOnStatusCode: false });
+
+    // Skip this test if running on dev/prev servers because login only fails on live server.
+    // Note: The test will be marked as pending because that is mocha's behavior.
+    cy.url().then(function (url) {
+      if (url.includes('localhost')) {
+        this.skip();
+      }
+    });
+
     cy.get('.page-title').should('contain.text', 'Access denied');
   });
 

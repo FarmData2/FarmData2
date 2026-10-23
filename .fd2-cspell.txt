@@ -83,6 +83,7 @@ privkey
 proselint
 Pzoq
 readlink
+Rolldown
 rushstack
 saithodev
 setsid

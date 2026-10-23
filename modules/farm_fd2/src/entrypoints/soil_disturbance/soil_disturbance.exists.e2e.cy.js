@@ -34,14 +34,17 @@ describe('Soil Disturbance: exists and has main page elements.', () => {
   });
 
   it('Check that guest cannot access soil disturbance form', () => {
-    /*
-     * Skip this test if we are not running from the live farmOS
-     * server.
-     */
-    cy.skipOn('localhost');
-
     cy.login('guest', 'farmdata2');
     cy.visit({ url: 'fd2/soil_disturbance/', failOnStatusCode: false });
+
+    // Skip this test if running on dev/prev servers because login only fails on live server.
+    // Note: The test will be marked as pending because that is mocha's behavior.
+    cy.url().then(function (url) {
+      if (url.includes('localhost')) {
+        this.skip();
+      }
+    });
+
     cy.get('.page-title').should('contain.text', 'Access denied');
   });
 });

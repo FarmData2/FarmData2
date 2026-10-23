@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-import glob from 'glob';
+import { globSync } from 'glob';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import vue from '@vitejs/plugin-vue';
@@ -22,34 +22,45 @@ let viteConfig = {
         {
           src: '../module/*.yml',
           dest: '.',
+          rename: { stripBase: 1 },
         },
         {
           src: '../module/*.install',
           dest: '.',
+          rename: { stripBase: 1 },
         },
         {
           src: '../module/Controller',
           dest: 'src/',
+          rename: { stripBase: 1 },
         },
         {
           src: '../module/Plugin',
           dest: 'src/',
+          rename: { stripBase: 1 },
         },
         {
           src: '../module/config',
           dest: '.',
+          rename: { stripBase: 1 },
         },
         {
           src: '../composer.json',
           dest: '.',
         },
         {
+          src: '../composer.json',
+          dest: 'farmdata2/',
+        },
+        {
           src: '../module/*.css',
           dest: 'style/',
+          rename: { stripBase: 1 },
         },
         {
           src: '../module/*.module',
           dest: '.',
+          rename: { stripBase: 1 },
         },
       ],
     }),
@@ -78,7 +89,7 @@ let viteConfig = {
     cssCodeSplit: false,
     rollupOptions: {
       input: Object.fromEntries(
-        glob.sync('modules/farm_fd2/src/entrypoints/*/*.html').map((dir) => {
+        globSync('modules/farm_fd2/src/entrypoints/*/*.html').map((dir) => {
           let key = dir.split('/').at(-2) + '/' + dir.split('/').at(-1);
           return [key, dir];
         })
