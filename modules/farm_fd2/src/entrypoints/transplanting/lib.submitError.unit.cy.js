@@ -64,11 +64,11 @@ describe('Error when submitting using the transplanting lib.', () => {
     { retries: 4 },
     () => {
       /*
-       * Create a error on submission of the activity log which is the
+       * Create a error on submission of the transplanting log which is the
        * final step.  At that point all other records should have been
        * created and thus should also all be deleted.
        */
-      cy.intercept('POST', '**/api/log/activity', {
+      cy.intercept('POST', '**/api/log/transplanting', {
         statusCode: 401,
       });
 
@@ -137,25 +137,13 @@ describe('Error when submitting using the transplanting lib.', () => {
     { retries: 4 },
     () => {
       /*
-       * Create a error on submission of the activity log which is the
+       * Let the transplanting log post succeed, then create an error on
+       * submission of the soil disturbance activity log, which is now the
        * final step. At that point all other records should have been
        * created and thus should also all be deleted.
        */
-      // Counter to track the number of POST requests
-      let postRequestCount = 0;
-
-      // Intercept POST requests to the endpoint
-      cy.intercept('POST', '**/api/log/activity', (req) => {
-        postRequestCount += 1;
-        if (postRequestCount === 2) {
-          // On the second request, modify the response to have a status code of 401
-          req.reply({
-            statusCode: 401,
-          });
-        } else {
-          // Continue with the request normally for other requests
-          req.continue();
-        }
+      cy.intercept('POST', '**/api/log/activity', {
+        statusCode: 401,
       });
 
       /*

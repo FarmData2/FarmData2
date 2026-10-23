@@ -81,7 +81,7 @@ describe('Test the transplanting activity log functions', () => {
     cy.getAll(['@transplantAsset', '@bedFeetQuantity', '@traysQuantity']).then(
       ([transplantAsset, bedFeetQuantity, traysQuantity]) => {
         cy.wrap(
-          farmosUtil.createTransplantingActivityLog(
+          farmosUtil.createTransplantingLog(
             '01/02/1999',
             'ALF',
             ['ALF-1', 'ALF-2'],
@@ -94,7 +94,7 @@ describe('Test the transplanting activity log functions', () => {
 
     // Read the transplant log so we get the one on the server.
     cy.get('@transplantingLog').then((transplantingLog) => {
-      cy.wrap(farmosUtil.getTransplantingActivityLog(transplantingLog.id)).as(
+      cy.wrap(farmosUtil.getTransplantingLog(transplantingLog.id)).as(
         'readTransplantingLog'
       );
     });
@@ -111,7 +111,7 @@ describe('Test the transplanting activity log functions', () => {
           '1999-01-02_xp_BROCCOLI'
         );
         expect(transplantingLog.attributes.timestamp).to.contain('1999-01-02');
-        expect(transplantingLog.type).to.equal('log--activity');
+        expect(transplantingLog.type).to.equal('log--transplanting');
         expect(transplantingLog.attributes.status).to.equal('done');
         expect(transplantingLog.attributes.is_movement).to.equal(true);
 
@@ -197,7 +197,7 @@ describe('Test the transplanting activity log functions', () => {
   });
 
   it('Error creating a transplanting log', { retries: 4 }, () => {
-    cy.intercept('POST', '**/api/log/activity', {
+    cy.intercept('POST', '**/api/log/transplanting', {
       statusCode: 401,
     });
 
@@ -214,7 +214,7 @@ describe('Test the transplanting activity log functions', () => {
     cy.get('@transplantAsset').then((transplantAsset) => {
       cy.wrap(
         farmosUtil
-          .createTransplantingActivityLog(
+          .createTransplantingLog(
             '01/02/1999',
             'A',
             [],
@@ -245,7 +245,7 @@ describe('Test the transplanting activity log functions', () => {
     // Create the transplanting log
     cy.get('@transplantAsset').then((transplantAsset) => {
       cy.wrap(
-        farmosUtil.createTransplantingActivityLog(
+        farmosUtil.createTransplantingLog(
           '01/02/1999',
           'A',
           [],
@@ -258,7 +258,7 @@ describe('Test the transplanting activity log functions', () => {
     cy.get('@transplantingLog').then((transplantingLog) => {
       cy.wrap(
         farmosUtil
-          .deleteTransplantingActivityLog(transplantingLog.id)
+          .deleteTransplantingLog(transplantingLog.id)
           .then((result) => {
             expect(result.status).to.equal(204);
           })
@@ -267,13 +267,13 @@ describe('Test the transplanting activity log functions', () => {
   });
 
   it('Error deleting a transplanting log', { retries: 4 }, () => {
-    cy.intercept('DELETE', '**/api/log/activity/*', {
+    cy.intercept('DELETE', '**/api/log/transplanting/*', {
       statusCode: 401,
     });
 
     cy.wrap(
       farmosUtil
-        .deleteTransplantingActivityLog('1234')
+        .deleteTransplantingLog('1234')
         .then(() => {
           throw new Error('Deleting transplanting log should have failed.');
         })
