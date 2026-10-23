@@ -46,7 +46,7 @@ export async function createTransplantingActivityLog(
       .name;
 
   const activityLogData = {
-    type: 'log--activity',
+    type: 'log--transplanting',
     attributes: {
       name: logName,
       timestamp: dayjs(transplantingDate).format(),
@@ -81,7 +81,7 @@ export async function createTransplantingActivityLog(
 export async function getTransplantingActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
   const results = await farm.log.fetch({
-    filter: { type: 'log--activity', id: activityLogId },
+    filter: { type: 'log--transplanting', id: activityLogId },
   });
   return results.data[0];
 }
@@ -98,11 +98,11 @@ export async function getTransplantingActivityLog(activityLogId) {
 export async function deleteTransplantingActivityLog(activityLogId) {
   const farm = await getFarmOSInstance();
   try {
-    const result = await farm.log.delete('activity', activityLogId);
+    const result = await farm.log.delete('transplanting', activityLogId);
     return result;
   } catch (error) {
     console.error('deleteTransplantingActivityLog:');
-    console.error('  Unable to delete activity log with id: ' + activityLogId);
+    console.error('  Unable to delete activity log with id: ' + activityLogId);
     console.error(error.message);
     console.error(error);
     throw error;
