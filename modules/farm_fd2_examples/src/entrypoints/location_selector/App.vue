@@ -32,29 +32,29 @@
       <tr>
         <th>Prop</th>
         <th>Control</th>
+        <th>Value</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>required</td>
+        <td>allowBedSelection</td>
         <td>
           <BFormCheckbox
-            id="required-checkbox"
-            data-cy="required-checkbox"
+            id="allowBedSelection-checkbox"
+            data-cy="allowBedSelection-checkbox"
             switch
-            v-model="required"
+            v-model="allowBedSelection"
+            v-on:change="
+              () => {
+                if (!allowBedSelection) {
+                  form.pickedBeds = [];
+                }
+              }
+            "
           />
         </td>
-      </tr>
-      <tr>
-        <td>showValidityStyling</td>
         <td>
-          <BFormCheckbox
-            id="styling-checkbox"
-            data-cy="styling-checkbox"
-            switch
-            v-model="validity.showStyling"
-          />
+          {{ allowBedSelection }}
         </td>
       </tr>
       <tr>
@@ -66,6 +66,9 @@
             switch
             v-model="includeFields"
           />
+        </td>
+        <td>
+          {{ includeFields }}
         </td>
       </tr>
       <tr>
@@ -85,6 +88,9 @@
             "
           />
         </td>
+        <td>
+          {{ includeGreenhouses }}
+        </td>
       </tr>
       <tr>
         <td>includeGreenhousesWithBeds</td>
@@ -97,23 +103,42 @@
             v-bind:disabled="includeGreenhouses"
           />
         </td>
+        <td>
+          {{ includeGreenhousesWithBeds }}
+        </td>
       </tr>
       <tr>
-        <td>allowBedSelection</td>
+        <td>pickedBeds</td>
         <td>
-          <BFormCheckbox
-            id="allowBedSelection-checkbox"
-            data-cy="allowBedSelection-checkbox"
-            switch
-            v-model="allowBedSelection"
-            v-on:change="
-              () => {
-                if (!allowBedSelection) {
-                  form.pickedBeds = [];
-                }
-              }
+          <BButton
+            id="select-bed-button"
+            data-cy="select-bed-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.form.pickedBeds.push(this.form.selected + '-1')"
+            v-bind:disabled="
+              !['ALF', 'CHUAU', 'GHANA'].includes(this.form.selected) ||
+              this.form.pickedBeds.includes(this.form.selected + '-1') ||
+              !this.allowBedSelection
             "
-          />
+          >
+            Pick 1st Bed
+          </BButton>
+          <BButton
+            id="clear-bed-button"
+            data-cy="clear-bed-button"
+            variant="outline-primary"
+            size="sm"
+            v-on:click="this.form.pickedBeds = []"
+            v-bind:disabled="
+              this.form.pickedBeds.length == 0 || !this.allowBedSelection
+            "
+          >
+            Clear Beds
+          </BButton>
+        </td>
+        <td>
+          {{ form.pickedBeds }}
         </td>
       </tr>
       <tr>
@@ -126,6 +151,23 @@
             v-model="requireBedSelection"
           />
         </td>
+        <td>
+          {{ requireBedSelection }}
+        </td>
+      </tr>
+      <tr>
+        <td>required</td>
+        <td>
+          <BFormCheckbox
+            id="required-checkbox"
+            data-cy="required-checkbox"
+            switch
+            v-model="required"
+          />
+        </td>
+        <td>
+          {{ required }}
+        </td>
       </tr>
       <tr>
         <td>selectAllBedsByDefault</td>
@@ -136,6 +178,9 @@
             switch
             v-model="selectAllBedsByDefault"
           />
+        </td>
+        <td>
+          {{ selectAllBedsByDefault }}
         </td>
       </tr>
       <tr>
@@ -171,6 +216,7 @@
           >
             Field w/ Beds
           </BButton>
+          <br />
           <BButton
             id="select-greenhouse-button"
             data-cy="select-greenhouse-button"
@@ -197,39 +243,25 @@
             Greenhouse w/ Beds
           </BButton>
         </td>
-      </tr>
-      <tr>
-        <td>pickedBeds</td>
         <td>
-          <BButton
-            id="select-bed-button"
-            data-cy="select-bed-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="this.form.pickedBeds.push(this.form.selected + '-1')"
-            v-bind:disabled="
-              !['ALF', 'CHUAU', 'GHANA'].includes(this.form.selected) ||
-              this.form.pickedBeds.includes(this.form.selected + '-1') ||
-              !this.allowBedSelection
-            "
-          >
-            Select Bed
-          </BButton>
-          <BButton
-            id="clear-bed-button"
-            data-cy="clear-bed-button"
-            variant="outline-primary"
-            size="sm"
-            v-on:click="this.form.pickedBeds = []"
-            v-bind:disabled="
-              this.form.pickedBeds.length == 0 || !this.allowBedSelection
-            "
-          >
-            Clear Beds
-          </BButton>
+          {{ form.selected }}
         </td>
       </tr>
-    </tbody>
+      <tr>
+        <td>showValidityStyling</td>
+        <td>
+          <BFormCheckbox
+            id="styling-checkbox"
+            data-cy="styling-checkbox"
+            switch
+            v-model="validity.showStyling"
+          />
+        </td>
+        <td>
+          {{ validity.showStyling }}
+        </td>
+      </tr>
+</tbody>
   </table>
 
   <h5>Component Event Payloads:</h5>
